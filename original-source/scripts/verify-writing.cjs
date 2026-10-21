@@ -1,0 +1,58 @@
+const fs = require('node:fs');
+const vm = require('node:vm');
+const assert = require('node:assert/strict');
+const ts = require('typescript');
+const { DatabaseSync } = require('node:sqlite');
+function load(file, overrides={}) {
+ const code=ts.transpileModule(fs.readFileSync(file,'utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022}}).outputText;
+ const module={exports:{}};
+ vm.runInNewContext(code,{module,exports:module.exports,require:n=>n in overrides?overrides[n]:require(n),crypto:globalThis.crypto,Response,Request,File,Blob,TextEncoder,TextDecoder,Uint8Array,DataView,DecompressionStream,URL,structuredClone,setTimeout,console},{filename:file});
+ return module.exports;
+}
+const m=load('lib/desk-model.ts');
+const p=m.createProject('A blank screenplay','screenplay'),draft=p.nodes.find(n=>n.role==='draft'),research=p.nodes.find(n=>n.role==='research'),trash=p.nodes.find(n=>n.role==='trash'),first=p.nodes.find(n=>n.kind==='screenplay');
+assert.equal(first.html,'');assert.equal(p.nodes.some(n=>/Sam|guardian/i.test(n.title+n.html)),false);
+first.html='<p data-element="action">One two three.</p>';
+const folder=m.node('Sequence','folder',draft.id,1),second=m.node('Second','screenplay',folder.id),third=m.node('Third','screenplay',draft.id,2);
+p.nodes.push(folder,second,third);
+assert.deepEqual(Array.from(m.compileNodes(p),n=>n.id),[first.id,second.id,third.id]);
+assert.equal(m.moveNode(p,folder.id,folder.id),false);
+assert.equal(m.moveNode(p,folder.id,second.id),false);
+assert.equal(m.moveNode(p,draft.id,research.id),false);
+assert.equal(m.moveNode(p,third.id,draft.id,first.id),true);
+assert.deepEqual(Array.from(m.compileNodes(p),n=>n.id),[third.id,first.id,second.id]);
+assert.equal(m.trashNode(p,folder.id),true);assert.equal(m.inTrash(p,second),true);assert.equal(m.compileNodes(p).length,2);
+assert.equal(m.restoreNode(p,folder.id),true);assert.equal(m.inTrash(p,second),false);assert.equal(m.compileNodes(p).length,3);
+assert.equal(m.wordCount(first.html),3);
+const state=m.emptyWorkspace();state.projects.push(p);assert.equal(m.validWorkspace(state),true);
+const corrupt=structuredClone(state);corrupt.projects[0].nodes.find(n=>n.id===folder.id).parent=second.id;assert.equal(m.validWorkspace(corrupt),false);
+assert.equal(m.searchNodes(p,'three')[0].id,first.id);
+console.log('PASS: blank templates, linked order, cycle prevention, nested trash/restore, compilation, search, backup validation');
+
+p.moodboard=[{id:'reference',kind:'note',title:'Light',text:'Cool morning through glass'}];p.sceneBeats={[first.id+'/document']:{summary:'An arrival',emotion:'Hope',tension:3}};p.beatOrders={[draft.id]:[first.id+'/document']};
+p.nodes.find(n=>n.fields['development.kind']==='foundation').fields.logline='A filmmaker finds a new beginning.';p.nodes.find(n=>n.title==='Free Exploration').html='<p>A thought worth keeping.</p>';
+const sql=new DatabaseSync(':memory:');sql.exec(fs.readFileSync('drizzle/0000_closed_chameleon.sql','utf8'));
+let failNext=false;
+const DB={prepare(text){return {text,args:[],bind(...args){this.args=args;return this;}};},async batch(statements){sql.exec('BEGIN');try{const results=statements.map((s,i)=>{if(failNext&&i===3){failNext=false;throw Error('Injected write failure');}const stmt=sql.prepare(s.text);if(/^SELECT/i.test(s.text))return {results:stmt.all(...s.args),meta:{changes:0}};const result=stmt.run(...s.args);return {results:[],meta:{changes:Number(result.changes)}};});sql.exec('COMMIT');return results;}catch(e){sql.exec('ROLLBACK');throw e;}}};
+const api=load('app/api/workspace/route.ts',{'cloudflare:workers':{env:{DB}}});
+const req=(method,body,owner='writer-one',origin='https://desk.test')=>new Request('https://desk.test/api/workspace',{method,headers:{...(owner?{'oai-authenticated-user-id':owner}:{}),'Content-Type':'application/json',Origin:origin},...(body?{body:JSON.stringify(body)}:{})});
+(async()=>{
+ assert.equal((await api.GET(req('GET',null,''))).status,401);
+ let saved=await api.PUT(req('PUT',{revision:0,state}));assert.equal(saved.status,200);assert.equal((await saved.json()).revision,1);
+ const firstLoad=await (await api.GET(req('GET'))).json();assert.equal(firstLoad.state.projects[0].title,'A blank screenplay');assert.deepEqual(firstLoad.state.projects[0].moodboard,p.moodboard);assert.deepEqual(firstLoad.state.projects[0].sceneBeats,p.sceneBeats);assert.deepEqual(firstLoad.state.projects[0].beatOrders,p.beatOrders);assert.equal(firstLoad.state.projects[0].nodes.find(n=>n.fields['development.kind']==='foundation').fields.logline,'A filmmaker finds a new beginning.');assert.equal(firstLoad.state.projects[0].nodes.find(n=>n.title==='Free Exploration').html,'<p>A thought worth keeping.</p>');
+ const next=structuredClone(state);next.projects[0].title='Latest draft';
+ saved=await api.PUT(req('PUT',{revision:1,state:next}));assert.equal(saved.status,200);
+ const stale=await api.PUT(req('PUT',{revision:1,state}));assert.equal(stale.status,409);
+ assert.equal((await (await api.GET(req('GET'))).json()).state.projects[0].title,'Latest draft');
+ assert.equal((await api.PUT(req('PUT',{revision:2,state},'writer-one','https://other.test'))).status,403);
+ assert.equal((await (await api.GET(req('GET',null,'writer-two'))).json()).state,null);
+ const unicode=structuredClone(next);unicode.scratch='x'.repeat(119999)+'🎬한글 తెలుగు'.repeat(20000);
+ saved=await api.PUT(req('PUT',{revision:2,state:unicode}));assert.equal(saved.status,200);
+ assert.equal((await (await api.GET(req('GET'))).json()).state.scratch,unicode.scratch);
+ failNext=true;await assert.rejects(api.PUT(req('PUT',{revision:3,state})),/Injected/);
+ const afterFailure=await (await api.GET(req('GET'))).json();assert.equal(afterFailure.revision,3);assert.equal(afterFailure.state.scratch,unicode.scratch);
+ console.log('PASS: authenticated storage, owner isolation, atomic saves, stale-write conflicts, origin checks, Unicode chunk round-trip, failed-write rollback');
+ const client=load('lib/desk-client.ts',{'./desk-model':m,'./screenplay-layout':load('lib/screenplay-layout.ts')});fs.mkdirSync('/tmp/desk-export-qa',{recursive:true});fs.writeFileSync('/tmp/desk-export-qa/sample.docx',client.wordDocument('Sample',[{text:'INT. ROOM - DAY',type:'scene'},{text:'A writer opens a document.',type:'action'},{text:'WRITER',type:'character'},{text:'A new beginning.',type:'dialogue'}]));
+ const bytes=client.zipFiles([{name:'mimetype',content:'application/epub+zip'},{name:'note.txt',content:'한글 తెలుగు 🎬'}]);fs.writeFileSync('/tmp/desk-export-qa/sample.zip',bytes);
+ console.log('PASS: Word / ZIP export generation');
+})().catch(e=>{console.error(e);process.exitCode=1;});

@@ -1,0 +1,613 @@
+/* Paper Studio — colors sampled from the original 15-month plan.
+   A restrained editorial shell around the unchanged writing and data tools. */
+:root { background:#f5efdf; color:#372438; color-scheme:light; }
+.studio.atlas-shell,
+.studio.atlas-shell.dark[data-palette=carbon] {
+  --bg:#f5efdf;
+  --side:#fffbf0;
+  --surface:#f0e5d3;
+  --line:#d7c9b4;
+  --text:#372438;
+  --secondary:#604f4a;
+  --muted:#756454;
+  --accent:#ae3928;
+  --accent-soft:#f2ded2;
+  --on-accent:#fffaf0;
+  --paper:#fffbf0;
+  --editor:#e9dfcc;
+  --control-border:#ac9384;
+  --approved:#3c684d;
+  --progress:#315596;
+  --blocked:#a62f30;
+  --draft:#665d59;
+  --tungsten:#7a504b;
+  --warning:#7e511a;
+  --warning-bg:#f6e6c8;
+  --warning-border:#a87934;
+  color-scheme:light;
+  background:var(--bg);
+  font-family:var(--font-ui);
+}
+.studio.atlas-shell { font-size:var(--type-body); }
+.studio.atlas-shell :is(button,input,textarea,select) { font-family:var(--font-ui); }
+.studio.atlas-shell :is(button,a,input,select,textarea,[tabindex]):focus-visible {
+  outline:2px solid var(--accent); outline-offset:2px;
+}
+.studio.atlas-shell ::selection { background:#efd0bd; color:var(--text); }
+.studio.atlas-shell .compact-header,
+.studio.atlas-shell .compact-header .menubar { background:var(--side); }
+.studio.atlas-shell .compact-header { border-bottom:1px solid var(--line); }
+.studio.atlas-shell .compact-header .menubar { height:64px; padding-inline:clamp(16px,2.5vw,38px); gap:16px; }
+.studio.atlas-shell .app-wordmark { color:var(--text); gap:12px; }
+.studio-account { border-top:1px solid var(--line); margin-top:10px; padding:14px 10px 3px; display:flex; flex-wrap:wrap; gap:12px; font-size:12px; }
+.studio-account>span { width:100%; overflow-wrap:anywhere; color:var(--muted); }
+.studio-account>a { color:var(--accent); text-decoration:none; }
+.studio.atlas-shell .settings-archive[hidden] { display:none!important; }
+.studio.atlas-shell:not(.legacy-archive-owner) button:has(>svg.lucide-archive) { display:none; }
+.studio.atlas-shell .app-wordmark .studio-mark { filter:none; }
+.studio.atlas-shell img.studio-mark { display:block; object-fit:contain; border-radius:7px; }
+.studio.atlas-shell .welcome-symbol img.studio-mark { border-radius:18px; }
+.studio.atlas-shell .app-wordmark>span { font-size:1rem; letter-spacing:-.02em; font-weight:600; }
+.studio.atlas-shell .app-wordmark b { color:var(--accent); }
+.studio.atlas-shell .header-world { border-left-color:var(--line); color:var(--secondary); font-size:.875rem; }
+.studio.atlas-shell .command-trigger { border-color:var(--line); background:var(--bg); min-height:38px; font-size:.8125rem; }
+.studio.atlas-shell .command-trigger:hover { background:var(--accent-soft); color:var(--accent); }
+.studio.atlas-shell .header-save { color:var(--secondary); }
+.studio.atlas-shell .compact-header .compile-button { background:var(--accent); color:var(--on-accent); border-color:var(--accent); padding-inline:15px; }
+.studio.atlas-shell .compact-header .compile-button:not(:disabled):hover,
+.studio.atlas-shell .button.primary:not(:disabled):hover { background:#8c3026; border-color:#8c3026; color:#fffaf0; }
+.studio.atlas-shell .button.primary,
+.studio.atlas-shell .compile-button { background:var(--accent); color:var(--on-accent); border-color:var(--accent); }
+.studio.atlas-shell .button.secondary { background:var(--side); border-color:var(--line); }
+.studio.atlas-shell .workspace-layout { padding:0; }
+.studio.atlas-shell .main-editor,
+.studio.atlas-shell .editor-body { background:var(--bg); }
+.studio.atlas-shell .workspace-nav { background:var(--bg); border-bottom:1px solid var(--line); }
+.studio.atlas-shell .workspace-context { padding-inline:clamp(12px,2.5vw,38px); }
+.studio.atlas-shell .creative-dock { bottom:16px; padding:6px; background:var(--side); border:1px solid var(--line); border-radius:10px; box-shadow:0 10px 28px #3923371c; }
+.studio.atlas-shell .creative-dock>button { min-height:44px; border-radius:6px; color:var(--secondary); font-size:.8125rem; }
+.studio.atlas-shell .creative-dock>button[aria-current=page] { background:var(--accent-soft); color:var(--accent); box-shadow:inset 0 -2px var(--accent); }
+.studio.atlas-shell .creative-dock>button:hover { color:var(--accent); background:#f7e9dc; }
+.studio.atlas-shell .binder.section-library,
+.studio.atlas-shell .inspector { background:var(--side); border-color:var(--line); box-shadow:0 24px 64px #39233726; border-radius:8px; }
+.studio.atlas-shell .atlas-panel-backdrop { background:#3923376b; }
+.studio.atlas-shell .library-sections .section-choice.tree-select { background:transparent; font-size:.8125rem; }
+.studio.atlas-shell .library-sections .section-choice.selected,
+.studio.atlas-shell .section-library .tree-row.selected { color:var(--accent); background:var(--accent-soft); border-color:#ddb7a4; }
+.studio.atlas-shell .section-library .tree-row>.tree-select { font-size:.875rem; }
+.studio.atlas-shell .binder-search { background:var(--bg); border-color:var(--line); }
+.studio.atlas-shell .binder-search input { font-size:.875rem; }
+
+/* The world overview reads like an editorial spread, with its screenplay at the center. */
+.studio.atlas-shell .story-atlas { max-width:1320px; padding:clamp(26px,3.5vw,52px) clamp(18px,3vw,42px) 28px; }
+.studio.atlas-shell .atlas-heading { margin-bottom:32px; align-items:flex-end; }
+.studio.atlas-shell .atlas-eyebrow,
+.studio.atlas-shell .collection-eyebrow { font-family:var(--font-data); color:var(--accent); font-size:.7rem; letter-spacing:.1em; text-transform:uppercase; }
+.studio.atlas-shell .live-dot,
+.studio.atlas-shell .collection-eyebrow>span { background:var(--accent); }
+.studio.atlas-shell .atlas-world-name { margin-top:13px; max-width:900px; }
+.studio.atlas-shell .atlas-world-name>input,
+.studio.atlas-shell .welcome h1,
+.studio.atlas-shell .pitch-title>h1 { font-family:var(--font-story); font-weight:400; letter-spacing:-.025em; }
+.studio.atlas-shell .atlas-world-name>input { font-size:clamp(3rem,5vw,5.1rem); line-height:1.02; padding:2px 0 9px; }
+.studio.atlas-shell .atlas-heading p { color:var(--secondary); font-size:.9375rem; line-height:1.55; margin-top:8px; max-width:68ch; }
+.studio.atlas-shell .pitch-launch { margin-top:0; border-color:var(--control-border); background:var(--side); color:var(--text); border-radius:5px; min-height:44px; font-size:.875rem; }
+.studio.atlas-shell .pitch-launch:hover { color:var(--accent); border-color:var(--accent); }
+.studio.atlas-shell .atlas-caption { min-height:51px; }
+.studio.atlas-shell .atlas-caption>span,
+.studio.atlas-shell .stage-section-heading { color:var(--text); font-family:var(--font-data); font-size:.7rem; letter-spacing:.08em; }
+.studio.atlas-shell .atlas-caption>small { color:var(--muted); font-size:.8125rem; }
+.studio.atlas-shell .atlas-viewport { background-color:#efe5d3; background-image:none; border-bottom:1px solid var(--line); height:526px; }
+.studio.atlas-shell .atlas-map { top:24px; }
+.studio.atlas-shell .atlas-lane { color:var(--muted); font-family:var(--font-data); letter-spacing:.1em; font-size:.7rem; }
+.studio.atlas-shell .atlas-connections path { stroke:#ad9488; stroke-dasharray:none; opacity:.65; }
+.studio.atlas-shell .atlas-node { background:var(--side); border:1px solid var(--line); border-radius:5px; box-shadow:0 5px 18px #39233710; }
+.studio.atlas-shell button.atlas-node:hover { border-color:var(--accent); box-shadow:0 7px 22px #39233720; }
+.studio.atlas-shell .atlas-node h2 { font-family:var(--font-story); font-weight:400; font-size:2.2rem; letter-spacing:-.015em; line-height:1.05; margin:17px 0 12px; }
+.studio.atlas-shell .atlas-node p { color:var(--secondary); font-size:.8125rem; line-height:1.55; }
+.studio.atlas-shell .node-overline { color:var(--accent); font-family:var(--font-data); font-size:.68rem; letter-spacing:.08em; }
+.studio.atlas-shell .node-footer { color:var(--accent); }
+.studio.atlas-shell .atlas-foundation { border-top:3px solid var(--accent); }
+.studio.atlas-shell .atlas-script { border-top:3px solid var(--accent); }
+.studio.atlas-shell .script-preview-lines { background:var(--paper); }
+.studio.atlas-shell .atlas-empty-frame { background:var(--surface); }
+.studio.atlas-shell .atlas-empty-frame>span { background:var(--bg); }
+.studio.atlas-shell .atlas-empty-frame>span:nth-child(2) { background:#d9ac96; }
+.studio.atlas-shell .atlas-visual h2 { font-family:var(--font-story); font-size:1.8rem; font-weight:400; }
+.studio.atlas-shell .atlas-world>button:hover { color:var(--accent); background:var(--accent-soft); }
+.studio.atlas-shell .atlas-pan-hint { background:var(--surface); }
+.studio.atlas-shell .atlas-scene-strip>button { background:var(--side); border-radius:5px; border-color:var(--line); padding:16px; }
+.studio.atlas-shell .atlas-scene-strip strong { font-size:.875rem; }
+.studio.atlas-shell .atlas-scene-strip>button>span { font-family:var(--font-data); color:var(--accent); }
+.studio.atlas-shell .atlas-recent { margin-top:18px; }
+
+/* Calm document surfaces and better hierarchy throughout the tools. */
+.studio.atlas-shell .collection-workspace.corkboard { max-width:1320px; padding:clamp(26px,3.5vw,52px) clamp(18px,3vw,42px) 44px; }
+.studio.atlas-shell .collection-name>input,
+.studio.atlas-shell .collection-heading h1,
+.studio.atlas-shell .director-tool-heading h1,
+.studio.atlas-shell .stage-heading h1 { font-family:var(--font-story); font-size:clamp(2.8rem,4vw,4.5rem); font-weight:400; letter-spacing:-.02em; line-height:1.07; }
+.studio.atlas-shell .collection-heading p,
+.studio.atlas-shell .director-tool-heading p,
+.studio.atlas-shell .stage-heading p { font-size:.9375rem; color:var(--secondary); }
+.studio.atlas-shell .collection-grid.card-stage { gap:16px; }
+.studio.atlas-shell .collection-card.index-card { border-radius:5px; min-height:276px; background:var(--side); }
+.studio.atlas-shell .collection-card.index-card:hover { background:#fff8e9; border-color:var(--control-border); }
+.studio.atlas-shell .collection-card .index-card-head>input { font-family:var(--font-story); font-size:1.75rem; font-weight:400; letter-spacing:-.015em; }
+.studio.atlas-shell .collection-card>textarea { color:var(--secondary); font-size:.875rem; }
+.studio.atlas-shell .collection-card-kind,
+.studio.atlas-shell .collection-card-number { font-family:var(--font-data); font-size:.6875rem; letter-spacing:.05em; }
+.studio.atlas-shell .collection-card-icon { background:var(--accent-soft); color:var(--accent); }
+.studio.atlas-shell .collection-add-card { border-radius:5px; }
+.studio.atlas-shell .planning-sheet { max-width:1020px; padding:32px 30px 48px; }
+.studio.atlas-shell .planning-sheet header h2,
+.studio.atlas-shell .dialog-heading h2,
+.studio.atlas-shell .empty-board h2 { font-family:var(--font-story); font-size:clamp(2.2rem,3vw,3rem); font-weight:400; letter-spacing:-.015em; }
+.studio.atlas-shell .planning-field,
+.studio.atlas-shell .planning-free-notes { background:var(--side); border-color:var(--line); border-radius:5px; }
+.studio.atlas-shell .planning-field>span { color:var(--accent); font-family:var(--font-data); font-size:.75rem; }
+.studio.atlas-shell .planning-field>textarea,
+.studio.atlas-shell .planning-field>input { font-size:1rem; line-height:1.65; }
+.studio.atlas-shell .development-intro { border-left-color:var(--accent); color:var(--secondary); font-size:.875rem; }
+.studio.atlas-shell .mood-card,
+.studio.atlas-shell .beat-card,
+.studio.atlas-shell .dialog,
+.studio.atlas-shell .dropdown,
+.studio.atlas-shell .application-menu-popover { background:var(--side); border-color:var(--line); border-radius:6px; color:var(--text); }
+.studio.atlas-shell .dialog::backdrop { background:#3923379c; }
+.studio.atlas-shell .document-save-bar { background:var(--bg); }
+.studio.atlas-shell .formatbar,
+.studio.atlas-shell .compact-document-heading { background:var(--side); }
+.studio.atlas-shell .formatbar select { color:var(--text); }
+.studio.atlas-shell .editor-body .paper:not(.screenplay) { background:var(--paper); color:var(--text); box-shadow:0 1px 12px #39233713; }
+.studio.atlas-shell .screenplay-prosemirror { background:var(--paper); color:var(--text); box-shadow:0 1px 12px #39233713; }
+.studio.atlas-shell .screenplay-prosemirror .rm-pagination-gap { background:var(--editor)!important; border-color:var(--editor)!important; }
+.studio.atlas-shell .breakdown-script,
+.studio.atlas-shell .breakdown-frames { background:var(--side); border-radius:5px; }
+.studio.atlas-shell .breakdown-block,
+.studio.atlas-shell .screenplay-prosemirror .script-block { font-family:"Courier Prime",monospace; }
+.studio.atlas-shell .screenplay-prosemirror .script-block.is-empty:before { color:var(--muted); }
+.studio.atlas-shell .carbon-theme-summary { background:var(--bg); }
+.studio.atlas-shell .toast-message { background:var(--side); box-shadow:0 6px 24px #39233722; }
+
+@media (max-width:760px) {
+  .studio.atlas-shell .compact-header .menubar { height:56px; padding-inline:10px; }
+  .studio.atlas-shell .story-atlas { padding:22px 17px 18px; }
+  .studio.atlas-shell .atlas-heading { align-items:flex-start; gap:16px; }
+  .studio.atlas-shell .atlas-world-name>input { font-size:clamp(2.5rem,10vw,3.5rem)!important; }
+  .studio.atlas-shell .atlas-heading p { font-size:.875rem; }
+  .studio.atlas-shell .atlas-viewport { background:transparent; border:0; height:auto; }
+  .studio.atlas-shell .atlas-map { gap:12px; }
+  .studio.atlas-shell .atlas-foundation { border-top:3px solid var(--accent); }
+  .studio.atlas-shell .atlas-node { box-shadow:none; }
+  .studio.atlas-shell .atlas-script .script-preview-lines { display:none; }
+  .studio.atlas-shell .atlas-script { min-height:190px; }
+  .studio.atlas-shell .atlas-visual { min-height:190px; }
+  .studio.atlas-shell .atlas-world { padding:17px; }
+  .studio.atlas-shell .collection-workspace.corkboard { padding:23px 17px 28px; }
+  .studio.atlas-shell .collection-name>input,
+  .studio.atlas-shell .collection-heading h1 { font-size:2.8rem; }
+  .studio.atlas-shell .collection-grid.card-stage { gap:12px; }
+  .studio.atlas-shell .planning-sheet { padding:22px 17px 36px; }
+  .studio.atlas-shell .creative-dock { bottom:max(8px,env(safe-area-inset-bottom)); width:calc(100% - 16px); border-radius:9px; }
+  .studio.atlas-shell .creative-dock>button { font-size:.75rem; min-height:54px; }
+}
+
+/* Atlas refinements: three visual prompts, purposeful links, and a quiet raised dock. */
+.studio.atlas-shell .atlas-viewport { cursor:default; }
+.studio.atlas-shell .atlas-map { will-change:auto; }
+.studio.atlas-shell .atlas-connections path { stroke:#ad9488; stroke-width:1.4; stroke-linecap:round; stroke-linejoin:round; opacity:.8; }
+.studio.atlas-shell .atlas-connections circle { fill:var(--bg); stroke:var(--accent); stroke-width:1.7; }
+.studio.atlas-shell .atlas-visual-triptych {
+  display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px;
+  height:108px; padding:11px 17px 8px; background:#ede0cb; overflow:hidden;
+}
+.studio.atlas-shell .visual-study {
+  position:relative; min-width:0; height:88px; display:block; overflow:hidden;
+  border:1px solid #c7b49b; border-radius:3px; background:#f6edda;
+  box-shadow:0 2px 4px #3923371c; transform:rotate(-3deg);
+}
+.studio.atlas-shell .visual-study:nth-child(2) { transform:translateY(-3px) rotate(2deg); }
+.studio.atlas-shell .visual-study:nth-child(3) { transform:rotate(4deg); }
+.studio.atlas-shell .visual-study>img,
+.studio.atlas-shell .visual-study>i { display:block; width:100%; height:100%; object-fit:cover; }
+.studio.atlas-shell .visual-study>em {
+  position:absolute; bottom:0; left:0; right:0; z-index:2;
+  padding:6px 7px 5px; background:linear-gradient(0deg,#2c1c28cb,#2c1c2800);
+  color:#fff9eb; font:500 9px/1.2 var(--font-data); letter-spacing:.08em; font-style:normal; text-align:left;
+}
+.studio.atlas-shell .visual-study-light>i {
+  position:relative; background:linear-gradient(126deg,#372438 0%,#6d5051 37%,#d49a77 38%,#f2cf9c 52%,#79645e 53%,#493438 100%);
+}
+.studio.atlas-shell .visual-study-light>i:after {
+  content:""; position:absolute; inset:14% 52% 18% 15%;
+  border:2px solid #f9dfae; border-bottom-color:#b9896f;
+  box-shadow:0 0 20px #ffdaa582,8px 8px 26px #fbd4a68c;
+}
+.studio.atlas-shell .visual-study-texture>i {
+  background:
+    radial-gradient(ellipse at 24% 30%,#75574845 0 7%,transparent 25%),
+    radial-gradient(ellipse at 78% 72%,#5e474345 0 9%,transparent 31%),
+    repeating-linear-gradient(155deg,transparent 0 6px,#fff4dc79 7px 8px,transparent 9px 14px),
+    linear-gradient(145deg,#c6a886,#9d7969 57%,#d8b995);
+}
+.studio.atlas-shell .visual-study-colour>i {
+  background:linear-gradient(90deg,#392337 0 33%,#ae3928 33% 66%,#f5efdf 66% 100%);
+}
+.studio.atlas-shell .atlas-visual>div:last-child { padding:13px 18px 15px; }
+.studio.atlas-shell .atlas-visual h2 { margin:8px 0 3px; }
+.studio.atlas-shell .creative-dock {
+  background:linear-gradient(180deg,#fffdf6 0%,#f8f0e2 100%);
+  border:1px solid #cbb9a2;
+  box-shadow:0 2px 0 #c5aa94,0 11px 24px #39233729,0 22px 42px #39233712,inset 0 1px 0 #fff;
+}
+.studio.atlas-shell .creative-dock>button[aria-current=page] {
+  box-shadow:inset 0 -2px var(--accent),inset 0 1px #fff8;
+}
+@media(max-width:760px) {
+  .studio.atlas-shell .atlas-visual-triptych { height:96px; padding:9px; gap:5px; }
+  .studio.atlas-shell .visual-study { height:78px; }
+  .studio.atlas-shell .atlas-visual>div:last-child { padding:13px; }
+  .studio.atlas-shell .creative-dock { box-shadow:0 2px 0 #c5aa94,0 7px 19px #39233729,inset 0 1px #fff; }
+}
+
+/* Atlas composition: content sets its own height. The numbered rail replaces the
+   decorative paths and expresses the actual Idea → Story → World progression. */
+.studio.atlas-shell .atlas-caption { border-bottom:0; }
+.studio.atlas-shell .atlas-viewport {
+  height:auto; min-height:0; overflow:visible; background:transparent; border:0;
+  padding:17px 0 0; touch-action:auto;
+}
+.studio.atlas-shell .atlas-map {
+  position:relative; top:auto; left:auto; margin:0; width:100%; height:auto;
+  transform:none; display:grid; gap:16px 24px; align-items:stretch;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  grid-template-rows:27px minmax(265px,auto) minmax(162px,auto);
+  grid-template-areas:
+    "idea story world-lane"
+    "foundation script visual"
+    "research script world";
+}
+.studio.atlas-shell .atlas-lane {
+  position:relative; top:auto; left:auto; align-self:center;
+  padding-bottom:8px; border-bottom:1px solid var(--line);
+  font-size:.6875rem; color:var(--muted); letter-spacing:.1em;
+}
+.studio.atlas-shell .lane-one { grid-area:idea; }
+.studio.atlas-shell .lane-two { grid-area:story; }
+.studio.atlas-shell .lane-three { grid-area:world-lane; }
+.studio.atlas-shell .atlas-lane:not(.lane-three)::after {
+  content:"→"; position:absolute; right:-20px; bottom:-8px;
+  width:16px; height:16px; display:grid; place-items:center;
+  background:var(--bg); color:var(--accent); font:14px/1 var(--font-ui);
+}
+.studio.atlas-shell .atlas-node {
+  position:relative; top:auto; left:auto; width:auto; height:auto; min-width:0;
+  border:1px solid #cbb9a5; border-radius:6px; background:var(--side);
+  box-shadow:0 2px 0 #c9ad97,0 10px 21px #3923371c,inset 0 1px 0 #fff;
+  transition:transform 160ms ease,box-shadow 160ms ease,border-color 160ms ease;
+}
+.studio.atlas-shell button.atlas-node:hover,
+.studio.atlas-shell button.atlas-node:focus-visible,
+.studio.atlas-shell .atlas-world:hover,
+.studio.atlas-shell .atlas-world:focus-within {
+  transform:translateY(-3px); border-color:#b68f79;
+  box-shadow:0 4px 0 #c9ad97,0 17px 28px #39233727,inset 0 1px 0 #fff;
+}
+.studio.atlas-shell .atlas-foundation { grid-area:foundation; min-height:265px; }
+.studio.atlas-shell .atlas-research { grid-area:research; min-height:100px; padding:20px; }
+.studio.atlas-shell .atlas-script { grid-area:script; display:flex; flex-direction:column; min-height:0; padding:24px; }
+.studio.atlas-shell .atlas-script .node-footer { margin-top:auto; }
+.studio.atlas-shell .atlas-script .script-preview-lines { margin-top:42px; margin-bottom:32px; }
+.studio.atlas-shell .atlas-visual { grid-area:visual; display:flex; flex-direction:column; min-height:265px; }
+.studio.atlas-shell .atlas-visual-triptych { height:146px; flex:none; }
+.studio.atlas-shell .atlas-visual .visual-study { height:126px; }
+.studio.atlas-shell .atlas-world { grid-area:world; min-height:162px; align-self:stretch; }
+.studio.atlas-shell .atlas-reel { margin-top:25px; }
+@media(min-width:761px) and (max-width:1050px) {
+  .studio.atlas-shell .atlas-map {
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    grid-template-rows:auto; gap:16px;
+    grid-template-areas:
+      "foundation script"
+      "research script"
+      "visual world";
+  }
+  .studio.atlas-shell .atlas-lane { display:none; }
+  .studio.atlas-shell .atlas-script { min-height:380px; }
+  .studio.atlas-shell .atlas-visual { min-height:245px; }
+  .studio.atlas-shell .atlas-visual-triptych { height:118px; }
+  .studio.atlas-shell .atlas-visual .visual-study { height:98px; }
+}
+@media(max-width:760px) {
+  .studio.atlas-shell .atlas-viewport { padding-top:14px; }
+  .studio.atlas-shell .atlas-map {
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    grid-template-rows:auto; gap:12px;
+    grid-template-areas:
+      "foundation foundation"
+      "script visual"
+      "world world"
+      "research research";
+  }
+  .studio.atlas-shell .atlas-lane { display:none; }
+  .studio.atlas-shell .atlas-node { box-shadow:0 2px 0 #c9ad97,0 7px 15px #39233719,inset 0 1px 0 #fff; }
+  .studio.atlas-shell .atlas-script { min-height:210px; padding:17px; }
+  .studio.atlas-shell .atlas-script .script-preview-lines { display:none; }
+  .studio.atlas-shell .atlas-visual { min-height:210px; }
+  .studio.atlas-shell .atlas-visual-triptych { height:96px; }
+  .studio.atlas-shell .atlas-visual .visual-study { height:78px; }
+  .studio.atlas-shell .atlas-world { min-height:0; }
+  .studio.atlas-shell .atlas-research { min-height:75px; }
+}
+
+/* Let the deck float over the work instead of reserving a fixed cream band. */
+.studio.atlas-shell { padding-bottom:0; }
+.studio.atlas-shell .story-atlas {
+  padding-top:clamp(18px,2vw,28px);
+  padding-bottom:108px;
+}
+
+/* A tighter editorial title and index bring the map into view sooner. */
+.studio.atlas-shell .atlas-heading { margin-bottom:17px; gap:24px; }
+.studio.atlas-shell .atlas-heading .atlas-eyebrow { letter-spacing:.12em; }
+.studio.atlas-shell .atlas-heading .atlas-eyebrow::after {
+  content:""; width:32px; height:1px; margin-left:3px; background:var(--line);
+}
+.studio.atlas-shell .atlas-world-name { margin-top:8px; }
+.studio.atlas-shell .atlas-world-name>input {
+  font-size:clamp(3rem,4.15vw,4.3rem);
+  line-height:1.02;
+  padding:0 0 5px;
+}
+.studio.atlas-shell .atlas-heading p { margin-top:5px; line-height:1.45; }
+.studio.atlas-shell .pitch-launch { align-self:center; }
+.studio.atlas-shell .atlas-caption { min-height:39px; gap:14px; }
+.studio.atlas-shell .atlas-viewport { padding-top:9px; }
+.studio.atlas-shell .atlas-map {
+  row-gap:12px;
+}
+.studio.atlas-shell .atlas-lane { padding-bottom:5px; }
+
+@media(max-width:760px) {
+  .studio.atlas-shell .story-atlas { padding:18px 17px 100px; }
+  .studio.atlas-shell .atlas-heading { margin-bottom:15px; gap:10px; align-items:flex-end; }
+  .studio.atlas-shell .atlas-world-name>input { font-size:clamp(2.2rem,9vw,3.1rem)!important; }
+  .studio.atlas-shell .atlas-caption { min-height:36px; }
+  .studio.atlas-shell .atlas-viewport { padding-top:10px; }
+}
+@media(prefers-reduced-motion:reduce) {
+  .studio.atlas-shell .atlas-node { transition:none; }
+}
+@media(max-width:540px) {
+  .studio.atlas-shell .atlas-map {
+    grid-template-columns:minmax(0,1fr);
+    grid-template-areas:"foundation" "research" "script" "visual" "world";
+  }
+  .studio.atlas-shell .atlas-foundation { min-height:235px; }
+  .studio.atlas-shell .atlas-script { min-height:265px; }
+  .studio.atlas-shell .atlas-visual { min-height:245px; }
+  .studio.atlas-shell .atlas-visual-triptych { height:122px; }
+  .studio.atlas-shell .atlas-visual .visual-study { height:102px; }
+}
+
+/* Atlas cards hold a piece of the actual work, like the visual studies do. */
+.studio.atlas-shell .atlas-map {
+  grid-template-rows:27px minmax(288px,auto) minmax(224px,auto);
+}
+.studio.atlas-shell .atlas-foundation,
+.studio.atlas-shell .atlas-research,
+.studio.atlas-shell .atlas-script,
+.studio.atlas-shell .atlas-world { border-top:1px solid #cbb9a5; }
+.studio.atlas-shell .atlas-foundation { display:flex; flex-direction:column; padding:24px; min-height:288px; }
+.studio.atlas-shell .atlas-foundation h2 { margin:19px 0 15px; }
+.studio.atlas-shell .spark-note {
+  position:relative; padding:16px 18px 17px; margin:0 0 18px;
+  background:#f7eedf; border:1px solid #dac8b2; border-left:3px solid var(--accent);
+  box-shadow:0 3px 0 #e3d1bb,0 8px 14px #3923370c;
+  transform:rotate(-.4deg);
+}
+.studio.atlas-shell .spark-note small { display:block; font:500 .625rem/1.4 var(--font-data); letter-spacing:.12em; color:var(--accent); margin-bottom:9px; }
+.studio.atlas-shell .spark-note p { height:auto; font-family:var(--font-story); font-size:1.22rem; line-height:1.22; color:var(--text); -webkit-line-clamp:3; }
+.studio.atlas-shell .atlas-foundation .node-footer { margin-top:auto; }
+.studio.atlas-shell .atlas-research { display:flex; flex-direction:column; align-items:stretch; gap:0; min-height:224px; padding:19px 22px 20px; }
+.studio.atlas-shell .research-card-body { display:flex; align-items:center; justify-content:space-between; gap:10px; flex:1; min-width:0; }
+.studio.atlas-shell .research-card-body>div:first-child { min-width:0; flex:1; }
+.studio.atlas-shell .atlas-research h2 { font-size:1.78rem; margin:8px 0 8px; line-height:1.04; }
+.studio.atlas-shell .atlas-research small { display:block; font-size:.72rem; line-height:1.4; color:var(--muted); max-width:19ch; }
+.studio.atlas-shell .research-stack { position:relative; width:112px; height:112px; flex:none; }
+.studio.atlas-shell .research-stack span { position:absolute; inset:8px 6px 12px 8px; overflow:hidden; padding:12px 10px;
+  background:#fffaf0; border:1px solid #ccb7a1; box-shadow:0 3px 8px #3923371b;
+  color:var(--secondary); font:500 .67rem/1.35 var(--font-data); transform:rotate(6deg); }
+.studio.atlas-shell .research-stack span:first-child { z-index:1; transform:translate(-10px,7px) rotate(-7deg); border-top:3px solid #b75a45; }
+.studio.atlas-shell .research-stack span:last-child { border-top:3px solid #a98567; }
+.studio.atlas-shell .atlas-research .node-footer { width:100%; margin-top:8px; }
+.studio.atlas-shell .atlas-script { padding:24px; }
+.studio.atlas-shell .script-page-preview { position:relative; width:min(80%,235px); min-height:198px; margin:22px auto 20px; padding:23px 16px 18px;
+  background:#fffdf5; border:1px solid #d8c8b4; box-shadow:4px 5px 0 #ebdecb,8px 10px 0 #d8c8b4,0 15px 22px #3923371a;
+  color:var(--text); font:500 .66rem/1.35 "Courier Prime",monospace; transform:rotate(1deg); }
+.studio.atlas-shell .script-page-preview>span { display:block; text-align:right; font-weight:700; margin-bottom:21px; }
+.studio.atlas-shell .script-page-preview>strong { display:block; overflow:hidden; white-space:nowrap; text-overflow:ellipsis; font-size:.73rem; margin-bottom:18px; }
+.studio.atlas-shell .script-page-preview>i { display:block; height:2px; background:#b6a596; width:87%; margin:9px 0; opacity:.7; }
+.studio.atlas-shell .script-page-preview>i:nth-of-type(2) { width:67%; }
+.studio.atlas-shell .script-page-preview>i:nth-of-type(3) { width:76%; }
+.studio.atlas-shell .script-page-preview>em { display:block; margin:18px auto 0; text-align:center; font-style:normal; max-width:15ch; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.studio.atlas-shell .atlas-script h2 { margin:13px 0 6px; }
+.studio.atlas-shell .atlas-script .node-footer { width:100%; }
+.studio.atlas-shell .atlas-world { display:flex; flex-direction:column; padding:19px 22px; min-height:224px; }
+.studio.atlas-shell .world-card-heading { margin:8px 0 12px; }
+.studio.atlas-shell .world-card-heading strong { display:block; font:400 1.68rem/1.1 var(--font-story); color:var(--text); }
+.studio.atlas-shell .world-card-heading small { display:block; margin-top:5px; font-size:.7rem; color:var(--muted); }
+.studio.atlas-shell .world-index { border-top:1px solid var(--line); }
+.studio.atlas-shell .world-index>button { width:100%; min-height:36px; display:flex; align-items:center; gap:9px; padding:7px 3px; text-align:left; border-bottom:1px solid var(--line); }
+.studio.atlas-shell .world-index>button:hover { background:var(--accent-soft); color:var(--accent); }
+.studio.atlas-shell .world-index-number { color:var(--muted); font:400 .625rem var(--font-data); width:20px; }
+.studio.atlas-shell .world-index>button>svg:first-of-type { color:var(--accent); }
+.studio.atlas-shell .world-index>button>strong { font-weight:500; font-size:.76rem; flex:1; }
+.studio.atlas-shell .world-index-count { color:var(--secondary); font:400 .75rem var(--font-data); }
+.studio.atlas-shell .world-index>button>svg:last-of-type { color:var(--muted); }
+
+/* Sequence: a useful scene board and a compact reading of its developing arc. */
+.studio.atlas-shell .beat-view { max-width:1600px; margin:0 auto; padding-bottom:110px; }
+.studio.atlas-shell .director-tool-actions { flex-wrap:wrap; }
+.studio.atlas-shell .beat-workspace { display:grid; grid-template-columns:minmax(0,1fr) minmax(300px,340px); gap:26px; align-items:start; }
+.studio.atlas-shell .beat-board { min-width:0; }
+.studio.atlas-shell .beat-board-description { border-top:1px solid var(--line); margin:0 0 16px; padding:15px 0 0; align-items:center; }
+.studio.atlas-shell .beat-board-description>span:first-child { color:var(--accent); font:500 .72rem/1.5 var(--font-data); letter-spacing:.1em; }
+.studio.atlas-shell .beat-board-description b { color:var(--muted); font-weight:400; }
+.studio.atlas-shell .beat-board-description>span:last-child { letter-spacing:0; font-size:.76rem; }
+.studio.atlas-shell .beat-timeline { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); align-items:start; gap:16px; overflow:visible; padding:0 0 24px; scroll-snap-type:none; }
+.studio.atlas-shell .beat-card { width:100%; max-width:none; min-width:0; padding:20px; border:1px solid var(--line); border-top:4px solid var(--accent); box-shadow:0 2px 0 #ceb9a5,0 8px 18px #39233712; }
+.studio.atlas-shell .beat-card .beat-title { font-family:var(--font-story); font-size:1.5rem; line-height:1.2; }
+.studio.atlas-shell .beat-card>textarea { background:#f8f0e1; border-color:var(--line); min-height:110px; font-size:.875rem; }
+.studio.atlas-shell .beat-add-card { min-height:210px; height:100%; max-height:300px; background:#faf3e6; border:1px dashed #c6aa92; color:var(--accent); font-size:.875rem; }
+.studio.atlas-shell .beat-add-card:hover { border-color:var(--accent); background:var(--accent-soft); }
+.studio.atlas-shell .beat-insights { min-width:0; border:1px solid var(--line); border-radius:7px; background:#fffbf0; padding:21px; box-shadow:0 2px 0 #ceb9a5,0 10px 20px #39233713; }
+.studio.atlas-shell .beat-insight-label { display:flex; justify-content:space-between; gap:12px; color:var(--accent); font:500 .67rem/1.5 var(--font-data); letter-spacing:.1em; border-bottom:1px solid var(--line); padding-bottom:14px; }
+.studio.atlas-shell .beat-insight-label span { color:var(--muted); }
+.studio.atlas-shell .beat-arc { border:0; border-radius:0; background:transparent; padding:22px 0 18px; margin:0; border-bottom:1px solid var(--line); }
+.studio.atlas-shell .beat-arc strong { font:400 1.65rem/1.1 var(--font-story); color:var(--text); }
+.studio.atlas-shell .beat-arc svg { height:123px; margin-top:23px; }
+.studio.atlas-shell .beat-arc-legend { display:flex; flex-wrap:wrap; gap:8px 15px; margin-top:14px; color:var(--secondary); font-size:.67rem; }
+.studio.atlas-shell .beat-arc-legend span { display:flex; align-items:center; gap:5px; }
+.studio.atlas-shell .beat-arc-legend i { display:block; width:12px; height:3px; background:var(--accent); }
+.studio.atlas-shell .beat-arc-legend .arc-pressure { background:#87a79c; }
+.studio.atlas-shell .beat-arc-beginning { display:flex; align-items:center; gap:15px; min-height:138px; margin-top:15px; padding:12px; background:#f6ecdd; border:1px solid var(--line); }
+.studio.atlas-shell .arc-opening-mark { font:400 3.4rem/1 var(--font-story); color:var(--accent); }
+.studio.atlas-shell .beat-arc-beginning p { font-size:.8rem; line-height:1.5; color:var(--secondary); margin:0; }
+.studio.atlas-shell .beat-plan-facts { display:grid; grid-template-columns:1fr 1fr; gap:15px; padding:19px 0 14px; }
+.studio.atlas-shell .beat-plan-facts>div+div { border-left:1px solid var(--line); padding-left:15px; }
+.studio.atlas-shell .beat-plan-facts small { display:block; color:var(--muted); font:400 .62rem/1.4 var(--font-data); letter-spacing:.07em; }
+.studio.atlas-shell .beat-plan-facts strong { display:block; margin-top:8px; font:400 2rem/1 var(--font-story); }
+.studio.atlas-shell .beat-plan-facts em { font:400 .8rem var(--font-ui); color:var(--muted); }
+.studio.atlas-shell .beat-insight-note { margin:6px 0 0; color:var(--muted); font-size:.72rem; line-height:1.5; }
+@media(max-width:1200px) {
+  .studio.atlas-shell .beat-workspace { grid-template-columns:minmax(0,1fr) 295px; gap:18px; }
+  .studio.atlas-shell .beat-timeline { grid-template-columns:minmax(0,1fr); }
+  .studio.atlas-shell .beat-add-card { height:180px; min-height:180px; }
+}
+@media(max-width:800px) {
+  .studio.atlas-shell .beat-workspace { grid-template-columns:minmax(0,1fr); }
+  .studio.atlas-shell .beat-insights { grid-row:1; }
+  .studio.atlas-shell .beat-timeline { grid-template-columns:repeat(auto-fit,minmax(min(290px,100%),1fr)); }
+  .studio.atlas-shell .atlas-map { grid-template-rows:auto; }
+  .studio.atlas-shell .atlas-research { min-height:220px; }
+}
+@media(max-width:540px) {
+  .studio.atlas-shell .atlas-foundation { min-height:280px; }
+  .studio.atlas-shell .atlas-research { min-height:220px; }
+  .studio.atlas-shell .atlas-script { min-height:430px; }
+  .studio.atlas-shell .script-page-preview { min-height:185px; }
+  .studio.atlas-shell .beat-board-description { flex-direction:column; align-items:flex-start; }
+  .studio.atlas-shell .beat-card { padding:17px; }
+}
+
+/* A screenplay page expands with the card and uses real scene text. */
+.studio.atlas-shell .atlas-script .script-page-preview {
+  display:flex; flex-direction:column; flex:1; width:min(86%,252px); min-height:245px;
+  max-height:none; margin:22px auto 25px; padding:24px 18px 16px;
+}
+.studio.atlas-shell .script-page-excerpt { flex:1; margin-top:3px; min-height:0; overflow:hidden; }
+.studio.atlas-shell .script-page-excerpt p {
+  display:-webkit-box; -webkit-box-orient:vertical; -webkit-line-clamp:4;
+  overflow:hidden; font:400 .68rem/1.55 "Courier Prime",monospace;
+  color:#6c5c54; margin:0 0 13px; max-height:none;
+}
+.studio.atlas-shell .script-page-preview>em {
+  width:100%; max-width:none; padding-top:11px; border-top:1px solid #ddcfbe;
+  color:#8d7768; font:.57rem/1.4 var(--font-data); letter-spacing:.07em;
+}
+.studio.atlas-shell .pitch-add-frames { display:inline-flex; align-items:center; gap:9px; margin-top:30px;
+  color:var(--accent); border:1px solid var(--line); background:var(--side);
+  padding:11px 14px; font-size:.8rem; border-radius:5px; }
+.studio.atlas-shell .pitch-add-frames:hover { border-color:var(--accent); }
+
+/* One compact document header replaces the empty tools row and duplicate save bar. */
+.studio.atlas-shell .document-save-shell { background:var(--bg); }
+.studio.atlas-shell .document-save-status { color:var(--muted); font:.7rem/1.4 var(--font-data); white-space:nowrap; margin-right:5px; }
+.studio.atlas-shell .compact-document-heading { margin:0; border-left:0; border-right:0; border-radius:0; min-height:48px; padding-inline:clamp(18px,2.5vw,38px); }
+.studio.atlas-shell .compact-document-heading .document-identity>input { font-size:1rem; }
+.studio.atlas-shell .formatbar { position:relative; z-index:11; overflow:visible; padding-inline:clamp(14px,2.5vw,34px); }
+.studio.atlas-shell .formatbar .format-tools { min-width:0; }
+.studio.atlas-shell .format-more-popover { left:auto; right:0; min-width:205px; }
+.studio.atlas-shell .format-more-popover button { font-size:.8rem; }
+.studio.atlas-shell .editor-view-select { background:var(--bg); }
+@media(max-width:760px) {
+  .studio.atlas-shell .atlas-script .script-page-preview { width:min(90%,252px); min-height:190px; }
+  .studio.atlas-shell .compact-document-heading { padding-inline:13px; }
+  .studio.atlas-shell .document-save-status { display:none; }
+  .studio.atlas-shell .formatbar { overflow-x:auto; overflow-y:hidden; }
+  .studio.atlas-shell .format-more-popover { position:fixed; right:10px; left:auto; top:154px; z-index:90; }
+}
+
+/* Give writing the screen. The document title and draft selector share one row. */
+.studio.atlas-shell .screenplay-writing-heading .document-section-label { display:none; }
+.studio.atlas-shell .screenplay-writing-heading .document-identity>input { max-width:370px; }
+.studio.atlas-shell .screenplay-writing-heading .draft-version-bar { display:flex; border:0; padding:0; background:transparent; flex:none; }
+.studio.atlas-shell .screenplay-writing-heading .draft-version-bar select { max-width:150px; }
+.studio.atlas-shell .screenplay-writing-heading .draft-version-bar .icon-button { width:30px; height:30px; }
+.studio.atlas-shell .screenplay-toolbar { min-height:40px; padding:4px clamp(14px,2.5vw,36px); }
+.studio.atlas-shell .screenplay-toolbar-main>i { margin-inline:6px; }
+.studio.atlas-shell .script-page-scroll { padding:12px 18px 105px; }
+.studio.atlas-shell .script-page-zoom { width:816px; margin-inline:auto; }
+
+/* Free Exploration is a writing area, not a small page nested in two cards. */
+.studio.atlas-shell .development-sheet { max-width:min(1460px,100%); width:100%; padding:28px clamp(24px,3vw,52px) 90px; }
+.studio.atlas-shell .development-sheet .planning-field-grid { max-width:1160px; margin-inline:auto; }
+.studio.atlas-shell .development-sheet .planning-free-notes { margin-top:44px; padding:20px 0 0; background:transparent; border:0; border-top:1px solid var(--line); border-radius:0; }
+.studio.atlas-shell .development-sheet .planning-free-notes>.section-label { margin-bottom:13px; color:var(--accent); }
+.studio.atlas-shell .development-sheet .planning-free-notes .prose-document { width:100%; min-height:0; background:var(--surface); border:1px solid var(--line); border-radius:7px; padding:0; box-shadow:0 3px 0 #bd9f8b36,0 15px 30px #3923370a; }
+.studio.atlas-shell .development-sheet .planning-free-notes .paper { width:100%; max-width:none; min-height:0; margin:0; padding:clamp(26px,3vw,44px) clamp(24px,4vw,60px); font-size:18px!important; background:transparent; }
+.studio.atlas-shell .development-sheet .planning-free-notes .rich-editor { min-height:max(500px,62dvh); font-size:inherit; line-height:1.8; }
+.studio.atlas-shell .document-save-shell>.prose-document .paper { max-width:min(1100px,100%); padding:clamp(24px,3vw,44px) clamp(25px,4vw,58px); }
+.studio.atlas-shell .document-save-shell>.prose-document .rich-editor { min-height:max(480px,calc(100dvh - 225px)); }
+@media(max-width:760px) {
+  .studio.atlas-shell .screenplay-writing-heading .draft-version-bar select { max-width:105px; }
+  .studio.atlas-shell .screenplay-writing-heading .document-identity>input { max-width:155px; }
+  .studio.atlas-shell .script-page-scroll { padding:0 0 100px; }
+  .studio.atlas-shell .script-page-zoom { width:100%; }
+  .studio.atlas-shell .development-sheet { padding:24px 18px 96px; }
+  .studio.atlas-shell .development-sheet .planning-free-notes .paper { padding:24px 19px; }
+  .studio.atlas-shell .development-sheet .planning-free-notes .rich-editor { min-height:56dvh; }
+}
+.studio.atlas-shell .screenplay-toolbar-main { overflow:visible; }
+.studio.atlas-shell .script-more-menu { position:relative; flex-shrink:0; }
+.studio.atlas-shell .script-more-trigger { display:flex; align-items:center; justify-content:center; }
+.studio.atlas-shell .script-more-popover { position:absolute; top:calc(100% + 9px); right:0; z-index:50; min-width:194px; padding:6px; background:var(--surface); border:1px solid var(--line); border-radius:7px; box-shadow:0 10px 28px #39233726; }
+.studio.atlas-shell .script-more-popover button { display:flex; align-items:center; gap:10px; width:100%; min-height:35px; padding:7px 9px; color:var(--text); text-align:left; border-radius:4px; font-size:12px; }
+.studio.atlas-shell .script-more-popover button:hover { background:var(--accent-soft); }
+@media(max-width:760px) {
+  .studio.atlas-shell .screenplay-toolbar-main { overflow-x:auto; }
+  .studio.atlas-shell .script-more-popover { position:fixed; top:155px; right:10px; }
+}
+
+@media(min-width:1051px) {
+  .studio.atlas-shell .atlas-map {
+    grid-template-rows:21px minmax(288px,auto) minmax(224px,auto);
+  }
+}
+
+/* The navigation deck retreats to a compact corner control inside workspaces. */
+.studio.atlas-shell .dock-bubble {
+  position:absolute; right:18px; bottom:16px; z-index:26;
+  display:grid; place-items:center; width:48px; height:48px;
+  color:var(--accent); background:linear-gradient(160deg,#fffdf6,#f4e7d6);
+  border:1px solid #cbb9a2; border-radius:50%;
+  box-shadow:0 2px 0 #c5aa94,0 8px 22px #39233729,inset 0 1px #fff;
+  transition:transform .18s ease,box-shadow .18s ease;
+}
+.studio.atlas-shell .dock-bubble:hover { transform:translateY(-2px); box-shadow:0 3px 0 #c5aa94,0 12px 25px #39233733,inset 0 1px #fff; }
+.studio.atlas-shell .dock-bubble:focus-visible,
+.studio.atlas-shell .creative-dock .dock-close:focus-visible { outline:2px solid var(--accent); outline-offset:3px; }
+.studio.atlas-shell .creative-dock.is-work-open { left:auto; right:18px; transform:none; }
+.studio.atlas-shell .creative-dock .dock-close {
+  flex:0 0 34px; min-width:34px; width:34px; min-height:34px;
+  padding:6px; margin-left:4px; border-left:1px solid var(--line);
+}
+@media(max-width:760px) {
+  .studio.atlas-shell .dock-bubble { right:12px; bottom:max(10px,env(safe-area-inset-bottom)); width:46px; height:46px; }
+  .studio.atlas-shell .creative-dock.is-work-open {
+    left:8px; right:8px; width:auto; max-width:none; transform:none;
+  }
+  .studio.atlas-shell .creative-dock .dock-close { flex:0 0 30px; min-width:30px; width:30px; min-height:44px; margin-left:2px; }
+}

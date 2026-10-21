@@ -1,0 +1,26 @@
+{
+  "id": "./",
+  "name": "Film Prep OS \u00b7 Story Atlas",
+  "short_name": "Film Prep OS",
+  "description": "Develop your story, write your screenplay, and connect your visual world.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#171717",
+  "theme_color": "#171717",
+  "prefer_related_applications": false,
+  "icons": [
+    {
+      "src": "/brand/film-prep-v2-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/brand/film-prep-v2-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

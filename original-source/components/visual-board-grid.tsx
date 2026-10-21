@@ -1,0 +1,18 @@
+'use client';
+import { ArrowDown, ArrowUp, ArrowUpRight, Film, Headphones, Link2, Plus } from 'lucide-react';
+import { plain } from '@/lib/desk-model';
+import type { MoodCard } from '@/lib/director-model';
+import { referenceCategory, referenceSceneIds, VISUAL_CATEGORIES } from '@/lib/visual-language';
+import { safeUrl } from '@/lib/desk-client';
+export default function VisualBoardGrid({cards,group,onEdit,onMove,onReorder,onAdd,emptyTitle,emptyCopy,ownership}:{cards:MoodCard[];group:string;onEdit:(id:string)=>void;onMove:(id:string,delta:number)=>void;onReorder:(id:string,before:string)=>void;onAdd?:()=>void;emptyTitle?:string;emptyCopy?:string;ownership?:Record<string,string>}){
+ const category=VISUAL_CATEGORIES.find(c=>c.id===group);
+ if(!cards.length)return <div className="vl-empty-board"><div className="vl-empty-composition" aria-hidden="true"><i/><i/><i/></div><h3>{emptyTitle||(group==='all'?'Give this scene a visual language.':'Nothing in this group yet.')}</h3><p>{emptyCopy||'Add a frame, a colour study, a camera reference, or a sound. Explain the part you want to use.'}</p>{onAdd&&<button className="vl-button" onClick={onAdd}><Plus size={15}/>Add a reference</button>}</div>;
+ return <section className="vl-reference-group">{category&&<header><h3>{category.label}</h3><span>{cards.length}</span></header>}<div className="vl-board-grid">{cards.map(card=><article className={'vl-reference kind-'+card.kind+' size-'+(card.size||'standard')} key={card.id} draggable onDragStart={e=>e.dataTransfer.setData('application/x-visual-reference',card.id)} onDragOver={e=>{if(e.dataTransfer.types.includes('application/x-visual-reference'))e.preventDefault();}} onDrop={e=>{const id=e.dataTransfer.getData('application/x-visual-reference');if(id){e.preventDefault();e.stopPropagation();onReorder(id,card.id);}}}>
+  <button className="vl-reference-open" onClick={()=>onEdit(card.id)} aria-label={'Edit reference '+card.title}>
+   {card.asset&&<img src={safeUrl(card.asset.url)} alt={card.title}/>}
+   {card.kind==='palette'&&<div className="vl-palette">{(card.colors||[]).map((c,i)=><span key={i} style={{background:c}}><small>{c}</small></span>)}</div>}
+   {card.kind==='link'&&<div className={'vl-media-preview type-'+(card.mediaType||'video')}>{card.mediaType==='audio'?<Headphones size={30} strokeWidth={1}/>:card.mediaType==='web'?<Link2 size={30} strokeWidth={1}/>:<Film size={30} strokeWidth={1}/>}<span>{card.mediaType==='audio'?'SOUND REFERENCE':card.mediaType==='web'?'WEB REFERENCE':'MOTION REFERENCE'}</span></div>}
+   <div className="vl-reference-copy"><span className="vl-reference-category">{VISUAL_CATEGORIES.find(c=>c.id===referenceCategory(card))?.label}</span>{card.moment&&<span className="vl-moment">{card.moment}</span>}<h4>{card.title||'Untitled reference'}</h4><p>{card.purpose||plain(card.notesHtml||card.text)||'Add what you want to take from this reference.'}</p>{card.source&&<small>{card.source}</small>}</div>
+  </button>{ownership&&<p className="vl-reference-ownership" title={ownership[card.id]}>{ownership[card.id]}</p>}<footer><span>{referenceSceneIds(card).length>1?`SHARED · ${referenceSceneIds(card).length} SCENES`:card.kind==='palette'?'COLOUR STUDY':card.kind==='shot'?'CAMERA NOTE':card.kind==='note'?'WORKING NOTE':card.kind==='link'?'LINK':'REFERENCE FRAME'}</span><div><button aria-label={'Move '+card.title+' earlier'} onClick={()=>onMove(card.id,-1)}><ArrowUp size={12}/></button><button aria-label={'Move '+card.title+' later'} onClick={()=>onMove(card.id,1)}><ArrowDown size={12}/></button><button aria-label={'Open details for '+card.title} onClick={()=>onEdit(card.id)}><ArrowUpRight size={13}/></button></div></footer>
+ </article>)}</div></section>;
+}

@@ -1,0 +1,9 @@
+{
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "esbuild": "0.28.0",
+    "postcss": "8.5.23",
+    "@tailwindcss/postcss": "4.2.1"
+  }
+}

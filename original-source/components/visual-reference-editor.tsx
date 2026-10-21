@@ -1,0 +1,38 @@
+'use client';
+import { useEffect, useRef } from 'react';
+import { ArrowUpRight, Trash2, X } from 'lucide-react';
+import type { Project } from '@/lib/desk-model';
+import type { DirectorScene, MoodCard } from '@/lib/director-model';
+import { assignReference, externalReferenceUrl, referenceCategory, referenceEmbed, referenceSceneIds, referenceScope, VISUAL_CATEGORIES } from '@/lib/visual-language';
+import ProfileNotes from './profile-notes';
+import { profileSuggestions } from '@/lib/profile-links';
+import { safeUrl } from '@/lib/desk-client';
+export default function VisualReferenceEditor({card,project,scenes,onPatch,onClose,onDelete,onOpenProfile}:{card:MoodCard;project:Project;scenes:DirectorScene[];onPatch:(change:Partial<MoodCard>)=>void;onClose:()=>void;onDelete:()=>void;onOpenProfile:(id:string)=>void}){
+ const ref=useRef<HTMLDialogElement>(null);useEffect(()=>{const d=ref.current;d?.showModal();return()=>d?.close();},[]);
+ const ids=referenceSceneIds(card),scope=referenceScope(card),url=externalReferenceUrl(card.url||''),embed=referenceEmbed(url),otherIds=ids.filter(id=>!scenes.some(s=>s.id===id));
+ function openProfile(id:string){onClose();onOpenProfile(id);}
+ function assign(nextScope:'film'|'scenes'|'unassigned',next=ids){const assigned=assignReference(card,nextScope,next);onPatch({scope:nextScope,sceneIds:assigned.sceneIds,sceneId:assigned.sceneId});}
+ return <dialog ref={ref} className="vl-reference-dialog" onCancel={e=>{e.preventDefault();onClose();}} onClick={e=>{if(e.target===e.currentTarget)onClose();}} aria-label="Reference details">
+  <header><div><span className="vl-eyebrow">REFERENCE / DETAILS</span><h2>{card.kind==='palette'?'Colour study':card.kind==='link'?'Motion & sound':card.kind==='image'?'Reference frame':'Working note'}</h2></div><button aria-label="Close reference details" onClick={onClose}><X size={20}/></button></header>
+  <div className="vl-editor-body"><section className="vl-editor-material">
+   {card.asset&&<img className="vl-editor-image" src={safeUrl(card.asset.url)} alt={card.title}/>}
+   {card.kind==='link'&&url&&(embed?<iframe src={embed} title={card.title||'Reference player'} allow="fullscreen; picture-in-picture" allowFullScreen referrerPolicy="strict-origin-when-cross-origin"/>:card.mediaType==='audio'?<audio controls src={url}>Audio playback unavailable.</audio>:card.mediaType==='video'?<video controls preload="metadata" src={url}>Video playback unavailable.</video>:null)}
+   <label>Title<input aria-label="Reference title" autoFocus value={card.title} onChange={e=>onPatch({title:e.target.value})}/></label>
+   {card.kind==='link'&&<><label>Media type<select aria-label="Reference media type" value={card.mediaType||'video'} onChange={e=>onPatch({mediaType:e.target.value as MoodCard['mediaType']})}><option value="video">Video / motion</option><option value="audio">Audio / sound</option><option value="web">Web reference</option></select></label><label>Source link<input type="url" aria-label="Reference URL" placeholder="https://…" value={card.url||''} onChange={e=>onPatch({url:e.target.value})}/></label>{card.url&&!url&&<p className="vl-inline-error">Use a complete http or https link.</p>}{url&&<a className="vl-source-link" href={url} target="_blank" rel="noreferrer">Open original source<ArrowUpRight size={13}/></a>}</>}
+   <label>What are you taking from this?<textarea aria-label="Reference purpose" rows={3} placeholder="The low, isolated pool of light. Keep the face half in shadow." value={card.purpose||''} onChange={e=>onPatch({purpose:e.target.value})}/></label>
+   <label>Moment / shot label <small>optional</small><input aria-label="Reference moment" placeholder="The final close-up, after the door closes" value={card.moment||''} onChange={e=>onPatch({moment:e.target.value})}/></label>
+   {card.kind==='palette'&&<div className="vl-palette-editor">{(card.colors||[]).map((colour,i)=><label key={i} style={{background:colour}}><input type="color" aria-label={'Palette colour '+(i+1)} value={colour} onChange={e=>onPatch({colors:card.colors!.map((c,j)=>j===i?e.target.value:c)})}/><span>{colour}</span></label>)}</div>}
+   <div className="vl-rich-notes"><span>Notes & linked profiles</span><ProfileNotes key={card.id} project={project} html={card.notesHtml} text={card.text} onChange={(text,notesHtml)=>onPatch({text,notesHtml})} onOpenProfile={openProfile}/></div>
+   <label>Source / creator / timecode<input aria-label="Reference source credit" placeholder="Film, photographer, location, or clip timecode" value={card.source||''} onChange={e=>onPatch({source:e.target.value})}/></label>
+  </section><aside className="vl-editor-organisation">
+   <label>Reference group<select aria-label="Reference group" value={referenceCategory(card)} onChange={e=>onPatch({category:e.target.value as MoodCard['category']})}>{VISUAL_CATEGORIES.map(c=><option key={c.id} value={c.id}>{c.label}</option>)}</select></label>
+   <fieldset><legend>Where does it belong?</legend>{([['scenes','Specific scenes'],['film','Film direction'],['unassigned','Keep unassigned']] as const).map(([value,label])=><label className="vl-radio" key={value}><input type="radio" name="reference-scope" checked={scope===value} onChange={()=>assign(value)}/>{label}</label>)}</fieldset>
+   {scope==='scenes'&&<div className="vl-scene-checks"><p>Select every scene this reference serves.</p>{scenes.map((scene,i)=><label key={scene.id}><input type="checkbox" aria-label={'Assign to '+scene.heading} checked={ids.includes(scene.id)} onChange={e=>{const next=e.target.checked?[...ids,scene.id]:ids.filter(id=>id!==scene.id);const assigned=assignReference(card,'scenes',next);onPatch({scope:'scenes',sceneIds:assigned.sceneIds,sceneId:assigned.sceneId});}}/><span><small>{String(i+1).padStart(2,'0')}</small>{scene.meta.title||scene.heading}</span></label>)}{otherIds.length>0&&<p className="vl-retained-links">{otherIds.length} link{otherIds.length===1?'':'s'} to another draft or removed scene retained.<button onClick={()=>assign('scenes',ids.filter(id=>!otherIds.includes(id)))}>Clear those links</button></p>}{!scenes.length&&<p>Write a scene heading in the screenplay to create a scene board.</p>}</div>}
+   {ids.length>1&&scope==='scenes'&&<p className="vl-shared-note">Shared across {ids.length} scenes. Changes to this reference appear in every linked scene.</p>}
+   <label>Size on board<select aria-label="Reference size" value={card.size||'standard'} onChange={e=>onPatch({size:e.target.value as MoodCard['size']})}><option value="standard">Standard</option><option value="wide">Wide</option><option value="hero">Anchor image</option></select></label>
+   <label>Link a profile<select aria-label="Link reference to a profile" value="" onChange={e=>{if(e.target.value)onPatch({profileIds:[...new Set([...(card.profileIds||[]),e.target.value])]});}}><option value="">Choose character, location, or object…</option>{profileSuggestions(project,'@','').filter(n=>!card.profileIds?.includes(n.id)).map(n=><option key={n.id} value={n.id}>{n.title} · {n.kind}</option>)}</select></label>
+   <div className="vl-profile-links">{(card.profileIds||[]).map(id=>{const n=project.nodes.find(n=>n.id===id);return n?<span key={id}><button onClick={()=>openProfile(id)}>{n.title}<ArrowUpRight size={12}/></button><button aria-label={'Unlink '+n.title} onClick={()=>onPatch({profileIds:card.profileIds?.filter(x=>x!==id)})}><X size={12}/></button></span>:null;})}</div>
+   <button className="vl-delete" onClick={onDelete}><Trash2 size={14}/>Delete reference everywhere</button>
+  </aside></div><footer><span>Changes save with your project.</span><button className="vl-button is-primary" onClick={onClose}>Done</button></footer>
+ </dialog>;
+}

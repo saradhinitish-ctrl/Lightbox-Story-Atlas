@@ -1,0 +1,136 @@
+/* Film Prep OS typography: productive UI, editorial story, technical metadata.
+   Screenplay pages retain Courier Prime and their existing pagination metrics. */
+:root {
+  --font-ui: "DM Sans", "Segoe UI", sans-serif;
+  --font-story: "Instrument Serif", Georgia, serif;
+  --font-data: "DM Mono", monospace;
+  --type-caption: .75rem;
+  --type-control: .875rem;
+  --type-body: .9375rem;
+  --type-reading: 1.125rem;
+}
+body { font-family: var(--font-ui); }
+.studio.atlas-shell { font-size: var(--type-body); line-height: 1.5; }
+.studio.atlas-shell :is(button, input, textarea, select) { font-family: var(--font-ui); }
+.studio.atlas-shell :is(button, select) { line-height: 1.4; }
+.studio.atlas-shell :is(.button, .creative-dock>button, .dropdown button, .collection-open) {
+  font-size: var(--type-control); font-weight: 500;
+}
+.studio.atlas-shell :is(.atlas-eyebrow, .collection-eyebrow, .node-overline, .atlas-lane,
+  .stage-section-heading, .collection-card-kind, .pitch-label, .document-section-label) {
+  font-size: var(--type-caption); letter-spacing: .06em; line-height: 1.5; font-weight: 500;
+}
+.studio.atlas-shell :is(kbd, .atlas-zoom>output, .collection-card-number,
+  .atlas-scene-strip>button>span, .beat-number>span, .pitch-label>span) {
+  font-family: var(--font-data); font-size: var(--type-caption);
+  font-weight: 400; font-variant-numeric: tabular-nums; letter-spacing: 0;
+}
+.studio.atlas-shell :is(.header-world, .tree-select, .binder-search input, .formatbar select,
+  .screenplay-toolbar select, .screenplay-toolbar button, .command-trigger>span) {
+  font-size: var(--type-control);
+}
+.studio.atlas-shell .app-wordmark>span { font-size: 1rem; letter-spacing: -.025em; }
+.studio.atlas-shell .app-wordmark { font-weight: 600; }
+.studio.atlas-shell :is(.atlas-world-name>input, .welcome h1, .pitch-title>h1) {
+  font-family: var(--font-story); font-weight: 400; letter-spacing: -.035em; line-height: 1.15;
+}
+.studio.atlas-shell .atlas-world-name>input { font-size: clamp(2rem, 3.5vw, 3rem); padding-block: 4px 8px; }
+.studio.atlas-shell .welcome h1 { font-size: clamp(2.5rem, 5vw, 3.75rem); max-width: 18ch; }
+.studio.atlas-shell .pitch-title>h1 { font-size: clamp(2.5rem, 6vw, 5.5rem); }
+.studio.atlas-shell .pitch-title>p { font-family: var(--font-story); font-size: 1.25rem; line-height: 1.65; max-width: 60ch; }
+.studio.atlas-shell :is(.collection-name>input, .collection-heading h1, .director-tool-heading h1, .stage-heading h1) {
+  font-family: var(--font-ui); font-size: clamp(1.75rem, 2.8vw, 2.25rem);
+  font-weight: 500; letter-spacing: -.025em; line-height: 1.25;
+}
+.studio.atlas-shell :is(.planning-sheet h2, .dialog-heading h2, .profile-preview h2, .empty-board h2) {
+  font-family: var(--font-ui); font-size: 1.75rem; font-weight: 500; letter-spacing: -.025em; line-height: 1.3;
+}
+.studio.atlas-shell :is(.atlas-heading p, .collection-heading p, .director-tool-heading p,
+  .stage-heading p, .planning-sheet header p, .dialog-heading p) {
+  font-size: var(--type-body); line-height: 1.65; max-width: 70ch;
+}
+.studio.atlas-shell :is(.mood-card-title, .beat-title, .document-identity>input) {
+  font-family: var(--font-ui); font-size: 1.125rem; font-weight: 500; line-height: 1.4; letter-spacing: -.015em;
+}
+.studio.atlas-shell .collection-card .index-card-head>input {
+  font-size: 1.25rem; font-weight: 500; line-height: 1.4; letter-spacing: -.02em;
+}
+.studio.atlas-shell .collection-card>textarea {
+  font-family: var(--font-ui); font-size: var(--type-body); line-height: 1.65;
+  height: 112px; min-height: 112px;
+}
+.studio.atlas-shell :is(.collection-card-meta, .collection-card-meta>span, .collection-card .index-card-foot) { flex-wrap: wrap; }
+.studio.atlas-shell .freeform .collection-card { height: auto; min-height: 340px; }
+.studio.atlas-shell .freeform .collection-card>textarea { min-height: 112px; height: 112px; resize: vertical; }
+.studio.atlas-shell :is(.planning-field>span, .planning-extra label, .inspector label) {
+  font-size: var(--type-control); font-weight: 500; letter-spacing: 0; line-height: 1.5;
+}
+.studio.atlas-shell :is(.planning-field>input, .planning-field>textarea, .planning-extra input,
+  .beat-card>textarea, .mood-card>textarea, .notes-input) {
+  font-family: var(--font-ui); font-size: 1rem; line-height: 1.65;
+}
+.studio.atlas-shell :is(.synopsis-input, .scratchpad, .compare-text, .comment-card blockquote) {
+  font-family: var(--font-story); font-size: 1rem; line-height: 1.7;
+}
+.studio.atlas-shell .paper:not(.screenplay) { line-height: 1.7; }
+.studio.atlas-shell .paper:not(.screenplay) .rich-editor { font-family: inherit; }
+.studio.atlas-shell .flow-view .paper:not(.screenplay) { max-width: 76ch; margin-inline: auto; }
+.studio.atlas-shell .formatbar { min-height: 46px; height: auto; padding-block: 5px; }
+.studio.atlas-shell .formatbar select { max-width: 155px; min-height: 32px; }
+.studio.atlas-shell .format-tools { flex-shrink: 0; }
+.studio.atlas-shell .editor-footer { height: auto; min-height: 34px; padding-block: 6px; line-height: 1.5; flex-wrap: wrap; }
+.studio.atlas-shell :is(.document-save-bar, .collection-toolbar, .beat-card footer) { flex-wrap: wrap; }
+.studio.atlas-shell .scene-navigator>button { font-family: var(--font-ui); font-size: var(--type-control); }
+.studio.atlas-shell .scene-navigator>button>span { font-family: var(--font-data); }
+.studio.atlas-shell .mood-swatches { flex-wrap: wrap; }
+.studio.atlas-shell .mood-swatches label { flex: 1 0 80px; min-height: 80px; }
+.studio.atlas-shell .mood-swatches span { font-family: var(--font-data); font-size: var(--type-caption); }
+
+/* Enlarge the map's vertical rhythm along with its type; media never covers labels. */
+.studio.atlas-shell .atlas-viewport { height: 560px; }
+.studio.atlas-shell .atlas-map { height: 470px; }
+.studio.atlas-shell .atlas-node h2 { font-size: 1.625rem; font-weight: 500; line-height: 1.25; letter-spacing: -.025em; margin: 18px 0 12px; }
+.studio.atlas-shell .atlas-node p { font-size: var(--type-control); line-height: 1.65; }
+.studio.atlas-shell .node-overline { gap: 7px; }
+.studio.atlas-shell .atlas-foundation { height: 265px; }
+.studio.atlas-shell .atlas-foundation p { height: 65px; }
+.studio.atlas-shell .atlas-research { top: 345px; height: 92px; }
+.studio.atlas-shell .atlas-research>span { min-width: 0; }
+.studio.atlas-shell .atlas-research strong { font-size: var(--type-body); }
+.studio.atlas-shell .atlas-research small { font-size: var(--type-caption); line-height: 1.5; }
+.studio.atlas-shell .atlas-script { height: 350px; }
+.studio.atlas-shell .atlas-visual { height: 224px; }
+.studio.atlas-shell .atlas-visual h2 { font-size: 1.375rem; margin: 8px 0 4px; }
+.studio.atlas-shell .atlas-world { top: 295px; }
+.studio.atlas-shell .atlas-world>button { min-height: 36px; height: auto; padding-block: 6px; font-size: var(--type-control); }
+.studio.atlas-shell .atlas-scene-strip>button { flex-basis: 240px; }
+.studio.atlas-shell .atlas-scene-strip strong { font-size: var(--type-control); }
+.studio.atlas-shell .atlas-recent>span { font-size: var(--type-caption); letter-spacing: .06em; }
+
+@media (max-width: 1000px) {
+  .studio.atlas-shell .compact-header .menubar { padding-inline: 16px; gap: 8px; }
+  .studio.atlas-shell .creative-dock>button { padding-inline: 10px; min-width: 70px; }
+}
+@media (max-width: 760px) {
+  .studio.atlas-shell .atlas-viewport { height: auto; min-height: 0; }
+  .studio.atlas-shell .atlas-map { height: auto; grid-template-columns: 1fr; gap: 16px; }
+  .studio.atlas-shell .atlas-node { width: 100%; min-height: 0; grid-column: 1 / -1; grid-row: auto; }
+  .studio.atlas-shell .atlas-node h2 { font-size: 1.5rem; }
+  .studio.atlas-shell .atlas-foundation p { height: auto; }
+  .studio.atlas-shell .atlas-script .script-preview-lines { height: 65px; }
+  .studio.atlas-shell .atlas-visual>img, .studio.atlas-shell .atlas-empty-frame { height: 130px; }
+  .studio.atlas-shell .atlas-world { padding: 20px; }
+  .studio.atlas-shell .atlas-world-name>input { font-size: 2rem !important; }
+  .studio.atlas-shell .collection-name>input { font-size: 2rem; }
+  .studio.atlas-shell .atlas-caption { flex-wrap: wrap; gap: 8px; padding-block: 10px; }
+  .studio.atlas-shell .atlas-caption>small { width: 100%; order: 2; }
+  .studio.atlas-shell .creative-dock>button { font-size: .75rem; min-width: 0; padding-inline: 10px; }
+  .studio.atlas-shell .creative-dock { gap: 2px; padding-inline: 6px; overflow-x: auto; justify-content: flex-start; }
+  .studio.atlas-shell .pitch-title>h1 { font-size: clamp(2.25rem, 10vw, 3.5rem); }
+  .studio.atlas-shell .pitch-title>p { font-size: 1.125rem; }
+  .studio.atlas-shell :is(input:not([type=checkbox]):not([type=range]), textarea, select) { font-size: max(1rem, 1em); }
+  .studio.atlas-shell .formatbar select, .studio.atlas-shell .collection-toolbar select { font-size: 1rem; max-width: 165px; }
+  .studio.atlas-shell .studio-command>label>input { font-size: 1rem !important; }
+  .studio.atlas-shell .collection-card>textarea { font-size: 1rem; }
+  .studio.atlas-shell .document-save-bar { gap: 10px; }
+}

@@ -1,0 +1,13 @@
+User-agent: *
+Allow: /
+Disallow: /studio
+Disallow: /join
+Disallow: /api/
+Disallow: /legacy/
+Disallow: /session-vault.json
+Disallow: /vault-files/
+Disallow: /signin-with-chatgpt
+Disallow: /signout-with-chatgpt
+Disallow: /callback
+
+Sitemap: https://lightbox.beigeleaf64.chatgpt.site/sitemap.xml

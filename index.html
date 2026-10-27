@@ -72,7 +72,19 @@
     <link rel="stylesheet" href="./styles.css">
 </head>
 <body class="antialiased">
-    <div id="root"></div>
+    <div id="root">
+      <main id="static-intro" style="max-width:840px;margin:8vh auto;padding:24px;font-family:system-ui,Arial,sans-serif;color:#35262c">
+        <p style="letter-spacing:.15em;font-size:12px">LIGHTBOX STUDIO</p>
+        <h1 style="font-family:Georgia,serif;font-size:clamp(36px,6vw,62px);line-height:1.1">A workspace for stories becoming films.</h1>
+        <p>Lightbox Studio is a browser-based filmmaking and screenwriting workspace created by Bitra Nitish Saradhi. Develop screenplays, characters, story worlds, visual references and scene plans in one creative environment.</p>
+        <nav aria-label="Information about Lightbox" style="display:flex;gap:18px;flex-wrap:wrap">
+          <a href="/about.html">About Lightbox</a>
+          <a href="/creator.html">Meet the creator</a>
+          <a href="https://github.com/saradhinitish-ctrl/Lightbox-Story-Atlas">Public source code</a>
+        </nav>
+        <p style="font-size:13px;opacity:.7">The interactive workspace loads when JavaScript is available.</p>
+      </main>
+    </div>
 
     <script defer src="./script.js"></script>
 </body>

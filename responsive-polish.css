@@ -1,0 +1,130 @@
+/* Lightbox responsive refinement — 2026-10-28
+   Additive overrides; existing application and theme styles remain intact. */
+
+/* Desktop: understated focus, consistent interaction targets */
+@media (min-width: 761px) {
+  .studio.atlas-shell .atlas-node {
+    transition: border-color .18s ease, box-shadow .18s ease, translate .18s ease;
+  }
+  .studio.atlas-shell .atlas-node:focus-visible,
+  .studio.atlas-shell .atlas-node:focus-within {
+    outline: 2px solid var(--fire-accent, #ff7a2f);
+    outline-offset: 3px;
+  }
+  .studio.atlas-shell .atlas-node:hover {
+    border-color: color-mix(in srgb, var(--fire-accent, #ff7a2f) 42%, var(--fire-line, #45372c));
+  }
+}
+
+/* Prevent long titles and preview contents from forcing horizontal scrolling */
+.studio.atlas-shell :is(.atlas-node, .atlas-heading, .atlas-caption, .atlas-viewport, .atlas-map) {min-width:0;}
+.studio.atlas-shell :is(.atlas-node h2, .world-card-heading strong, .atlas-heading p) {
+  overflow-wrap:anywhere;
+}
+.studio.atlas-shell :is(button,a,input,textarea,select):focus-visible {
+  outline:2px solid var(--fire-accent,#ff7a2f);
+  outline-offset:2px;
+}
+
+@media (max-width:760px) {
+  html,body,#root {max-width:100%;overflow-x:clip;}
+  .studio.atlas-shell {width:100%;max-width:100%;overflow-x:clip;}
+  .studio.atlas-shell .workspace-layout {min-width:0;max-width:100%;}
+  .studio.atlas-shell .story-atlas {
+    width:100%;max-width:600px;
+    padding:18px 14px calc(136px + env(safe-area-inset-bottom));
+    margin-inline:auto;
+  }
+  .studio.atlas-shell .atlas-heading {margin-bottom:20px;}
+  .studio.atlas-shell .atlas-world-name > input {
+    font-size:clamp(30px,8.3vw,45px)!important;
+    letter-spacing:-.035em;
+    min-width:0;
+  }
+  .studio.atlas-shell .atlas-heading p {font-size:13px;line-height:1.55;margin-bottom:12px;}
+  .studio.atlas-shell .pitch-launch {min-height:44px;max-width:100%;}
+  .studio.atlas-shell .atlas-caption {
+    margin-bottom:14px;padding-top:13px;
+    min-width:0;
+  }
+  .studio.atlas-shell .atlas-viewport {padding:0 0 16px;overflow:visible;}
+  .studio.atlas-shell .atlas-map {
+    display:grid;
+    grid-template-columns:minmax(0,1fr);
+    grid-template-areas:"foundation" "script" "visual" "research" "world";
+    width:100%;gap:12px;
+    align-items:stretch;overflow:visible;
+  }
+  .studio.atlas-shell .atlas-node {
+    min-width:0;width:100%;max-width:100%;
+    border-radius:14px;
+    padding:17px!important;
+    margin:0;
+    overflow:hidden;
+    box-shadow:0 1px 0 #0005,0 6px 16px #0002;
+    touch-action:manipulation;
+  }
+  .studio.atlas-shell .atlas-node h2 {
+    font-size:clamp(24px,7vw,30px);
+    line-height:1.13;
+    margin:11px 0;
+  }
+  .studio.atlas-shell .node-overline {font-size:9px;letter-spacing:.065em;gap:7px;}
+  .studio.atlas-shell .node-overline > svg:last-child {margin-left:auto;}
+  .studio.atlas-shell .node-footer {
+    font-size:12px;min-height:40px;display:flex;align-items:center;
+    padding-top:12px;margin-top:14px;gap:8px;
+  }
+  .studio.atlas-shell .spark-note {padding:13px 14px;}
+  .studio.atlas-shell .spark-note p {font-size:clamp(19px,5.8vw,24px);}
+  .studio.atlas-shell .atlas-script .script-page-preview {
+    width:min(100%,290px);
+    min-height:150px;
+    max-height:185px;
+    padding:15px;
+    margin:14px auto 18px;
+    overflow:hidden;
+  }
+  .studio.atlas-shell .atlas-script .script-page-excerpt {max-height:90px;overflow:hidden;}
+  .studio.atlas-shell .atlas-script h2 {margin-bottom:5px;}
+  .studio.atlas-shell .atlas-script > p {line-height:1.55;}
+  .studio.atlas-shell .atlas-scene-visual {padding:17px!important;}
+  .studio.atlas-shell .atlas-scene-visual > h2 {font-size:clamp(24px,7vw,30px);}
+  .studio.atlas-shell .atlas-visual-scenes > span {min-width:0;min-height:48px;}
+  .studio.atlas-shell .atlas-visual-scenes strong,
+  .studio.atlas-shell .atlas-visual-scenes small {overflow-wrap:anywhere;}
+  .studio.atlas-shell .atlas-research .research-card-body {margin-top:6px;gap:10px;}
+  .studio.atlas-shell .atlas-research h2 {font-size:26px;margin:8px 0;}
+  .studio.atlas-shell .research-stack {width:78px;height:90px;flex-shrink:0;}
+  .studio.atlas-shell .atlas-world .world-card-heading {margin:12px 0;}
+  .studio.atlas-shell .world-card-heading strong {font-size:27px;}
+  .studio.atlas-shell .world-index > button {min-height:50px;padding:8px 2px;}
+  .studio.atlas-shell .atlas-scene-strip {
+    display:flex;overflow-x:auto;overscroll-behavior-x:contain;
+    scroll-snap-type:x mandatory;
+    gap:10px;
+    -webkit-overflow-scrolling:touch;
+    padding-bottom:16px;
+  }
+  .studio.atlas-shell .atlas-scene-strip > button {
+    min-width:min(78vw,250px);max-width:85vw;
+    scroll-snap-align:start;min-height:90px;
+  }
+  .studio.atlas-shell .atlas-recent > button {min-height:44px;}
+  .studio.atlas-shell :is(.dialog,.binder.section-library,.inspector) {
+    max-width:100vw;
+  }
+}
+@media (max-width:390px) {
+  .studio.atlas-shell .story-atlas {padding-inline:11px;}
+  .studio.atlas-shell .atlas-node {padding:14px!important;}
+  .studio.atlas-shell .atlas-map {gap:10px;}
+  .studio.atlas-shell .atlas-script .script-page-preview {width:100%;max-width:255px;}
+  .studio.atlas-shell .world-card-heading strong {font-size:24px;}
+}
+@media (hover:none) and (max-width:760px) {
+  .studio.atlas-shell .atlas-node:hover {transform:none!important;}
+}
+@media (prefers-reduced-motion:reduce) {
+  .studio.atlas-shell .atlas-node {transition:none!important;}
+}

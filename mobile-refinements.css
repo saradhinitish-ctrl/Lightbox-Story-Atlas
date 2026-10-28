@@ -62,3 +62,53 @@ img,video,canvas,svg{max-width:100%}
 @media (prefers-reduced-motion:reduce){
   .atlas-map>.atlas-node,.creative-dock button{transition:none!important}
 }
+
+/* Mobile detail-screen refinement, 2026-10-28. Keep the Atlas overview untouched. */
+@media (max-width:767px){
+  /* Five-stage navigation: stable equal-width cells and short labels. */
+  .creative-dock{display:grid!important;grid-template-columns:repeat(5,minmax(0,1fr))!important;align-items:stretch!important;gap:3px!important;padding:5px!important;max-width:calc(100vw - 16px)!important}
+  .creative-dock > button,.creative-dock > a{width:100%!important;min-width:0!important;max-width:100%!important;height:48px!important;min-height:48px!important;margin:0!important;padding:4px 1px!important;display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;gap:3px!important;font-size:clamp(8px,2.4vw,11px)!important;line-height:1.15!important;text-align:center!important;letter-spacing:0!important;white-space:normal!important;overflow:visible!important}
+  .creative-dock svg{flex-shrink:0!important;width:17px!important;height:17px!important}
+  /* Visual direction: sidebar becomes a scrollable library, main panel stays full width. */
+  .vl-workspace{display:flex!important;flex-direction:column!important;gap:16px!important;min-width:0!important;width:100%!important;padding:12px 12px calc(100px + env(safe-area-inset-bottom))!important;overflow:visible!important}
+  .vl-sidebar,.vl-main{width:100%!important;min-width:0!important;max-width:100%!important;min-height:0!important;position:relative!important;inset:auto!important}
+  .vl-sidebar{padding:14px!important;border-radius:14px!important}
+  .vl-scene-list{display:flex!important;flex-direction:row!important;gap:9px!important;overflow-x:auto!important;overscroll-behavior-x:contain!important;padding:8px 0 10px!important;scroll-snap-type:x proximity}
+  .vl-scene-list>*{flex:0 0 min(72vw,260px)!important;scroll-snap-align:start;min-width:0}
+  .vl-main{padding:0!important;overflow:visible!important}
+  .vl-board-heading,.vl-film-banner,.vl-scene-controls{display:flex!important;flex-wrap:wrap!important;gap:12px!important;align-items:flex-start!important}
+  .vl-scene-board,.vl-direction,.vl-scene-cover{max-width:100%!important;min-width:0!important;padding:16px!important;border-radius:15px!important}
+  .vl-board-grid{display:grid!important;grid-template-columns:minmax(0,1fr)!important;gap:14px!important}
+  .vl-board-grid>*,.vl-direction>*,.vl-scene-board>*{min-width:0!important;max-width:100%!important}
+  /* Beat timeline: readable cards and controls; avoid dense multi-column inspection panels. */
+  .beat-workspace{display:flex!important;flex-direction:column!important;gap:16px!important;width:100%!important;padding:14px 12px calc(100px + env(safe-area-inset-bottom))!important;overflow:visible!important}
+  .beat-board,.beat-insights{width:100%!important;min-width:0!important;max-width:100%!important;padding:16px!important;border-radius:15px!important}
+  .beat-timeline{display:flex!important;flex-direction:column!important;gap:14px!important;max-width:100%!important;overflow:visible!important}
+  .beat-card{width:100%!important;max-width:100%!important;min-width:0!important;margin:0!important;padding:16px!important;border-radius:13px!important;overflow:visible!important}
+  .beat-fields{display:grid!important;grid-template-columns:minmax(0,1fr)!important;gap:12px!important}
+  .beat-fields>*{min-width:0!important}
+  .beat-card input,.beat-card select,.beat-card textarea,.beat-slider input{width:100%!important;max-width:100%!important}
+  .beat-insights{display:block!important}
+  .beat-arc{max-width:100%!important;overflow-x:auto!important}
+  /* Screenplay editing: compact horizontal tools, protected page width. */
+  .script-editor-shell{max-width:100%!important;min-width:0!important}
+  .screenplay-toolbar{width:100%!important;max-width:100%!important;min-width:0!important;padding:8px!important;overflow:visible!important}
+  .screenplay-toolbar-main{display:flex!important;align-items:center!important;flex-wrap:nowrap!important;gap:5px!important;width:100%!important;max-width:100%!important;min-width:0!important;overflow-x:auto!important;overscroll-behavior-x:contain!important;scrollbar-width:none!important;-webkit-overflow-scrolling:touch}
+  .screenplay-toolbar-main::-webkit-scrollbar{display:none}
+  .screenplay-toolbar-main select{flex:0 0 auto!important;width:min(42vw,180px)!important;min-width:100px!important;max-width:180px!important;min-height:38px!important;font-size:12px!important}
+  .screenplay-toolbar-main>.script-tool,.screenplay-toolbar-main>.phone-dialogue-continue,.screenplay-toolbar-main>.script-more-menu{flex:0 0 auto!important}
+  .screenplay-toolbar .script-tool{width:36px!important;height:38px!important;min-width:36px!important;display:inline-flex!important;align-items:center!important;justify-content:center!important}
+  .screenplay-toolbar-main>i{flex:0 0 1px!important;height:22px!important;margin:0 2px!important}
+  .script-page-scroll,.script-page-zoom{max-width:100%!important;min-width:0!important}
+  /* Development: spacious single-column fields and legible headings. */
+  .development-intro,.planning-sheet,.planning-free-notes{width:100%!important;max-width:100%!important;min-width:0!important;padding:18px 16px!important}
+  .development-intro h1,.development-intro h2,.planning-sheet h1,.planning-sheet h2{font-size:clamp(24px,6.8vw,34px)!important;line-height:1.19!important;overflow-wrap:break-word!important}
+  .planning-field-grid{display:grid!important;grid-template-columns:minmax(0,1fr)!important;gap:16px!important}
+  .planning-field{display:flex!important;flex-direction:column!important;gap:7px!important;min-width:0!important;width:100%!important}
+  .planning-field textarea{min-height:120px!important;line-height:1.6!important;padding:13px!important}
+  .planning-extra{max-width:100%!important}
+}
+@media (min-width:768px){
+  .screenplay-toolbar-main{gap:8px}
+  .vl-workspace,.beat-workspace{min-width:0}
+}

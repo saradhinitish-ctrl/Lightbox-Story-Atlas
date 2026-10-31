@@ -23176,3 +23176,103 @@ body {
   }
 }
 /*! tailwindcss v4.2.1 | MIT License | https://tailwindcss.com */
+
+/* World creation: one continuous surface, with actions aligned to the form.
+   Scoped to the template chooser so other dialog footers retain their layout. */
+.studio .dialog:has(.template-grid) {
+  width: min(640px, calc(100vw - 32px));
+  border-radius: 12px;
+}
+.studio .dialog:has(.template-grid) .dialog-heading {
+  padding: 26px 28px 22px;
+}
+.studio .dialog:has(.template-grid) .dialog-body {
+  padding: 24px 28px 26px;
+}
+.studio .dialog:has(.template-grid) .form-label input {
+  min-height: 46px;
+  padding: 12px 14px;
+  border-radius: 7px;
+}
+.studio .dialog:has(.template-grid) .template-grid {
+  gap: 12px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+.studio .dialog:has(.template-grid) .template-card {
+  min-width: 0;
+  min-height: 164px;
+  padding: 18px 14px;
+  gap: 10px;
+  border-radius: 8px;
+  box-shadow: none;
+  transition: border-color 160ms ease-out, background-color 160ms ease-out;
+}
+.studio .dialog:has(.template-grid) .template-card:hover {
+  border-color: var(--accent);
+}
+.studio .dialog:has(.template-grid) .template-card.chosen {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+.studio .dialog:has(.template-grid) .template-card strong {
+  font-size: 13px;
+  font-weight: 600;
+  padding-right: 8px;
+}
+.studio .dialog:has(.template-grid) .template-card span {
+  color: var(--text);
+  opacity: .8;
+  line-height: 1.6;
+}
+.studio .dialog:has(.template-grid) .form-note {
+  margin: 18px 0 0;
+  line-height: 1.6;
+}
+.studio .dialog:has(.template-grid) .dialog-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  margin: 24px 0 0;
+  padding: 20px 0 0;
+  background: transparent;
+  box-shadow: none;
+  border-radius: 0;
+  border-top: 1px solid var(--line);
+}
+.studio .dialog:has(.template-grid) .dialog-actions .button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 11px 18px;
+  margin: 0;
+  border-radius: 7px;
+  font-size: 13px;
+  line-height: 1.3;
+}
+.studio .dialog:has(.template-grid) button:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+@media (max-width: 600px) {
+  .studio .dialog:has(.template-grid) {
+    width: 100%;
+    border-radius: 0;
+  }
+  .studio .dialog:has(.template-grid) .dialog-heading { padding: 20px; }
+  .studio .dialog:has(.template-grid) .dialog-body { padding: 20px; }
+  .studio .dialog:has(.template-grid) .template-grid { grid-template-columns: minmax(0, 1fr); gap: 10px; }
+  .studio .dialog:has(.template-grid) .template-card {
+    min-height: 94px;
+    padding: 16px 36px 16px 54px;
+    gap: 6px;
+  }
+  .studio .dialog:has(.template-grid) .template-card > svg:first-child { left: 16px; top: 18px; }
+  .studio .dialog:has(.template-grid) .dialog-actions { flex-wrap: nowrap; }
+  .studio .dialog:has(.template-grid) .dialog-actions .primary { flex: 1; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .studio .dialog:has(.template-grid) .template-card { transition: none; }
+}

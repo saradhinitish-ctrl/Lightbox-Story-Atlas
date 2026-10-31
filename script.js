@@ -64906,7 +64906,7 @@ ${prefix}
           /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("input", { autoFocus: true, value: newTitle, onChange: (e) => setNewTitle(e.target.value), placeholder: "Name this world" })
         ] }),
         /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("label", { className: "form-label", children: "START WITH" }),
-        /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { className: "template-grid", children: [["screenplay", Film, "Screenplay", "Scenes, characters, locations, and research."], ["novel", BookOpen, "Manuscript", "A flexible home for chapters and scenes."], ["blank", FileText, "Blank project", "An open structure. Make it yours."]].map(([id, Icon2, title, desc]) => /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("button", { type: "button", className: "template-card " + (newTemplate === id ? "chosen" : ""), onClick: () => setNewTemplate(id), children: [
+        /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { className: "template-grid", children: [["screenplay", Film, "Screenplay", "Scenes, characters, locations, and research."], ["novel", BookOpen, "Manuscript", "A flexible home for chapters and scenes."], ["blank", FileText, "Blank project", "An open structure. Make it yours."]].map(([id, Icon2, title, desc]) => /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("button", { type: "button", className: "template-card " + (newTemplate === id ? "chosen" : ""), "aria-pressed": newTemplate === id, onClick: () => setNewTemplate(id), children: [
           /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(Icon2, { size: 24, strokeWidth: 1.3 }),
           /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("strong", { children: title }),
           /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("span", { children: desc }),

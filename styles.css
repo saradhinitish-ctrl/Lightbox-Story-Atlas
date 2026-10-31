@@ -23276,3 +23276,22 @@ body {
 @media (prefers-reduced-motion: reduce) {
   .studio .dialog:has(.template-grid) .template-card { transition: none; }
 }
+
+/* Phone world creation fills the visible viewport, including short screens. */
+@media (max-width: 600px) {
+  .studio .dialog:has(.template-grid) {
+    inset: 0;
+    margin: 0;
+    height: 100dvh;
+    max-height: 100dvh;
+    max-width: 100%;
+    overflow-y: auto;
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  .studio .dialog:has(.template-grid) .form-label input { font-size: 16px; }
+  .studio .dialog:has(.template-grid) .dialog-actions {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+  .studio .dialog:has(.template-grid) .dialog-actions .button { min-width: 0; }
+}

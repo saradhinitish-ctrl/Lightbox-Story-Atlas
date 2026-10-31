@@ -12764,12 +12764,12 @@
         return x === y && (0 !== x || 1 / x === 1 / y) || x !== x && y !== y;
       }
       var objectIs = "function" === typeof Object.is ? Object.is : is;
-      var useState14 = React3.useState;
-      var useEffect13 = React3.useEffect;
+      var useState12 = React3.useState;
+      var useEffect11 = React3.useEffect;
       var useLayoutEffect2 = React3.useLayoutEffect;
       var useDebugValue2 = React3.useDebugValue;
       function useSyncExternalStore$2(subscribe, getSnapshot) {
-        var value = getSnapshot(), _useState = useState14({ inst: { value, getSnapshot } }), inst = _useState[0].inst, forceUpdate = _useState[1];
+        var value = getSnapshot(), _useState = useState12({ inst: { value, getSnapshot } }), inst = _useState[0].inst, forceUpdate = _useState[1];
         useLayoutEffect2(
           function() {
             inst.value = value;
@@ -12778,7 +12778,7 @@
           },
           [subscribe, value, getSnapshot]
         );
-        useEffect13(
+        useEffect11(
           function() {
             checkIfSnapshotChanged(inst) && forceUpdate({ inst });
             return subscribe(function() {
@@ -12831,12 +12831,12 @@
       }
       var objectIs = "function" === typeof Object.is ? Object.is : is;
       var useSyncExternalStore2 = shim.useSyncExternalStore;
-      var useRef12 = React3.useRef;
-      var useEffect13 = React3.useEffect;
+      var useRef10 = React3.useRef;
+      var useEffect11 = React3.useEffect;
       var useMemo5 = React3.useMemo;
       var useDebugValue2 = React3.useDebugValue;
       exports.useSyncExternalStoreWithSelector = function(subscribe, getSnapshot, getServerSnapshot, selector, isEqual) {
-        var instRef = useRef12(null);
+        var instRef = useRef10(null);
         if (null === instRef.current) {
           var inst = { hasValue: false, value: null };
           instRef.current = inst;
@@ -12876,7 +12876,7 @@
           [getSnapshot, getServerSnapshot, selector, isEqual]
         );
         var value = useSyncExternalStore2(subscribe, instRef[0], instRef[1]);
-        useEffect13(
+        useEffect11(
           function() {
             inst.hasValue = true;
             inst.value = value;
@@ -33937,11 +33937,11 @@
   });
 
   // portable-entry.tsx
-  var import_react20 = __toESM(require_react(), 1);
+  var import_react18 = __toESM(require_react(), 1);
   var import_client = __toESM(require_client(), 1);
 
   // components/writing-studio.tsx
-  var import_react19 = __toESM(require_react(), 1);
+  var import_react17 = __toESM(require_react(), 1);
 
   // ../../original-source/node_modules/lucide-react/dist/esm/createLucideIcon.mjs
   var import_react3 = __toESM(require_react(), 1);
@@ -34312,17 +34312,8 @@
   __iconData12.node;
   var ChevronRight = createLucideIcon(__iconData12);
 
-  // ../../original-source/node_modules/lucide-react/dist/esm/icons/chevron-up.mjs
-  var __iconData13 = {
-    name: "chevron-up",
-    size: 24,
-    node: [["path", { d: "m18 15-6-6-6 6", key: "153udz" }]]
-  };
-  __iconData13.node;
-  var ChevronUp = createLucideIcon(__iconData13);
-
   // ../../original-source/node_modules/lucide-react/dist/esm/icons/circle-alert.mjs
-  var __iconData14 = {
+  var __iconData13 = {
     name: "circle-alert",
     size: 24,
     node: [
@@ -34332,11 +34323,11 @@
     ],
     aliases: ["alert-circle"]
   };
-  __iconData14.node;
-  var CircleAlert = createLucideIcon(__iconData14);
+  __iconData13.node;
+  var CircleAlert = createLucideIcon(__iconData13);
 
   // ../../original-source/node_modules/lucide-react/dist/esm/icons/circle-check.mjs
-  var __iconData15 = {
+  var __iconData14 = {
     name: "circle-check",
     size: 24,
     node: [
@@ -34345,20 +34336,20 @@
     ],
     aliases: ["check-circle-2"]
   };
-  __iconData15.node;
-  var CircleCheck = createLucideIcon(__iconData15);
+  __iconData14.node;
+  var CircleCheck = createLucideIcon(__iconData14);
 
   // ../../original-source/node_modules/lucide-react/dist/esm/icons/cloud.mjs
-  var __iconData16 = {
+  var __iconData15 = {
     name: "cloud",
     size: 24,
     node: [["path", { d: "M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z", key: "p7xjir" }]]
   };
-  __iconData16.node;
-  var Cloud = createLucideIcon(__iconData16);
+  __iconData15.node;
+  var Cloud = createLucideIcon(__iconData15);
 
   // ../../original-source/node_modules/lucide-react/dist/esm/icons/columns-2.mjs
-  var __iconData17 = {
+  var __iconData16 = {
     name: "columns-2",
     size: 24,
     node: [
@@ -34367,11 +34358,11 @@
     ],
     aliases: ["columns"]
   };
-  __iconData17.node;
-  var Columns2 = createLucideIcon(__iconData17);
+  __iconData16.node;
+  var Columns2 = createLucideIcon(__iconData16);
 
   // ../../original-source/node_modules/lucide-react/dist/esm/icons/command.mjs
-  var __iconData18 = {
+  var __iconData17 = {
     name: "command",
     size: 24,
     node: [
@@ -34384,11 +34375,11 @@
       ]
     ]
   };
-  __iconData18.node;
-  var Command = createLucideIcon(__iconData18);
+  __iconData17.node;
+  var Command = createLucideIcon(__iconData17);
 
   // ../../original-source/node_modules/lucide-react/dist/esm/icons/copy.mjs
-  var __iconData19 = {
+  var __iconData18 = {
     name: "copy",
     size: 24,
     node: [
@@ -34396,11 +34387,11 @@
       ["path", { d: "M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2", key: "zix9uf" }]
     ]
   };
-  __iconData19.node;
-  var Copy = createLucideIcon(__iconData19);
+  __iconData18.node;
+  var Copy = createLucideIcon(__iconData18);
 
   // ../../original-source/node_modules/lucide-react/dist/esm/icons/download.mjs
-  var __iconData20 = {
+  var __iconData19 = {
     name: "download",
     size: 24,
     node: [
@@ -34409,11 +34400,11 @@
       ["path", { d: "m7 10 5 5 5-5", key: "brsn70" }]
     ]
   };
-  __iconData20.node;
-  var Download = createLucideIcon(__iconData20);
+  __iconData19.node;
+  var Download = createLucideIcon(__iconData19);
 
   // ../../original-source/node_modules/lucide-react/dist/esm/icons/ellipsis.mjs
-  var __iconData21 = {
+  var __iconData20 = {
     name: "ellipsis",
     size: 24,
     node: [
@@ -34423,11 +34414,11 @@
     ],
     aliases: ["more-horizontal"]
   };
-  __iconData21.node;
-  var Ellipsis = createLucideIcon(__iconData21);
+  __iconData20.node;
+  var Ellipsis = createLucideIcon(__iconData20);
 
   // ../../original-source/node_modules/lucide-react/dist/esm/icons/external-link.mjs
-  var __iconData22 = {
+  var __iconData21 = {
     name: "external-link",
     size: 24,
     node: [
@@ -34436,11 +34427,11 @@
       ["path", { d: "M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6", key: "a6xqqp" }]
     ]
   };
-  __iconData22.node;
-  var ExternalLink = createLucideIcon(__iconData22);
+  __iconData21.node;
+  var ExternalLink = createLucideIcon(__iconData21);
 
   // ../../original-source/node_modules/lucide-react/dist/esm/icons/file-plus-corner.mjs
-  var __iconData23 = {
+  var __iconData22 = {
     name: "file-plus-corner",
     size: 24,
     node: [
@@ -34457,11 +34448,11 @@
     ],
     aliases: ["file-plus-2"]
   };
-  __iconData23.node;
-  var FilePlusCorner = createLucideIcon(__iconData23);
+  __iconData22.node;
+  var FilePlusCorner = createLucideIcon(__iconData22);
 
   // ../../original-source/node_modules/lucide-react/dist/esm/icons/file-text.mjs
-  var __iconData24 = {
+  var __iconData23 = {
     name: "file-text",
     size: 24,
     node: [
@@ -34478,11 +34469,11 @@
       ["path", { d: "M16 17H8", key: "z1uh3a" }]
     ]
   };
-  __iconData24.node;
-  var FileText = createLucideIcon(__iconData24);
+  __iconData23.node;
+  var FileText = createLucideIcon(__iconData23);
 
   // ../../original-source/node_modules/lucide-react/dist/esm/icons/film.mjs
-  var __iconData25 = {
+  var __iconData24 = {
     name: "film",
     size: 24,
     node: [
@@ -34496,11 +34487,11 @@
       ["path", { d: "M17 16.5h4", key: "go4c1d" }]
     ]
   };
-  __iconData25.node;
-  var Film = createLucideIcon(__iconData25);
+  __iconData24.node;
+  var Film = createLucideIcon(__iconData24);
 
   // ../../original-source/node_modules/lucide-react/dist/esm/icons/folder-open.mjs
-  var __iconData26 = {
+  var __iconData25 = {
     name: "folder-open",
     size: 24,
     node: [
@@ -34513,11 +34504,11 @@
       ]
     ]
   };
-  __iconData26.node;
-  var FolderOpen = createLucideIcon(__iconData26);
+  __iconData25.node;
+  var FolderOpen = createLucideIcon(__iconData25);
 
   // ../../original-source/node_modules/lucide-react/dist/esm/icons/folder.mjs
-  var __iconData27 = {
+  var __iconData26 = {
     name: "folder",
     size: 24,
     node: [
@@ -34530,11 +34521,11 @@
       ]
     ]
   };
-  __iconData27.node;
-  var Folder = createLucideIcon(__iconData27);
+  __iconData26.node;
+  var Folder = createLucideIcon(__iconData26);
 
   // ../../original-source/node_modules/lucide-react/dist/esm/icons/grip-vertical.mjs
-  var __iconData28 = {
+  var __iconData27 = {
     name: "grip-vertical",
     size: 24,
     node: [
@@ -34546,11 +34537,11 @@
       ["circle", { cx: "15", cy: "19", r: "1", key: "f4zoj3" }]
     ]
   };
-  __iconData28.node;
-  var GripVertical = createLucideIcon(__iconData28);
+  __iconData27.node;
+  var GripVertical = createLucideIcon(__iconData27);
 
   // ../../original-source/node_modules/lucide-react/dist/esm/icons/headphones.mjs
-  var __iconData29 = {
+  var __iconData28 = {
     name: "headphones",
     size: 24,
     node: [
@@ -34563,11 +34554,11 @@
       ]
     ]
   };
-  __iconData29.node;
-  var Headphones = createLucideIcon(__iconData29);
+  __iconData28.node;
+  var Headphones = createLucideIcon(__iconData28);
 
   // ../../original-source/node_modules/lucide-react/dist/esm/icons/image-plus.mjs
-  var __iconData30 = {
+  var __iconData29 = {
     name: "image-plus",
     size: 24,
     node: [
@@ -34578,11 +34569,11 @@
       ["circle", { cx: "9", cy: "9", r: "2", key: "af1f0g" }]
     ]
   };
-  __iconData30.node;
-  var ImagePlus = createLucideIcon(__iconData30);
+  __iconData29.node;
+  var ImagePlus = createLucideIcon(__iconData29);
 
   // ../../original-source/node_modules/lucide-react/dist/esm/icons/image.mjs
-  var __iconData31 = {
+  var __iconData30 = {
     name: "image",
     size: 24,
     node: [
@@ -34591,11 +34582,11 @@
       ["path", { d: "m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21", key: "1xmnt7" }]
     ]
   };
-  __iconData31.node;
-  var Image = createLucideIcon(__iconData31);
+  __iconData30.node;
+  var Image = createLucideIcon(__iconData30);
 
   // ../../original-source/node_modules/lucide-react/dist/esm/icons/info.mjs
-  var __iconData32 = {
+  var __iconData31 = {
     name: "info",
     size: 24,
     node: [
@@ -34604,11 +34595,11 @@
       ["path", { d: "M12 8h.01", key: "e9boi3" }]
     ]
   };
-  __iconData32.node;
-  var Info = createLucideIcon(__iconData32);
+  __iconData31.node;
+  var Info = createLucideIcon(__iconData31);
 
   // ../../original-source/node_modules/lucide-react/dist/esm/icons/italic.mjs
-  var __iconData33 = {
+  var __iconData32 = {
     name: "italic",
     size: 24,
     node: [
@@ -34617,11 +34608,11 @@
       ["line", { x1: "15", x2: "9", y1: "4", y2: "20", key: "uljnxc" }]
     ]
   };
-  __iconData33.node;
-  var Italic = createLucideIcon(__iconData33);
+  __iconData32.node;
+  var Italic = createLucideIcon(__iconData32);
 
   // ../../original-source/node_modules/lucide-react/dist/esm/icons/keyboard.mjs
-  var __iconData34 = {
+  var __iconData33 = {
     name: "keyboard",
     size: 24,
     node: [
@@ -34636,11 +34627,11 @@
       ["rect", { width: "20", height: "16", x: "2", y: "4", rx: "2", key: "18n3k1" }]
     ]
   };
-  __iconData34.node;
-  var Keyboard = createLucideIcon(__iconData34);
+  __iconData33.node;
+  var Keyboard = createLucideIcon(__iconData33);
 
   // ../../original-source/node_modules/lucide-react/dist/esm/icons/layers.mjs
-  var __iconData35 = {
+  var __iconData34 = {
     name: "layers",
     size: 24,
     node: [
@@ -34668,11 +34659,11 @@
     ],
     aliases: ["layers-3"]
   };
-  __iconData35.node;
-  var Layers = createLucideIcon(__iconData35);
+  __iconData34.node;
+  var Layers = createLucideIcon(__iconData34);
 
   // ../../original-source/node_modules/lucide-react/dist/esm/icons/layout-grid.mjs
-  var __iconData36 = {
+  var __iconData35 = {
     name: "layout-grid",
     size: 24,
     node: [
@@ -34682,11 +34673,11 @@
       ["rect", { width: "7", height: "7", x: "3", y: "14", rx: "1", key: "1bb6yr" }]
     ]
   };
-  __iconData36.node;
-  var LayoutGrid = createLucideIcon(__iconData36);
+  __iconData35.node;
+  var LayoutGrid = createLucideIcon(__iconData35);
 
   // ../../original-source/node_modules/lucide-react/dist/esm/icons/letter-b.mjs
-  var __iconData37 = {
+  var __iconData36 = {
     name: "letter-b",
     size: 24,
     node: [
@@ -34697,11 +34688,11 @@
     ],
     aliases: ["bold"]
   };
-  __iconData37.node;
-  var LetterB = createLucideIcon(__iconData37);
+  __iconData36.node;
+  var LetterB = createLucideIcon(__iconData36);
 
   // ../../original-source/node_modules/lucide-react/dist/esm/icons/lightbulb.mjs
-  var __iconData38 = {
+  var __iconData37 = {
     name: "lightbulb",
     size: 24,
     node: [
@@ -34716,11 +34707,11 @@
       ["path", { d: "M10 22h4", key: "ceow96" }]
     ]
   };
-  __iconData38.node;
-  var Lightbulb = createLucideIcon(__iconData38);
+  __iconData37.node;
+  var Lightbulb = createLucideIcon(__iconData37);
 
   // ../../original-source/node_modules/lucide-react/dist/esm/icons/link-2.mjs
-  var __iconData39 = {
+  var __iconData38 = {
     name: "link-2",
     size: 24,
     node: [
@@ -34729,11 +34720,11 @@
       ["line", { x1: "8", x2: "16", y1: "12", y2: "12", key: "1jonct" }]
     ]
   };
-  __iconData39.node;
-  var Link2 = createLucideIcon(__iconData39);
+  __iconData38.node;
+  var Link2 = createLucideIcon(__iconData38);
 
   // ../../original-source/node_modules/lucide-react/dist/esm/icons/list-ordered.mjs
-  var __iconData40 = {
+  var __iconData39 = {
     name: "list-ordered",
     size: 24,
     node: [
@@ -34745,11 +34736,11 @@
       ["path", { d: "M6.5 20H3.4c0-1 2.6-1.925 2.6-3.5a1.5 1.5 0 0 0-2.6-1.02", key: "xtkcd5" }]
     ]
   };
-  __iconData40.node;
-  var ListOrdered = createLucideIcon(__iconData40);
+  __iconData39.node;
+  var ListOrdered = createLucideIcon(__iconData39);
 
   // ../../original-source/node_modules/lucide-react/dist/esm/icons/list-tree.mjs
-  var __iconData41 = {
+  var __iconData40 = {
     name: "list-tree",
     size: 24,
     node: [
@@ -34760,11 +34751,11 @@
       ["path", { d: "M3 5v12a2 2 0 0 0 2 2h3", key: "x1gjn2" }]
     ]
   };
-  __iconData41.node;
-  var ListTree = createLucideIcon(__iconData41);
+  __iconData40.node;
+  var ListTree = createLucideIcon(__iconData40);
 
   // ../../original-source/node_modules/lucide-react/dist/esm/icons/list.mjs
-  var __iconData42 = {
+  var __iconData41 = {
     name: "list",
     size: 24,
     node: [
@@ -34776,21 +34767,21 @@
       ["path", { d: "M8 19h13", key: "m83p4d" }]
     ]
   };
-  __iconData42.node;
-  var List = createLucideIcon(__iconData42);
+  __iconData41.node;
+  var List = createLucideIcon(__iconData41);
 
   // ../../original-source/node_modules/lucide-react/dist/esm/icons/loader-circle.mjs
-  var __iconData43 = {
+  var __iconData42 = {
     name: "loader-circle",
     size: 24,
     node: [["path", { d: "M21 12a9 9 0 1 1-6.219-8.56", key: "13zald" }]],
     aliases: ["loader-2"]
   };
-  __iconData43.node;
-  var LoaderCircle = createLucideIcon(__iconData43);
+  __iconData42.node;
+  var LoaderCircle = createLucideIcon(__iconData42);
 
   // ../../original-source/node_modules/lucide-react/dist/esm/icons/map-pin.mjs
-  var __iconData44 = {
+  var __iconData43 = {
     name: "map-pin",
     size: 24,
     node: [
@@ -34804,11 +34795,11 @@
       ["circle", { cx: "12", cy: "10", r: "3", key: "ilqhr7" }]
     ]
   };
-  __iconData44.node;
-  var MapPin = createLucideIcon(__iconData44);
+  __iconData43.node;
+  var MapPin = createLucideIcon(__iconData43);
 
   // ../../original-source/node_modules/lucide-react/dist/esm/icons/maximize-2.mjs
-  var __iconData45 = {
+  var __iconData44 = {
     name: "maximize-2",
     size: 24,
     node: [
@@ -34818,11 +34809,11 @@
       ["path", { d: "M9 21H3v-6", key: "wtvkvv" }]
     ]
   };
-  __iconData45.node;
-  var Maximize2 = createLucideIcon(__iconData45);
+  __iconData44.node;
+  var Maximize2 = createLucideIcon(__iconData44);
 
   // ../../original-source/node_modules/lucide-react/dist/esm/icons/menu.mjs
-  var __iconData46 = {
+  var __iconData45 = {
     name: "menu",
     size: 24,
     node: [
@@ -34831,11 +34822,11 @@
       ["path", { d: "M4 19h16", key: "1djgab" }]
     ]
   };
-  __iconData46.node;
-  var Menu = createLucideIcon(__iconData46);
+  __iconData45.node;
+  var Menu = createLucideIcon(__iconData45);
 
   // ../../original-source/node_modules/lucide-react/dist/esm/icons/message-square.mjs
-  var __iconData47 = {
+  var __iconData46 = {
     name: "message-square",
     size: 24,
     node: [
@@ -34848,11 +34839,11 @@
       ]
     ]
   };
-  __iconData47.node;
-  var MessageSquare = createLucideIcon(__iconData47);
+  __iconData46.node;
+  var MessageSquare = createLucideIcon(__iconData46);
 
   // ../../original-source/node_modules/lucide-react/dist/esm/icons/minimize-2.mjs
-  var __iconData48 = {
+  var __iconData47 = {
     name: "minimize-2",
     size: 24,
     node: [
@@ -34862,11 +34853,11 @@
       ["path", { d: "M4 14h6v6", key: "rmj7iw" }]
     ]
   };
-  __iconData48.node;
-  var Minimize2 = createLucideIcon(__iconData48);
+  __iconData47.node;
+  var Minimize2 = createLucideIcon(__iconData47);
 
   // ../../original-source/node_modules/lucide-react/dist/esm/icons/package.mjs
-  var __iconData49 = {
+  var __iconData48 = {
     name: "package",
     size: 24,
     node: [
@@ -34882,11 +34873,11 @@
       ["path", { d: "m7.5 4.27 9 5.15", key: "1c824w" }]
     ]
   };
-  __iconData49.node;
-  var Package = createLucideIcon(__iconData49);
+  __iconData48.node;
+  var Package = createLucideIcon(__iconData48);
 
   // ../../original-source/node_modules/lucide-react/dist/esm/icons/palette.mjs
-  var __iconData50 = {
+  var __iconData49 = {
     name: "palette",
     size: 24,
     node: [
@@ -34903,11 +34894,11 @@
       ["circle", { cx: "8.5", cy: "7.5", r: ".5", fill: "currentColor", key: "fotxhn" }]
     ]
   };
-  __iconData50.node;
-  var Palette = createLucideIcon(__iconData50);
+  __iconData49.node;
+  var Palette = createLucideIcon(__iconData49);
 
   // ../../original-source/node_modules/lucide-react/dist/esm/icons/panel-left.mjs
-  var __iconData51 = {
+  var __iconData50 = {
     name: "panel-left",
     size: 24,
     node: [
@@ -34916,11 +34907,11 @@
     ],
     aliases: ["sidebar"]
   };
-  __iconData51.node;
-  var PanelLeft = createLucideIcon(__iconData51);
+  __iconData50.node;
+  var PanelLeft = createLucideIcon(__iconData50);
 
   // ../../original-source/node_modules/lucide-react/dist/esm/icons/panel-right.mjs
-  var __iconData52 = {
+  var __iconData51 = {
     name: "panel-right",
     size: 24,
     node: [
@@ -34928,11 +34919,11 @@
       ["path", { d: "M15 3v18", key: "14nvp0" }]
     ]
   };
-  __iconData52.node;
-  var PanelRight = createLucideIcon(__iconData52);
+  __iconData51.node;
+  var PanelRight = createLucideIcon(__iconData51);
 
   // ../../original-source/node_modules/lucide-react/dist/esm/icons/pencil.mjs
-  var __iconData53 = {
+  var __iconData52 = {
     name: "pencil",
     size: 24,
     node: [
@@ -34946,11 +34937,11 @@
       ["path", { d: "m15 5 4 4", key: "1mk7zo" }]
     ]
   };
-  __iconData53.node;
-  var Pencil = createLucideIcon(__iconData53);
+  __iconData52.node;
+  var Pencil = createLucideIcon(__iconData52);
 
   // ../../original-source/node_modules/lucide-react/dist/esm/icons/play.mjs
-  var __iconData54 = {
+  var __iconData53 = {
     name: "play",
     size: 24,
     node: [
@@ -34963,11 +34954,11 @@
       ]
     ]
   };
-  __iconData54.node;
-  var Play = createLucideIcon(__iconData54);
+  __iconData53.node;
+  var Play = createLucideIcon(__iconData53);
 
   // ../../original-source/node_modules/lucide-react/dist/esm/icons/plus.mjs
-  var __iconData55 = {
+  var __iconData54 = {
     name: "plus",
     size: 24,
     node: [
@@ -34975,11 +34966,11 @@
       ["path", { d: "M12 5v14", key: "s699le" }]
     ]
   };
-  __iconData55.node;
-  var Plus = createLucideIcon(__iconData55);
+  __iconData54.node;
+  var Plus = createLucideIcon(__iconData54);
 
   // ../../original-source/node_modules/lucide-react/dist/esm/icons/printer.mjs
-  var __iconData56 = {
+  var __iconData55 = {
     name: "printer",
     size: 24,
     node: [
@@ -34994,11 +34985,11 @@
       ["rect", { x: "6", y: "14", width: "12", height: "8", rx: "1", key: "1ue0tg" }]
     ]
   };
-  __iconData56.node;
-  var Printer = createLucideIcon(__iconData56);
+  __iconData55.node;
+  var Printer = createLucideIcon(__iconData55);
 
   // ../../original-source/node_modules/lucide-react/dist/esm/icons/redo-2.mjs
-  var __iconData57 = {
+  var __iconData56 = {
     name: "redo-2",
     size: 24,
     node: [
@@ -35006,11 +34997,11 @@
       ["path", { d: "M20 9H9.5A5.5 5.5 0 0 0 4 14.5A5.5 5.5 0 0 0 9.5 20H13", key: "6uklza" }]
     ]
   };
-  __iconData57.node;
-  var Redo2 = createLucideIcon(__iconData57);
+  __iconData56.node;
+  var Redo2 = createLucideIcon(__iconData56);
 
   // ../../original-source/node_modules/lucide-react/dist/esm/icons/rotate-ccw-clock.mjs
-  var __iconData58 = {
+  var __iconData57 = {
     name: "rotate-ccw-clock",
     size: 24,
     node: [
@@ -35020,11 +35011,11 @@
     ],
     aliases: ["history"]
   };
-  __iconData58.node;
-  var RotateCcwClock = createLucideIcon(__iconData58);
+  __iconData57.node;
+  var RotateCcwClock = createLucideIcon(__iconData57);
 
   // ../../original-source/node_modules/lucide-react/dist/esm/icons/rotate-ccw.mjs
-  var __iconData59 = {
+  var __iconData58 = {
     name: "rotate-ccw",
     size: 24,
     node: [
@@ -35032,11 +35023,11 @@
       ["path", { d: "M3 3v5h5", key: "1xhq8a" }]
     ]
   };
-  __iconData59.node;
-  var RotateCcw = createLucideIcon(__iconData59);
+  __iconData58.node;
+  var RotateCcw = createLucideIcon(__iconData58);
 
   // ../../original-source/node_modules/lucide-react/dist/esm/icons/rows-3.mjs
-  var __iconData60 = {
+  var __iconData59 = {
     name: "rows-3",
     size: 24,
     node: [
@@ -35046,11 +35037,11 @@
     ],
     aliases: ["panels-top-bottom"]
   };
-  __iconData60.node;
-  var Rows3 = createLucideIcon(__iconData60);
+  __iconData59.node;
+  var Rows3 = createLucideIcon(__iconData59);
 
   // ../../original-source/node_modules/lucide-react/dist/esm/icons/save.mjs
-  var __iconData61 = {
+  var __iconData60 = {
     name: "save",
     size: 24,
     node: [
@@ -35065,11 +35056,11 @@
       ["path", { d: "M7 3v4a1 1 0 0 0 1 1h7", key: "t51u73" }]
     ]
   };
-  __iconData61.node;
-  var Save = createLucideIcon(__iconData61);
+  __iconData60.node;
+  var Save = createLucideIcon(__iconData60);
 
   // ../../original-source/node_modules/lucide-react/dist/esm/icons/search.mjs
-  var __iconData62 = {
+  var __iconData61 = {
     name: "search",
     size: 24,
     node: [
@@ -35077,11 +35068,11 @@
       ["circle", { cx: "11", cy: "11", r: "8", key: "4ej97u" }]
     ]
   };
-  __iconData62.node;
-  var Search = createLucideIcon(__iconData62);
+  __iconData61.node;
+  var Search = createLucideIcon(__iconData61);
 
   // ../../original-source/node_modules/lucide-react/dist/esm/icons/settings.mjs
-  var __iconData63 = {
+  var __iconData62 = {
     name: "settings",
     size: 24,
     node: [
@@ -35095,11 +35086,11 @@
       ["circle", { cx: "12", cy: "12", r: "3", key: "1v7zrd" }]
     ]
   };
-  __iconData63.node;
-  var Settings = createLucideIcon(__iconData63);
+  __iconData62.node;
+  var Settings = createLucideIcon(__iconData62);
 
   // ../../original-source/node_modules/lucide-react/dist/esm/icons/sliders-horizontal.mjs
-  var __iconData64 = {
+  var __iconData63 = {
     name: "sliders-horizontal",
     size: 24,
     node: [
@@ -35114,11 +35105,11 @@
       ["path", { d: "M8 12H3", key: "a7s4jb" }]
     ]
   };
-  __iconData64.node;
-  var SlidersHorizontal = createLucideIcon(__iconData64);
+  __iconData63.node;
+  var SlidersHorizontal = createLucideIcon(__iconData63);
 
   // ../../original-source/node_modules/lucide-react/dist/esm/icons/spell-check-2.mjs
-  var __iconData65 = {
+  var __iconData64 = {
     name: "spell-check-2",
     size: 24,
     node: [
@@ -35133,11 +35124,11 @@
       ]
     ]
   };
-  __iconData65.node;
-  var SpellCheck2 = createLucideIcon(__iconData65);
+  __iconData64.node;
+  var SpellCheck2 = createLucideIcon(__iconData64);
 
   // ../../original-source/node_modules/lucide-react/dist/esm/icons/square-split-horizontal.mjs
-  var __iconData66 = {
+  var __iconData65 = {
     name: "square-split-horizontal",
     size: 24,
     node: [
@@ -35147,11 +35138,11 @@
     ],
     aliases: ["split-square-horizontal"]
   };
-  __iconData66.node;
-  var SquareSplitHorizontal = createLucideIcon(__iconData66);
+  __iconData65.node;
+  var SquareSplitHorizontal = createLucideIcon(__iconData65);
 
   // ../../original-source/node_modules/lucide-react/dist/esm/icons/sticky-note.mjs
-  var __iconData67 = {
+  var __iconData66 = {
     name: "sticky-note",
     size: 24,
     node: [
@@ -35165,11 +35156,11 @@
       ["path", { d: "M15 3v5a1 1 0 0 0 1 1h5", key: "6s6qgf" }]
     ]
   };
-  __iconData67.node;
-  var StickyNote = createLucideIcon(__iconData67);
+  __iconData66.node;
+  var StickyNote = createLucideIcon(__iconData66);
 
   // ../../original-source/node_modules/lucide-react/dist/esm/icons/tags.mjs
-  var __iconData68 = {
+  var __iconData67 = {
     name: "tags",
     size: 24,
     node: [
@@ -35187,11 +35178,11 @@
       ["circle", { cx: "10.5", cy: "6.5", r: ".5", fill: "currentColor", key: "12ikhr" }]
     ]
   };
-  __iconData68.node;
-  var Tags = createLucideIcon(__iconData68);
+  __iconData67.node;
+  var Tags = createLucideIcon(__iconData67);
 
   // ../../original-source/node_modules/lucide-react/dist/esm/icons/text-align-start.mjs
-  var __iconData69 = {
+  var __iconData68 = {
     name: "text-align-start",
     size: 24,
     node: [
@@ -35201,11 +35192,11 @@
     ],
     aliases: ["text", "align-left"]
   };
-  __iconData69.node;
-  var TextAlignStart = createLucideIcon(__iconData69);
+  __iconData68.node;
+  var TextAlignStart = createLucideIcon(__iconData68);
 
   // ../../original-source/node_modules/lucide-react/dist/esm/icons/trash.mjs
-  var __iconData70 = {
+  var __iconData69 = {
     name: "trash",
     size: 24,
     node: [
@@ -35217,11 +35208,11 @@
     ],
     aliases: ["trash-2"]
   };
-  __iconData70.node;
-  var Trash = createLucideIcon(__iconData70);
+  __iconData69.node;
+  var Trash = createLucideIcon(__iconData69);
 
   // ../../original-source/node_modules/lucide-react/dist/esm/icons/underline.mjs
-  var __iconData71 = {
+  var __iconData70 = {
     name: "underline",
     size: 24,
     node: [
@@ -35229,11 +35220,11 @@
       ["line", { x1: "4", x2: "20", y1: "20", y2: "20", key: "nun2al" }]
     ]
   };
-  __iconData71.node;
-  var Underline = createLucideIcon(__iconData71);
+  __iconData70.node;
+  var Underline = createLucideIcon(__iconData70);
 
   // ../../original-source/node_modules/lucide-react/dist/esm/icons/undo-2.mjs
-  var __iconData72 = {
+  var __iconData71 = {
     name: "undo-2",
     size: 24,
     node: [
@@ -35241,11 +35232,11 @@
       ["path", { d: "M4 9h10.5a5.5 5.5 0 0 1 5.5 5.5a5.5 5.5 0 0 1-5.5 5.5H11", key: "f3b9sd" }]
     ]
   };
-  __iconData72.node;
-  var Undo2 = createLucideIcon(__iconData72);
+  __iconData71.node;
+  var Undo2 = createLucideIcon(__iconData71);
 
   // ../../original-source/node_modules/lucide-react/dist/esm/icons/upload.mjs
-  var __iconData73 = {
+  var __iconData72 = {
     name: "upload",
     size: 24,
     node: [
@@ -35254,11 +35245,11 @@
       ["path", { d: "M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4", key: "ih7n3h" }]
     ]
   };
-  __iconData73.node;
-  var Upload = createLucideIcon(__iconData73);
+  __iconData72.node;
+  var Upload = createLucideIcon(__iconData72);
 
   // ../../original-source/node_modules/lucide-react/dist/esm/icons/user-round.mjs
-  var __iconData74 = {
+  var __iconData73 = {
     name: "user-round",
     size: 24,
     node: [
@@ -35267,11 +35258,11 @@
     ],
     aliases: ["user-2"]
   };
-  __iconData74.node;
-  var UserRound = createLucideIcon(__iconData74);
+  __iconData73.node;
+  var UserRound = createLucideIcon(__iconData73);
 
   // ../../original-source/node_modules/lucide-react/dist/esm/icons/x.mjs
-  var __iconData75 = {
+  var __iconData74 = {
     name: "x",
     size: 24,
     node: [
@@ -35279,8 +35270,8 @@
       ["path", { d: "m6 6 12 12", key: "d8bk6v" }]
     ]
   };
-  __iconData75.node;
-  var X = createLucideIcon(__iconData75);
+  __iconData74.node;
+  var X = createLucideIcon(__iconData74);
 
   // lib/visual-language.ts
   var FILM_BOARD = "$film";
@@ -63250,261 +63241,68 @@ ${prefix}
   }
 
   // components/development-sheet.tsx
-  var import_react17 = __toESM(require_react(), 1);
   var import_jsx_runtime16 = __toESM(require_jsx_runtime(), 1);
-  function readStoryBeats(value) {
-    try {
-      const items = JSON.parse(value || "[]");
-      return Array.isArray(items) ? items.filter((b) => b && typeof b.id === "string" && typeof b.title === "string" && typeof b.turn === "string") : [];
-    } catch {
-      return [];
-    }
-  }
-  var chapters = [["spark", "The spark", "Find the idea"], ["engine", "Story engine", "Desire meets pressure"], ["world", "World & tone", "Define the experience"], ["beats", "Turning points", "Build a sequence"], ["notes", "Open questions", "Keep exploring"]];
-  function DevelopmentSheet({ n, patch, children: children3, onCreateScene }) {
-    const [chapter, setChapter] = (0, import_react17.useState)("spark");
-    const room = (0, import_react17.useRef)(null);
-    (0, import_react17.useEffect)(() => {
-      const scroll = room.current?.closest(".editor-body");
-      if (scroll) scroll.scrollTop = 0;
-    }, [chapter]);
-    const get2 = (key2) => n.fields["development." + key2] || "";
-    const set = (key2, value) => patch(n.id, { fields: { ...n.fields, ["development." + key2]: value } });
-    const beats = readStoryBeats(get2("beats"));
-    const saveBeats = (next) => set("beats", JSON.stringify(next));
-    const field = (key2, label, hint, large = false) => /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("label", { className: "studio-field " + (large ? "field-featured" : ""), children: [
-      /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("span", { children: label }),
-      /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("small", { children: hint }),
-      /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("textarea", { rows: large ? 4 : 3, "aria-label": label, value: get2(key2), placeholder: hint, onChange: (e) => set(key2, e.target.value) })
-    ] }, key2);
-    const status = [["seed", "premise"], ["protagonist", "want", "conflict", "stakes"], ["world", "tone", "theme"], [], ["questions"]];
-    return /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { ref: room, className: "planning-sheet development-sheet story-lab", children: [
+  var prompts = [["seed", "The seed", "An image, a question, a situation, a feeling\u2014whatever started this idea."], ["premise", "Premise", "What is the central situation or possibility?"], ["logline", "Logline", "An optional one-sentence description of the story. It can change."], ["world", "The world", "How does this world work? Its everyday life, history, culture, systems, or invented rules."], ["theme", "What you want to explore", "Questions, themes, contradictions, or a personal reason to make this."], ["conflict", "Pressure & possibilities", "What disrupts this world? What could happen? Explore without committing."], ["tone", "Tone & experience", "How should it feel to watch? Form, genre, atmosphere, or experiments."], ["questions", "Unknowns & alternatives", "Unanswered questions, competing ideas, and things to investigate."]];
+  function DevelopmentSheet({ n, patch, children: children3 }) {
+    return /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "planning-sheet development-sheet", children: [
       /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("header", { children: [
-        /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("span", { className: "planning-symbol", children: /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(Lightbulb, { size: 25 }) }),
+        /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("span", { className: "planning-symbol", children: /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(Lightbulb, { size: 28, strokeWidth: 1.3 }) }),
         /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { children: [
-          /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "eyebrow", children: "THE DEVELOPMENT ROOM" }),
-          /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("h2", { children: "The spark." }),
-          /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("p", { children: "Find the story only you can tell." })
+          /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "eyebrow", children: "STORY DEVELOPMENT" }),
+          /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("h2", { children: n.title }),
+          /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("p", { children: "Explore the idea in your own order. Every prompt is optional." })
         ] })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("nav", { className: "lab-chapters", "aria-label": "Story development chapters", children: chapters.map(([id, title, detail], i) => /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("button", { "aria-pressed": chapter === id, onClick: () => setChapter(id), children: [
-        /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("span", { className: "chapter-number", children: [
-          "0",
-          i + 1
-        ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("span", { children: [
-          /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("strong", { children: title }),
-          /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("small", { children: detail })
-        ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("i", { "aria-label": (id === "beats" ? beats.length > 0 : status[i].some((key2) => get2(key2).trim())) ? "Started" : "Open", className: (id === "beats" ? beats.length > 0 : status[i].some((key2) => get2(key2).trim())) ? "started" : "" })
-      ] }, id)) }),
-      /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("section", { className: "lab-workspace", children: [
-        chapter === "spark" && /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)(import_jsx_runtime16.Fragment, { children: [
-          /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "lab-section-intro", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("span", { children: "01 / BEGIN ANYWHERE" }),
-            /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("h3", { children: "Hold onto the first image." }),
-            /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("p", { children: "A sentence, a memory, a contradiction. You can discover the structure later." })
-          ] }),
-          field("seed", "The seed", "What image, moment, or question will not leave you alone?", true),
-          field("premise", "The premise", "A person in a situation that cannot stay the same."),
-          /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("details", { className: "lab-detail", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("summary", { children: "Shape a one-sentence pitch" }),
-            field("logline", "Logline", "When something changes, someone must act, or risk losing something that matters.")
-          ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("button", { className: "lab-next", onClick: () => setChapter("engine"), children: [
-            "Find the story engine",
-            /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(ArrowRight, { size: 16 })
-          ] })
-        ] }),
-        chapter === "engine" && /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)(import_jsx_runtime16.Fragment, { children: [
-          /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "lab-section-intro", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("span", { children: "02 / MAKE IT MOVE" }),
-            /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("h3", { children: "Someone wants something." }),
-            /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("p", { children: "Connect the desire, the resistance, and the cost. These are working choices, not a checklist." })
-          ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "story-engine-preview", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("span", { children: "YOUR STORY IN MOTION" }),
-            /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("p", { children: [
-              /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("b", { children: get2("protagonist") || "Someone" }),
-              " wants ",
-              /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("b", { children: get2("want") || "something that matters" }),
-              ", but ",
-              /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("b", { children: get2("conflict") || "a force stands in the way" }),
-              ". If they fail, ",
-              /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("b", { children: get2("stakes") || "something will be lost" }),
-              "."
-            ] })
-          ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "lab-field-pair", children: [
-            field("protagonist", "At the centre", "Who has the most to lose?"),
-            field("want", "The pursuit", "What specific outcome are they chasing?"),
-            field("conflict", "Pressure & possibilities", "Who or what makes the pursuit difficult?"),
-            field("stakes", "The cost of failure", "What changes if they cannot get there?")
-          ] }),
-          field("theme", "What you want to explore", "What belief or contradiction will the story put under pressure?"),
-          /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("button", { className: "lab-next", onClick: () => setChapter("beats"), children: [
-            "Explore turning points",
-            /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(ArrowRight, { size: 16 })
-          ] })
-        ] }),
-        chapter === "world" && /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)(import_jsx_runtime16.Fragment, { children: [
-          /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "lab-section-intro", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("span", { children: "03 / THE EXPERIENCE" }),
-            /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("h3", { children: "Give the idea a world." }),
-            /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("p", { children: "Choose the rules and sensations that shape what can happen." })
-          ] }),
-          field("world", "The world", "Everyday life, history, culture, systems, or an invented rule.", true),
-          field("tone", "Tone & experience", "What should it feel like to be inside this story?"),
-          field("theme", "What you want to explore", "The question underneath the events.")
-        ] }),
-        chapter === "beats" && /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)(import_jsx_runtime16.Fragment, { children: [
-          /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "lab-section-intro", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("span", { children: "04 / CAUSE & CONSEQUENCE" }),
-            /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("h3", { children: "What changes next?" }),
-            /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("p", { children: "Collect turning points in any order. Give each one a consequence, then move it into place." })
-          ] }),
-          !beats.length && /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "lab-empty", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(Film, { size: 26 }),
-            /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("p", { children: "Start with a disruption, a difficult choice, or an ending you can see." })
-          ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("ol", { className: "story-beat-list", children: beats.map((b, i) => /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("li", { children: [
-            /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("span", { className: "beat-index", children: String(i + 1).padStart(2, "0") }),
-            /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { children: [
-              /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("input", { "aria-label": "Turning point " + (i + 1), placeholder: "A choice that changes things", value: b.title, onChange: (e) => saveBeats(beats.map((x) => x.id === b.id ? { ...x, title: e.target.value } : x)) }),
-              /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("textarea", { "aria-label": "Consequence " + (i + 1), placeholder: "Because of this, what changes?", value: b.turn, onChange: (e) => saveBeats(beats.map((x) => x.id === b.id ? { ...x, turn: e.target.value } : x)) }),
-              /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "beat-tools", children: [
-                /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("button", { "aria-label": "Move turning point " + (i + 1) + " earlier", disabled: i === 0, onClick: () => {
-                  const copy2 = [...beats];
-                  [copy2[i - 1], copy2[i]] = [copy2[i], copy2[i - 1]];
-                  saveBeats(copy2);
-                }, children: /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(ChevronUp, { size: 16 }) }),
-                /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("button", { "aria-label": "Move turning point " + (i + 1) + " later", disabled: i === beats.length - 1, onClick: () => {
-                  const copy2 = [...beats];
-                  [copy2[i + 1], copy2[i]] = [copy2[i], copy2[i + 1]];
-                  saveBeats(copy2);
-                }, children: /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(ChevronDown, { size: 16 }) }),
-                onCreateScene && /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("button", { disabled: !b.title.trim(), onClick: () => onCreateScene(b.title, b.turn), children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(Film, { size: 14 }),
-                  "Draft as a scene"
-                ] }),
-                /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("button", { "aria-label": "Remove turning point " + (i + 1), onClick: () => {
-                  if (window.confirm("Remove this turning point?")) saveBeats(beats.filter((x) => x.id !== b.id));
-                }, children: /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(X, { size: 15 }) })
-              ] })
-            ] })
-          ] }, b.id)) }),
-          /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("button", { className: "button secondary", onClick: () => saveBeats([...beats, { id: uid(), title: "", turn: "" }]), children: [
-            /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(Plus, { size: 15 }),
-            "Add a turning point"
-          ] })
-        ] }),
-        chapter === "notes" && /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)(import_jsx_runtime16.Fragment, { children: [
-          /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "lab-section-intro", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("span", { children: "05 / FOLLOW THE THREAD" }),
-            /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("h3", { children: "Leave room for discovery." }),
-            /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("p", { children: "Keep alternatives alive. The answers can change as you write." })
-          ] }),
-          field("questions", "Unknowns & alternatives", "What do you want to investigate or try differently?", true),
-          /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("section", { className: "planning-free-notes", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "section-label", children: "FREE EXPLORATION" }),
-            children3
-          ] })
-        ] })
-      ] }, chapter)
+      /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "development-intro", children: "Start with a spark. Shape the details as your story grows." }),
+      /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "planning-field-grid", children: prompts.map(([key2, label, placeholder]) => /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("label", { className: "planning-field", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("span", { children: label }),
+        /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("textarea", { rows: 4, "aria-label": label, value: n.fields["development." + key2] || "", placeholder, onChange: (e) => patch(n.id, { fields: { ...n.fields, ["development." + key2]: e.target.value } }) })
+      ] }, key2)) }),
+      /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("section", { className: "planning-free-notes", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "section-label", children: "FREE EXPLORATION \xB7 WRITE ANYTHING" }),
+        children3
+      ] })
     ] });
   }
 
   // components/planning-sheet.tsx
-  var import_react18 = __toESM(require_react(), 1);
   var import_jsx_runtime17 = __toESM(require_jsx_runtime(), 1);
-  function PlanningSheet({ n, patch, children: children3, images, project, onOpen }) {
-    const [tab, setTab] = (0, import_react18.useState)("story");
-    const room = (0, import_react18.useRef)(null);
-    (0, import_react18.useEffect)(() => {
-      const scroll = room.current?.closest(".editor-body");
-      if (scroll) scroll.scrollTop = 0;
-    }, [tab]);
+  function PlanningSheet({ n, patch, children: children3, images }) {
     const character = n.kind === "character", prop = n.kind === "prop";
-    const get2 = (key2) => n.fields["profile." + key2] || "";
-    const fields = character ? [
-      ["role", "Story role", "How do they alter the course of the story?"],
-      ["want", "Want", "The visible goal they are actively pursuing."],
-      ["need", "Need", "What must they understand or accept?"],
-      ["obstacle", "Resistance", "A person, a system, a fear, or their own contradiction."],
-      ["stakes", "Personal stakes", "What will failure cost this person?"],
-      ["voice", "Voice & behaviour", "A rhythm, a habit, a way of hiding what they feel."]
-    ] : prop ? [
-      ["purpose", "Dramatic purpose", "What can happen because this object exists?"],
-      ["appearance", "Recognisable details", "Material, wear, markings, weight, or a distinct silhouette."],
-      ["ownership", "Who has it now?", "Who holds it, and who wants it?"],
-      ["continuity", "State through the story", "Track its location, condition, and each change of hands."],
-      ["practical", "On-set requirements", "Working version, safe handling, duplicates, sourcing."]
-    ] : [["context", "Place & time", "When and where does the scene take place?"], ["appearance", "What we see", "The details that make this setting unmistakable."], ["atmosphere", "Sound, light & atmosphere", "What can the audience sense?"], ["purpose", "Dramatic function", "What does this place make possible or impossible?"], ["practical", "Production details", "Access, space, light, sound, and practical requirements."]];
-    const depth = character ? [["background", "Before the story", "A past event that still shapes their choices."], ["fear", "Fear & vulnerability", "What are they protecting?"], ["change", "From \u2192 to", "How do their choices change them, or reveal who they are?"], ["relationships", "Relationships", "Who brings out a different side of them?"]] : prop ? [["history", "History & meaning", "Where did it come from? Why is it irreplaceable?"], ["references", "Research & references", "Sources, links, dimensions, or questions to follow."]] : [["continuity", "Continuity", "How does this setting change between scenes?"], ["references", "Research & references", "Sources, links, or a place to investigate."]];
-    const field = ([key2, label, hint]) => /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("label", { className: "studio-field", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("span", { children: label }),
-      /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("small", { children: hint }),
-      /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("textarea", { rows: 3, "aria-label": label, value: get2(key2), placeholder: hint, onChange: (e) => patch(n.id, { fields: { ...n.fields, ["profile." + key2]: e.target.value } }) })
-    ] }, key2);
-    const scenes = tab === "connections" && project ? scenesForDraft(project).filter((s) => [...s.characters, ...s.locations, ...s.props].includes(n.id)) : [];
-    const others = project ? activeNodes(project).filter((p) => p.id !== n.id && ["character", "location", "prop"].includes(p.kind)) : [];
-    const related = get2("linkedProfiles").split(",").filter(Boolean);
-    return /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("div", { ref: room, className: "planning-sheet profile-dossier " + (character ? "character-sheet" : prop ? "prop-sheet" : "location-sheet"), children: [
+    const fields = character ? [["role", "Role in the story", ""], ["want", "What they want", "Their immediate goal, larger desire, or both."], ["obstacle", "What holds them back", "External obstacles, inner resistance, or contradictions."], ["relationships", "Relationships", "The people who shape their choices."], ["voice", "Voice & behaviour", "How this person speaks, acts, and responds."]] : prop ? [["purpose", "Story purpose", "What does this object make possible or change?"], ["appearance", "Appearance & details", "Shape, material, wear, markings, or scale."], ["ownership", "Ownership & handling", "Who owns, carries, finds, or uses it?"], ["continuity", "Continuity", "Where is it, and how does its condition change?"], ["practical", "Production notes", "Sourcing, duplicates, handling, or practical requirements."]] : [["context", "Place & time", ""], ["appearance", "What we see", "Physical details that matter to the scene."], ["atmosphere", "What we hear and feel", "Sound, light, activity, and atmosphere."], ["purpose", "What happens here", "How this place affects the story."], ["practical", "Practical details", "Access, space, props, or production notes."]];
+    const additional = character ? [["background", "Background"], ["fear", "Fear & vulnerability"], ["change", "How they change"]] : prop ? [["history", "History & meaning"], ["references", "References & research"]] : [["continuity", "Continuity"], ["references", "References & research"]];
+    function input(key2, label, placeholder = "", short = false) {
+      return /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("label", { className: "planning-field " + (short ? "short" : ""), children: [
+        /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("span", { children: label }),
+        short ? /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("input", { "aria-label": label, value: n.fields["profile." + key2] || "", onChange: (e) => patch(n.id, { fields: { ...n.fields, ["profile." + key2]: e.target.value } }), placeholder: "Write what matters to your story\u2026" }) : /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("textarea", { "aria-label": label, rows: 3, value: n.fields["profile." + key2] || "", onChange: (e) => patch(n.id, { fields: { ...n.fields, ["profile." + key2]: e.target.value } }), placeholder: placeholder || "Your notes\u2026" })
+      ] }, key2);
+    }
+    return /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("div", { className: "planning-sheet " + (character ? "character-sheet" : prop ? "prop-sheet" : "location-sheet"), children: [
       /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("header", { children: [
-        /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("span", { className: "planning-symbol", children: character ? /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(UserRound, { size: 26 }) : prop ? /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(Package, { size: 26 }) : /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(MapPin, { size: 26 }) }),
+        /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("span", { className: "planning-symbol", children: character ? /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(UserRound, { size: 28, strokeWidth: 1.3 }) : prop ? /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(Package, { size: 28, strokeWidth: 1.3 }) : /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(MapPin, { size: 28, strokeWidth: 1.3 }) }),
         /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("div", { children: [
-          /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("div", { className: "eyebrow", children: [
-            character ? "THE CAST" : prop ? "THE OBJECTS" : "THE LOCATIONS",
-            " / WORKING DOSSIER"
-          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("div", { className: "eyebrow", children: character ? "CHARACTER PROFILE" : prop ? "PROP PROFILE" : "LOCATION PROFILE" }),
           /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("h2", { children: n.title }),
-          /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("p", { children: character ? "Build a person whose choices move the story." : prop ? "Follow the object. Find the story it carries." : "A place with its own pressure and possibility." })
+          /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("p", { children: [
+            "A place to develop this ",
+            character ? "person" : prop ? "object" : "setting",
+            ". Use the fields that help you."
+          ] })
         ] })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("div", { className: "dossier-summary", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("span", { children: character ? "THE DRIVING FORCE" : prop ? "WHY IT MATTERS" : "THE SCENE EXPERIENCE" }),
-        /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("p", { children: get2(character ? "want" : "purpose") || "Start with its role in the story. The details can grow from there." })
-      ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("nav", { className: "dossier-tabs", "aria-label": "Profile sections", children: [["story", character ? "Desire & pressure" : prop ? "Purpose & continuity" : "Place & atmosphere"], ["depth", character ? "History & change" : "History & research"], ["visual", "Images"], ["connections", "Connections"], ["notes", "Notes"]].map(([id, label]) => /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("button", { "aria-pressed": tab === id, onClick: () => setTab(id), children: [
-        label,
-        id === "visual" && !!n.images?.length && /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("small", { children: n.images.length })
-      ] }, id)) }),
-      /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("section", { className: "dossier-content", children: [
-        tab === "story" && /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("div", { className: "lab-field-pair", children: fields.map(field) }),
-        tab === "depth" && /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("div", { className: "lab-field-pair", children: depth.map(field) }),
-        tab === "visual" && images,
-        tab === "notes" && /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("section", { className: "planning-free-notes", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("div", { className: "section-label", children: "SCENE IDEAS, OBSERVATIONS & FREE NOTES" }),
-          children3
+      images,
+      /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("div", { className: "planning-field-grid", children: fields.map(([key2, label, placeholder], i) => input(key2, label, placeholder, i === 0)) }),
+      /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("details", { className: "planning-extra", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("summary", { children: [
+          "Additional details",
+          /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(ChevronDown, { size: 14 })
         ] }),
-        tab === "connections" && /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)(import_jsx_runtime17.Fragment, { children: [
-          /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("div", { className: "lab-section-intro", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("span", { children: "IN THIS WORLD" }),
-            /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("h3", { children: "Nothing exists alone." }),
-            /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("p", { children: "Connect the people, places, and objects that shape this profile." })
-          ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("div", { className: "profile-connections", children: others.length ? others.map((p) => /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("label", { children: [
-            /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("input", { type: "checkbox", checked: related.includes(p.id), onChange: (e) => patch(n.id, { fields: { ...n.fields, "profile.linkedProfiles": (e.target.checked ? [...related, p.id] : related.filter((id) => id !== p.id)).join(",") } }) }),
-            /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("span", { children: [
-              p.title,
-              /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("small", { children: p.kind })
-            ] }),
-            onOpen && /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("button", { "aria-label": "Open " + p.title, onClick: () => onOpen(p.id), children: /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(ArrowUpRight, { size: 16 }) })
-          ] }, p.id)) : /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("p", { children: "Add another character, location, or object to connect it here." }) }),
-          /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("h3", { className: "dossier-subheading", children: "In the screenplay" }),
-          /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("p", { className: "dossier-hint", children: "Scenes detected in the active draft, including profiles linked with @." }),
-          /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("div", { className: "dossier-scene-list", children: scenes.length ? scenes.map((s) => /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("div", { className: "dossier-scene-entry", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("button", { onClick: () => onOpen?.(s.documentId), children: [
-              s.heading,
-              /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(ArrowUpRight, { size: 15 })
-            ] }),
-            prop && /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("label", { className: "studio-field", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("span", { children: "Condition in this scene" }),
-              /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("textarea", { rows: 2, "aria-label": "Object condition in " + s.heading, placeholder: "Who has it? What condition is it in?", value: get2("continuity." + s.id), onChange: (e) => patch(n.id, { fields: { ...n.fields, ["profile.continuity." + s.id]: e.target.value } }) })
-            ] })
-          ] }, s.id)) : /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("p", { children: "No matching scenes yet. Link this profile with @ in your screenplay." }) })
-        ] })
-      ] }, tab)
+        /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("div", { children: additional.map(([key2, label]) => input(key2, label)) })
+      ] }),
+      /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("section", { className: "planning-free-notes", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("div", { className: "section-label", children: "FREE NOTES" }),
+        children3
+      ] })
     ] });
   }
 
@@ -63576,8 +63374,8 @@ ${prefix}
   }
   var dateLabel = (date) => new Date(date).toLocaleString(void 0, { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" });
   function ModalFrame({ title, description, children: children3, close: close2, wide = false }) {
-    const ref = (0, import_react19.useRef)(null);
-    (0, import_react19.useEffect)(() => {
+    const ref = (0, import_react17.useRef)(null);
+    (0, import_react17.useEffect)(() => {
       const d = ref.current;
       d?.showModal();
       return () => {
@@ -63601,12 +63399,12 @@ ${prefix}
     ] });
   }
   function RichEditor({ n, project, patch, register, onSelection, zoom, font, page, dialogueFocus, readOnly = false }) {
-    const ref = (0, import_react19.useRef)(null);
-    const [element, setElement] = (0, import_react19.useState)("action");
-    (0, import_react19.useEffect)(() => {
+    const ref = (0, import_react17.useRef)(null);
+    const [element, setElement] = (0, import_react17.useState)("action");
+    (0, import_react17.useEffect)(() => {
       if (ref.current) ref.current.innerHTML = sanitize(n.html) || (n.kind === "screenplay" ? '<p data-element="scene"><br></p>' : "<p><br></p>");
     }, [n.id]);
-    (0, import_react19.useEffect)(() => {
+    (0, import_react17.useEffect)(() => {
       const el = ref.current;
       if (!el || sanitize(n.html) === sanitize(el.innerHTML)) return;
       const selection = window.getSelection();
@@ -63707,41 +63505,38 @@ ${prefix}
     ] });
   }
   function Studio({ accountName = "", accountUserId = "", allowLegacyArchive = false } = {}) {
-    const [stage, setStage] = (0, import_react19.useState)("atlas");
-    const [dockOpen, setDockOpen] = (0, import_react19.useState)(false);
-    const [visualSceneId, setVisualSceneId] = (0, import_react19.useState)("");
+    const [stage, setStage] = (0, import_react17.useState)("atlas");
+    const [dockOpen, setDockOpen] = (0, import_react17.useState)(false);
+    const [visualSceneId, setVisualSceneId] = (0, import_react17.useState)("");
     const phone = usePhoneLayout();
-    const [phonePanel, setPhonePanel] = (0, import_react19.useState)("");
-    const [workspace, setWorkspace] = (0, import_react19.useState)(emptyWorkspace);
-    const stateRef = (0, import_react19.useRef)(workspace);
-    const [loaded, setLoaded] = (0, import_react19.useState)(false), [status, setStatus] = (0, import_react19.useState)("loading"), [error2, setError] = (0, import_react19.useState)("");
-    const revision = (0, import_react19.useRef)(0), generation = (0, import_react19.useRef)(0), savedGeneration = (0, import_react19.useRef)(0), inflight = (0, import_react19.useRef)(false), blocked = (0, import_react19.useRef)(false), ready = (0, import_react19.useRef)(false), recoverBlock = (0, import_react19.useRef)(false), userKey = (0, import_react19.useRef)(accountUserId ? "workspace:" + accountUserId : "workspace"), accountId = (0, import_react19.useRef)(accountUserId);
-    const [projectId, setProjectId] = (0, import_react19.useState)(""), [selectedId, setSelectedId] = (0, import_react19.useState)(""), [mode, setMode] = (0, import_react19.useState)("editor"), [tabs, setTabs] = (0, import_react19.useState)([]), [expanded, setExpanded] = (0, import_react19.useState)([]);
-    const [prefs, setPrefs] = (0, import_react19.useState)(DEFAULT_PREFS), [inspectorTab, setInspectorTab] = (0, import_react19.useState)("notes"), [modal, setModal] = (0, import_react19.useState)(null), [menu, setMenu] = (0, import_react19.useState)(""), [focus2, setFocus] = (0, import_react19.useState)(false), [splitId, setSplitId] = (0, import_react19.useState)("");
-    const [query, setQuery] = (0, import_react19.useState)(""), [collectionId, setCollectionId] = (0, import_react19.useState)(""), [toast, setToast] = (0, import_react19.useState)(""), [dragId, setDragId] = (0, import_react19.useState)(""), [freeform, setFreeform] = (0, import_react19.useState)(false), [sort, setSort] = (0, import_react19.useState)("order");
-    const [importProblems, setImportProblems] = (0, import_react19.useState)([]), [importBusy, setImportBusy] = (0, import_react19.useState)(false);
-    const failedImports = (0, import_react19.useRef)([]), importLock = (0, import_react19.useRef)(false), cleanupLock = (0, import_react19.useRef)(false), currentProjectId = (0, import_react19.useRef)(projectId);
+    const [phonePanel, setPhonePanel] = (0, import_react17.useState)("");
+    const [workspace, setWorkspace] = (0, import_react17.useState)(emptyWorkspace);
+    const stateRef = (0, import_react17.useRef)(workspace);
+    const [loaded, setLoaded] = (0, import_react17.useState)(false), [status, setStatus] = (0, import_react17.useState)("loading"), [error2, setError] = (0, import_react17.useState)("");
+    const revision = (0, import_react17.useRef)(0), generation = (0, import_react17.useRef)(0), savedGeneration = (0, import_react17.useRef)(0), inflight = (0, import_react17.useRef)(false), blocked = (0, import_react17.useRef)(false), ready = (0, import_react17.useRef)(false), recoverBlock = (0, import_react17.useRef)(false), userKey = (0, import_react17.useRef)(accountUserId ? "workspace:" + accountUserId : "workspace"), accountId = (0, import_react17.useRef)(accountUserId);
+    const [projectId, setProjectId] = (0, import_react17.useState)(""), [selectedId, setSelectedId] = (0, import_react17.useState)(""), [mode, setMode] = (0, import_react17.useState)("editor"), [tabs, setTabs] = (0, import_react17.useState)([]), [expanded, setExpanded] = (0, import_react17.useState)([]);
+    const [prefs, setPrefs] = (0, import_react17.useState)(DEFAULT_PREFS), [inspectorTab, setInspectorTab] = (0, import_react17.useState)("notes"), [modal, setModal] = (0, import_react17.useState)(null), [menu, setMenu] = (0, import_react17.useState)(""), [focus2, setFocus] = (0, import_react17.useState)(false), [splitId, setSplitId] = (0, import_react17.useState)("");
+    const [query, setQuery] = (0, import_react17.useState)(""), [collectionId, setCollectionId] = (0, import_react17.useState)(""), [toast, setToast] = (0, import_react17.useState)(""), [dragId, setDragId] = (0, import_react17.useState)(""), [freeform, setFreeform] = (0, import_react17.useState)(false), [sort, setSort] = (0, import_react17.useState)("order");
+    const [importProblems, setImportProblems] = (0, import_react17.useState)([]), [importBusy, setImportBusy] = (0, import_react17.useState)(false);
+    const failedImports = (0, import_react17.useRef)([]), importLock = (0, import_react17.useRef)(false), cleanupLock = (0, import_react17.useRef)(false), currentProjectId = (0, import_react17.useRef)(projectId);
     currentProjectId.current = projectId;
-    const [manualSaving, setManualSaving] = (0, import_react19.useState)(false), [profileId, setProfileId] = (0, import_react19.useState)(""), [sceneReveal, setSceneReveal] = (0, import_react19.useState)(null);
-    const manualSaveLock = (0, import_react19.useRef)(false), saveFailure = (0, import_react19.useRef)("");
-    const [newDraftName, setNewDraftName] = (0, import_react19.useState)("");
-    const [newTitle, setNewTitle] = (0, import_react19.useState)(""), [newTemplate, setNewTemplate] = (0, import_react19.useState)("screenplay"), [compileFormat, setCompileFormat] = (0, import_react19.useState)("pdf"), [compileScope, setCompileScope] = (0, import_react19.useState)("draft"), [includeTitles, setIncludeTitles] = (0, import_react19.useState)(false), [titlePage, setTitlePage] = (0, import_react19.useState)(true), [compilePreview, setCompilePreview] = (0, import_react19.useState)(false);
-    const [replaceFind, setReplaceFind] = (0, import_react19.useState)(""), [replaceWith, setReplaceWith] = (0, import_react19.useState)(""), [replaceScope, setReplaceScope] = (0, import_react19.useState)("document"), [snapshotId, setSnapshotId] = (0, import_react19.useState)(""), [compareId, setCompareId] = (0, import_react19.useState)(""), [moveParent, setMoveParent] = (0, import_react19.useState)("");
-    const [vault, setVault] = (0, import_react19.useState)(null), [vaultError, setVaultError] = (0, import_react19.useState)(""), [vaultQuery, setVaultQuery] = (0, import_react19.useState)("");
-    const [recovery, setRecovery] = (0, import_react19.useState)(null), [lastSaved, setLastSaved] = (0, import_react19.useState)(""), [selectionQuote, setSelectionQuote] = (0, import_react19.useState)("");
-    const activeEditor = (0, import_react19.useRef)(null), range2 = (0, import_react19.useRef)(null), importInput = (0, import_react19.useRef)(null), restoreInput = (0, import_react19.useRef)(null), toastTimer = (0, import_react19.useRef)(null);
-    const editorBody = (0, import_react19.useRef)(null);
-    (0, import_react19.useEffect)(() => {
-      if (editorBody.current) editorBody.current.scrollTop = 0;
-    }, [selectedId, stage, mode]);
-    const undoStack = (0, import_react19.useRef)([]), redoStack = (0, import_react19.useRef)([]), lastMutation = (0, import_react19.useRef)("structure");
+    const [manualSaving, setManualSaving] = (0, import_react17.useState)(false), [profileId, setProfileId] = (0, import_react17.useState)(""), [sceneReveal, setSceneReveal] = (0, import_react17.useState)(null);
+    const manualSaveLock = (0, import_react17.useRef)(false), saveFailure = (0, import_react17.useRef)("");
+    const [newDraftName, setNewDraftName] = (0, import_react17.useState)("");
+    const [newTitle, setNewTitle] = (0, import_react17.useState)(""), [newTemplate, setNewTemplate] = (0, import_react17.useState)("screenplay"), [compileFormat, setCompileFormat] = (0, import_react17.useState)("pdf"), [compileScope, setCompileScope] = (0, import_react17.useState)("draft"), [includeTitles, setIncludeTitles] = (0, import_react17.useState)(false), [titlePage, setTitlePage] = (0, import_react17.useState)(true), [compilePreview, setCompilePreview] = (0, import_react17.useState)(false);
+    const [replaceFind, setReplaceFind] = (0, import_react17.useState)(""), [replaceWith, setReplaceWith] = (0, import_react17.useState)(""), [replaceScope, setReplaceScope] = (0, import_react17.useState)("document"), [snapshotId, setSnapshotId] = (0, import_react17.useState)(""), [compareId, setCompareId] = (0, import_react17.useState)(""), [moveParent, setMoveParent] = (0, import_react17.useState)("");
+    const [vault, setVault] = (0, import_react17.useState)(null), [vaultError, setVaultError] = (0, import_react17.useState)(""), [vaultQuery, setVaultQuery] = (0, import_react17.useState)("");
+    const [recovery, setRecovery] = (0, import_react17.useState)(null), [lastSaved, setLastSaved] = (0, import_react17.useState)(""), [selectionQuote, setSelectionQuote] = (0, import_react17.useState)("");
+    const activeEditor = (0, import_react17.useRef)(null), range2 = (0, import_react17.useRef)(null), importInput = (0, import_react17.useRef)(null), restoreInput = (0, import_react17.useRef)(null), toastTimer = (0, import_react17.useRef)(null);
+    const editorBody = (0, import_react17.useRef)(null);
+    const undoStack = (0, import_react17.useRef)([]), redoStack = (0, import_react17.useRef)([]), lastMutation = (0, import_react17.useRef)("structure");
     const project = workspace.projects.find((p) => p.id === projectId && !p.archived) || null, selected = project?.nodes.find((n) => n.id === selectedId) || null;
     const visibleProjects = workspace.projects.filter((p) => !p.archived), snapshots = workspace.snapshots.filter((s) => s.projectId === projectId && s.nodeId === selectedId).sort((a, b) => b.created.localeCompare(a.created));
     const scope = project ? selected?.kind === "folder" ? selected : project.nodes.find((n) => n.id === selected?.parent) || project.nodes.find((n) => n.role === "draft") : null;
     const libraryRoot = project ? sectionForNode(project, selectedId) || project.nodes.find((n) => n.role === "development") : void 0, libraryFolder = project ? sectionFolder(project, libraryRoot) : void 0;
     const libraryItems = project ? sectionEntries(project, libraryRoot) : [];
     const headingNode = ["corkboard", "outline"].includes(mode) ? scope : selected;
-    (0, import_react19.useEffect)(() => {
+    (0, import_react17.useEffect)(() => {
       editorBody.current?.scrollTo({ top: 0, left: 0 });
     }, [stage, selectedId, mode, projectId]);
     const collection = project?.collections.find((c) => c.id === collectionId), searching = !!query.trim() || !!collection;
@@ -63753,8 +63548,8 @@ ${prefix}
       if (toastTimer.current) clearTimeout(toastTimer.current);
       toastTimer.current = setTimeout(() => setToast(""), 3500);
     }
-    const cloudBase = (0, import_react19.useRef)(emptyWorkspace()), pulling = (0, import_react19.useRef)(false);
-    const applyRemote = (0, import_react19.useCallback)((result) => {
+    const cloudBase = (0, import_react17.useRef)(emptyWorkspace()), pulling = (0, import_react17.useRef)(false);
+    const applyRemote = (0, import_react17.useCallback)((result) => {
       if (accountId.current && result.userId && result.userId !== accountId.current) {
         blocked.current = true;
         saveFailure.current = "The local workspace changed. Reopen this app to use the new account.";
@@ -63798,7 +63593,7 @@ ${prefix}
       });
       return true;
     }, []);
-    const cloudSave = (0, import_react19.useCallback)(async () => {
+    const cloudSave = (0, import_react17.useCallback)(async () => {
       if (!ready.current || inflight.current || pulling.current || blocked.current || recoverBlock.current || generation.current === savedGeneration.current) return;
       inflight.current = true;
       saveFailure.current = "";
@@ -63832,7 +63627,7 @@ ${prefix}
         if (!blocked.current && generation.current !== savedGeneration.current && savedGeneration.current === savingGeneration) setTimeout(() => void cloudSave(), 300);
       }
     }, []);
-    (0, import_react19.useEffect)(() => {
+    (0, import_react17.useEffect)(() => {
       try {
         const p = JSON.parse(localStorage.getItem("desk-writing-preferences") || "{}");
         setPrefs({ ...DEFAULT_PREFS, ...p, font: !p.font || p.font === "IBM Plex Serif" || !p.typographyVersion && p.font === "Georgia" ? "DM Sans" : p.font, palette: "carbon", dark: false, binder: false, inspector: false });
@@ -63902,14 +63697,14 @@ ${prefix}
       }
       void load();
     }, []);
-    (0, import_react19.useEffect)(() => {
+    (0, import_react17.useEffect)(() => {
       if (!loaded) return;
       try {
         localStorage.setItem("desk-writing-preferences", JSON.stringify({ ...prefs, atlasVersion: 2, typographyVersion: 1 }));
       } catch {
       }
     }, [prefs, loaded]);
-    (0, import_react19.useEffect)(() => {
+    (0, import_react17.useEffect)(() => {
       if (!loaded || recoverBlock.current) return;
       const timer = setTimeout(() => {
         void recoverWrite(userKey.current, { state: stateRef.current, revision: revision.current, pending: generation.current !== savedGeneration.current }).catch(() => {
@@ -63919,7 +63714,7 @@ ${prefix}
       }, 700);
       return () => clearTimeout(timer);
     }, [workspace, loaded, cloudSave]);
-    const refreshCloud = (0, import_react19.useCallback)(async () => {
+    const refreshCloud = (0, import_react17.useCallback)(async () => {
       if (!ready.current || inflight.current || pulling.current || blocked.current || recoverBlock.current || !navigator.onLine || document.visibilityState === "hidden") return;
       pulling.current = true;
       try {
@@ -63935,7 +63730,7 @@ ${prefix}
         void cloudSave();
       }
     }, [applyRemote, cloudSave]);
-    (0, import_react19.useEffect)(() => {
+    (0, import_react17.useEffect)(() => {
       if (!loaded) return;
       const refresh = () => void refreshCloud();
       const leaving = () => {
@@ -63956,7 +63751,7 @@ ${prefix}
         document.removeEventListener("visibilitychange", leaving);
       };
     }, [loaded, refreshCloud, cloudSave]);
-    (0, import_react19.useEffect)(() => {
+    (0, import_react17.useEffect)(() => {
       const retry = () => void cloudSave();
       window.addEventListener("online", retry);
       const timer = setInterval(retry, 15e3);
@@ -63973,19 +63768,19 @@ ${prefix}
         clearInterval(timer);
       };
     }, [cloudSave]);
-    (0, import_react19.useEffect)(() => {
+    (0, import_react17.useEffect)(() => {
       if (projectId) try {
         localStorage.setItem("desk-last-project", projectId);
       } catch {
       }
     }, [projectId]);
-    (0, import_react19.useEffect)(() => {
+    (0, import_react17.useEffect)(() => {
       if (projectId && selectedId && loaded) try {
         localStorage.setItem("desk-last-document:" + projectId, selectedId);
       } catch {
       }
     }, [projectId, selectedId, loaded]);
-    (0, import_react19.useEffect)(() => {
+    (0, import_react17.useEffect)(() => {
       if (allowLegacyArchive && modal === "vault" && !vault) {
         fetch("/legacy/session-vault.json").then((r) => {
           if (!r.ok) throw Error("Could not load previous Vault");
@@ -64286,7 +64081,7 @@ ${prefix}
       setMode("corkboard");
       notify("Deleted permanently. Unused file cleanup runs after saving.");
     }
-    (0, import_react19.useEffect)(() => {
+    (0, import_react17.useEffect)(() => {
       if (!loaded || status !== "saved" || !workspace.pendingAssetDeletes?.length) return;
       let cancelled = false;
       const cleanup = async () => {
@@ -64691,7 +64486,7 @@ ${prefix}
           break;
       }
     }
-    (0, import_react19.useEffect)(() => {
+    (0, import_react17.useEffect)(() => {
       function keys3(e) {
         if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
           e.preventDefault();
@@ -64723,16 +64518,16 @@ ${prefix}
       document.addEventListener("keydown", keys3);
       return () => document.removeEventListener("keydown", keys3);
     });
-    (0, import_react19.useEffect)(() => {
+    (0, import_react17.useEffect)(() => {
       if (!menu) return;
       const close2 = () => setMenu("");
       document.addEventListener("click", close2);
       return () => document.removeEventListener("click", close2);
     }, [menu]);
-    (0, import_react19.useEffect)(() => {
+    (0, import_react17.useEffect)(() => {
       setDockOpen(false);
     }, [stage, mode, selectedId, projectId]);
-    (0, import_react19.useEffect)(() => {
+    (0, import_react17.useEffect)(() => {
       if (!dockOpen || stage === "atlas") return;
       const close2 = (e) => {
         if (e.target instanceof Element && !e.target.closest(".creative-dock, .dock-bubble")) setDockOpen(false);
@@ -64751,7 +64546,7 @@ ${prefix}
       window.addEventListener("pointermove", move);
       window.addEventListener("pointerup", end);
     }
-    const inlineImage = (0, import_react19.useRef)(false);
+    const inlineImage = (0, import_react17.useRef)(false);
     async function importFiles(files) {
       if (!files?.length || importLock.current) return;
       if (!project) {
@@ -65013,26 +64808,19 @@ ${prefix}
       const prose = /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(RichEditor, { n, project, patch, register: (el, n2) => {
         if (el) activeEditor.current = { el, id: n2.id };
       }, onSelection: selection, zoom: prefs.zoom, font: prefs.font, page: false, dialogueFocus: false }, n.id + "-" + n.kind);
-      return saveDocument(n, n.fields["development.kind"] === "foundation" ? /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(DevelopmentSheet, { n, patch, onCreateScene: (title, turn) => {
-        const root = activeDraftRoot(project);
-        if (!root) return;
-        const scene = node(title, "screenplay", root.id, children(project, root.id).length, { html: '<p data-element="action" data-script-mode="auto"></p>', synopsis: turn });
-        changeProject((p) => p.nodes.push(scene), true);
-        openNodeAfter(scene);
-        notify("Turning point copied to a new scene.");
-      }, children: prose }, n.id) : isProfileKind(n.kind) ? /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(PlanningSheet, { n, patch, project, onOpen: openNode, images: /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(ProfileImages, { n, mutate: (fn, removed) => updateProfileImages(n.id, fn, removed) }, n.id), children: prose }, n.id) : prose);
+      return saveDocument(n, n.fields["development.kind"] === "foundation" ? /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(DevelopmentSheet, { n, patch, children: prose }) : isProfileKind(n.kind) ? /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(PlanningSheet, { n, patch, images: /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(ProfileImages, { n, mutate: (fn, removed) => updateProfileImages(n.id, fn, removed) }, n.id), children: prose }) : prose);
     }
     const totalWords = project ? compileNodes(project).reduce((s, n) => s + wordCount(n.html), 0) : 0;
     const saveLabel = { loading: "Opening workspace\u2026", saved: "All changes saved locally", saving: "Saving\u2026", pending: "Unsaved changes", offline: "Offline \xB7 device copy", error: "Save needs attention", conflict: "Another session changed this workspace" }[status];
-    const [pdfPreviewUrl, setPdfPreviewUrl] = (0, import_react19.useState)("");
-    (0, import_react19.useEffect)(() => {
+    const [pdfPreviewUrl, setPdfPreviewUrl] = (0, import_react17.useState)("");
+    (0, import_react17.useEffect)(() => {
       setCompilePreview(false);
       if (pdfPreviewUrl) {
         URL.revokeObjectURL(pdfPreviewUrl);
         setPdfPreviewUrl("");
       }
     }, [compileScope, compileFormat, includeTitles, titlePage, projectId, project?.activeDraftId, JSON.stringify(project?.titlePage)]);
-    const [showArchived, setShowArchived] = (0, import_react19.useState)(false);
+    const [showArchived, setShowArchived] = (0, import_react17.useState)(false);
     function recoverDevice() {
       if (!recovery) return;
       recoverBlock.current = false;
@@ -65969,7 +65757,7 @@ ${prefix}
               ] })
             ] })
           ] }),
-          project && !stage && ["editor", "scrivenings"].includes(mode) && selected?.kind === "text" && (selected.fields["development.kind"] === "foundation" ? /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("details", { className: "foundation-formatting", children: [
+          project && !stage && ["editor", "scrivenings"].includes(mode) && selected?.kind === "text" && (phone && selected.fields["development.kind"] === "foundation" ? /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("details", { className: "foundation-formatting", children: [
             /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("summary", { children: [
               "Free-note formatting",
               /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(ChevronDown, { size: 14 })
@@ -66140,7 +65928,7 @@ ${prefix}
           /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("input", { autoFocus: true, value: newTitle, onChange: (e) => setNewTitle(e.target.value), placeholder: "Name this world" })
         ] }),
         /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("label", { className: "form-label", children: "START WITH" }),
-        /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { className: "template-grid", children: [["screenplay", Film, "Screenplay", "Scenes, characters, locations, and research."], ["novel", BookOpen, "Manuscript", "A flexible home for chapters and scenes."], ["blank", FileText, "Blank project", "An open structure. Make it yours."]].map(([id, Icon2, title, desc]) => /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("button", { type: "button", className: "template-card " + (newTemplate === id ? "chosen" : ""), "aria-pressed": newTemplate === id, onClick: () => setNewTemplate(id), children: [
+        /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { className: "template-grid", children: [["screenplay", Film, "Screenplay", "Scenes, characters, locations, and research."], ["novel", BookOpen, "Manuscript", "A flexible home for chapters and scenes."], ["blank", FileText, "Blank project", "An open structure. Make it yours."]].map(([id, Icon2, title, desc]) => /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("button", { type: "button", className: "template-card " + (newTemplate === id ? "chosen" : ""), onClick: () => setNewTemplate(id), children: [
           /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(Icon2, { size: 24, strokeWidth: 1.3 }),
           /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("strong", { children: title }),
           /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("span", { children: desc }),
@@ -66737,7 +66525,7 @@ ${prefix}
     if (originalFetch) return originalFetch(input, init2);
     throw Error("Network requests are unavailable.");
   };
-  var ErrorBoundary = class extends import_react20.default.Component {
+  var ErrorBoundary = class extends import_react18.default.Component {
     constructor() {
       super(...arguments);
       this.state = { error: "" };
@@ -66874,7 +66662,6 @@ lucide-react/dist/esm/icons/check.mjs:
 lucide-react/dist/esm/icons/chevron-down.mjs:
 lucide-react/dist/esm/icons/chevron-left.mjs:
 lucide-react/dist/esm/icons/chevron-right.mjs:
-lucide-react/dist/esm/icons/chevron-up.mjs:
 lucide-react/dist/esm/icons/circle-alert.mjs:
 lucide-react/dist/esm/icons/circle-check.mjs:
 lucide-react/dist/esm/icons/cloud.mjs:

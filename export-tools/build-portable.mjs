@@ -17,6 +17,7 @@ for(const name of fs.readdirSync(sourceDir)){if(name==='node_modules'||name==='.
 fs.cpSync(path.join(toolDir,'overrides'),work,{recursive:true});
 fs.symlinkSync(deps,path.join(work,'node_modules'),'junction');
 await esbuild.build({absWorkingDir:work,entryPoints:['portable-entry.tsx'],outfile:out+'/script.js',bundle:true,format:'iife',platform:'browser',target:'es2022',jsx:'automatic',nodePaths:[deps],define:{'process.env.NODE_ENV':'"production"'},minify:false,legalComments:'eof',metafile:true});
+if (!process.argv.includes('--scripts-only')) {
 const layout=fs.readFileSync(work+'/app/layout.tsx','utf8');
 const fonts=[...layout.matchAll(/import "(@fontsource\/[^"]+\.css)"/g)].map(m=>m[1]);
 let css='';
@@ -27,6 +28,7 @@ fs.writeFileSync(work+'/portable-processed.css',processed.css);
 await esbuild.build({absWorkingDir:work,entryPoints:['portable-processed.css'],outfile:out+'/styles.css',bundle:true,loader:{'.woff2':'dataurl','.woff':'dataurl','.ttf':'dataurl','.png':'dataurl','.svg':'dataurl'},legalComments:'eof',minify:false});
 const logo='data:image/png;base64,'+fs.readFileSync(work+'/public/brand/lightbox-approved-192.png').toString('base64');
 if (!fs.existsSync(out+'/index.html')) fs.writeFileSync(out+'/index.html',`<!doctype html>\n<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><meta name="theme-color" content="#f5efdf"><title>Lightbox — Portable workspace (v64)</title><link rel="icon" href="${logo}"><link rel="stylesheet" href="./styles.css"></head><body class="antialiased"><div id="root"></div><noscript>Enable JavaScript to use Lightbox.</noscript><script defer src="./script.js"></script></body></html>\n`);
-fs.copyFileSync(work+'/app/studio-refresh.css',out+'/studio-refresh.css');
-for (const file of ['script.js','styles.css']) {const target=out+'/'+file;const value=fs.readFileSync(target,'utf8').replace(/[ \t]+$/gm,'').replace(/\r?\n/g,'\r\n');fs.writeFileSync(target,value);}
+}
+fs.copyFileSync(work+'/app/screenplay-polish.css',out+'/screenplay-polish.css');
+for (const file of (process.argv.includes('--scripts-only')?['script.js']:['script.js','styles.css'])) {const target=out+'/'+file;const value=fs.readFileSync(target,'utf8').replace(/[ \t]+$/gm,'').replace(/\r?\n/g,'\r\n');fs.writeFileSync(target,value);}
 console.log('Portable bundle created. Existing hosting HTML preserved.');

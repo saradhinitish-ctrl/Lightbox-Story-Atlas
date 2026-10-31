@@ -12764,12 +12764,12 @@
         return x === y && (0 !== x || 1 / x === 1 / y) || x !== x && y !== y;
       }
       var objectIs = "function" === typeof Object.is ? Object.is : is;
-      var useState12 = React3.useState;
-      var useEffect11 = React3.useEffect;
+      var useState13 = React3.useState;
+      var useEffect12 = React3.useEffect;
       var useLayoutEffect2 = React3.useLayoutEffect;
       var useDebugValue2 = React3.useDebugValue;
       function useSyncExternalStore$2(subscribe, getSnapshot) {
-        var value = getSnapshot(), _useState = useState12({ inst: { value, getSnapshot } }), inst = _useState[0].inst, forceUpdate = _useState[1];
+        var value = getSnapshot(), _useState = useState13({ inst: { value, getSnapshot } }), inst = _useState[0].inst, forceUpdate = _useState[1];
         useLayoutEffect2(
           function() {
             inst.value = value;
@@ -12778,7 +12778,7 @@
           },
           [subscribe, value, getSnapshot]
         );
-        useEffect11(
+        useEffect12(
           function() {
             checkIfSnapshotChanged(inst) && forceUpdate({ inst });
             return subscribe(function() {
@@ -12831,12 +12831,12 @@
       }
       var objectIs = "function" === typeof Object.is ? Object.is : is;
       var useSyncExternalStore2 = shim.useSyncExternalStore;
-      var useRef10 = React3.useRef;
-      var useEffect11 = React3.useEffect;
+      var useRef11 = React3.useRef;
+      var useEffect12 = React3.useEffect;
       var useMemo5 = React3.useMemo;
       var useDebugValue2 = React3.useDebugValue;
       exports.useSyncExternalStoreWithSelector = function(subscribe, getSnapshot, getServerSnapshot, selector, isEqual) {
-        var instRef = useRef10(null);
+        var instRef = useRef11(null);
         if (null === instRef.current) {
           var inst = { hasValue: false, value: null };
           instRef.current = inst;
@@ -12876,7 +12876,7 @@
           [getSnapshot, getServerSnapshot, selector, isEqual]
         );
         var value = useSyncExternalStore2(subscribe, instRef[0], instRef[1]);
-        useEffect11(
+        useEffect12(
           function() {
             inst.hasValue = true;
             inst.value = value;
@@ -33937,11 +33937,11 @@
   });
 
   // portable-entry.tsx
-  var import_react18 = __toESM(require_react(), 1);
+  var import_react19 = __toESM(require_react(), 1);
   var import_client = __toESM(require_client(), 1);
 
   // components/writing-studio.tsx
-  var import_react17 = __toESM(require_react(), 1);
+  var import_react18 = __toESM(require_react(), 1);
 
   // ../../original-source/node_modules/lucide-react/dist/esm/createLucideIcon.mjs
   var import_react3 = __toESM(require_react(), 1);
@@ -62457,18 +62457,100 @@ ${prefix}
   }
 
   // components/story-atlas.tsx
+  var import_react14 = __toESM(require_react(), 1);
+
+  // components/install-app.tsx
   var import_react13 = __toESM(require_react(), 1);
   var import_jsx_runtime12 = __toESM(require_jsx_runtime(), 1);
+  var pendingPrompt = null;
+  var installationAccepted = false;
+  function InstallApp() {
+    const steps = (0, import_react13.useRef)(null);
+    const [prompt, setPrompt] = (0, import_react13.useState)(pendingPrompt), [installed, setInstalled] = (0, import_react13.useState)(installationAccepted), [expanded, setExpanded] = (0, import_react13.useState)(false), [busy, setBusy] = (0, import_react13.useState)(false), [platform, setPlatform] = (0, import_react13.useState)("desktop");
+    (0, import_react13.useEffect)(() => {
+      if (expanded) steps.current?.scrollIntoView({ block: "nearest", behavior: "auto" });
+    }, [expanded]);
+    (0, import_react13.useEffect)(() => {
+      const mode = window.matchMedia("(display-mode: standalone)");
+      setInstalled(installationAccepted || mode.matches || Boolean(navigator.standalone));
+      const ua = navigator.userAgent;
+      setPlatform(/iPad|iPhone|iPod/.test(ua) || /Mac/.test(ua) && navigator.maxTouchPoints > 1 ? "ios" : /Android/.test(ua) ? "android" : /Mac/.test(ua) && /Safari/.test(ua) && !/Chrome|Chromium/.test(ua) ? "safari" : "desktop");
+      const ready = (event) => {
+        event.preventDefault();
+        pendingPrompt = event;
+        setPrompt(pendingPrompt);
+      };
+      const done = () => {
+        installationAccepted = true;
+        pendingPrompt = null;
+        setPrompt(null);
+        setInstalled(true);
+      };
+      const changed = () => setInstalled(installationAccepted || mode.matches || Boolean(navigator.standalone));
+      window.addEventListener("beforeinstallprompt", ready);
+      window.addEventListener("appinstalled", done);
+      mode.addEventListener("change", changed);
+      return () => {
+        window.removeEventListener("beforeinstallprompt", ready);
+        window.removeEventListener("appinstalled", done);
+        mode.removeEventListener("change", changed);
+      };
+    }, []);
+    async function install() {
+      if (!prompt) {
+        setExpanded((v) => !v);
+        return;
+      }
+      const event = prompt;
+      pendingPrompt = null;
+      setPrompt(null);
+      setBusy(true);
+      try {
+        await event.prompt();
+        const result = await event.userChoice;
+        if (result.outcome === "accepted") {
+          installationAccepted = true;
+          setInstalled(true);
+        }
+      } catch {
+        setExpanded(true);
+      } finally {
+        setBusy(false);
+      }
+    }
+    if (installed) return null;
+    return /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("footer", { className: "install-app", "aria-label": "Get the Lightbox app", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "install-app-row", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("strong", { children: "Make room for the full experience." }),
+          /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("p", { children: "Keep Lightbox on your home screen or desktop." })
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("button", { className: "button secondary", disabled: busy, "aria-expanded": expanded, "aria-controls": "lightbox-install-steps", onClick: () => void install(), children: [
+          /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(Download, { size: 16 }),
+          busy ? "Opening\u2026" : "Download the app"
+        ] })
+      ] }),
+      expanded && /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { ref: steps, id: "lightbox-install-steps", className: "install-app-steps", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("button", { className: "icon-button", "aria-label": "Close install instructions", onClick: () => setExpanded(false), children: /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(X, { size: 16 }) }),
+        /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("strong", { children: "Install Lightbox" }),
+        platform === "ios" ? /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("p", { children: "Open Lightbox in Safari. Tap Share, then Add to Home Screen. Keep Open as Web App enabled if shown, then tap Add." }) : platform === "android" ? /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("p", { children: "Open your browser menu and choose Install app or Add to Home screen, then confirm. If the option is missing, try Chrome." }) : platform === "safari" ? /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("p", { children: "In Safari, open File \u2192 Add to Dock, then click Add." }) : /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("p", { children: "In Chrome or Edge, look for the install icon in the address bar, or open the browser menu and choose Install Lightbox. In Safari on Mac, choose File \u2192 Add to Dock." }),
+        /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("small", { children: "Installs from your browser. Your writing stays saved in this browser; export a backup before changing browsers or devices." })
+      ] })
+    ] });
+  }
+
+  // components/story-atlas.tsx
+  var import_jsx_runtime13 = __toESM(require_jsx_runtime(), 1);
   function SceneStrip({ scenes, onScene }) {
-    return /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { className: "atlas-scene-strip", "aria-label": "Scene reel", children: scenes.length ? scenes.map((scene, i) => /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("button", { onClick: () => onScene(scene.documentId, scene.key), children: [
-      /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("span", { children: String(i + 1).padStart(2, "0") }),
-      /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("strong", { children: scene.meta.title || scene.heading }),
-      /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("small", { children: [
+    return /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("div", { className: "atlas-scene-strip", "aria-label": "Scene reel", children: scenes.length ? scenes.map((scene, i) => /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("button", { onClick: () => onScene(scene.documentId, scene.key), children: [
+      /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("span", { children: String(i + 1).padStart(2, "0") }),
+      /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("strong", { children: scene.meta.title || scene.heading }),
+      /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("small", { children: [
         scene.words,
         " words",
-        /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(ArrowUpRight, { size: 12 })
+        /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(ArrowUpRight, { size: 12 })
       ] })
-    ] }, scene.id)) : /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("p", { children: "Your scene reel appears here as you write." }) });
+    ] }, scene.id)) : /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("p", { children: "Your scene reel appears here as you write." }) });
   }
   function StoryAtlas(props) {
     const { project, onFoundation, onWrite, onMoodboard, onBeats, onSection, onOpen, onScene, onRename, view, onView } = props;
@@ -62482,10 +62564,10 @@ ${prefix}
     const researchNotes = nodes.filter((n) => n.parent === researchRoot?.id && n.kind !== "folder").slice(0, 2);
     const counts = { characters: nodes.filter((n) => n.kind === "character").length, locations: nodes.filter((n) => n.kind === "location").length, props: nodes.filter((n) => n.kind === "prop").length };
     const recent = [...nodes].filter((n) => n.kind !== "folder" && (plain(n.html).trim() || n.synopsis || Object.values(n.fields).some((v) => v && v !== "foundation"))).sort((a, b) => b.updated.localeCompare(a.updated)).slice(0, 3);
-    const [sceneId, setSceneId] = (0, import_react13.useState)(""), [sceneQuery, setSceneQuery] = (0, import_react13.useState)(""), [slide, setSlide] = (0, import_react13.useState)(0);
+    const [sceneId, setSceneId] = (0, import_react14.useState)(""), [sceneQuery, setSceneQuery] = (0, import_react14.useState)(""), [slide, setSlide] = (0, import_react14.useState)(0);
     const matched = scenes.filter((s) => (s.heading + " " + (s.meta.title || "")).toLowerCase().includes(sceneQuery.toLowerCase()));
     const selectedScene = matched.find((s) => s.id === sceneId) || matched[0];
-    (0, import_react13.useEffect)(() => {
+    (0, import_react14.useEffect)(() => {
       const down = (e) => {
         if (e.target.closest("input,textarea,[contenteditable=true],dialog")) return;
         if (view === "pitch" && (e.key === "ArrowRight" || e.key === "ArrowLeft")) {
@@ -62496,50 +62578,50 @@ ${prefix}
       window.addEventListener("keydown", down);
       return () => window.removeEventListener("keydown", down);
     }, [view, images.length]);
-    (0, import_react13.useEffect)(() => {
+    (0, import_react14.useEffect)(() => {
       setSlide(0);
       setSceneId("");
     }, [project.id]);
     if (view === "pitch") {
       const card = images[Math.max(0, slide - 1)];
-      return /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "pitch-stage", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "pitch-label", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(Play, { size: 14 }),
+      return /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "pitch-stage", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "pitch-label", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(Play, { size: 14 }),
           "DIRECTOR'S PITCH",
-          /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("span", { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("span", { children: [
             String(slide + 1).padStart(2, "0"),
             " / ",
             String(images.length + 1).padStart(2, "0")
           ] })
         ] }),
-        slide === 0 ? /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "pitch-title", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("span", { className: "atlas-eyebrow", children: "A FILM IN DEVELOPMENT" }),
-          /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("h1", { children: project.title }),
-          /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("p", { children: idea || "Add a premise or logline in Story Foundation to introduce your film." }),
-          project.author && /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("small", { children: [
+        slide === 0 ? /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "pitch-title", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("span", { className: "atlas-eyebrow", children: "A FILM IN DEVELOPMENT" }),
+          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("h1", { children: project.title }),
+          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("p", { children: idea || "Add a premise or logline in Story Foundation to introduce your film." }),
+          project.author && /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("small", { children: [
             "A film by ",
             project.author
           ] }),
-          !images.length && /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("button", { className: "pitch-add-frames", onClick: () => onMoodboard(), children: [
-            /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(Palette, { size: 15 }),
+          !images.length && /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("button", { className: "pitch-add-frames", onClick: () => onMoodboard(), children: [
+            /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(Palette, { size: 15 }),
             "Add visual frames to this pitch",
-            /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(ArrowUpRight, { size: 14 })
+            /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(ArrowUpRight, { size: 14 })
           ] })
-        ] }) : card && /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("figure", { className: "pitch-frame", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("img", { src: safeUrl(card.asset.url), alt: card.title }),
-          /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("figcaption", { children: [
-            /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("strong", { children: card.title }),
-            /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("p", { children: card.purpose || plain(card.notesHtml || "") || card.text })
+        ] }) : card && /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("figure", { className: "pitch-frame", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("img", { src: safeUrl(card.asset.url), alt: card.title }),
+          /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("figcaption", { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("strong", { children: card.title }),
+            /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("p", { children: card.purpose || plain(card.notesHtml || "") || card.text })
           ] })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "pitch-controls", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("button", { onClick: () => onView("atlas"), children: [
-            /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(Layers, { size: 16 }),
+        /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "pitch-controls", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("button", { onClick: () => onView("atlas"), children: [
+            /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(Layers, { size: 16 }),
             "Back to atlas"
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("span", { children: "Arrow keys to navigate" }),
-          /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("button", { "aria-label": "Previous pitch slide", disabled: slide === 0, onClick: () => setSlide((s) => s - 1), children: /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(ChevronLeft, { size: 20 }) }),
-          /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("button", { "aria-label": "Next pitch slide", disabled: slide >= images.length, onClick: () => setSlide((s) => s + 1), children: /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(ChevronRight, { size: 20 }) })
+          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("span", { children: "Arrow keys to navigate" }),
+          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("button", { "aria-label": "Previous pitch slide", disabled: slide === 0, onClick: () => setSlide((s) => s - 1), children: /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(ChevronLeft, { size: 20 }) }),
+          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("button", { "aria-label": "Next pitch slide", disabled: slide >= images.length, onClick: () => setSlide((s) => s + 1), children: /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(ChevronRight, { size: 20 }) })
         ] })
       ] });
     }
@@ -62547,269 +62629,270 @@ ${prefix}
       const refs = (project.moodboard || []).filter((c) => referenceInScene(c, selectedScene?.id));
       const linkedIds = /* @__PURE__ */ new Set([...selectedScene?.characters || [], ...selectedScene?.locations || [], ...selectedScene?.props || []]);
       const linked = nodes.filter((n) => linkedIds.has(n.id));
-      return /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "breakdown-stage", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("header", { className: "stage-heading", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { children: [
-            /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("span", { className: "atlas-eyebrow", children: "SCRIPT \u2192 FRAME" }),
-            /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("h1", { children: "Inside the scene." }),
-            /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("p", { children: "Writing, references, and linked assets in one view." })
+      return /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "breakdown-stage", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("header", { className: "stage-heading", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("span", { className: "atlas-eyebrow", children: "SCRIPT \u2192 FRAME" }),
+            /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("h1", { children: "Inside the scene." }),
+            /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("p", { children: "Writing, references, and linked assets in one view." })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("button", { className: "button secondary", onClick: onBeats, children: [
+          /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("button", { className: "button secondary", onClick: onBeats, children: [
             "Open beat timeline",
-            /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(ArrowUpRight, { size: 15 })
+            /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(ArrowUpRight, { size: 15 })
           ] })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "breakdown-picker", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("label", { children: [
-            /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(Search, { size: 16 }),
-            /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("input", { value: sceneQuery, onChange: (e) => setSceneQuery(e.target.value), placeholder: "Find a scene\u2026", "aria-label": "Find a breakdown scene" })
+        /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "breakdown-picker", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("label", { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(Search, { size: 16 }),
+            /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("input", { value: sceneQuery, onChange: (e) => setSceneQuery(e.target.value), placeholder: "Find a scene\u2026", "aria-label": "Find a breakdown scene" })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("select", { "aria-label": "Breakdown scene", value: selectedScene?.id || "", onChange: (e) => setSceneId(e.target.value), children: matched.length ? matched.map((s, i) => /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("option", { value: s.id, children: [
+          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("select", { "aria-label": "Breakdown scene", value: selectedScene?.id || "", onChange: (e) => setSceneId(e.target.value), children: matched.length ? matched.map((s, i) => /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("option", { value: s.id, children: [
             String(i + 1).padStart(2, "0"),
             " \xB7 ",
             s.heading
-          ] }, s.id)) : /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("option", { value: "", children: "No scenes" }) })
+          ] }, s.id)) : /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("option", { value: "", children: "No scenes" }) })
         ] }),
-        selectedScene ? /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "breakdown-columns", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("section", { className: "breakdown-script", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "stage-section-heading", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("span", { children: "01 / THE PAGE" }),
-              /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("button", { onClick: () => onScene(selectedScene.documentId, selectedScene.key), children: [
+        selectedScene ? /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "breakdown-columns", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("section", { className: "breakdown-script", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "stage-section-heading", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("span", { children: "01 / THE PAGE" }),
+              /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("button", { onClick: () => onScene(selectedScene.documentId, selectedScene.key), children: [
                 "Edit scene",
-                /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(ArrowUpRight, { size: 14 })
+                /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(ArrowUpRight, { size: 14 })
               ] })
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("h2", { children: selectedScene.heading }),
-            /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { children: selectedScene.blocks.map((block, i) => /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("p", { className: "breakdown-block type-" + block.type, children: block.text || "\xA0" }, i)) })
+            /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("h2", { children: selectedScene.heading }),
+            /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("div", { children: selectedScene.blocks.map((block, i) => /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("p", { className: "breakdown-block type-" + block.type, children: block.text || "\xA0" }, i)) })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("section", { className: "breakdown-frames", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "stage-section-heading", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("span", { children: "02 / THE FRAME" }),
-              /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("button", { onClick: () => onMoodboard(selectedScene?.id), children: [
+          /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("section", { className: "breakdown-frames", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "stage-section-heading", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("span", { children: "02 / THE FRAME" }),
+              /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("button", { onClick: () => onMoodboard(selectedScene?.id), children: [
                 "Link references",
-                /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(Plus, { size: 14 })
+                /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(Plus, { size: 14 })
               ] })
             ] }),
-            refs.length ? refs.map((card) => /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("article", { className: "breakdown-reference", children: [
-              card.asset && /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("img", { src: safeUrl(card.asset.url), alt: card.title }),
-              /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("strong", { children: card.title }),
-              /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("p", { children: card.purpose || plain(card.notesHtml || "") || card.text }),
-              card.colors && /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { className: "breakdown-swatches", children: card.colors.map((color, i) => /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("span", { style: { background: color }, title: color }, i)) })
-            ] }, card.id)) : /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "stage-empty", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(Palette, { size: 26 }),
-              /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("p", { children: "No references linked to this scene." }),
-              /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("button", { onClick: () => onMoodboard(selectedScene?.id), children: [
+            refs.length ? refs.map((card) => /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("article", { className: "breakdown-reference", children: [
+              card.asset && /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("img", { src: safeUrl(card.asset.url), alt: card.title }),
+              /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("strong", { children: card.title }),
+              /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("p", { children: card.purpose || plain(card.notesHtml || "") || card.text }),
+              card.colors && /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("div", { className: "breakdown-swatches", children: card.colors.map((color, i) => /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("span", { style: { background: color }, title: color }, i)) })
+            ] }, card.id)) : /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "stage-empty", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(Palette, { size: 26 }),
+              /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("p", { children: "No references linked to this scene." }),
+              /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("button", { onClick: () => onMoodboard(selectedScene?.id), children: [
                 "Open this scene\u2019s visual board",
-                /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(ArrowRight, { size: 14 })
+                /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(ArrowRight, { size: 14 })
               ] })
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { className: "stage-section-heading", children: /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("span", { children: "03 / LINKED ASSETS" }) }),
-            /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { className: "breakdown-assets", children: linked.length ? linked.map((n) => /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("button", { onClick: () => onOpen(n.id), children: [
-              n.kind === "character" ? /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(UserRound, { size: 14 }) : n.kind === "location" ? /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(MapPin, { size: 14 }) : /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(Package, { size: 14 }),
-              /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("span", { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("div", { className: "stage-section-heading", children: /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("span", { children: "03 / LINKED ASSETS" }) }),
+            /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("div", { className: "breakdown-assets", children: linked.length ? linked.map((n) => /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("button", { onClick: () => onOpen(n.id), children: [
+              n.kind === "character" ? /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(UserRound, { size: 14 }) : n.kind === "location" ? /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(MapPin, { size: 14 }) : /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(Package, { size: 14 }),
+              /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("span", { children: [
                 n.title,
-                /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("small", { children: n.kind })
+                /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("small", { children: n.kind })
               ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(ArrowUpRight, { size: 13 })
-            ] }, n.id)) : /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("p", { children: "Link profiles with @ in your screenplay. Detected character and location matches also appear here; review them before production." }) })
+              /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(ArrowUpRight, { size: 13 })
+            ] }, n.id)) : /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("p", { children: "Link profiles with @ in your screenplay. Detected character and location matches also appear here; review them before production." }) })
           ] })
-        ] }) : /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "stage-empty", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(Film, { size: 34 }),
-          /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("h2", { children: sceneQuery ? "No matching scene." : "Start with a scene." }),
-          /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("p", { children: sceneQuery ? "Try a different title." : "Write a scene heading to begin your breakdown." }),
-          /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("button", { className: "button primary", onClick: onWrite, children: "Open screenplay" })
+        ] }) : /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "stage-empty", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(Film, { size: 34 }),
+          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("h2", { children: sceneQuery ? "No matching scene." : "Start with a scene." }),
+          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("p", { children: sceneQuery ? "Try a different title." : "Write a scene heading to begin your breakdown." }),
+          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("button", { className: "button primary", onClick: onWrite, children: "Open screenplay" })
         ] })
       ] });
     }
-    return /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "story-atlas", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("header", { className: "atlas-heading", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { children: [
-          /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "atlas-eyebrow", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("span", { className: "live-dot" }),
+    return /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "story-atlas", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("header", { className: "atlas-heading", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "atlas-eyebrow", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("span", { className: "live-dot" }),
             "YOUR WORLD / IN DEVELOPMENT"
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("label", { className: "atlas-world-name", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("input", { "aria-label": "World name", value: project.title, onChange: (e) => onRename(e.target.value), onBlur: () => {
+          /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("label", { className: "atlas-world-name", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("input", { "aria-label": "World name", value: project.title, onChange: (e) => onRename(e.target.value), onBlur: () => {
               if (!project.title.trim()) onRename("Untitled world");
             }, placeholder: "Name your world" }),
-            /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(Pencil, { size: 17 })
+            /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(Pencil, { size: 17 })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("p", { children: idea || "An idea becomes a world. Make room for yours." })
+          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("p", { children: idea || "An idea becomes a world. Make room for yours." })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("button", { className: "pitch-launch", onClick: () => onView("pitch"), children: [
-          /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(Play, { size: 16 }),
-          /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("span", { children: "Pitch view" }),
-          /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(ArrowUpRight, { size: 14 })
+        /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("button", { className: "pitch-launch", onClick: () => onView("pitch"), children: [
+          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(Play, { size: 16 }),
+          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("span", { children: "Pitch view" }),
+          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(ArrowUpRight, { size: 14 })
         ] })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "atlas-caption", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("span", { children: [
-          /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(Layers, { size: 14 }),
+      /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "atlas-caption", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("span", { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(Layers, { size: 14 }),
           "STORY ATLAS"
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("small", { children: "One world. Every part connected." })
+        /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("small", { children: "One world. Every part connected." })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { className: "atlas-viewport", "aria-label": "Story map", children: /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "atlas-map", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { className: "atlas-lane lane-one", children: "01 \u2014 THE IDEA" }),
-        /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { className: "atlas-lane lane-two", children: "02 \u2014 THE STORY" }),
-        /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { className: "atlas-lane lane-three", children: "03 \u2014 THE WORLD" }),
-        /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("button", { className: "atlas-node atlas-foundation", onClick: onFoundation, children: [
-          /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("span", { className: "node-overline", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(Lightbulb, { size: 16 }),
+      /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("div", { className: "atlas-viewport", "aria-label": "Story map", children: /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "atlas-map", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("div", { className: "atlas-lane lane-one", children: "01 \u2014 THE IDEA" }),
+        /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("div", { className: "atlas-lane lane-two", children: "02 \u2014 THE STORY" }),
+        /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("div", { className: "atlas-lane lane-three", children: "03 \u2014 THE WORLD" }),
+        /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("button", { className: "atlas-node atlas-foundation", onClick: onFoundation, children: [
+          /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("span", { className: "node-overline", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(Lightbulb, { size: 16 }),
             "STORY FOUNDATION",
-            /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(ArrowUpRight, { size: 15 })
+            /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(ArrowUpRight, { size: 15 })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("h2", { children: "The spark." }),
-          /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "spark-note", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("small", { children: "YOUR PREMISE" }),
-            /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("p", { children: premise || "Add your premise in Story Foundation." })
+          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("h2", { children: "The spark." }),
+          /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "spark-note", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("small", { children: "YOUR PREMISE" }),
+            /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("p", { children: premise || "Add your premise in Story Foundation." })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("span", { className: "node-footer", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("span", { className: "node-footer", children: [
             premise ? "Edit premise" : "Write your premise",
-            /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(ArrowRight, { size: 15 })
+            /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(ArrowRight, { size: 15 })
           ] })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("button", { className: "atlas-node atlas-research", onClick: () => onSection("research"), children: [
-          /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("span", { className: "node-overline", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(BookOpen, { size: 16 }),
+        /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("button", { className: "atlas-node atlas-research", onClick: () => onSection("research"), children: [
+          /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("span", { className: "node-overline", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(BookOpen, { size: 16 }),
             "THE FIELD NOTES",
-            /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(ArrowUpRight, { size: 15 })
+            /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(ArrowUpRight, { size: 15 })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "research-card-body", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { children: [
-              /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("h2", { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "research-card-body", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("h2", { children: [
                 "Research &",
-                /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("br", {}),
+                /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("br", {}),
                 "exploration."
               ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("small", { children: researchNotes.length ? `${researchNotes.length} notes in view` : "Follow the threads worth keeping." })
+              /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("small", { children: researchNotes.length ? `${researchNotes.length} notes in view` : "Follow the threads worth keeping." })
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "research-stack", "aria-hidden": "true", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("span", { children: researchNotes[0]?.title || "A question to follow" }),
-              /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("span", { children: researchNotes[1]?.title || "A detail to remember" })
+            /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "research-stack", "aria-hidden": "true", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("span", { children: researchNotes[0]?.title || "A question to follow" }),
+              /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("span", { children: researchNotes[1]?.title || "A detail to remember" })
             ] })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("span", { className: "node-footer", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("span", { className: "node-footer", children: [
             "Open research",
-            /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(ArrowRight, { size: 15 })
+            /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(ArrowRight, { size: 15 })
           ] })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("button", { className: "atlas-node atlas-script", onClick: onWrite, children: [
-          /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("span", { className: "node-overline", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(Film, { size: 16 }),
+        /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("button", { className: "atlas-node atlas-script", onClick: onWrite, children: [
+          /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("span", { className: "node-overline", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(Film, { size: 16 }),
             "THE SCREENPLAY",
-            /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(ArrowUpRight, { size: 15 })
+            /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(ArrowUpRight, { size: 15 })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "script-page-preview", "aria-hidden": "true", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("span", { children: "FADE IN:" }),
-            /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("strong", { children: firstScene?.heading || "INT. THE FIRST SCENE \u2014 DAY" }),
-            /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { className: "script-page-excerpt", children: sceneExcerpt.length ? sceneExcerpt.map((block, i) => /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("p", { children: block.text }, i)) : /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("p", { children: firstScene ? "The scene is ready for its first action." : "Your first scene begins here." }) }),
-            /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("em", { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "script-page-preview", "aria-hidden": "true", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("span", { children: "FADE IN:" }),
+            /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("strong", { children: firstScene?.heading || "INT. THE FIRST SCENE \u2014 DAY" }),
+            /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("div", { className: "script-page-excerpt", children: sceneExcerpt.length ? sceneExcerpt.map((block, i) => /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("p", { children: block.text }, i)) : /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("p", { children: firstScene ? "The scene is ready for its first action." : "Your first scene begins here." }) }),
+            /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("em", { children: [
               "SCENE 01 / ",
               scenes.length || "\u2014",
               " PLANNED"
             ] })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("h2", { children: "Make it a scene." }),
-          /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("p", { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("h2", { children: "Make it a scene." }),
+          /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("p", { children: [
             words.toLocaleString(),
             " words ",
-            /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("span", { children: "\xB7" }),
+            /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("span", { children: "\xB7" }),
             " ",
             scenes.length,
             " ",
             scenes.length === 1 ? "scene" : "scenes"
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("span", { className: "node-footer", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("span", { className: "node-footer", children: [
             "Enter writing room",
-            /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(ArrowRight, { size: 15 })
+            /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(ArrowRight, { size: 15 })
           ] })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("button", { className: "atlas-node atlas-visual atlas-scene-visual", onClick: () => onMoodboard(), children: [
-          /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("span", { className: "node-overline", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(Palette, { size: 15 }),
+        /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("button", { className: "atlas-node atlas-visual atlas-scene-visual", onClick: () => onMoodboard(), children: [
+          /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("span", { className: "node-overline", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(Palette, { size: 15 }),
             "VISUAL LANGUAGE",
-            /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(ArrowUpRight, { size: 15 })
+            /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(ArrowUpRight, { size: 15 })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("h2", { children: "Scene by scene." }),
-          /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "atlas-visual-scenes", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("h2", { children: "Scene by scene." }),
+          /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "atlas-visual-scenes", children: [
             scenes.slice(0, 2).map((scene, i) => {
               const refs = (project.moodboard || []).filter((c) => referenceInScene(c, scene.id)), image = refs.find((c) => c.asset?.mime.startsWith("image/"));
-              return /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("span", { children: [
-                image ? /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("img", { src: safeUrl(image.asset.url), alt: "" }) : /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("i", { children: String(i + 1).padStart(2, "0") }),
-                /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("strong", { children: scene.meta.title || scene.heading }),
-                /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("small", { children: [
+              return /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("span", { children: [
+                image ? /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("img", { src: safeUrl(image.asset.url), alt: "" }) : /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("i", { children: String(i + 1).padStart(2, "0") }),
+                /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("strong", { children: scene.meta.title || scene.heading }),
+                /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("small", { children: [
                   refs.length,
                   " refs"
                 ] })
               ] }, scene.id);
             }),
-            !scenes.length && /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("p", { children: "Build a visual direction for each scene." })
+            !scenes.length && /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("p", { children: "Build a visual direction for each scene." })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("span", { className: "atlas-visual-board-footer", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("span", { className: "atlas-visual-board-footer", children: [
             scenes.filter((scene) => (project.moodboard || []).some((c) => referenceInScene(c, scene.id))).length,
             " / ",
             scenes.length,
             " scene boards started",
-            /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(ArrowRight, { size: 14 })
+            /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(ArrowRight, { size: 14 })
           ] })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "atlas-node atlas-world", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("span", { className: "node-overline", children: "THE PEOPLE. THE PLACES." }),
-          /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "world-card-heading", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("strong", { children: "Build the world." }),
-            /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("small", { children: "Every person and place leaves a trace." })
+        /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "atlas-node atlas-world", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("span", { className: "node-overline", children: "THE PEOPLE. THE PLACES." }),
+          /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "world-card-heading", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("strong", { children: "Build the world." }),
+            /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("small", { children: "Every person and place leaves a trace." })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { className: "world-index", children: [["characters", "Characters", UserRound], ["locations", "Locations", MapPin], ["props", "Objects", Package]].map(([role, label, Icon2], i) => /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("button", { onClick: () => onSection(role), children: [
-            /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("span", { className: "world-index-number", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("div", { className: "world-index", children: [["characters", "Characters", UserRound], ["locations", "Locations", MapPin], ["props", "Objects", Package]].map(([role, label, Icon2], i) => /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("button", { onClick: () => onSection(role), children: [
+            /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("span", { className: "world-index-number", children: [
               "0",
               i + 1
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(Icon2, { size: 17 }),
-            /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("strong", { children: label }),
-            /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("span", { className: "world-index-count", children: counts[role] }),
-            /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(ArrowUpRight, { size: 14 })
+            /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(Icon2, { size: 17 }),
+            /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("strong", { children: label }),
+            /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("span", { className: "world-index-count", children: counts[role] }),
+            /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(ArrowUpRight, { size: 14 })
           ] }, role)) })
         ] })
       ] }) }),
-      /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("section", { className: "atlas-reel", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "stage-section-heading", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("span", { children: [
+      /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("section", { className: "atlas-reel", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "stage-section-heading", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("span", { children: [
             "SCENE REEL / ",
             String(scenes.length).padStart(2, "0")
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("button", { onClick: onBeats, children: [
+          /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("button", { onClick: onBeats, children: [
             "Shape the sequence",
-            /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(ArrowUpRight, { size: 14 })
+            /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(ArrowUpRight, { size: 14 })
           ] })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(SceneStrip, { scenes, onScene })
+        /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(SceneStrip, { scenes, onScene })
       ] }),
-      recent.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { className: "atlas-recent", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("span", { children: "PICK UP A THREAD" }),
-        recent.map((n) => /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("button", { onClick: () => onOpen(n.id), children: [
+      recent.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "atlas-recent", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("span", { children: "PICK UP A THREAD" }),
+        recent.map((n) => /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("button", { onClick: () => onOpen(n.id), children: [
           n.title,
-          /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(ArrowUpRight, { size: 12 })
+          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(ArrowUpRight, { size: 12 })
         ] }, n.id))
-      ] })
+      ] }),
+      /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(InstallApp, {})
     ] });
   }
 
   // components/studio-command.tsx
-  var import_react14 = __toESM(require_react(), 1);
-  var import_jsx_runtime13 = __toESM(require_jsx_runtime(), 1);
+  var import_react15 = __toESM(require_react(), 1);
+  var import_jsx_runtime14 = __toESM(require_jsx_runtime(), 1);
   function StudioCommand({ project, onOpen, commands }) {
-    const [query, setQuery] = (0, import_react14.useState)(""), [active, setActive] = (0, import_react14.useState)(0), list = (0, import_react14.useRef)(null);
+    const [query, setQuery] = (0, import_react15.useState)(""), [active, setActive] = (0, import_react15.useState)(0), list = (0, import_react15.useRef)(null);
     const actions = commands.filter((c) => (c.label + " " + c.detail).toLowerCase().includes(query.toLowerCase())).map((c) => ({ ...c, kind: "command" }));
     const docs = project && query.trim() ? searchNodes(project, query).slice(0, 20).map((n) => ({ label: n.title, detail: n.kind, kind: "document", run: () => onOpen(n.id) })) : [];
     const results = [...actions, ...docs];
-    (0, import_react14.useEffect)(() => {
+    (0, import_react15.useEffect)(() => {
       list.current?.querySelector("[data-active=true]")?.scrollIntoView({ block: "nearest" });
     }, [active]);
-    return /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "studio-command", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("label", { children: [
-        /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(Search, { size: 19 }),
-        /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("input", { autoFocus: true, "aria-label": "Search commands and documents", placeholder: "A scene, a character, a place\u2026", value: query, onChange: (e) => {
+    return /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "studio-command", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("label", { children: [
+        /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(Search, { size: 19 }),
+        /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("input", { autoFocus: true, "aria-label": "Search commands and documents", placeholder: "A scene, a character, a place\u2026", value: query, onChange: (e) => {
           setQuery(e.target.value);
           setActive(0);
         }, onKeyDown: (e) => {
@@ -62822,23 +62905,23 @@ ${prefix}
             results[active]?.run();
           }
         } }),
-        /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("kbd", { children: "ESC" })
+        /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("kbd", { children: "ESC" })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "command-results", ref: list, children: [
-        results.map((r, i) => /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("button", { "data-active": active === i, onMouseEnter: () => setActive(i), onClick: r.run, children: [
-          r.kind === "document" ? /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(FileText, { size: 17 }) : /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(Command, { size: 17 }),
-          /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("span", { children: [
-            /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("strong", { children: r.label }),
-            /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("small", { children: r.detail })
+      /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "command-results", ref: list, children: [
+        results.map((r, i) => /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("button", { "data-active": active === i, onMouseEnter: () => setActive(i), onClick: r.run, children: [
+          r.kind === "document" ? /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(FileText, { size: 17 }) : /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(Command, { size: 17 }),
+          /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("span", { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("strong", { children: r.label }),
+            /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("small", { children: r.detail })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(ArrowUpRight, { size: 15 })
+          /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(ArrowUpRight, { size: 15 })
         ] }, r.kind + r.label + i)),
-        !results.length && /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("p", { children: "No results. Try a title or a workspace name." })
+        !results.length && /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("p", { children: "No results. Try a title or a workspace name." })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("footer", { children: [
+      /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("footer", { children: [
         "\u2191 \u2193 Navigate ",
-        /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("span", { children: "\u21B5 Open" }),
-        /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("span", { children: "Esc Close" })
+        /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("span", { children: "\u21B5 Open" }),
+        /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("span", { children: "Esc Close" })
       ] })
     ] });
   }
@@ -62872,10 +62955,10 @@ ${prefix}
   }
 
   // components/beat-timeline.tsx
-  var import_react15 = __toESM(require_react(), 1);
-  var import_jsx_runtime14 = __toESM(require_jsx_runtime(), 1);
+  var import_react16 = __toESM(require_react(), 1);
+  var import_jsx_runtime15 = __toESM(require_jsx_runtime(), 1);
   function BeatTimeline({ project, onBeat, onOrder, onAdd, onOpen, onDelete, onSave, saving, saveLabel }) {
-    const [mode, setMode] = (0, import_react15.useState)("emotion"), [character, setCharacter] = (0, import_react15.useState)("");
+    const [mode, setMode] = (0, import_react16.useState)("emotion"), [character, setCharacter] = (0, import_react16.useState)("");
     const scenes = timelineScenes(project), people = profileNodes(project, "character"), places = profileNodes(project, "location"), props = profileNodes(project, "prop");
     const visible = scenes.filter((s) => !character || [...s.characters, ...s.meta.characters || []].includes(character));
     const color = (s) => {
@@ -62898,70 +62981,70 @@ ${prefix}
       ids.splice(end, 0, from2);
       onOrder(ids);
     }
-    return /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "director-tool-view beat-view", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("header", { className: "director-tool-heading", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { children: [
-          /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "eyebrow", children: [
+    return /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "director-tool-view beat-view", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("header", { className: "director-tool-heading", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "eyebrow", children: [
             project.title,
             " / ",
             activeDraftRoot(project)?.role === "draft" ? "ORIGINAL DRAFT" : activeDraftRoot(project)?.title
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("h1", { children: "Beat timeline" }),
-          /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("p", { children: "Shape the emotional movement before the pages. Scene headings and linked profiles stay connected to the screenplay." })
+          /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("h1", { children: "Beat timeline" }),
+          /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("p", { children: "Shape the emotional movement before the pages. Scene headings and linked profiles stay connected to the screenplay." })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "tool-save", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("small", { children: saveLabel }),
-          /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("button", { className: "button primary", disabled: saving, onClick: onSave, children: [
-            /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(Save, { size: 14 }),
+        /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "tool-save", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("small", { children: saveLabel }),
+          /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("button", { className: "button primary", disabled: saving, onClick: onSave, children: [
+            /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(Save, { size: 14 }),
             saving ? "Saving\u2026" : "Save beats"
           ] })
         ] })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "director-tool-actions", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("button", { className: "button secondary", onClick: onAdd, children: [
-          /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(Plus, { size: 14 }),
+      /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "director-tool-actions", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("button", { className: "button secondary", onClick: onAdd, children: [
+          /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(Plus, { size: 14 }),
           "Plan a scene"
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("label", { children: [
+        /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("label", { children: [
           "Color by ",
-          /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("select", { "aria-label": "Beat card colors", value: mode, onChange: (e) => setMode(e.target.value), children: [
-            /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("option", { value: "emotion", children: "Emotional arc" }),
-            /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("option", { value: "tension", children: "Story tension" }),
-            /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("option", { value: "pressure", children: "Character pressure" }),
-            /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("option", { value: "character", children: "Character presence" })
+          /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("select", { "aria-label": "Beat card colors", value: mode, onChange: (e) => setMode(e.target.value), children: [
+            /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("option", { value: "emotion", children: "Emotional arc" }),
+            /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("option", { value: "tension", children: "Story tension" }),
+            /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("option", { value: "pressure", children: "Character pressure" }),
+            /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("option", { value: "character", children: "Character presence" })
           ] })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("select", { "aria-label": "Filter beats by character", value: character, onChange: (e) => setCharacter(e.target.value), children: [
-          /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("option", { value: "", children: "All characters" }),
-          people.map((p) => /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("option", { value: p.id, children: p.title }, p.id))
+        /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("select", { "aria-label": "Filter beats by character", value: character, onChange: (e) => setCharacter(e.target.value), children: [
+          /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("option", { value: "", children: "All characters" }),
+          people.map((p) => /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("option", { value: p.id, children: p.title }, p.id))
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("button", { className: "text-button", onClick: () => onOrder([]), children: [
-          /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(RotateCcw, { size: 12 }),
+        /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("button", { className: "text-button", onClick: () => onOrder([]), children: [
+          /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(RotateCcw, { size: 12 }),
           "Reset board order"
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("span", { children: [
+        /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("span", { children: [
           scenes.length,
           " scenes \xB7 ",
           minutes.toFixed(1),
           " planned min"
         ] })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "beat-workspace", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("section", { className: "beat-board", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "beat-board-description", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("span", { children: [
+      /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "beat-workspace", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("section", { className: "beat-board", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "beat-board-description", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("span", { children: [
               "SCENE BOARD ",
-              /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("b", { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("b", { children: [
                 "/ ",
                 String(visible.length).padStart(2, "0")
               ] })
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("span", { children: scenes.length > 1 ? "Drag cards to reorder the plan." : "The shape of the story starts with a scene." })
+            /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("span", { children: scenes.length > 1 ? "Drag cards to reorder the plan." : "The shape of the story starts with a scene." })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "beat-timeline", role: "list", "aria-label": "Scene beat cards", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "beat-timeline", role: "list", "aria-label": "Scene beat cards", children: [
             visible.map((scene, i) => {
               const selected = /* @__PURE__ */ new Set([...scene.characters, ...scene.meta.characters || []]);
-              return /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("article", { className: "beat-card", role: "listitem", style: { borderTopColor: color(scene) }, draggable: true, onDragStart: (e) => e.dataTransfer.setData("application/x-beat-scene", scene.id), onDragOver: (e) => {
+              return /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("article", { className: "beat-card", role: "listitem", style: { borderTopColor: color(scene) }, draggable: true, onDragStart: (e) => e.dataTransfer.setData("application/x-beat-scene", scene.id), onDragOver: (e) => {
                 if (e.dataTransfer.types.includes("application/x-beat-scene")) e.preventDefault();
               }, onDrop: (e) => {
                 const id = e.dataTransfer.getData("application/x-beat-scene");
@@ -62970,146 +63053,146 @@ ${prefix}
                   move(id, scene.id);
                 }
               }, children: [
-                /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "beat-number", children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("span", { children: String(scenes.findIndex((s) => s.id === scene.id) + 1).padStart(2, "0") }),
-                  /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("button", { title: "Open scene in screenplay", onClick: () => onOpen(scene.documentId, scene.key), children: /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(ArrowUpRight, { size: 15 }) })
+                /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "beat-number", children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("span", { children: String(scenes.findIndex((s) => s.id === scene.id) + 1).padStart(2, "0") }),
+                  /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("button", { title: "Open scene in screenplay", onClick: () => onOpen(scene.documentId, scene.key), children: /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(ArrowUpRight, { size: 15 }) })
                 ] }),
-                /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("input", { className: "beat-title", "aria-label": "Beat title", value: scene.meta.title || scene.heading, onChange: (e) => onBeat(scene.id, { title: e.target.value }) }),
-                /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("textarea", { rows: 4, "aria-label": "Beat summary for " + scene.heading, placeholder: "What changes in this scene? What turns, breaks, or becomes possible?", value: scene.meta.summary || "", onChange: (e) => onBeat(scene.id, { summary: e.target.value }) }),
-                /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "beat-fields", children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("label", { children: [
+                /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("input", { className: "beat-title", "aria-label": "Beat title", value: scene.meta.title || scene.heading, onChange: (e) => onBeat(scene.id, { title: e.target.value }) }),
+                /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("textarea", { rows: 4, "aria-label": "Beat summary for " + scene.heading, placeholder: "What changes in this scene? What turns, breaks, or becomes possible?", value: scene.meta.summary || "", onChange: (e) => onBeat(scene.id, { summary: e.target.value }) }),
+                /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "beat-fields", children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("label", { children: [
                     "Emotional beat",
-                    /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("select", { value: scene.meta.emotion || "Neutral", onChange: (e) => onBeat(scene.id, { emotion: e.target.value }), children: Object.keys(EMOTIONS).map((v) => /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("option", { children: v }, v)) })
+                    /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("select", { value: scene.meta.emotion || "Neutral", onChange: (e) => onBeat(scene.id, { emotion: e.target.value }), children: Object.keys(EMOTIONS).map((v) => /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("option", { children: v }, v)) })
                   ] }),
-                  /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("label", { children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("label", { children: [
                     "Planned minutes",
-                    /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("input", { type: "number", min: "0", max: "120", step: "0.5", value: scene.meta.minutes ?? 1, onChange: (e) => onBeat(scene.id, { minutes: Math.max(0, Math.min(120, Number(e.target.value) || 0)) }) })
+                    /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("input", { type: "number", min: "0", max: "120", step: "0.5", value: scene.meta.minutes ?? 1, onChange: (e) => onBeat(scene.id, { minutes: Math.max(0, Math.min(120, Number(e.target.value) || 0)) }) })
                   ] })
                 ] }),
-                /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("label", { className: "beat-slider", children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("span", { children: [
+                /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("label", { className: "beat-slider", children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("span", { children: [
                     "Story tension ",
-                    /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("b", { children: [
+                    /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("b", { children: [
                       scene.meta.tension ?? 5,
                       "/10"
                     ] })
                   ] }),
-                  /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("input", { type: "range", min: "0", max: "10", value: scene.meta.tension ?? 5, onChange: (e) => onBeat(scene.id, { tension: Number(e.target.value) }) })
+                  /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("input", { type: "range", min: "0", max: "10", value: scene.meta.tension ?? 5, onChange: (e) => onBeat(scene.id, { tension: Number(e.target.value) }) })
                 ] }),
-                /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("label", { className: "beat-slider", children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("span", { children: [
+                /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("label", { className: "beat-slider", children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("span", { children: [
                     "Character pressure ",
-                    /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("b", { children: [
+                    /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("b", { children: [
                       scene.meta.pressure ?? 5,
                       "/10"
                     ] })
                   ] }),
-                  /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("input", { type: "range", min: "0", max: "10", value: scene.meta.pressure ?? 5, onChange: (e) => onBeat(scene.id, { pressure: Number(e.target.value) }) })
+                  /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("input", { type: "range", min: "0", max: "10", value: scene.meta.pressure ?? 5, onChange: (e) => onBeat(scene.id, { pressure: Number(e.target.value) }) })
                 ] }),
-                /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "beat-cast", children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("span", { children: "CHARACTERS" }),
-                  /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("div", { children: people.length ? people.map((p) => /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("button", { disabled: scene.characters.includes(p.id), title: scene.characters.includes(p.id) ? "Linked in the screenplay" : "Toggle planned character presence", "aria-pressed": selected.has(p.id), className: selected.has(p.id) ? "selected" : "", onClick: () => {
+                /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "beat-cast", children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("span", { children: "CHARACTERS" }),
+                  /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("div", { children: people.length ? people.map((p) => /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("button", { disabled: scene.characters.includes(p.id), title: scene.characters.includes(p.id) ? "Linked in the screenplay" : "Toggle planned character presence", "aria-pressed": selected.has(p.id), className: selected.has(p.id) ? "selected" : "", onClick: () => {
                     const manual = new Set(scene.meta.characters || []);
                     if (manual.has(p.id)) manual.delete(p.id);
                     else manual.add(p.id);
                     onBeat(scene.id, { characters: [...manual] });
                   }, children: [
                     p.title,
-                    scene.characters.includes(p.id) && /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("small", { children: " \xB7 script" })
-                  ] }, p.id)) : /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("small", { children: "Add character profiles, then link them here or use @Name in the script." }) })
+                    scene.characters.includes(p.id) && /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("small", { children: " \xB7 script" })
+                  ] }, p.id)) : /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("small", { children: "Add character profiles, then link them here or use @Name in the script." }) })
                 ] }),
-                props.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "beat-cast", children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("span", { children: "PROPS" }),
-                  /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("div", { children: props.map((p) => {
+                props.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "beat-cast", children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("span", { children: "PROPS" }),
+                  /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("div", { children: props.map((p) => {
                     const linked = scene.props.includes(p.id), selected2 = linked || (scene.meta.props || []).includes(p.id);
-                    return /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("button", { disabled: linked, title: linked ? "Linked in the screenplay" : "Toggle planned prop presence", "aria-pressed": selected2, className: selected2 ? "selected" : "", onClick: () => onBeat(scene.id, { props: selected2 ? (scene.meta.props || []).filter((id) => id !== p.id) : [...scene.meta.props || [], p.id] }), children: [
+                    return /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("button", { disabled: linked, title: linked ? "Linked in the screenplay" : "Toggle planned prop presence", "aria-pressed": selected2, className: selected2 ? "selected" : "", onClick: () => onBeat(scene.id, { props: selected2 ? (scene.meta.props || []).filter((id) => id !== p.id) : [...scene.meta.props || [], p.id] }), children: [
                       p.title,
-                      linked && /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("small", { children: " \xB7 script" })
+                      linked && /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("small", { children: " \xB7 script" })
                     ] }, p.id);
                   }) })
                 ] }),
-                /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("label", { className: "beat-location", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("label", { className: "beat-location", children: [
                   "LOCATION",
-                  /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("select", { value: scene.meta.location || scene.locations[0] || "", onChange: (e) => onBeat(scene.id, { location: e.target.value }), children: [
-                    /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("option", { value: "", children: "Not assigned" }),
-                    places.map((p) => /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("option", { value: p.id, children: p.title }, p.id))
+                  /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("select", { value: scene.meta.location || scene.locations[0] || "", onChange: (e) => onBeat(scene.id, { location: e.target.value }), children: [
+                    /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("option", { value: "", children: "Not assigned" }),
+                    places.map((p) => /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("option", { value: p.id, children: p.title }, p.id))
                   ] })
                 ] }),
-                /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("footer", { children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("button", { className: "delete-control", "aria-label": "Delete beat " + (scene.meta.title || scene.heading), onClick: () => onDelete(scene.id), children: [
-                    /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(Trash, { size: 12 }),
+                /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("footer", { children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("button", { className: "delete-control", "aria-label": "Delete beat " + (scene.meta.title || scene.heading), onClick: () => onDelete(scene.id), children: [
+                    /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(Trash, { size: 12 }),
                     "Delete beat"
                   ] }),
-                  /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("button", { onClick: () => onOpen(scene.documentId, scene.key), children: [
-                    /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(Film, { size: 12 }),
+                  /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("button", { onClick: () => onOpen(scene.documentId, scene.key), children: [
+                    /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(Film, { size: 12 }),
                     "Open scene"
                   ] })
                 ] })
               ] }, scene.id);
             }),
-            /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("button", { className: "beat-add-card", onClick: onAdd, children: [
-              /* @__PURE__ */ (0, import_jsx_runtime14.jsx)(Plus, { size: 24, strokeWidth: 1 }),
-              /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("span", { children: "Plan the next scene" })
+            /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("button", { className: "beat-add-card", onClick: onAdd, children: [
+              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(Plus, { size: 24, strokeWidth: 1 }),
+              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("span", { children: "Plan the next scene" })
             ] })
           ] }),
-          !visible.length && scenes.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("div", { className: "empty-small", children: "No scenes match this character yet." })
+          !visible.length && scenes.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("div", { className: "empty-small", children: "No scenes match this character yet." })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("aside", { className: "beat-insights", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "beat-insight-label", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("aside", { className: "beat-insights", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "beat-insight-label", children: [
             "THE SHAPE OF THE FILM ",
-            /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("span", { children: "01 / 02" })
+            /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("span", { children: "01 / 02" })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "beat-arc", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("div", { children: /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("strong", { children: "Pressure across the film" }) }),
-            scenes.length > 1 ? /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("svg", { viewBox: "0 0 900 170", role: "img", "aria-label": "Planned story tension and character pressure across scene order", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("line", { x1: "40", x2: "860", y1: "25", y2: "25" }),
-              /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("line", { x1: "40", x2: "860", y1: "85", y2: "85" }),
-              /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("line", { x1: "40", x2: "860", y1: "145", y2: "145" }),
-              /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("text", { x: "4", y: "29", children: "10" }),
-              /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("text", { x: "12", y: "149", children: "0" }),
-              /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("polyline", { className: "arc-tension", points: points("tension") }),
-              /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("polyline", { className: "arc-pressure", points: points("pressure") }),
-              scenes.map((s, i) => /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("circle", { cx: 40 + i * 820 / (scenes.length - 1), cy: 145 - (s.meta.tension ?? 5) * 12, r: "4" }, s.id))
-            ] }) : /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "beat-arc-beginning", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("span", { className: "arc-opening-mark", children: "01" }),
-              /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("p", { children: scenes.length ? "One scene is a beginning. Add the next turn to see the pressure move." : "Plan your opening scene to start tracing the story." })
+          /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "beat-arc", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("div", { children: /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("strong", { children: "Pressure across the film" }) }),
+            scenes.length > 1 ? /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("svg", { viewBox: "0 0 900 170", role: "img", "aria-label": "Planned story tension and character pressure across scene order", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("line", { x1: "40", x2: "860", y1: "25", y2: "25" }),
+              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("line", { x1: "40", x2: "860", y1: "85", y2: "85" }),
+              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("line", { x1: "40", x2: "860", y1: "145", y2: "145" }),
+              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("text", { x: "4", y: "29", children: "10" }),
+              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("text", { x: "12", y: "149", children: "0" }),
+              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("polyline", { className: "arc-tension", points: points("tension") }),
+              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("polyline", { className: "arc-pressure", points: points("pressure") }),
+              scenes.map((s, i) => /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("circle", { cx: 40 + i * 820 / (scenes.length - 1), cy: 145 - (s.meta.tension ?? 5) * 12, r: "4" }, s.id))
+            ] }) : /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "beat-arc-beginning", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("span", { className: "arc-opening-mark", children: "01" }),
+              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("p", { children: scenes.length ? "One scene is a beginning. Add the next turn to see the pressure move." : "Plan your opening scene to start tracing the story." })
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "beat-arc-legend", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("span", { children: [
-                /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("i", { className: "arc-tension" }),
+            /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "beat-arc-legend", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("span", { children: [
+                /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("i", { className: "arc-tension" }),
                 "Story tension"
               ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("span", { children: [
-                /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("i", { className: "arc-pressure" }),
+              /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("span", { children: [
+                /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("i", { className: "arc-pressure" }),
                 "Character pressure"
               ] })
             ] })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { className: "beat-plan-facts", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { children: [
-              /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("small", { children: "PLANNED SCENES" }),
-              /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("strong", { children: String(scenes.length).padStart(2, "0") })
+          /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "beat-plan-facts", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("small", { children: "PLANNED SCENES" }),
+              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("strong", { children: String(scenes.length).padStart(2, "0") })
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("div", { children: [
-              /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("small", { children: "ESTIMATED RUN TIME" }),
-              /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)("strong", { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("small", { children: "ESTIMATED RUN TIME" }),
+              /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("strong", { children: [
                 minutes.toFixed(1),
                 " ",
-                /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("em", { children: "min" })
+                /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("em", { children: "min" })
               ] })
             ] })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("p", { className: "beat-insight-note", children: "The arc follows your own 0\u201310 scores. Minutes are planning estimates you can change on each card." })
+          /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("p", { className: "beat-insight-note", children: "The arc follows your own 0\u201310 scores. Minutes are planning estimates you can change on each card." })
         ] })
       ] })
     ] });
   }
 
   // components/profile-images.tsx
-  var import_react16 = __toESM(require_react(), 1);
-  var import_jsx_runtime15 = __toESM(require_jsx_runtime(), 1);
+  var import_react17 = __toESM(require_react(), 1);
+  var import_jsx_runtime16 = __toESM(require_jsx_runtime(), 1);
   function ProfileImages({ n, mutate }) {
-    const input = (0, import_react16.useRef)(null), [busy, setBusy] = (0, import_react16.useState)(false), [error2, setError] = (0, import_react16.useState)("");
+    const input = (0, import_react17.useRef)(null), [busy, setBusy] = (0, import_react17.useState)(false), [error2, setError] = (0, import_react17.useState)("");
     const images = n.images || [];
     async function upload(files) {
       if (!files?.length || busy || !mutate) return;
@@ -63151,7 +63234,7 @@ ${prefix}
       });
     }
     if (!mutate && !images.length) return null;
-    return /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("section", { className: "profile-gallery " + (!mutate ? "read-only" : ""), "aria-label": n.title + " images", onDragOver: (e) => {
+    return /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("section", { className: "profile-gallery " + (!mutate ? "read-only" : ""), "aria-label": n.title + " images", onDragOver: (e) => {
       if (mutate && e.dataTransfer.types.includes("Files")) e.preventDefault();
     }, onDrop: (e) => {
       if (mutate && e.dataTransfer.files.length) {
@@ -63160,38 +63243,38 @@ ${prefix}
         void upload(e.dataTransfer.files);
       }
     }, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "profile-gallery-heading", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { children: [
-          /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("span", { className: "section-label", children: "VISUAL REFERENCES" }),
-          mutate && /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("small", { children: "Drop images here. The first image is the card cover." })
+      /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "profile-gallery-heading", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("span", { className: "section-label", children: "VISUAL REFERENCES" }),
+          mutate && /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("small", { children: "Drop images here. The first image is the card cover." })
         ] }),
-        mutate && /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("button", { className: "button secondary", disabled: busy, onClick: () => input.current?.click(), children: [
-          /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(ImagePlus, { size: 14 }),
+        mutate && /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("button", { className: "button secondary", disabled: busy, onClick: () => input.current?.click(), children: [
+          /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(ImagePlus, { size: 14 }),
           busy ? "Uploading\u2026" : "Add images"
         ] })
       ] }),
-      mutate && /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("input", { ref: input, type: "file", accept: "image/*", multiple: true, hidden: true, "aria-label": "Upload images for " + n.title, onChange: (e) => void upload(e.target.files) }),
-      error2 && /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("div", { className: "tool-error", role: "alert", children: error2 }),
-      !images.length && mutate && /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("button", { className: "profile-image-drop", disabled: busy, onClick: () => input.current?.click(), children: [
-        /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(ImagePlus, { size: 23 }),
-        /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("span", { children: "Add a face, a setting, or an object reference." })
+      mutate && /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("input", { ref: input, type: "file", accept: "image/*", multiple: true, hidden: true, "aria-label": "Upload images for " + n.title, onChange: (e) => void upload(e.target.files) }),
+      error2 && /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "tool-error", role: "alert", children: error2 }),
+      !images.length && mutate && /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("button", { className: "profile-image-drop", disabled: busy, onClick: () => input.current?.click(), children: [
+        /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(ImagePlus, { size: 23 }),
+        /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("span", { children: "Add a face, a setting, or an object reference." })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("div", { className: "profile-image-grid", children: images.map((image, index) => /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("figure", { children: [
-        /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("a", { href: safeUrl(image.asset.url), target: "_blank", rel: "noreferrer", children: /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("img", { src: safeUrl(image.asset.url), alt: image.caption || n.title + " reference " + (index + 1) }) }),
-        mutate ? /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)(import_jsx_runtime15.Fragment, { children: [
-          /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("input", { "aria-label": "Image caption " + (index + 1), value: image.caption, placeholder: "Add a caption\u2026", onChange: (e) => mutate((images2) => images2.map((i) => i.id === image.id ? { ...i, caption: e.target.value } : i)) }),
-          /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "profile-image-actions", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("span", { children: index === 0 ? "COVER" : String(index + 1).padStart(2, "0") }),
-            /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("button", { title: "Move image earlier", disabled: index === 0, onClick: () => move(image.id, -1), children: /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(ChevronLeft, { size: 13 }) }),
-            /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("button", { title: "Move image later", disabled: index === images.length - 1, onClick: () => move(image.id, 1), children: /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(ChevronRight, { size: 13 }) }),
-            /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("button", { className: "delete-control", "aria-label": "Delete image " + (index + 1), onClick: () => {
+      /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "profile-image-grid", children: images.map((image, index) => /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("figure", { children: [
+        /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("a", { href: safeUrl(image.asset.url), target: "_blank", rel: "noreferrer", children: /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("img", { src: safeUrl(image.asset.url), alt: image.caption || n.title + " reference " + (index + 1) }) }),
+        mutate ? /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)(import_jsx_runtime16.Fragment, { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("input", { "aria-label": "Image caption " + (index + 1), value: image.caption, placeholder: "Add a caption\u2026", onChange: (e) => mutate((images2) => images2.map((i) => i.id === image.id ? { ...i, caption: e.target.value } : i)) }),
+          /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "profile-image-actions", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("span", { children: index === 0 ? "COVER" : String(index + 1).padStart(2, "0") }),
+            /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("button", { title: "Move image earlier", disabled: index === 0, onClick: () => move(image.id, -1), children: /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(ChevronLeft, { size: 13 }) }),
+            /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("button", { title: "Move image later", disabled: index === images.length - 1, onClick: () => move(image.id, 1), children: /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(ChevronRight, { size: 13 }) }),
+            /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("button", { className: "delete-control", "aria-label": "Delete image " + (index + 1), onClick: () => {
               if (window.confirm("Remove this image from " + n.title + "?")) mutate((images2) => images2.filter((i) => i.id !== image.id), [image.asset.id]);
             }, children: [
-              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(Trash, { size: 12 }),
+              /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(Trash, { size: 12 }),
               "Delete"
             ] })
           ] })
-        ] }) : image.caption && /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("figcaption", { children: image.caption })
+        ] }) : image.caption && /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("figcaption", { children: image.caption })
       ] }, image.id)) })
     ] });
   }
@@ -63241,49 +63324,49 @@ ${prefix}
   }
 
   // components/development-sheet.tsx
-  var import_jsx_runtime16 = __toESM(require_jsx_runtime(), 1);
+  var import_jsx_runtime17 = __toESM(require_jsx_runtime(), 1);
   var prompts = [["seed", "The seed", "An image, a question, a situation, a feeling\u2014whatever started this idea."], ["premise", "Premise", "What is the central situation or possibility?"], ["logline", "Logline", "An optional one-sentence description of the story. It can change."], ["world", "The world", "How does this world work? Its everyday life, history, culture, systems, or invented rules."], ["theme", "What you want to explore", "Questions, themes, contradictions, or a personal reason to make this."], ["conflict", "Pressure & possibilities", "What disrupts this world? What could happen? Explore without committing."], ["tone", "Tone & experience", "How should it feel to watch? Form, genre, atmosphere, or experiments."], ["questions", "Unknowns & alternatives", "Unanswered questions, competing ideas, and things to investigate."]];
   function DevelopmentSheet({ n, patch, children: children3 }) {
-    return /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "planning-sheet development-sheet", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("header", { children: [
-        /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("span", { className: "planning-symbol", children: /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(Lightbulb, { size: 28, strokeWidth: 1.3 }) }),
-        /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { children: [
-          /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "eyebrow", children: "STORY DEVELOPMENT" }),
-          /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("h2", { children: n.title }),
-          /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("p", { children: "Explore the idea in your own order. Every prompt is optional." })
+    return /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("div", { className: "planning-sheet development-sheet", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("header", { children: [
+        /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("span", { className: "planning-symbol", children: /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(Lightbulb, { size: 28, strokeWidth: 1.3 }) }),
+        /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("div", { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("div", { className: "eyebrow", children: "STORY DEVELOPMENT" }),
+          /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("h2", { children: n.title }),
+          /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("p", { children: "Explore the idea in your own order. Every prompt is optional." })
         ] })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "development-intro", children: "Start with a spark. Shape the details as your story grows." }),
-      /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "planning-field-grid", children: prompts.map(([key2, label, placeholder]) => /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("label", { className: "planning-field", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("span", { children: label }),
-        /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("textarea", { rows: 4, "aria-label": label, value: n.fields["development." + key2] || "", placeholder, onChange: (e) => patch(n.id, { fields: { ...n.fields, ["development." + key2]: e.target.value } }) })
+      /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("div", { className: "development-intro", children: "Start with a spark. Shape the details as your story grows." }),
+      /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("div", { className: "planning-field-grid", children: prompts.map(([key2, label, placeholder]) => /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("label", { className: "planning-field", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("span", { children: label }),
+        /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("textarea", { rows: 4, "aria-label": label, value: n.fields["development." + key2] || "", placeholder, onChange: (e) => patch(n.id, { fields: { ...n.fields, ["development." + key2]: e.target.value } }) })
       ] }, key2)) }),
-      /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("section", { className: "planning-free-notes", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "section-label", children: "FREE EXPLORATION \xB7 WRITE ANYTHING" }),
+      /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("section", { className: "planning-free-notes", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("div", { className: "section-label", children: "FREE EXPLORATION \xB7 WRITE ANYTHING" }),
         children3
       ] })
     ] });
   }
 
   // components/planning-sheet.tsx
-  var import_jsx_runtime17 = __toESM(require_jsx_runtime(), 1);
+  var import_jsx_runtime18 = __toESM(require_jsx_runtime(), 1);
   function PlanningSheet({ n, patch, children: children3, images }) {
     const character = n.kind === "character", prop = n.kind === "prop";
     const fields = character ? [["role", "Role in the story", ""], ["want", "What they want", "Their immediate goal, larger desire, or both."], ["obstacle", "What holds them back", "External obstacles, inner resistance, or contradictions."], ["relationships", "Relationships", "The people who shape their choices."], ["voice", "Voice & behaviour", "How this person speaks, acts, and responds."]] : prop ? [["purpose", "Story purpose", "What does this object make possible or change?"], ["appearance", "Appearance & details", "Shape, material, wear, markings, or scale."], ["ownership", "Ownership & handling", "Who owns, carries, finds, or uses it?"], ["continuity", "Continuity", "Where is it, and how does its condition change?"], ["practical", "Production notes", "Sourcing, duplicates, handling, or practical requirements."]] : [["context", "Place & time", ""], ["appearance", "What we see", "Physical details that matter to the scene."], ["atmosphere", "What we hear and feel", "Sound, light, activity, and atmosphere."], ["purpose", "What happens here", "How this place affects the story."], ["practical", "Practical details", "Access, space, props, or production notes."]];
     const additional = character ? [["background", "Background"], ["fear", "Fear & vulnerability"], ["change", "How they change"]] : prop ? [["history", "History & meaning"], ["references", "References & research"]] : [["continuity", "Continuity"], ["references", "References & research"]];
     function input(key2, label, placeholder = "", short = false) {
-      return /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("label", { className: "planning-field " + (short ? "short" : ""), children: [
-        /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("span", { children: label }),
-        short ? /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("input", { "aria-label": label, value: n.fields["profile." + key2] || "", onChange: (e) => patch(n.id, { fields: { ...n.fields, ["profile." + key2]: e.target.value } }), placeholder: "Write what matters to your story\u2026" }) : /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("textarea", { "aria-label": label, rows: 3, value: n.fields["profile." + key2] || "", onChange: (e) => patch(n.id, { fields: { ...n.fields, ["profile." + key2]: e.target.value } }), placeholder: placeholder || "Your notes\u2026" })
+      return /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("label", { className: "planning-field " + (short ? "short" : ""), children: [
+        /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("span", { children: label }),
+        short ? /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("input", { "aria-label": label, value: n.fields["profile." + key2] || "", onChange: (e) => patch(n.id, { fields: { ...n.fields, ["profile." + key2]: e.target.value } }), placeholder: "Write what matters to your story\u2026" }) : /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("textarea", { "aria-label": label, rows: 3, value: n.fields["profile." + key2] || "", onChange: (e) => patch(n.id, { fields: { ...n.fields, ["profile." + key2]: e.target.value } }), placeholder: placeholder || "Your notes\u2026" })
       ] }, key2);
     }
-    return /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("div", { className: "planning-sheet " + (character ? "character-sheet" : prop ? "prop-sheet" : "location-sheet"), children: [
-      /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("header", { children: [
-        /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("span", { className: "planning-symbol", children: character ? /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(UserRound, { size: 28, strokeWidth: 1.3 }) : prop ? /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(Package, { size: 28, strokeWidth: 1.3 }) : /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(MapPin, { size: 28, strokeWidth: 1.3 }) }),
-        /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("div", { children: [
-          /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("div", { className: "eyebrow", children: character ? "CHARACTER PROFILE" : prop ? "PROP PROFILE" : "LOCATION PROFILE" }),
-          /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("h2", { children: n.title }),
-          /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("p", { children: [
+    return /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "planning-sheet " + (character ? "character-sheet" : prop ? "prop-sheet" : "location-sheet"), children: [
+      /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("header", { children: [
+        /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("span", { className: "planning-symbol", children: character ? /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(UserRound, { size: 28, strokeWidth: 1.3 }) : prop ? /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(Package, { size: 28, strokeWidth: 1.3 }) : /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(MapPin, { size: 28, strokeWidth: 1.3 }) }),
+        /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { className: "eyebrow", children: character ? "CHARACTER PROFILE" : prop ? "PROP PROFILE" : "LOCATION PROFILE" }),
+          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("h2", { children: n.title }),
+          /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("p", { children: [
             "A place to develop this ",
             character ? "person" : prop ? "object" : "setting",
             ". Use the fields that help you."
@@ -63291,16 +63374,16 @@ ${prefix}
         ] })
       ] }),
       images,
-      /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("div", { className: "planning-field-grid", children: fields.map(([key2, label, placeholder], i) => input(key2, label, placeholder, i === 0)) }),
-      /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("details", { className: "planning-extra", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("summary", { children: [
+      /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { className: "planning-field-grid", children: fields.map(([key2, label, placeholder], i) => input(key2, label, placeholder, i === 0)) }),
+      /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("details", { className: "planning-extra", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("summary", { children: [
           "Additional details",
-          /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(ChevronDown, { size: 14 })
+          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(ChevronDown, { size: 14 })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("div", { children: additional.map(([key2, label]) => input(key2, label)) })
+        /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { children: additional.map(([key2, label]) => input(key2, label)) })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("section", { className: "planning-free-notes", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("div", { className: "section-label", children: "FREE NOTES" }),
+      /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("section", { className: "planning-free-notes", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { className: "section-label", children: "FREE NOTES" }),
         children3
       ] })
     ] });
@@ -63356,7 +63439,7 @@ ${prefix}
   }
 
   // components/writing-studio.tsx
-  var import_jsx_runtime18 = __toESM(require_jsx_runtime(), 1);
+  var import_jsx_runtime19 = __toESM(require_jsx_runtime(), 1);
   async function screenplayPDF2(...args) {
     return (await Promise.resolve().then(() => (init_screenplay_pdf(), screenplay_pdf_exports))).screenplayPDF(...args);
   }
@@ -63366,45 +63449,45 @@ ${prefix}
   var ELEMENT_NAMES = { scene: "Scene heading", action: "Action", character: "Character", dialogue: "Dialogue", parenthetical: "Parenthetical", transition: "Transition", shot: "Shot" };
   var DEFAULT_PREFS = { binder: false, inspector: false, binderWidth: 248, inspectorWidth: 282, zoom: 100, font: "DM Sans", dark: false, page: true, dialogueFocus: false, spellcheck: false, palette: "carbon" };
   function IconButton({ title, children: children3, onClick, active = false, disabled = false, className = "" }) {
-    return /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("button", { type: "button", title, "aria-label": title, "aria-pressed": active, onClick, disabled, className: "icon-button " + (active ? "is-active " : "") + className, children: children3 });
+    return /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("button", { type: "button", title, "aria-label": title, "aria-pressed": active, onClick, disabled, className: "icon-button " + (active ? "is-active " : "") + className, children: children3 });
   }
   function NodeIcon({ n, open = false }) {
     const C = n.role === "trash" ? Trash : n.role === "development" ? Lightbulb : n.role === "characters" ? UserRound : n.role === "locations" ? MapPin : n.role === "props" ? Package : n.role === "research" ? BookOpen : n.role === "draft" || n.role === "draft-version" ? Film : n.kind === "folder" ? open ? FolderOpen : Folder : n.kind === "character" ? UserRound : n.kind === "location" ? MapPin : n.kind === "prop" ? Package : n.kind === "screenplay" ? Film : n.kind === "file" ? Image : FileText;
-    return /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(C, { size: 16, strokeWidth: 1.6 });
+    return /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(C, { size: 16, strokeWidth: 1.6 });
   }
   var dateLabel = (date) => new Date(date).toLocaleString(void 0, { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" });
   function ModalFrame({ title, description, children: children3, close: close2, wide = false }) {
-    const ref = (0, import_react17.useRef)(null);
-    (0, import_react17.useEffect)(() => {
+    const ref = (0, import_react18.useRef)(null);
+    (0, import_react18.useEffect)(() => {
       const d = ref.current;
       d?.showModal();
       return () => {
         d?.close();
       };
     }, []);
-    return /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("dialog", { ref, className: "dialog " + (wide ? "wide" : ""), onCancel: (e) => {
+    return /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("dialog", { ref, className: "dialog " + (wide ? "wide" : ""), onCancel: (e) => {
       e.preventDefault();
       close2();
     }, onClick: (e) => {
       if (e.target === e.currentTarget) close2();
     }, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "dialog-heading", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { children: [
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("h2", { children: title }),
-          description && /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("p", { children: description })
+      /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "dialog-heading", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("h2", { children: title }),
+          description && /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("p", { children: description })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(IconButton, { title: "Close dialog", onClick: close2, children: /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(X, { size: 18 }) })
+        /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(IconButton, { title: "Close dialog", onClick: close2, children: /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(X, { size: 18 }) })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { className: "dialog-body", children: children3 })
+      /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("div", { className: "dialog-body", children: children3 })
     ] });
   }
   function RichEditor({ n, project, patch, register, onSelection, zoom, font, page, dialogueFocus, readOnly = false }) {
-    const ref = (0, import_react17.useRef)(null);
-    const [element, setElement] = (0, import_react17.useState)("action");
-    (0, import_react17.useEffect)(() => {
+    const ref = (0, import_react18.useRef)(null);
+    const [element, setElement] = (0, import_react18.useState)("action");
+    (0, import_react18.useEffect)(() => {
       if (ref.current) ref.current.innerHTML = sanitize(n.html) || (n.kind === "screenplay" ? '<p data-element="scene"><br></p>' : "<p><br></p>");
     }, [n.id]);
-    (0, import_react17.useEffect)(() => {
+    (0, import_react18.useEffect)(() => {
       const el = ref.current;
       if (!el || sanitize(n.html) === sanitize(el.innerHTML)) return;
       const selection = window.getSelection();
@@ -63474,13 +63557,13 @@ ${prefix}
         save();
       }
     }
-    return /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "editor-document prose-document " + (page ? "page-view" : "flow-view"), children: [
-      n.kind === "screenplay" && /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "script-strip", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("span", { children: "SCREENPLAY" }),
-        /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("select", { "aria-label": "Screenplay element", value: element, onChange: (e) => setScriptElement(e.target.value), children: ELEMENTS.map((x) => /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("option", { value: x, children: ELEMENT_NAMES[x] }, x)) }),
-        /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("span", { className: "script-hint", children: "Tab changes element \xB7 Enter continues" })
+    return /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "editor-document prose-document " + (page ? "page-view" : "flow-view"), children: [
+      n.kind === "screenplay" && /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "script-strip", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { children: "SCREENPLAY" }),
+        /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("select", { "aria-label": "Screenplay element", value: element, onChange: (e) => setScriptElement(e.target.value), children: ELEMENTS.map((x) => /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("option", { value: x, children: ELEMENT_NAMES[x] }, x)) }),
+        /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { className: "script-hint", children: "Tab changes element \xB7 Enter continues" })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { className: "paper " + (n.kind === "screenplay" ? "screenplay " : "") + (dialogueFocus ? "dialogue-focus" : ""), style: { fontFamily: n.kind === "screenplay" ? '"Courier New", monospace' : font, fontSize: (n.kind === "screenplay" ? 16 : 18) * zoom / 100 }, children: /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { ref, contentEditable: !readOnly, suppressContentEditableWarning: true, spellCheck: true, role: "textbox", "aria-label": n.title + " writing editor", "aria-multiline": "true", "data-placeholder": n.kind === "screenplay" ? "INT. YOUR FIRST SCENE \u2014 DAY" : "Start writing\u2026", className: "rich-editor " + (!plain(n.html).trim() && !n.html.includes("<img") ? "is-empty" : ""), onFocus: () => {
+      /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("div", { className: "paper " + (n.kind === "screenplay" ? "screenplay " : "") + (dialogueFocus ? "dialogue-focus" : ""), style: { fontFamily: n.kind === "screenplay" ? '"Courier New", monospace' : font, fontSize: (n.kind === "screenplay" ? 16 : 18) * zoom / 100 }, children: /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("div", { ref, contentEditable: !readOnly, suppressContentEditableWarning: true, spellCheck: true, role: "textbox", "aria-label": n.title + " writing editor", "aria-multiline": "true", "data-placeholder": n.kind === "screenplay" ? "INT. YOUR FIRST SCENE \u2014 DAY" : "Start writing\u2026", className: "rich-editor " + (!plain(n.html).trim() && !n.html.includes("<img") ? "is-empty" : ""), onFocus: () => {
         register(ref.current, n);
         onSelection();
       }, onInput: save, onMouseUp: () => {
@@ -63505,38 +63588,38 @@ ${prefix}
     ] });
   }
   function Studio({ accountName = "", accountUserId = "", allowLegacyArchive = false } = {}) {
-    const [stage, setStage] = (0, import_react17.useState)("atlas");
-    const [dockOpen, setDockOpen] = (0, import_react17.useState)(false);
-    const [visualSceneId, setVisualSceneId] = (0, import_react17.useState)("");
+    const [stage, setStage] = (0, import_react18.useState)("atlas");
+    const [dockOpen, setDockOpen] = (0, import_react18.useState)(false);
+    const [visualSceneId, setVisualSceneId] = (0, import_react18.useState)("");
     const phone = usePhoneLayout();
-    const [phonePanel, setPhonePanel] = (0, import_react17.useState)("");
-    const [workspace, setWorkspace] = (0, import_react17.useState)(emptyWorkspace);
-    const stateRef = (0, import_react17.useRef)(workspace);
-    const [loaded, setLoaded] = (0, import_react17.useState)(false), [status, setStatus] = (0, import_react17.useState)("loading"), [error2, setError] = (0, import_react17.useState)("");
-    const revision = (0, import_react17.useRef)(0), generation = (0, import_react17.useRef)(0), savedGeneration = (0, import_react17.useRef)(0), inflight = (0, import_react17.useRef)(false), blocked = (0, import_react17.useRef)(false), ready = (0, import_react17.useRef)(false), recoverBlock = (0, import_react17.useRef)(false), userKey = (0, import_react17.useRef)(accountUserId ? "workspace:" + accountUserId : "workspace"), accountId = (0, import_react17.useRef)(accountUserId);
-    const [projectId, setProjectId] = (0, import_react17.useState)(""), [selectedId, setSelectedId] = (0, import_react17.useState)(""), [mode, setMode] = (0, import_react17.useState)("editor"), [tabs, setTabs] = (0, import_react17.useState)([]), [expanded, setExpanded] = (0, import_react17.useState)([]);
-    const [prefs, setPrefs] = (0, import_react17.useState)(DEFAULT_PREFS), [inspectorTab, setInspectorTab] = (0, import_react17.useState)("notes"), [modal, setModal] = (0, import_react17.useState)(null), [menu, setMenu] = (0, import_react17.useState)(""), [focus2, setFocus] = (0, import_react17.useState)(false), [splitId, setSplitId] = (0, import_react17.useState)("");
-    const [query, setQuery] = (0, import_react17.useState)(""), [collectionId, setCollectionId] = (0, import_react17.useState)(""), [toast, setToast] = (0, import_react17.useState)(""), [dragId, setDragId] = (0, import_react17.useState)(""), [freeform, setFreeform] = (0, import_react17.useState)(false), [sort, setSort] = (0, import_react17.useState)("order");
-    const [importProblems, setImportProblems] = (0, import_react17.useState)([]), [importBusy, setImportBusy] = (0, import_react17.useState)(false);
-    const failedImports = (0, import_react17.useRef)([]), importLock = (0, import_react17.useRef)(false), cleanupLock = (0, import_react17.useRef)(false), currentProjectId = (0, import_react17.useRef)(projectId);
+    const [phonePanel, setPhonePanel] = (0, import_react18.useState)("");
+    const [workspace, setWorkspace] = (0, import_react18.useState)(emptyWorkspace);
+    const stateRef = (0, import_react18.useRef)(workspace);
+    const [loaded, setLoaded] = (0, import_react18.useState)(false), [status, setStatus] = (0, import_react18.useState)("loading"), [error2, setError] = (0, import_react18.useState)("");
+    const revision = (0, import_react18.useRef)(0), generation = (0, import_react18.useRef)(0), savedGeneration = (0, import_react18.useRef)(0), inflight = (0, import_react18.useRef)(false), blocked = (0, import_react18.useRef)(false), ready = (0, import_react18.useRef)(false), recoverBlock = (0, import_react18.useRef)(false), userKey = (0, import_react18.useRef)(accountUserId ? "workspace:" + accountUserId : "workspace"), accountId = (0, import_react18.useRef)(accountUserId);
+    const [projectId, setProjectId] = (0, import_react18.useState)(""), [selectedId, setSelectedId] = (0, import_react18.useState)(""), [mode, setMode] = (0, import_react18.useState)("editor"), [tabs, setTabs] = (0, import_react18.useState)([]), [expanded, setExpanded] = (0, import_react18.useState)([]);
+    const [prefs, setPrefs] = (0, import_react18.useState)(DEFAULT_PREFS), [inspectorTab, setInspectorTab] = (0, import_react18.useState)("notes"), [modal, setModal] = (0, import_react18.useState)(null), [menu, setMenu] = (0, import_react18.useState)(""), [focus2, setFocus] = (0, import_react18.useState)(false), [splitId, setSplitId] = (0, import_react18.useState)("");
+    const [query, setQuery] = (0, import_react18.useState)(""), [collectionId, setCollectionId] = (0, import_react18.useState)(""), [toast, setToast] = (0, import_react18.useState)(""), [dragId, setDragId] = (0, import_react18.useState)(""), [freeform, setFreeform] = (0, import_react18.useState)(false), [sort, setSort] = (0, import_react18.useState)("order");
+    const [importProblems, setImportProblems] = (0, import_react18.useState)([]), [importBusy, setImportBusy] = (0, import_react18.useState)(false);
+    const failedImports = (0, import_react18.useRef)([]), importLock = (0, import_react18.useRef)(false), cleanupLock = (0, import_react18.useRef)(false), currentProjectId = (0, import_react18.useRef)(projectId);
     currentProjectId.current = projectId;
-    const [manualSaving, setManualSaving] = (0, import_react17.useState)(false), [profileId, setProfileId] = (0, import_react17.useState)(""), [sceneReveal, setSceneReveal] = (0, import_react17.useState)(null);
-    const manualSaveLock = (0, import_react17.useRef)(false), saveFailure = (0, import_react17.useRef)("");
-    const [newDraftName, setNewDraftName] = (0, import_react17.useState)("");
-    const [newTitle, setNewTitle] = (0, import_react17.useState)(""), [newTemplate, setNewTemplate] = (0, import_react17.useState)("screenplay"), [compileFormat, setCompileFormat] = (0, import_react17.useState)("pdf"), [compileScope, setCompileScope] = (0, import_react17.useState)("draft"), [includeTitles, setIncludeTitles] = (0, import_react17.useState)(false), [titlePage, setTitlePage] = (0, import_react17.useState)(true), [compilePreview, setCompilePreview] = (0, import_react17.useState)(false);
-    const [replaceFind, setReplaceFind] = (0, import_react17.useState)(""), [replaceWith, setReplaceWith] = (0, import_react17.useState)(""), [replaceScope, setReplaceScope] = (0, import_react17.useState)("document"), [snapshotId, setSnapshotId] = (0, import_react17.useState)(""), [compareId, setCompareId] = (0, import_react17.useState)(""), [moveParent, setMoveParent] = (0, import_react17.useState)("");
-    const [vault, setVault] = (0, import_react17.useState)(null), [vaultError, setVaultError] = (0, import_react17.useState)(""), [vaultQuery, setVaultQuery] = (0, import_react17.useState)("");
-    const [recovery, setRecovery] = (0, import_react17.useState)(null), [lastSaved, setLastSaved] = (0, import_react17.useState)(""), [selectionQuote, setSelectionQuote] = (0, import_react17.useState)("");
-    const activeEditor = (0, import_react17.useRef)(null), range2 = (0, import_react17.useRef)(null), importInput = (0, import_react17.useRef)(null), restoreInput = (0, import_react17.useRef)(null), toastTimer = (0, import_react17.useRef)(null);
-    const editorBody = (0, import_react17.useRef)(null);
-    const undoStack = (0, import_react17.useRef)([]), redoStack = (0, import_react17.useRef)([]), lastMutation = (0, import_react17.useRef)("structure");
+    const [manualSaving, setManualSaving] = (0, import_react18.useState)(false), [profileId, setProfileId] = (0, import_react18.useState)(""), [sceneReveal, setSceneReveal] = (0, import_react18.useState)(null);
+    const manualSaveLock = (0, import_react18.useRef)(false), saveFailure = (0, import_react18.useRef)("");
+    const [newDraftName, setNewDraftName] = (0, import_react18.useState)("");
+    const [newTitle, setNewTitle] = (0, import_react18.useState)(""), [newTemplate, setNewTemplate] = (0, import_react18.useState)("screenplay"), [compileFormat, setCompileFormat] = (0, import_react18.useState)("pdf"), [compileScope, setCompileScope] = (0, import_react18.useState)("draft"), [includeTitles, setIncludeTitles] = (0, import_react18.useState)(false), [titlePage, setTitlePage] = (0, import_react18.useState)(true), [compilePreview, setCompilePreview] = (0, import_react18.useState)(false);
+    const [replaceFind, setReplaceFind] = (0, import_react18.useState)(""), [replaceWith, setReplaceWith] = (0, import_react18.useState)(""), [replaceScope, setReplaceScope] = (0, import_react18.useState)("document"), [snapshotId, setSnapshotId] = (0, import_react18.useState)(""), [compareId, setCompareId] = (0, import_react18.useState)(""), [moveParent, setMoveParent] = (0, import_react18.useState)("");
+    const [vault, setVault] = (0, import_react18.useState)(null), [vaultError, setVaultError] = (0, import_react18.useState)(""), [vaultQuery, setVaultQuery] = (0, import_react18.useState)("");
+    const [recovery, setRecovery] = (0, import_react18.useState)(null), [lastSaved, setLastSaved] = (0, import_react18.useState)(""), [selectionQuote, setSelectionQuote] = (0, import_react18.useState)("");
+    const activeEditor = (0, import_react18.useRef)(null), range2 = (0, import_react18.useRef)(null), importInput = (0, import_react18.useRef)(null), restoreInput = (0, import_react18.useRef)(null), toastTimer = (0, import_react18.useRef)(null);
+    const editorBody = (0, import_react18.useRef)(null);
+    const undoStack = (0, import_react18.useRef)([]), redoStack = (0, import_react18.useRef)([]), lastMutation = (0, import_react18.useRef)("structure");
     const project = workspace.projects.find((p) => p.id === projectId && !p.archived) || null, selected = project?.nodes.find((n) => n.id === selectedId) || null;
     const visibleProjects = workspace.projects.filter((p) => !p.archived), snapshots = workspace.snapshots.filter((s) => s.projectId === projectId && s.nodeId === selectedId).sort((a, b) => b.created.localeCompare(a.created));
     const scope = project ? selected?.kind === "folder" ? selected : project.nodes.find((n) => n.id === selected?.parent) || project.nodes.find((n) => n.role === "draft") : null;
     const libraryRoot = project ? sectionForNode(project, selectedId) || project.nodes.find((n) => n.role === "development") : void 0, libraryFolder = project ? sectionFolder(project, libraryRoot) : void 0;
     const libraryItems = project ? sectionEntries(project, libraryRoot) : [];
     const headingNode = ["corkboard", "outline"].includes(mode) ? scope : selected;
-    (0, import_react17.useEffect)(() => {
+    (0, import_react18.useEffect)(() => {
       editorBody.current?.scrollTo({ top: 0, left: 0 });
     }, [stage, selectedId, mode, projectId]);
     const collection = project?.collections.find((c) => c.id === collectionId), searching = !!query.trim() || !!collection;
@@ -63548,8 +63631,8 @@ ${prefix}
       if (toastTimer.current) clearTimeout(toastTimer.current);
       toastTimer.current = setTimeout(() => setToast(""), 3500);
     }
-    const cloudBase = (0, import_react17.useRef)(emptyWorkspace()), pulling = (0, import_react17.useRef)(false);
-    const applyRemote = (0, import_react17.useCallback)((result) => {
+    const cloudBase = (0, import_react18.useRef)(emptyWorkspace()), pulling = (0, import_react18.useRef)(false);
+    const applyRemote = (0, import_react18.useCallback)((result) => {
       if (accountId.current && result.userId && result.userId !== accountId.current) {
         blocked.current = true;
         saveFailure.current = "The local workspace changed. Reopen this app to use the new account.";
@@ -63593,7 +63676,7 @@ ${prefix}
       });
       return true;
     }, []);
-    const cloudSave = (0, import_react17.useCallback)(async () => {
+    const cloudSave = (0, import_react18.useCallback)(async () => {
       if (!ready.current || inflight.current || pulling.current || blocked.current || recoverBlock.current || generation.current === savedGeneration.current) return;
       inflight.current = true;
       saveFailure.current = "";
@@ -63627,7 +63710,7 @@ ${prefix}
         if (!blocked.current && generation.current !== savedGeneration.current && savedGeneration.current === savingGeneration) setTimeout(() => void cloudSave(), 300);
       }
     }, []);
-    (0, import_react17.useEffect)(() => {
+    (0, import_react18.useEffect)(() => {
       try {
         const p = JSON.parse(localStorage.getItem("desk-writing-preferences") || "{}");
         setPrefs({ ...DEFAULT_PREFS, ...p, font: !p.font || p.font === "IBM Plex Serif" || !p.typographyVersion && p.font === "Georgia" ? "DM Sans" : p.font, palette: "carbon", dark: false, binder: false, inspector: false });
@@ -63697,14 +63780,14 @@ ${prefix}
       }
       void load();
     }, []);
-    (0, import_react17.useEffect)(() => {
+    (0, import_react18.useEffect)(() => {
       if (!loaded) return;
       try {
         localStorage.setItem("desk-writing-preferences", JSON.stringify({ ...prefs, atlasVersion: 2, typographyVersion: 1 }));
       } catch {
       }
     }, [prefs, loaded]);
-    (0, import_react17.useEffect)(() => {
+    (0, import_react18.useEffect)(() => {
       if (!loaded || recoverBlock.current) return;
       const timer = setTimeout(() => {
         void recoverWrite(userKey.current, { state: stateRef.current, revision: revision.current, pending: generation.current !== savedGeneration.current }).catch(() => {
@@ -63714,7 +63797,7 @@ ${prefix}
       }, 700);
       return () => clearTimeout(timer);
     }, [workspace, loaded, cloudSave]);
-    const refreshCloud = (0, import_react17.useCallback)(async () => {
+    const refreshCloud = (0, import_react18.useCallback)(async () => {
       if (!ready.current || inflight.current || pulling.current || blocked.current || recoverBlock.current || !navigator.onLine || document.visibilityState === "hidden") return;
       pulling.current = true;
       try {
@@ -63730,7 +63813,7 @@ ${prefix}
         void cloudSave();
       }
     }, [applyRemote, cloudSave]);
-    (0, import_react17.useEffect)(() => {
+    (0, import_react18.useEffect)(() => {
       if (!loaded) return;
       const refresh = () => void refreshCloud();
       const leaving = () => {
@@ -63751,7 +63834,7 @@ ${prefix}
         document.removeEventListener("visibilitychange", leaving);
       };
     }, [loaded, refreshCloud, cloudSave]);
-    (0, import_react17.useEffect)(() => {
+    (0, import_react18.useEffect)(() => {
       const retry = () => void cloudSave();
       window.addEventListener("online", retry);
       const timer = setInterval(retry, 15e3);
@@ -63768,19 +63851,19 @@ ${prefix}
         clearInterval(timer);
       };
     }, [cloudSave]);
-    (0, import_react17.useEffect)(() => {
+    (0, import_react18.useEffect)(() => {
       if (projectId) try {
         localStorage.setItem("desk-last-project", projectId);
       } catch {
       }
     }, [projectId]);
-    (0, import_react17.useEffect)(() => {
+    (0, import_react18.useEffect)(() => {
       if (projectId && selectedId && loaded) try {
         localStorage.setItem("desk-last-document:" + projectId, selectedId);
       } catch {
       }
     }, [projectId, selectedId, loaded]);
-    (0, import_react17.useEffect)(() => {
+    (0, import_react18.useEffect)(() => {
       if (allowLegacyArchive && modal === "vault" && !vault) {
         fetch("/legacy/session-vault.json").then((r) => {
           if (!r.ok) throw Error("Could not load previous Vault");
@@ -63937,7 +64020,7 @@ ${prefix}
       notify("Planned scene added. Use its card to develop the beat, then open it to write pages.");
     }
     function saveDocument(_n, body) {
-      return /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { className: "document-save-shell", children: body });
+      return /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("div", { className: "document-save-shell", children: body });
     }
     function openNode(id) {
       setStage(null);
@@ -64081,7 +64164,7 @@ ${prefix}
       setMode("corkboard");
       notify("Deleted permanently. Unused file cleanup runs after saving.");
     }
-    (0, import_react17.useEffect)(() => {
+    (0, import_react18.useEffect)(() => {
       if (!loaded || status !== "saved" || !workspace.pendingAssetDeletes?.length) return;
       let cancelled = false;
       const cleanup = async () => {
@@ -64486,7 +64569,7 @@ ${prefix}
           break;
       }
     }
-    (0, import_react17.useEffect)(() => {
+    (0, import_react18.useEffect)(() => {
       function keys3(e) {
         if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
           e.preventDefault();
@@ -64518,16 +64601,16 @@ ${prefix}
       document.addEventListener("keydown", keys3);
       return () => document.removeEventListener("keydown", keys3);
     });
-    (0, import_react17.useEffect)(() => {
+    (0, import_react18.useEffect)(() => {
       if (!menu) return;
       const close2 = () => setMenu("");
       document.addEventListener("click", close2);
       return () => document.removeEventListener("click", close2);
     }, [menu]);
-    (0, import_react17.useEffect)(() => {
+    (0, import_react18.useEffect)(() => {
       setDockOpen(false);
     }, [stage, mode, selectedId, projectId]);
-    (0, import_react17.useEffect)(() => {
+    (0, import_react18.useEffect)(() => {
       if (!dockOpen || stage === "atlas") return;
       const close2 = (e) => {
         if (e.target instanceof Element && !e.target.closest(".creative-dock, .dock-bubble")) setDockOpen(false);
@@ -64546,7 +64629,7 @@ ${prefix}
       window.addEventListener("pointermove", move);
       window.addEventListener("pointerup", end);
     }
-    const inlineImage = (0, import_react17.useRef)(false);
+    const inlineImage = (0, import_react18.useRef)(false);
     async function importFiles(files) {
       if (!files?.length || importLock.current) return;
       if (!project) {
@@ -64732,15 +64815,15 @@ ${prefix}
       Add: [{ label: "Add in this folder", id: "new-auto" }, { label: "Text document", id: "new-text" }, { label: "Screenplay scene", id: "new-scene" }, { label: "Folder", id: "new-folder" }, { label: "Character sheet", id: "new-character" }, { label: "Location sheet", id: "new-location" }, { label: "Prop sheet", id: "new-prop" }, { label: "Import files\u2026", id: "import" }]
     };
     function dropdown(name) {
-      return menu === name && /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { className: "dropdown", onClick: (e) => e.stopPropagation(), role: "menu", children: menus[name]?.filter((item) => allowLegacyArchive || item.id !== "vault").map((item) => /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("button", { role: "menuitem", onClick: () => action(item.id), children: [
-        /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("span", { children: item.label }),
-        item.shortcut && /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("kbd", { children: item.shortcut })
+      return menu === name && /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("div", { className: "dropdown", onClick: (e) => e.stopPropagation(), role: "menu", children: menus[name]?.filter((item) => allowLegacyArchive || item.id !== "vault").map((item) => /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("button", { role: "menuitem", onClick: () => action(item.id), children: [
+        /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { children: item.label }),
+        item.shortcut && /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("kbd", { children: item.shortcut })
       ] }, item.id)) });
     }
     function tree(n, depth = 0) {
       const list = project ? children(project, n.id) : [], open = expanded.includes(n.id), selectedHere = selectedId === n.id;
-      return /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "tree-item", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "tree-row " + (selectedHere ? "selected " : "") + (dragId === n.id ? "dragging" : ""), style: { paddingLeft: 12 + depth * 17 }, draggable: !n.role, onDragStart: (e) => {
+      return /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "tree-item", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "tree-row " + (selectedHere ? "selected " : "") + (dragId === n.id ? "dragging" : ""), style: { paddingLeft: 12 + depth * 17 }, draggable: !n.role, onDragStart: (e) => {
           setDragId(n.id);
           e.dataTransfer.setData("text/desk-node", n.id);
           e.dataTransfer.effectAllowed = "move";
@@ -64764,20 +64847,20 @@ ${prefix}
           setSelectedId(n.id);
           setMenu("Documents");
         }, children: [
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("button", { className: "tree-disclosure", "aria-label": (open ? "Collapse " : "Expand ") + n.title, onClick: () => setExpanded((x) => x.includes(n.id) ? x.filter((id) => id !== n.id) : [...x, n.id]), style: { visibility: n.kind === "folder" || list.length ? "visible" : "hidden" }, children: open ? /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(ChevronDown, { size: 12 }) : /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(ChevronRight, { size: 12 }) }),
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("button", { className: "tree-select", onClick: () => openNode(n.id), onDoubleClick: () => {
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("button", { className: "tree-disclosure", "aria-label": (open ? "Collapse " : "Expand ") + n.title, onClick: () => setExpanded((x) => x.includes(n.id) ? x.filter((id) => id !== n.id) : [...x, n.id]), style: { visibility: n.kind === "folder" || list.length ? "visible" : "hidden" }, children: open ? /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(ChevronDown, { size: 12 }) : /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(ChevronRight, { size: 12 }) }),
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("button", { className: "tree-select", onClick: () => openNode(n.id), onDoubleClick: () => {
             const title = window.prompt("Document title", n.title);
             if (title?.trim()) patch(n.id, { title: title.trim() });
           }, children: [
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("span", { className: "node-icon " + (n.kind === "folder" ? "folder-icon" : ""), children: /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(NodeIcon, { n, open }) }),
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("span", { className: "tree-title", children: n.title }),
-            n.label !== "None" && /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("i", { className: "label-dot", style: { background: COLORS[n.label] || COLORS.None } }),
-            n.kind === "folder" && list.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("small", { children: list.length })
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { className: "node-icon " + (n.kind === "folder" ? "folder-icon" : ""), children: /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(NodeIcon, { n, open }) }),
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { className: "tree-title", children: n.title }),
+            n.label !== "None" && /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("i", { className: "label-dot", style: { background: COLORS[n.label] || COLORS.None } }),
+            n.kind === "folder" && list.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("small", { children: list.length })
           ] }),
-          !n.role && /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("button", { className: "tree-delete", "aria-label": "Delete " + n.title, title: inTrash(project, n) ? "Delete permanently" : "Move to Trash", onClick: (e) => {
+          !n.role && /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("button", { className: "tree-delete", "aria-label": "Delete " + n.title, title: inTrash(project, n) ? "Delete permanently" : "Move to Trash", onClick: (e) => {
             e.stopPropagation();
             deleteNode2(n.id);
-          }, children: /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(Trash, { size: 13 }) })
+          }, children: /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(Trash, { size: 13 }) })
         ] }),
         open && list.map((c) => tree(c, depth + 1))
       ] }, n.id);
@@ -64786,41 +64869,41 @@ ${prefix}
       if (!project) return null;
       if (n.kind === "file") {
         const url = safeUrl(n.asset?.url || "");
-        return /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "file-view", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "file-heading", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("h2", { children: n.title }),
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("a", { className: "button secondary", href: url, download: n.title, target: "_blank", rel: "noreferrer", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(Download, { size: 14 }),
+        return /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "file-view", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "file-heading", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("h2", { children: n.title }),
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("a", { className: "button secondary", href: url, download: n.title, target: "_blank", rel: "noreferrer", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(Download, { size: 14 }),
               "Open original"
             ] })
           ] }),
-          n.asset?.mime === "application/pdf" ? /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("iframe", { title: n.title, src: url }) : n.asset?.mime.startsWith("image/") ? /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("img", { src: url, alt: n.title }) : n.asset?.mime.startsWith("audio/") ? /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("audio", { controls: true, src: url }) : n.asset?.mime.startsWith("video/") ? /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("video", { controls: true, src: url }) : /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "empty-small", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(FileText, { size: 34 }),
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("p", { children: "This reference is saved with your project." }),
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("a", { href: url, className: "button secondary", children: "Download file" })
+          n.asset?.mime === "application/pdf" ? /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("iframe", { title: n.title, src: url }) : n.asset?.mime.startsWith("image/") ? /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("img", { src: url, alt: n.title }) : n.asset?.mime.startsWith("audio/") ? /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("audio", { controls: true, src: url }) : n.asset?.mime.startsWith("video/") ? /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("video", { controls: true, src: url }) : /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "empty-small", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(FileText, { size: 34 }),
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("p", { children: "This reference is saved with your project." }),
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("a", { href: url, className: "button secondary", children: "Download file" })
           ] })
         ] });
       }
-      if (n.kind === "screenplay") return /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(ScreenplayEditor, { n, project, onChange: (html) => patch(n.id, { html }), onActivate: (el, tiptap) => {
+      if (n.kind === "screenplay") return /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(ScreenplayEditor, { n, project, onChange: (html) => patch(n.id, { html }), onActivate: (el, tiptap) => {
         activeEditor.current = { el, id: n.id, tiptap };
         lastMutation.current = "text";
       }, onSelection: selection, zoom: prefs.zoom, onZoom: (zoom) => setPrefs((p) => ({ ...p, zoom })), dialogueFocus: prefs.dialogueFocus, onOpenProfile: openProfile, revealScene: sceneReveal?.documentId === n.id ? sceneReveal : void 0, spellcheck: prefs.spellcheck, onSpellcheck: (spellcheck) => setPrefs((p) => ({ ...p, spellcheck })) }, n.id + "-script");
-      const prose = /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(RichEditor, { n, project, patch, register: (el, n2) => {
+      const prose = /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(RichEditor, { n, project, patch, register: (el, n2) => {
         if (el) activeEditor.current = { el, id: n2.id };
       }, onSelection: selection, zoom: prefs.zoom, font: prefs.font, page: false, dialogueFocus: false }, n.id + "-" + n.kind);
-      return saveDocument(n, n.fields["development.kind"] === "foundation" ? /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(DevelopmentSheet, { n, patch, children: prose }) : isProfileKind(n.kind) ? /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(PlanningSheet, { n, patch, images: /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(ProfileImages, { n, mutate: (fn, removed) => updateProfileImages(n.id, fn, removed) }, n.id), children: prose }) : prose);
+      return saveDocument(n, n.fields["development.kind"] === "foundation" ? /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(DevelopmentSheet, { n, patch, children: prose }) : isProfileKind(n.kind) ? /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(PlanningSheet, { n, patch, images: /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(ProfileImages, { n, mutate: (fn, removed) => updateProfileImages(n.id, fn, removed) }, n.id), children: prose }) : prose);
     }
     const totalWords = project ? compileNodes(project).reduce((s, n) => s + wordCount(n.html), 0) : 0;
     const saveLabel = { loading: "Opening workspace\u2026", saved: "All changes saved locally", saving: "Saving\u2026", pending: "Unsaved changes", offline: "Offline \xB7 device copy", error: "Save needs attention", conflict: "Another session changed this workspace" }[status];
-    const [pdfPreviewUrl, setPdfPreviewUrl] = (0, import_react17.useState)("");
-    (0, import_react17.useEffect)(() => {
+    const [pdfPreviewUrl, setPdfPreviewUrl] = (0, import_react18.useState)("");
+    (0, import_react18.useEffect)(() => {
       setCompilePreview(false);
       if (pdfPreviewUrl) {
         URL.revokeObjectURL(pdfPreviewUrl);
         setPdfPreviewUrl("");
       }
     }, [compileScope, compileFormat, includeTitles, titlePage, projectId, project?.activeDraftId, JSON.stringify(project?.titlePage)]);
-    const [showArchived, setShowArchived] = (0, import_react17.useState)(false);
+    const [showArchived, setShowArchived] = (0, import_react18.useState)(false);
     function recoverDevice() {
       if (!recovery) return;
       recoverBlock.current = false;
@@ -64884,116 +64967,116 @@ ${prefix}
       }
     }
     function renderInspector() {
-      if (!selected) return /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "inspector-empty", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(Info, { size: 24 }),
-        /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("p", { children: "Select a document to see its notes and details." })
+      if (!selected) return /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "inspector-empty", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(Info, { size: 24 }),
+        /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("p", { children: "Select a document to see its notes and details." })
       ] });
-      return /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)(import_jsx_runtime18.Fragment, { children: [
-        inspectorTab === "notes" && /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)(import_jsx_runtime18.Fragment, { children: [
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("section", { className: "inspector-section", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "section-label", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("span", { children: "SYNOPSIS" }),
-              /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("span", { children: "Index card" })
+      return /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)(import_jsx_runtime19.Fragment, { children: [
+        inspectorTab === "notes" && /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)(import_jsx_runtime19.Fragment, { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("section", { className: "inspector-section", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "section-label", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { children: "SYNOPSIS" }),
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { children: "Index card" })
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("textarea", { className: "synopsis-input", "aria-label": "Document synopsis", placeholder: "What happens in this document?", value: selected.synopsis, onChange: (e) => patch(selected.id, { synopsis: e.target.value }) })
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("textarea", { className: "synopsis-input", "aria-label": "Document synopsis", placeholder: "What happens in this document?", value: selected.synopsis, onChange: (e) => patch(selected.id, { synopsis: e.target.value }) })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("section", { className: "inspector-section fill", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "section-label", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("span", { children: "DOCUMENT NOTES" }),
-              /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(StickyNote, { size: 13 })
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("section", { className: "inspector-section fill", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "section-label", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { children: "DOCUMENT NOTES" }),
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(StickyNote, { size: 13 })
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("textarea", { className: "notes-input", "aria-label": "Document notes", placeholder: "Questions, possibilities, things to remember\u2026", value: selected.notes, onChange: (e) => patch(selected.id, { notes: e.target.value }) })
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("textarea", { className: "notes-input", "aria-label": "Document notes", placeholder: "Questions, possibilities, things to remember\u2026", value: selected.notes, onChange: (e) => patch(selected.id, { notes: e.target.value }) })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { className: "inspector-note", children: "These notes stay beside your writing." })
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("div", { className: "inspector-note", children: "These notes stay beside your writing." })
         ] }),
-        inspectorTab === "bookmarks" && /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("section", { className: "inspector-section", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "section-label", children: [
+        inspectorTab === "bookmarks" && /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("section", { className: "inspector-section", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "section-label", children: [
             "BOOKMARKS",
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(IconButton, { title: "Add web bookmark", onClick: addBookmark, children: /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(Plus, { size: 14 }) })
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(IconButton, { title: "Add web bookmark", onClick: addBookmark, children: /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(Plus, { size: 14 }) })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("p", { className: "field-hint", children: "Keep useful references within reach." }),
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("select", { className: "full-select", "aria-label": "Bookmark a project document", value: "", onChange: (e) => {
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("p", { className: "field-hint", children: "Keep useful references within reach." }),
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("select", { className: "full-select", "aria-label": "Bookmark a project document", value: "", onChange: (e) => {
             const target = project?.nodes.find((n) => n.id === e.target.value);
             if (target) patch(selected.id, { bookmarks: [...selected.bookmarks, { id: uid(), title: target.title, url: "#document:" + target.id }] });
           }, children: [
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("option", { value: "", children: "+ Link a project document\u2026" }),
-            project && activeNodes(project).filter((n) => n.kind !== "folder" && n.id !== selected.id).map((n) => /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("option", { value: n.id, children: n.title }, n.id))
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("option", { value: "", children: "+ Link a project document\u2026" }),
+            project && activeNodes(project).filter((n) => n.kind !== "folder" && n.id !== selected.id).map((n) => /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("option", { value: n.id, children: n.title }, n.id))
           ] }),
-          selected.bookmarks.map((b) => /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "bookmark-row", children: [
-            b.url.startsWith("#document:") ? /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("button", { onClick: () => openNode(b.url.slice(10)), children: [
-              /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(FileText, { size: 15 }),
+          selected.bookmarks.map((b) => /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "bookmark-row", children: [
+            b.url.startsWith("#document:") ? /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("button", { onClick: () => openNode(b.url.slice(10)), children: [
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(FileText, { size: 15 }),
               b.title
-            ] }) : /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("a", { href: safeUrl(b.url), target: "_blank", rel: "noreferrer", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(ExternalLink, { size: 15 }),
+            ] }) : /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("a", { href: safeUrl(b.url), target: "_blank", rel: "noreferrer", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(ExternalLink, { size: 15 }),
               b.title
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(IconButton, { title: "Remove bookmark", onClick: () => patch(selected.id, { bookmarks: selected.bookmarks.filter((x) => x.id !== b.id) }), children: /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(X, { size: 12 }) })
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(IconButton, { title: "Remove bookmark", onClick: () => patch(selected.id, { bookmarks: selected.bookmarks.filter((x) => x.id !== b.id) }), children: /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(X, { size: 12 }) })
           ] }, b.id)),
-          !selected.bookmarks.length && /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { className: "empty-small", children: "No bookmarks yet." })
+          !selected.bookmarks.length && /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("div", { className: "empty-small", children: "No bookmarks yet." })
         ] }),
-        inspectorTab === "metadata" && /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("section", { className: "inspector-section metadata", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { className: "section-label", children: "DOCUMENT DETAILS" }),
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("label", { children: [
+        inspectorTab === "metadata" && /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("section", { className: "inspector-section metadata", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("div", { className: "section-label", children: "DOCUMENT DETAILS" }),
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("label", { children: [
             "Label",
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("select", { value: selected.label, onChange: (e) => patch(selected.id, { label: e.target.value }), children: Object.keys(COLORS).map((c) => /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("option", { children: c }, c)) })
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("select", { value: selected.label, onChange: (e) => patch(selected.id, { label: e.target.value }), children: Object.keys(COLORS).map((c) => /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("option", { children: c }, c)) })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("label", { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("label", { children: [
             "Status",
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("select", { value: selected.status, onChange: (e) => patch(selected.id, { status: e.target.value }), children: STATUSES.map((s) => /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("option", { children: s }, s)) })
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("select", { value: selected.status, onChange: (e) => patch(selected.id, { status: e.target.value }), children: STATUSES.map((s) => /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("option", { children: s }, s)) })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("label", { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("label", { children: [
             "Section type",
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("select", { value: selected.sectionType, onChange: (e) => patch(selected.id, { sectionType: e.target.value }), children: ["Scene", "Chapter", "Part", "Heading", "Notes"].map((s) => /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("option", { children: s }, s)) })
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("select", { value: selected.sectionType, onChange: (e) => patch(selected.id, { sectionType: e.target.value }), children: ["Scene", "Chapter", "Part", "Heading", "Notes"].map((s) => /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("option", { children: s }, s)) })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("label", { className: "checkbox-label", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("input", { type: "checkbox", checked: selected.include, onChange: (e) => patch(selected.id, { include: e.target.checked }) }),
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("label", { className: "checkbox-label", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("input", { type: "checkbox", checked: selected.include, onChange: (e) => patch(selected.id, { include: e.target.checked }) }),
             "Include in Compile"
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("label", { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("label", { children: [
             "Keywords",
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("input", { placeholder: "Separate with commas", value: selected.keywords.join(", "), onChange: (e) => patch(selected.id, { keywords: e.target.value.split(",").map((x) => x.trimStart()) }) })
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("input", { placeholder: "Separate with commas", value: selected.keywords.join(", "), onChange: (e) => patch(selected.id, { keywords: e.target.value.split(",").map((x) => x.trimStart()) }) })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("label", { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("label", { children: [
             "Word target",
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("input", { type: "number", min: "0", value: selected.target || "", placeholder: "Optional", onChange: (e) => patch(selected.id, { target: Math.max(0, Number(e.target.value) || 0) }) })
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("input", { type: "number", min: "0", value: selected.target || "", placeholder: "Optional", onChange: (e) => patch(selected.id, { target: Math.max(0, Number(e.target.value) || 0) }) })
           ] }),
-          project?.customFields.map((name) => /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("label", { children: [
+          project?.customFields.map((name) => /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("label", { children: [
             name,
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("input", { value: selected.fields[name] || "", onChange: (e) => patch(selected.id, { fields: { ...selected.fields, [name]: e.target.value } }) })
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("input", { value: selected.fields[name] || "", onChange: (e) => patch(selected.id, { fields: { ...selected.fields, [name]: e.target.value } }) })
           ] }, name)),
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("button", { className: "text-button", onClick: () => {
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("button", { className: "text-button", onClick: () => {
             const name = window.prompt("Custom field name");
             if (name?.trim() && project && !project.customFields.includes(name.trim())) changeProject((p) => p.customFields.push(name.trim()));
           }, children: [
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(Plus, { size: 13 }),
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(Plus, { size: 13 }),
             "Add custom field"
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "metadata-dates", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("span", { children: "Created" }),
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("span", { children: dateLabel(selected.created) }),
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("span", { children: "Modified" }),
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("span", { children: dateLabel(selected.updated) })
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "metadata-dates", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { children: "Created" }),
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { children: dateLabel(selected.created) }),
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { children: "Modified" }),
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { children: dateLabel(selected.updated) })
           ] })
         ] }),
-        inspectorTab === "snapshots" && /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("section", { className: "inspector-section", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "section-label", children: [
+        inspectorTab === "snapshots" && /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("section", { className: "inspector-section", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "section-label", children: [
             "SNAPSHOTS",
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(IconButton, { title: "Take snapshot", onClick: () => {
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(IconButton, { title: "Take snapshot", onClick: () => {
               const title = window.prompt("Snapshot name", "Before revision");
               if (title !== null) snapshot(title || "Snapshot");
-            }, children: /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(Plus, { size: 14 }) })
+            }, children: /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(Plus, { size: 14 }) })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("p", { className: "field-hint", children: "Keep earlier writing before you change it." }),
-          snapshots.length === 0 ? /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "empty-small", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(Camera, { size: 25 }),
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("p", { children: "No snapshots yet." }),
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("button", { className: "button secondary", onClick: () => snapshot("First saved version"), children: "Take snapshot" })
-          ] }) : snapshots.map((s) => /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "snapshot-row " + (snapshotId === s.id ? "chosen" : ""), children: [
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("button", { className: "snapshot-select", onClick: () => setSnapshotId(s.id), children: [
-              /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(Camera, { size: 14 }),
-              /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("span", { children: [
-                /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("strong", { children: s.title }),
-                /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("small", { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("p", { className: "field-hint", children: "Keep earlier writing before you change it." }),
+          snapshots.length === 0 ? /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "empty-small", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(Camera, { size: 25 }),
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("p", { children: "No snapshots yet." }),
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("button", { className: "button secondary", onClick: () => snapshot("First saved version"), children: "Take snapshot" })
+          ] }) : snapshots.map((s) => /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "snapshot-row " + (snapshotId === s.id ? "chosen" : ""), children: [
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("button", { className: "snapshot-select", onClick: () => setSnapshotId(s.id), children: [
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(Camera, { size: 14 }),
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("span", { children: [
+                /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("strong", { children: s.title }),
+                /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("small", { children: [
                   dateLabel(s.created),
                   " \xB7 ",
                   wordCount(s.html),
@@ -65001,150 +65084,151 @@ ${prefix}
                 ] })
               ] })
             ] }),
-            snapshotId === s.id && /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "snapshot-actions", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("button", { onClick: () => {
+            snapshotId === s.id && /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "snapshot-actions", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("button", { onClick: () => {
                 setCompareId(s.id);
                 setModal("compare");
               }, children: "Compare" }),
-              /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("button", { onClick: () => restoreSnapshot(s), children: "Restore" }),
-              /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(IconButton, { title: "Delete this snapshot", onClick: () => {
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("button", { onClick: () => restoreSnapshot(s), children: "Restore" }),
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(IconButton, { title: "Delete this snapshot", onClick: () => {
                 if (window.confirm("Delete this snapshot? Current writing stays as it is.")) update((w) => w.snapshots = w.snapshots.filter((x) => x.id !== s.id), true);
-              }, children: /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(Trash, { size: 13 }) })
+              }, children: /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(Trash, { size: 13 }) })
             ] })
           ] }, s.id))
         ] }),
-        inspectorTab === "comments" && /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("section", { className: "inspector-section", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "section-label", children: [
+        inspectorTab === "comments" && /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("section", { className: "inspector-section", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "section-label", children: [
             "COMMENTS & FOOTNOTES",
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(IconButton, { title: "Add comment", onClick: () => addComment(), children: /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(Plus, { size: 14 }) })
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(IconButton, { title: "Add comment", onClick: () => addComment(), children: /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(Plus, { size: 14 }) })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("p", { className: "field-hint", children: "Select a passage in your writing, then add a comment." }),
-          selected.comments.length === 0 && /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "empty-small", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(MessageSquare, { size: 25 }),
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("p", { children: "No comments yet." })
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("p", { className: "field-hint", children: "Select a passage in your writing, then add a comment." }),
+          selected.comments.length === 0 && /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "empty-small", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(MessageSquare, { size: 25 }),
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("p", { children: "No comments yet." })
           ] }),
-          selected.comments.map((c) => /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("article", { className: "comment-card " + (c.resolved ? "resolved" : ""), children: [
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "comment-meta", children: [
+          selected.comments.map((c) => /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("article", { className: "comment-card " + (c.resolved ? "resolved" : ""), children: [
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "comment-meta", children: [
               c.type === "footnote" ? "FOOTNOTE" : "COMMENT",
-              /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("span", { children: dateLabel(c.created) })
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { children: dateLabel(c.created) })
             ] }),
-            c.quote && /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("blockquote", { children: c.quote }),
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("textarea", { "aria-label": "Comment text", value: c.text, onChange: (e) => patch(selected.id, { comments: selected.comments.map((x) => x.id === c.id ? { ...x, text: e.target.value } : x) }) }),
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "comment-actions", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("button", { onClick: () => patch(selected.id, { comments: selected.comments.map((x) => x.id === c.id ? { ...x, resolved: !x.resolved } : x) }), children: [
-                c.resolved ? /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(RotateCcw, { size: 12 }) : /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(Check, { size: 12 }),
+            c.quote && /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("blockquote", { children: c.quote }),
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("textarea", { "aria-label": "Comment text", value: c.text, onChange: (e) => patch(selected.id, { comments: selected.comments.map((x) => x.id === c.id ? { ...x, text: e.target.value } : x) }) }),
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "comment-actions", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("button", { onClick: () => patch(selected.id, { comments: selected.comments.map((x) => x.id === c.id ? { ...x, resolved: !x.resolved } : x) }), children: [
+                c.resolved ? /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(RotateCcw, { size: 12 }) : /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(Check, { size: 12 }),
                 " ",
                 c.resolved ? "Reopen" : "Resolve"
               ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(IconButton, { title: "Delete comment", onClick: () => patch(selected.id, { comments: selected.comments.filter((x) => x.id !== c.id) }), children: /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(X, { size: 12 }) })
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(IconButton, { title: "Delete comment", onClick: () => patch(selected.id, { comments: selected.comments.filter((x) => x.id !== c.id) }), children: /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(X, { size: 12 }) })
             ] })
           ] }, c.id))
         ] })
       ] });
     }
     function renderWorkspace() {
-      if (!project) return /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "welcome", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { className: "welcome-symbol", children: /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(StudioMark, {}) }),
-        /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { className: "eyebrow", children: "LIGHTBOX / FILMMAKING WORKSPACE" }),
-        /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("h1", { children: [
+      if (!project) return /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "welcome", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("div", { className: "welcome-symbol", children: /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(StudioMark, {}) }),
+        /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("div", { className: "eyebrow", children: "LIGHTBOX / FILMMAKING WORKSPACE" }),
+        /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("h1", { children: [
           "A space for",
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("br", {}),
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("em", { children: "your next story." })
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("br", {}),
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("em", { children: "your next story." })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("p", { children: [
+        /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("p", { children: [
           "Gather your ideas. Arrange your scenes.",
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("br", {}),
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("br", {}),
           "Write at your own pace."
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("button", { className: "button primary large", onClick: () => setModal("project"), disabled: !loaded, children: [
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(Plus, { size: 17 }),
+        /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("button", { className: "button primary large", onClick: () => setModal("project"), disabled: !loaded, children: [
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(Plus, { size: 17 }),
           "Create your first world"
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "welcome-secondary", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("button", { onClick: () => restoreInput.current?.click(), children: [
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(Upload, { size: 14 }),
+        /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "welcome-secondary", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("button", { onClick: () => restoreInput.current?.click(), children: [
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(Upload, { size: 14 }),
             "Restore a backup"
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("button", { onClick: () => setModal("vault"), children: [
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(Archive, { size: 14 }),
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("button", { onClick: () => setModal("vault"), children: [
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(Archive, { size: 14 }),
             "Open previous Vault"
           ] })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "welcome-bottom", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("span", { children: [
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(Folder, { size: 14 }),
+        /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "welcome-bottom", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("span", { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(Folder, { size: 14 }),
             "Everything in one project"
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("span", { children: [
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(Camera, { size: 14 }),
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("span", { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(Camera, { size: 14 }),
             "Room for every draft"
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("span", { children: [
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(Cloud, { size: 14 }),
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("span", { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(Cloud, { size: 14 }),
             "Privately saved"
           ] })
-        ] })
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(InstallApp, {})
       ] });
-      if (mode === "moodboard") return /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(Moodboard, { project, mutate: updateMoodboard, onDirection: updateVisualDirection, initialSceneId: visualSceneId, onOpenScene: openScene, onOpenProfile: openProfile, onSave: () => void saveNow(), saving: manualSaving, saveLabel }, project.id);
-      if (mode === "beats") return /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(BeatTimeline, { project, onBeat: updateBeat, onOrder: reorderBeats, onAdd: addPlannedScene, onOpen: openScene, onDelete: deleteBeat, onSave: () => void saveNow(), saving: manualSaving, saveLabel }, project.id);
+      if (mode === "moodboard") return /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(Moodboard, { project, mutate: updateMoodboard, onDirection: updateVisualDirection, initialSceneId: visualSceneId, onOpenScene: openScene, onOpenProfile: openProfile, onSave: () => void saveNow(), saving: manualSaving, saveLabel }, project.id);
+      if (mode === "beats") return /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(BeatTimeline, { project, onBeat: updateBeat, onOrder: reorderBeats, onAdd: addPlannedScene, onOpen: openScene, onDelete: deleteBeat, onSave: () => void saveNow(), saving: manualSaving, saveLabel }, project.id);
       if (mode === "corkboard") {
         const section = scope?.role || libraryRoot?.role || "", isBin = section === "trash";
         const descriptions = { development: "The ideas, questions, and discoveries behind your film.", characters: "The people who bring your story into focus.", locations: "Every place has a part in the story.", props: "Objects, details, and the meaning they carry.", research: "A collection of things worth keeping.", draft: "Scenes in progress. A story taking shape.", "draft-version": "A new perspective on the same story.", trash: "Removed work stays here until you choose what happens next." };
         const singular = { characters: "character", locations: "location", props: "prop", research: "note", development: "note", draft: "scene", "draft-version": "scene" };
         const addLabel = "New " + (singular[section] || "document");
-        return /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "collection-workspace corkboard " + (freeform ? "freeform" : ""), children: [
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("header", { className: "collection-heading", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { children: [
-              /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "collection-eyebrow", children: [
-                /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("span", {}),
+        return /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "collection-workspace corkboard " + (freeform ? "freeform" : ""), children: [
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("header", { className: "collection-heading", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "collection-eyebrow", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", {}),
                 project.title,
                 " / ",
                 isBin ? "ARCHIVE" : "WORLD LIBRARY"
               ] }),
-              searching ? /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("h1", { children: collection?.title || "Search results" }) : /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("label", { className: "collection-name", children: [
-                /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("input", { "aria-label": "Collection title", value: scope?.title || "Documents", onChange: (e) => scope && patch(scope.id, { title: e.target.value }), disabled: !scope }),
-                /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(Pencil, { size: 15 })
+              searching ? /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("h1", { children: collection?.title || "Search results" }) : /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("label", { className: "collection-name", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("input", { "aria-label": "Collection title", value: scope?.title || "Documents", onChange: (e) => scope && patch(scope.id, { title: e.target.value }), disabled: !scope }),
+                /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(Pencil, { size: 15 })
               ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("p", { children: searching ? "The threads that match your search." : descriptions[section] || "Notes, references, and details for this part of your world." })
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("p", { children: searching ? "The threads that match your search." : descriptions[section] || "Notes, references, and details for this part of your world." })
             ] }),
-            !searching && !isBin && /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("button", { className: "button primary collection-create", onClick: () => addNode2("auto"), children: [
-              /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(Plus, { size: 16 }),
+            !searching && !isBin && /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("button", { className: "button primary collection-create", onClick: () => addNode2("auto"), children: [
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(Plus, { size: 16 }),
               addLabel
             ] }),
-            isBin && /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("button", { className: "button secondary", disabled: !project.nodes.some((n) => inTrash(project, n) && !n.role), onClick: () => deleteTrash(), children: [
-              /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(Trash, { size: 14 }),
+            isBin && /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("button", { className: "button secondary", disabled: !project.nodes.some((n) => inTrash(project, n) && !n.role), onClick: () => deleteTrash(), children: [
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(Trash, { size: 14 }),
               "Empty Trash"
             ] })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "board-toolbar collection-toolbar", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { children: [
-              /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(LayoutGrid, { size: 15 }),
-              /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("span", { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "board-toolbar collection-toolbar", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(LayoutGrid, { size: 15 }),
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("span", { children: [
                 items.length,
                 " ",
                 items.length === 1 ? "item" : "items"
               ] }),
-              freeform && /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("small", { children: "Drag cards to arrange" })
+              freeform && /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("small", { children: "Drag cards to arrange" })
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { children: [
-              ["draft", "draft-version"].includes(section) && project.template === "screenplay" && /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("button", { className: "write-screenplay-button", onClick: () => setMode("scrivenings"), children: [
-                /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(Film, { size: 14 }),
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { children: [
+              ["draft", "draft-version"].includes(section) && project.template === "screenplay" && /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("button", { className: "write-screenplay-button", onClick: () => setMode("scrivenings"), children: [
+                /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(Film, { size: 14 }),
                 "Write screenplay"
               ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("select", { "aria-label": "Sort cards", value: sort, onChange: (e) => setSort(e.target.value), children: [
-                /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("option", { value: "order", children: "Custom order" }),
-                /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("option", { value: "title", children: "Title A\u2013Z" }),
-                /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("option", { value: "updated", children: "Recently edited" })
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("select", { "aria-label": "Sort cards", value: sort, onChange: (e) => setSort(e.target.value), children: [
+                /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("option", { value: "order", children: "Custom order" }),
+                /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("option", { value: "title", children: "Title A\u2013Z" }),
+                /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("option", { value: "updated", children: "Recently edited" })
               ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("button", { onClick: () => setMode("outline"), children: [
-                /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(ListTree, { size: 14 }),
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("button", { onClick: () => setMode("outline"), children: [
+                /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(ListTree, { size: 14 }),
                 "List"
               ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("button", { className: freeform ? "active" : "", "aria-pressed": freeform, onClick: () => setFreeform((v) => !v), children: [
-                /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(GripVertical, { size: 14 }),
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("button", { className: freeform ? "active" : "", "aria-pressed": freeform, onClick: () => setFreeform((v) => !v), children: [
+                /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(GripVertical, { size: 14 }),
                 freeform ? "Grid view" : "Arrange"
               ] }),
-              freeform && /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("button", { onClick: () => {
+              freeform && /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("button", { onClick: () => {
                 changeProject((p) => {
                   const ordered = [...items].sort((a, b) => (a.y || 0) - (b.y || 0) || (a.x || 0) - (b.x || 0));
                   ordered.forEach((n, i) => {
@@ -65156,7 +65240,7 @@ ${prefix}
               }, children: "Save order" })
             ] })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "card-stage collection-grid", style: freeform ? { minHeight: Math.max(650, ...items.map((n, i) => (n.y ?? Math.floor(i / 3) * 330) + 340)) } : void 0, onDragOver: (e) => {
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "card-stage collection-grid", style: freeform ? { minHeight: Math.max(650, ...items.map((n, i) => (n.y ?? Math.floor(i / 3) * 330) + 340)) } : void 0, onDragOver: (e) => {
             if (freeform && dragId) e.preventDefault();
           }, onDrop: (e) => {
             if (!freeform) return;
@@ -65167,7 +65251,7 @@ ${prefix}
           }, children: [
             items.map((n, i) => {
               const kind = n.fields["development.kind"] === "foundation" ? "Story foundation" : n.kind === "text" ? "Note" : n.kind === "file" ? "Reference file" : n.kind === "folder" ? "Collection" : n.kind === "screenplay" ? "Screenplay" : n.kind.charAt(0).toUpperCase() + n.kind.slice(1);
-              return /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("article", { className: "index-card collection-card " + (selectedId === n.id ? "selected-card" : ""), style: freeform ? { position: "absolute", left: n.x ?? i % 3 * 340, top: n.y ?? Math.floor(i / 3) * 330 } : void 0, draggable: true, onDragStart: (e) => {
+              return /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("article", { className: "index-card collection-card " + (selectedId === n.id ? "selected-card" : ""), style: freeform ? { position: "absolute", left: n.x ?? i % 3 * 340, top: n.y ?? Math.floor(i / 3) * 330 } : void 0, draggable: true, onDragStart: (e) => {
                 setDragId(n.id);
                 e.dataTransfer.setData("text/desk-node", n.id);
               }, onDragEnd: () => setDragId(""), onDragOver: (e) => {
@@ -65189,116 +65273,116 @@ ${prefix}
               }, onClick: (e) => {
                 if (!e.target.closest("input,textarea,button,a")) openNode(n.id);
               }, children: [
-                /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "collection-card-top", children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("span", { className: "collection-card-icon", children: /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(NodeIcon, { n }) }),
-                  /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("span", { className: "collection-card-kind", children: kind }),
-                  n.label !== "None" && /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("span", { className: "collection-label-dot", title: n.label, style: { background: COLORS[n.label] } }),
-                  /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("span", { className: "collection-card-number", children: String(i + 1).padStart(2, "0") })
+                /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "collection-card-top", children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { className: "collection-card-icon", children: /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(NodeIcon, { n }) }),
+                  /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { className: "collection-card-kind", children: kind }),
+                  n.label !== "None" && /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { className: "collection-label-dot", title: n.label, style: { background: COLORS[n.label] } }),
+                  /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { className: "collection-card-number", children: String(i + 1).padStart(2, "0") })
                 ] }),
-                isProfileKind(n.kind) && n.images?.[0] && /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("button", { className: "profile-card-image", "aria-label": "Open " + n.title + " profile", onClick: () => openNode(n.id), children: /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("img", { src: safeUrl(n.images[0].asset.url), alt: n.images[0].caption || n.title }) }),
-                /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { className: "index-card-head", children: /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("input", { "aria-label": "Card title", value: n.title, onChange: (e) => patch(n.id, { title: e.target.value }) }) }),
-                /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("textarea", { "aria-label": n.title + " synopsis", value: n.synopsis, placeholder: n.kind === "location" ? "What makes this place matter?" : n.kind === "character" ? "A want, a contradiction, a detail\u2026" : n.kind === "prop" ? "What does this object change?" : "A thought to return to\u2026", onChange: (e) => patch(n.id, { synopsis: e.target.value }) }),
-                /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "collection-card-meta", children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("span", { children: [
-                    /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("i", {}),
+                isProfileKind(n.kind) && n.images?.[0] && /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("button", { className: "profile-card-image", "aria-label": "Open " + n.title + " profile", onClick: () => openNode(n.id), children: /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("img", { src: safeUrl(n.images[0].asset.url), alt: n.images[0].caption || n.title }) }),
+                /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("div", { className: "index-card-head", children: /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("input", { "aria-label": "Card title", value: n.title, onChange: (e) => patch(n.id, { title: e.target.value }) }) }),
+                /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("textarea", { "aria-label": n.title + " synopsis", value: n.synopsis, placeholder: n.kind === "location" ? "What makes this place matter?" : n.kind === "character" ? "A want, a contradiction, a detail\u2026" : n.kind === "prop" ? "What does this object change?" : "A thought to return to\u2026", onChange: (e) => patch(n.id, { synopsis: e.target.value }) }),
+                /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "collection-card-meta", children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("span", { children: [
+                    /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("i", {}),
                     n.status === "No status" ? "In development" : n.status
                   ] }),
-                  /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("small", { children: n.kind === "folder" ? children(project, n.id).length + " items" : wordCount(n.html) + " words" })
+                  /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("small", { children: n.kind === "folder" ? children(project, n.id).length + " items" : wordCount(n.html) + " words" })
                 ] }),
-                /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "index-card-foot", children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("button", { className: "collection-open", "aria-label": "Open " + n.title, onClick: () => openNode(n.id), children: [
+                /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "index-card-foot", children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("button", { className: "collection-open", "aria-label": "Open " + n.title, onClick: () => openNode(n.id), children: [
                     "Open ",
                     n.kind === "folder" ? "collection" : isProfileKind(n.kind) ? "profile" : "document",
-                    /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(ArrowUpRight, { size: 15 })
+                    /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(ArrowUpRight, { size: 15 })
                   ] }),
-                  !inTrash(project, n) && !n.role && /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("button", { className: "card-delete delete-control", "aria-label": "Delete " + n.title, title: "Move to Trash", onClick: (e) => {
+                  !inTrash(project, n) && !n.role && /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("button", { className: "card-delete delete-control", "aria-label": "Delete " + n.title, title: "Move to Trash", onClick: (e) => {
                     e.stopPropagation();
                     deleteNode2(n.id);
-                  }, children: /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(Trash, { size: 14 }) })
+                  }, children: /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(Trash, { size: 14 }) })
                 ] }),
-                inTrash(project, n) && /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "trash-actions", children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("button", { onClick: () => {
+                inTrash(project, n) && /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "trash-actions", children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("button", { onClick: () => {
                     changeProject((p) => {
                       restoreNode(p, n.id);
                     }, true);
                     notify("Document restored");
                   }, children: "Restore" }),
-                  /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("button", { onClick: () => deleteTrash([n.id]), children: "Delete permanently" })
+                  /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("button", { onClick: () => deleteTrash([n.id]), children: "Delete permanently" })
                 ] })
               ] }, n.id);
             }),
-            !searching && !isBin && !freeform && /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("button", { className: "collection-add-card", onClick: () => addNode2("auto"), children: [
-              /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("span", { children: /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(Plus, { size: 21 }) }),
-              /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("strong", { children: addLabel }),
-              /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("small", { children: section === "locations" ? "Give the story somewhere to happen." : section === "characters" ? "Make room for someone new." : "Make room for the next idea." })
+            !searching && !isBin && !freeform && /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("button", { className: "collection-add-card", onClick: () => addNode2("auto"), children: [
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { children: /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(Plus, { size: 21 }) }),
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("strong", { children: addLabel }),
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("small", { children: section === "locations" ? "Give the story somewhere to happen." : section === "characters" ? "Make room for someone new." : "Make room for the next idea." })
             ] }),
-            items.length === 0 && (searching || isBin) && /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "empty-board", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(Search, { size: 28 }),
-              /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("h2", { children: isBin ? "Nothing in Trash." : "No matching documents." }),
-              /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("p", { children: isBin ? "Removed work will appear here." : "Try another search or add documents to this collection." })
+            items.length === 0 && (searching || isBin) && /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "empty-board", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(Search, { size: 28 }),
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("h2", { children: isBin ? "Nothing in Trash." : "No matching documents." }),
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("p", { children: isBin ? "Removed work will appear here." : "Try another search or add documents to this collection." })
             ] })
           ] })
         ] });
       }
-      if (mode === "outline") return /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "outliner", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "board-toolbar", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { children: [
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(ListTree, { size: 15 }),
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("span", { children: scope?.title || "Outline" }),
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("small", { children: [
+      if (mode === "outline") return /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "outliner", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "board-toolbar", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(ListTree, { size: 15 }),
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { children: scope?.title || "Outline" }),
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("small", { children: [
               items.length,
               " items"
             ] })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("button", { className: "text-button", onClick: () => addNode2("auto"), children: [
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(Plus, { size: 14 }),
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("button", { className: "text-button", onClick: () => addNode2("auto"), children: [
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(Plus, { size: 14 }),
             "Add document"
           ] })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("table", { children: [
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("thead", { children: /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("tr", { children: [
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("th", { children: "Title & synopsis" }),
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("th", { children: "Status" }),
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("th", { children: "Label" }),
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("th", { children: "Words" }),
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("th", { children: "Compile" }),
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("th", { children: "Order" }),
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("th", { children: "Delete" })
+        /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("table", { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("thead", { children: /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("tr", { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("th", { children: "Title & synopsis" }),
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("th", { children: "Status" }),
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("th", { children: "Label" }),
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("th", { children: "Words" }),
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("th", { children: "Compile" }),
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("th", { children: "Order" }),
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("th", { children: "Delete" })
           ] }) }),
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("tbody", { children: items.map((n, i) => /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("tr", { className: selectedId === n.id ? "outline-selected" : "", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("td", { children: [
-              /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("button", { className: "outline-title", onClick: () => openNode(n.id), children: [
-                /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(NodeIcon, { n }),
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("tbody", { children: items.map((n, i) => /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("tr", { className: selectedId === n.id ? "outline-selected" : "", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("td", { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("button", { className: "outline-title", onClick: () => openNode(n.id), children: [
+                /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(NodeIcon, { n }),
                 n.title
               ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("input", { "aria-label": n.title + " outline synopsis", placeholder: "Add synopsis\u2026", value: n.synopsis, onChange: (e) => patch(n.id, { synopsis: e.target.value }) })
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("input", { "aria-label": n.title + " outline synopsis", placeholder: "Add synopsis\u2026", value: n.synopsis, onChange: (e) => patch(n.id, { synopsis: e.target.value }) })
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("td", { children: /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("select", { "aria-label": n.title + " status", value: n.status, onChange: (e) => patch(n.id, { status: e.target.value }), children: STATUSES.map((s) => /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("option", { children: s }, s)) }) }),
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("td", { children: /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("select", { "aria-label": n.title + " label", value: n.label, onChange: (e) => patch(n.id, { label: e.target.value }), children: Object.keys(COLORS).map((c) => /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("option", { children: c }, c)) }) }),
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("td", { children: wordCount(n.html) }),
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("td", { children: /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("input", { type: "checkbox", "aria-label": "Include " + n.title + " in Compile", checked: n.include, onChange: (e) => patch(n.id, { include: e.target.checked }) }) }),
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("td", { children: /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "row-move", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(IconButton, { title: "Move earlier", disabled: i === 0, onClick: () => changeProject((p) => {
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("td", { children: /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("select", { "aria-label": n.title + " status", value: n.status, onChange: (e) => patch(n.id, { status: e.target.value }), children: STATUSES.map((s) => /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("option", { children: s }, s)) }) }),
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("td", { children: /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("select", { "aria-label": n.title + " label", value: n.label, onChange: (e) => patch(n.id, { label: e.target.value }), children: Object.keys(COLORS).map((c) => /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("option", { children: c }, c)) }) }),
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("td", { children: wordCount(n.html) }),
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("td", { children: /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("input", { type: "checkbox", "aria-label": "Include " + n.title + " in Compile", checked: n.include, onChange: (e) => patch(n.id, { include: e.target.checked }) }) }),
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("td", { children: /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "row-move", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(IconButton, { title: "Move earlier", disabled: i === 0, onClick: () => changeProject((p) => {
                 moveNode(p, n.id, n.parent, items[i - 1].id);
-              }, true), children: /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(ArrowUp, { size: 12 }) }),
-              /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(IconButton, { title: "Move later", disabled: i === items.length - 1, onClick: () => changeProject((p) => {
+              }, true), children: /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(ArrowUp, { size: 12 }) }),
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(IconButton, { title: "Move later", disabled: i === items.length - 1, onClick: () => changeProject((p) => {
                 const after = items[i + 2];
                 moveNode(p, n.id, n.parent, after?.id);
-              }, true), children: /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(ArrowDown, { size: 12 }) })
+              }, true), children: /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(ArrowDown, { size: 12 }) })
             ] }) }),
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("td", { children: !n.role && /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("button", { className: "delete-control", "aria-label": "Delete " + n.title, onClick: () => deleteNode2(n.id), children: [
-              /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(Trash, { size: 13 }),
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("td", { children: !n.role && /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("button", { className: "delete-control", "aria-label": "Delete " + n.title, onClick: () => deleteNode2(n.id), children: [
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(Trash, { size: 13 }),
               "Delete"
             ] }) })
           ] }, n.id)) })
         ] }),
-        !items.length && /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { className: "empty-small", children: "No documents in this view." })
+        !items.length && /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("div", { className: "empty-small", children: "No documents in this view." })
       ] });
       if (mode === "scrivenings" && scope && project.template === "screenplay" && activeDraftRoot(project)?.id === scope.id) {
         const docs = compileNodes(project).filter((n) => n.kind === "screenplay");
         if (docs.length) {
           const full = { ...docs[0], id: "full-draft-" + project.id + "-" + activeDraftRoot(project)?.id, title: "Full screenplay", html: combineScriptHTML(docs) };
-          return /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(ScreenplayEditor, { n: full, project, fullDraft: true, onChange: (html) => {
+          return /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(ScreenplayEditor, { n: full, project, fullDraft: true, onChange: (html) => {
             const parts = splitScriptHTML(html, docs[0].id, docs.map((d) => d.id));
             changeProject((p, s) => {
               let delta = 0;
@@ -65322,106 +65406,106 @@ ${prefix}
       }
       if (mode === "scrivenings") {
         const docs = searching ? items.filter((n) => n.kind !== "folder" && n.kind !== "file") : scope ? descendants(project, scope.id).filter((n) => n.kind !== "folder" && n.kind !== "file") : [];
-        return /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "scrivenings", children: [
-          docs.map((n) => /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("section", { children: [
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { className: "scrivening-divider", children: /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("button", { onClick: () => {
+        return /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "scrivenings", children: [
+          docs.map((n) => /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("section", { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("div", { className: "scrivening-divider", children: /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("button", { onClick: () => {
               setSelectedId(n.id);
               setTabs((t) => t.includes(n.id) ? t : [...t, n.id]);
             }, children: [
-              /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(FileText, { size: 12 }),
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(FileText, { size: 12 }),
               n.title
             ] }) }),
             editorFor(n)
           ] }, n.id)),
-          !docs.length && /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { className: "empty-small", children: "Add text documents to this folder to read them together." })
+          !docs.length && /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("div", { className: "empty-small", children: "Add text documents to this folder to read them together." })
         ] });
       }
-      if (selected?.kind === "folder") return /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "folder-cover", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(FolderOpen, { size: 42, strokeWidth: 1 }),
-        /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("h2", { children: selected.title }),
-        /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("p", { children: [
+      if (selected?.kind === "folder") return /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "folder-cover", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(FolderOpen, { size: 42, strokeWidth: 1 }),
+        /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("h2", { children: selected.title }),
+        /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("p", { children: [
           descendants(project, selected.id).filter((n) => n.kind !== "folder").length,
           " documents in this folder."
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "folder-cover-actions", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("button", { className: "button secondary", onClick: () => setMode("corkboard"), children: [
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(LayoutGrid, { size: 15 }),
+        /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "folder-cover-actions", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("button", { className: "button secondary", onClick: () => setMode("corkboard"), children: [
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(LayoutGrid, { size: 15 }),
             "Corkboard"
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("button", { className: "button secondary", onClick: () => setMode("scrivenings"), children: [
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(TextAlignStart, { size: 15 }),
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("button", { className: "button secondary", onClick: () => setMode("scrivenings"), children: [
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(TextAlignStart, { size: 15 }),
             "Read together"
           ] })
         ] })
       ] });
-      if (!selected) return /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "folder-cover", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(FileText, { size: 40, strokeWidth: 1 }),
-        /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("h2", { children: "Choose a document." }),
-        /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("p", { children: "Open one from the Binder or create a new page." }),
-        /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("button", { className: "button primary", onClick: () => addNode2("auto"), children: [
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(Plus, { size: 15 }),
+      if (!selected) return /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "folder-cover", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(FileText, { size: 40, strokeWidth: 1 }),
+        /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("h2", { children: "Choose a document." }),
+        /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("p", { children: "Open one from the Binder or create a new page." }),
+        /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("button", { className: "button primary", onClick: () => addNode2("auto"), children: [
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(Plus, { size: 15 }),
           "New document"
         ] })
       ] });
-      return /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "editor-splits " + (splitId ? "is-split" : ""), children: [
-        /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { className: "editor-pane", children: editorFor(selected) }),
-        splitId && /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "editor-pane reference-pane", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "split-header", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(SquareSplitHorizontal, { size: 13 }),
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("select", { "aria-label": "Second editor document", value: splitId, onChange: (e) => setSplitId(e.target.value), children: activeNodes(project).filter((n) => n.kind !== "folder").map((n) => /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("option", { value: n.id, children: n.title }, n.id)) }),
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(IconButton, { title: "Close split", onClick: () => setSplitId(""), children: /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(X, { size: 14 }) })
+      return /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "editor-splits " + (splitId ? "is-split" : ""), children: [
+        /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("div", { className: "editor-pane", children: editorFor(selected) }),
+        splitId && /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "editor-pane reference-pane", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "split-header", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(SquareSplitHorizontal, { size: 13 }),
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("select", { "aria-label": "Second editor document", value: splitId, onChange: (e) => setSplitId(e.target.value), children: activeNodes(project).filter((n) => n.kind !== "folder").map((n) => /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("option", { value: n.id, children: n.title }, n.id)) }),
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(IconButton, { title: "Close split", onClick: () => setSplitId(""), children: /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(X, { size: 14 }) })
           ] }),
           project.nodes.find((n) => n.id === splitId) && editorFor(project.nodes.find((n) => n.id === splitId))
         ] })
       ] });
     }
-    const formatToolbar = /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "formatbar", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { onMouseDown: (e) => {
+    const formatToolbar = /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "formatbar", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { onMouseDown: (e) => {
         if (e.target.closest("button")) e.preventDefault();
       }, className: "format-tools", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("select", { "aria-label": "Paragraph style", defaultValue: "p", onChange: (e) => command2("formatBlock", e.target.value), children: [
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("option", { value: "p", children: "Normal text" }),
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("option", { value: "h1", children: "Heading 1" }),
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("option", { value: "h2", children: "Heading 2" }),
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("option", { value: "h3", children: "Heading 3" }),
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("option", { value: "blockquote", children: "Block quote" }),
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("option", { value: "pre", children: "Code" })
+        /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("select", { "aria-label": "Paragraph style", defaultValue: "p", onChange: (e) => command2("formatBlock", e.target.value), children: [
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("option", { value: "p", children: "Normal text" }),
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("option", { value: "h1", children: "Heading 1" }),
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("option", { value: "h2", children: "Heading 2" }),
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("option", { value: "h3", children: "Heading 3" }),
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("option", { value: "blockquote", children: "Block quote" }),
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("option", { value: "pre", children: "Code" })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("select", { "aria-label": "Writing font", value: prefs.font, onChange: (e) => {
+        /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("select", { "aria-label": "Writing font", value: prefs.font, onChange: (e) => {
           setPrefs((p) => ({ ...p, font: e.target.value }));
           if (activeEditor.current) command2("fontName", e.target.value);
-        }, children: ["Instrument Serif", "DM Sans", "IBM Plex Serif", "IBM Plex Sans", "Georgia", "Arial", "Times New Roman", "Courier New", "Verdana"].map((f) => /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("option", { children: f }, f)) }),
-        /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { className: "format-divider" }),
-        /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(IconButton, { title: "Bold (\u2318B)", onClick: () => command2("bold"), children: /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(LetterB, { size: 14 }) }),
-        /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(IconButton, { title: "Italic (\u2318I)", onClick: () => command2("italic"), children: /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(Italic, { size: 14 }) }),
-        /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(IconButton, { title: "Underline (\u2318U)", onClick: () => command2("underline"), children: /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(Underline, { size: 14 }) }),
-        /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { className: "format-divider" }),
-        /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(IconButton, { title: "Bulleted list", onClick: () => command2("insertUnorderedList"), children: /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(List, { size: 14 }) }),
-        /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(IconButton, { title: "Numbered list", onClick: () => command2("insertOrderedList"), children: /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(ListOrdered, { size: 14 }) }),
-        /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "format-more menu-host", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(IconButton, { title: "More formatting tools", active: menu === "format-more", onClick: () => setMenu(menu === "format-more" ? "" : "format-more"), children: /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(Ellipsis, { size: 17 }) }),
-          menu === "format-more" && /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "dropdown format-more-popover", role: "menu", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("button", { onClick: () => {
+        }, children: ["Instrument Serif", "DM Sans", "IBM Plex Serif", "IBM Plex Sans", "Georgia", "Arial", "Times New Roman", "Courier New", "Verdana"].map((f) => /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("option", { children: f }, f)) }),
+        /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("div", { className: "format-divider" }),
+        /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(IconButton, { title: "Bold (\u2318B)", onClick: () => command2("bold"), children: /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(LetterB, { size: 14 }) }),
+        /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(IconButton, { title: "Italic (\u2318I)", onClick: () => command2("italic"), children: /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(Italic, { size: 14 }) }),
+        /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(IconButton, { title: "Underline (\u2318U)", onClick: () => command2("underline"), children: /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(Underline, { size: 14 }) }),
+        /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("div", { className: "format-divider" }),
+        /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(IconButton, { title: "Bulleted list", onClick: () => command2("insertUnorderedList"), children: /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(List, { size: 14 }) }),
+        /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(IconButton, { title: "Numbered list", onClick: () => command2("insertOrderedList"), children: /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(ListOrdered, { size: 14 }) }),
+        /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "format-more menu-host", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(IconButton, { title: "More formatting tools", active: menu === "format-more", onClick: () => setMenu(menu === "format-more" ? "" : "format-more"), children: /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(Ellipsis, { size: 17 }) }),
+          menu === "format-more" && /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "dropdown format-more-popover", role: "menu", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("button", { onClick: () => {
               setMenu("");
               addLink();
             }, children: "Insert link" }),
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("button", { onClick: () => {
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("button", { onClick: () => {
               setMenu("");
               addComment();
             }, children: "Add comment" }),
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("button", { onClick: () => {
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("button", { onClick: () => {
               setMenu("");
               command2("hiliteColor", "#ead1b9");
             }, children: "Highlight selection" }),
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("button", { onClick: () => {
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("button", { onClick: () => {
               setMenu("");
               command2("justifyLeft");
             }, children: "Align left" }),
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("button", { onClick: () => {
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("button", { onClick: () => {
               setMenu("");
               command2("insertHTML", '<table style="border-collapse:collapse;width:100%"><tbody><tr><td> </td><td> </td></tr><tr><td> </td><td> </td></tr></tbody></table><p><br></p>');
             }, children: "Insert table" }),
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("button", { onClick: () => {
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("button", { onClick: () => {
               setMenu("");
               inlineImage.current = true;
               importInput.current?.click();
@@ -65429,101 +65513,101 @@ ${prefix}
           ] })
         ] })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("select", { "aria-label": "Editor zoom", value: prefs.zoom, onChange: (e) => setPrefs((p) => ({ ...p, zoom: Number(e.target.value) })), children: [75, 90, 100, 110, 125, 150].map((x) => /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("option", { value: x, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("select", { "aria-label": "Editor zoom", value: prefs.zoom, onChange: (e) => setPrefs((p) => ({ ...p, zoom: Number(e.target.value) })), children: [75, 90, 100, 110, 125, 150].map((x) => /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("option", { value: x, children: [
         x,
         "%"
       ] }, x)) })
     ] });
-    return /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { "data-palette": prefs.palette, className: "studio atlas-shell " + (allowLegacyArchive ? "legacy-archive-owner " : "") + (stage ? "stage-active " : "") + (prefs.dark ? "dark " : "") + (phone ? "phone-layout " : "") + (focus2 ? "composition" : ""), style: { "--binder-width": prefs.binderWidth + "px", "--inspector-width": prefs.inspectorWidth + "px" }, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("input", { type: "file", ref: importInput, multiple: true, hidden: true, onChange: (e) => void importFiles(e.target.files) }),
-      /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("input", { type: "file", ref: restoreInput, accept: "application/json,.json", hidden: true, onChange: (e) => void restoreBackup(e.target.files?.[0]) }),
-      /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("header", { className: "app-header compact-header", children: /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "menubar", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "header-brand", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(IconButton, { title: "Show / hide Binder", active: phone ? phonePanel === "library" : prefs.binder, onClick: () => action("binder"), children: /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(PanelLeft, { size: 18 }) }),
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("button", { className: "app-wordmark", "aria-label": "Open Story Atlas", onClick: () => {
+    return /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { "data-palette": prefs.palette, className: "studio atlas-shell " + (allowLegacyArchive ? "legacy-archive-owner " : "") + (stage ? "stage-active " : "") + (prefs.dark ? "dark " : "") + (phone ? "phone-layout " : "") + (focus2 ? "composition" : ""), style: { "--binder-width": prefs.binderWidth + "px", "--inspector-width": prefs.inspectorWidth + "px" }, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("input", { type: "file", ref: importInput, multiple: true, hidden: true, onChange: (e) => void importFiles(e.target.files) }),
+      /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("input", { type: "file", ref: restoreInput, accept: "application/json,.json", hidden: true, onChange: (e) => void restoreBackup(e.target.files?.[0]) }),
+      /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("header", { className: "app-header compact-header", children: /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "menubar", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "header-brand", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(IconButton, { title: "Show / hide Binder", active: phone ? phonePanel === "library" : prefs.binder, onClick: () => action("binder"), children: /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(PanelLeft, { size: 18 }) }),
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("button", { className: "app-wordmark", "aria-label": "Open Story Atlas", onClick: () => {
             setStage("atlas");
             setFocus(false);
           }, children: [
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(StudioMark, {}),
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("span", { children: "Lightbox" })
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(StudioMark, {}),
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { children: "Lightbox" })
           ] })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "menu-host app-menu-host", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("button", { className: "application-menu-trigger", "aria-label": "Application menu", "aria-expanded": menu === "application" || Object.keys(menus).filter((n) => n !== "Add").includes(menu), onClick: (e) => {
+        /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "menu-host app-menu-host", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("button", { className: "application-menu-trigger", "aria-label": "Application menu", "aria-expanded": menu === "application" || Object.keys(menus).filter((n) => n !== "Add").includes(menu), onClick: (e) => {
             e.stopPropagation();
             setMenu(menu ? "" : "application");
           }, children: [
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(Menu, { size: 16 }),
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("span", { children: "Menu" })
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(Menu, { size: 16 }),
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { children: "Menu" })
           ] }),
-          (menu === "application" || Object.keys(menus).filter((n) => n !== "Add").includes(menu)) && /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { className: "application-menu-popover", onClick: (e) => e.stopPropagation(), children: menu === "application" ? /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)(import_jsx_runtime18.Fragment, { children: [
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { className: "popover-label", children: "STUDIO MENU" }),
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { className: "application-menu-grid", children: Object.keys(menus).filter((n) => n !== "Add").map((name) => /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("button", { onClick: () => setMenu(name), children: [
+          (menu === "application" || Object.keys(menus).filter((n) => n !== "Add").includes(menu)) && /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("div", { className: "application-menu-popover", onClick: (e) => e.stopPropagation(), children: menu === "application" ? /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)(import_jsx_runtime19.Fragment, { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("div", { className: "popover-label", children: "STUDIO MENU" }),
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("div", { className: "application-menu-grid", children: Object.keys(menus).filter((n) => n !== "Add").map((name) => /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("button", { onClick: () => setMenu(name), children: [
               name,
-              /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(ChevronRight, { size: 12 })
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(ChevronRight, { size: 12 })
             ] }, name)) }),
-            accountName && /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "studio-account", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("span", { children: accountName }),
-              /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("span", { children: "Local workspace \xB7 this browser" })
+            accountName && /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "studio-account", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { children: accountName }),
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { children: "Local workspace \xB7 this browser" })
             ] })
-          ] }) : /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)(import_jsx_runtime18.Fragment, { children: [
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("button", { className: "menu-back", onClick: () => setMenu("application"), children: [
-              /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(ChevronLeft, { size: 13 }),
+          ] }) : /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)(import_jsx_runtime19.Fragment, { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("button", { className: "menu-back", onClick: () => setMenu("application"), children: [
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(ChevronLeft, { size: 13 }),
               menu
             ] }),
             dropdown(menu)
           ] }) })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("button", { className: "world-switch-button header-world", onClick: () => setModal("projects"), title: "Switch world / project", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("span", { children: project?.title || "Your writing studio" }),
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(ChevronDown, { size: 12 })
+        /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("button", { className: "world-switch-button header-world", onClick: () => setModal("projects"), title: "Switch world / project", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { children: project?.title || "Your writing studio" }),
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(ChevronDown, { size: 12 })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "header-actions", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("button", { className: "command-trigger", onClick: () => setModal("command"), "aria-label": "Search and commands", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(Search, { size: 15 }),
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("span", { children: "Find anything" }),
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("kbd", { children: "\u2318 K" })
+        /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "header-actions", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("button", { className: "command-trigger", onClick: () => setModal("command"), "aria-label": "Search and commands", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(Search, { size: 15 }),
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { children: "Find anything" }),
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("kbd", { children: "\u2318 K" })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(IconButton, { title: "Workspace settings", onClick: () => setModal("settings"), children: /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(Settings, { size: 16 }) }),
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("button", { "aria-label": "Save project \xB7 " + saveLabel, title: saveLabel, onClick: () => void saveNow(), disabled: manualSaving || !loaded, className: "header-save", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(Save, { size: 14 }),
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("span", { children: manualSaving ? "Saving\u2026" : "Save project" })
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(IconButton, { title: "Workspace settings", onClick: () => setModal("settings"), children: /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(Settings, { size: 16 }) }),
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("button", { "aria-label": "Save project \xB7 " + saveLabel, title: saveLabel, onClick: () => void saveNow(), disabled: manualSaving || !loaded, className: "header-save", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(Save, { size: 14 }),
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { children: manualSaving ? "Saving\u2026" : "Save project" })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("button", { "aria-label": "Export screenplay", className: "compile-button", onClick: () => setModal("compile"), disabled: !project, children: [
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(Download, { size: 14 }),
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("span", { children: "Export PDF" })
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("button", { "aria-label": "Export screenplay", className: "compile-button", onClick: () => setModal("compile"), disabled: !project, children: [
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(Download, { size: 14 }),
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { children: "Export PDF" })
           ] })
         ] })
       ] }) }),
-      loaded && ["error", "offline", "conflict"].includes(status) && /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "save-warning", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(CircleAlert, { size: 14 }),
-        /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("span", { children: error2 || "Your work is retained on this device until it can sync." }),
-        /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("button", { onClick: () => void cloudSave(), children: "Retry saving" }),
-        /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("button", { onClick: backup, children: "Download copy" })
+      loaded && ["error", "offline", "conflict"].includes(status) && /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "save-warning", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(CircleAlert, { size: 14 }),
+        /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { children: error2 || "Your work is retained on this device until it can sync." }),
+        /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("button", { onClick: () => void cloudSave(), children: "Retry saving" }),
+        /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("button", { onClick: backup, children: "Download copy" })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "workspace-layout", children: [
-        !focus2 && (phone ? !!phonePanel : prefs.binder || !stage && prefs.inspector) && /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("button", { className: "phone-panel-backdrop atlas-panel-backdrop", "aria-label": "Close side panel", onClick: () => {
+      /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "workspace-layout", children: [
+        !focus2 && (phone ? !!phonePanel : prefs.binder || !stage && prefs.inspector) && /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("button", { className: "phone-panel-backdrop atlas-panel-backdrop", "aria-label": "Close side panel", onClick: () => {
           setPhonePanel("");
           setPrefs((p) => ({ ...p, binder: false, inspector: false }));
         } }),
-        (phone ? phonePanel === "library" : prefs.binder) && !focus2 && /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)(import_jsx_runtime18.Fragment, { children: [
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("aside", { className: "binder section-library", "aria-label": "World library", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "phone-panel-heading", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("strong", { children: "World library" }),
-              /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(IconButton, { title: "Close library", onClick: () => {
+        (phone ? phonePanel === "library" : prefs.binder) && !focus2 && /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)(import_jsx_runtime19.Fragment, { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("aside", { className: "binder section-library", "aria-label": "World library", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "phone-panel-heading", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("strong", { children: "World library" }),
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(IconButton, { title: "Close library", onClick: () => {
                 setPhonePanel("");
                 setPrefs((p) => ({ ...p, binder: false }));
-              }, children: /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(X, { size: 19 }) })
+              }, children: /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(X, { size: 19 }) })
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "binder-search", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(Search, { size: 14 }),
-              /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("input", { id: "project-search", placeholder: "Find in this world\u2026", "aria-label": "Search this project", value: query, onChange: (e) => {
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "binder-search", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(Search, { size: 14 }),
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("input", { id: "project-search", placeholder: "Find in this world\u2026", "aria-label": "Search this project", value: query, onChange: (e) => {
                 setQuery(e.target.value);
                 setCollectionId("");
               }, disabled: !project }),
-              query && /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("button", { "aria-label": "Clear search", onClick: () => setQuery(""), children: /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(X, { size: 12 }) })
+              query && /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("button", { "aria-label": "Clear search", onClick: () => setQuery(""), children: /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(X, { size: 12 }) })
             ] }),
-            project && /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("nav", { className: "library-sections", "aria-label": "World sections", children: children(project, null).filter((n) => n.role !== "trash").map((n) => /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("button", { className: "section-choice tree-select " + (libraryRoot?.id === n.id && !searching ? "selected" : ""), title: n.title, "aria-current": libraryRoot?.id === n.id && !searching ? "page" : void 0, onClick: () => chooseSection(n), onDragOver: (e) => {
+            project && /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("nav", { className: "library-sections", "aria-label": "World sections", children: children(project, null).filter((n) => n.role !== "trash").map((n) => /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("button", { className: "section-choice tree-select " + (libraryRoot?.id === n.id && !searching ? "selected" : ""), title: n.title, "aria-current": libraryRoot?.id === n.id && !searching ? "page" : void 0, onClick: () => chooseSection(n), onDragOver: (e) => {
               if (dragId && n.kind === "folder") e.preventDefault();
             }, onDrop: (e) => {
               const id = e.dataTransfer.getData("text/desk-node");
@@ -65535,264 +65619,264 @@ ${prefix}
               }, true);
               setDragId("");
             }, children: [
-              /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(NodeIcon, { n }),
-              /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("span", { className: "tree-title", children: n.title }),
-              /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("small", { children: (n.role === "draft" ? compileNodes(project) : descendants(project, n.id)).filter((n2) => n2.kind !== "folder").length })
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(NodeIcon, { n }),
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { className: "tree-title", children: n.title }),
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("small", { children: (n.role === "draft" ? compileNodes(project) : descendants(project, n.id)).filter((n2) => n2.kind !== "folder").length })
             ] }, n.id)) }),
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "library-list-heading", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { children: [
-                /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("span", { children: searching ? query ? "Search results" : collection?.title || "Collection" : libraryRoot?.title || "Your library" }),
-                /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("small", { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "library-list-heading", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { children: [
+                /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { children: searching ? query ? "Search results" : collection?.title || "Collection" : libraryRoot?.title || "Your library" }),
+                /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("small", { children: [
                   searching ? items.length : libraryItems.length,
                   " items",
                   libraryRoot?.role === "draft" && activeDraftRoot(project)?.role === "draft-version" ? " \xB7 " + activeDraftRoot(project)?.title : ""
                 ] })
               ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { children: [
-                collection && /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("button", { title: "Add selected document to collection", onClick: () => {
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { children: [
+                collection && /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("button", { title: "Add selected document to collection", onClick: () => {
                   if (selected && !collection.ids.includes(selected.id)) changeProject((p) => p.collections.find((c) => c.id === collection.id).ids.push(selected.id));
-                }, children: /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(Plus, { size: 14 }) }),
-                query && /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("button", { title: "Save search as collection", onClick: createCollection, children: /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(Bookmark, { size: 14 }) }),
-                /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("button", { className: "library-add", "aria-label": "Add in current section", title: "Add in current section", disabled: !loaded, onClick: () => addNode2("auto"), children: /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(Plus, { size: 15 }) }),
-                /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "menu-host", children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("button", { "aria-label": "Choose document type", title: "Choose document type", onClick: (e) => {
+                }, children: /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(Plus, { size: 14 }) }),
+                query && /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("button", { title: "Save search as collection", onClick: createCollection, children: /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(Bookmark, { size: 14 }) }),
+                /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("button", { className: "library-add", "aria-label": "Add in current section", title: "Add in current section", disabled: !loaded, onClick: () => addNode2("auto"), children: /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(Plus, { size: 15 }) }),
+                /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "menu-host", children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("button", { "aria-label": "Choose document type", title: "Choose document type", onClick: (e) => {
                     e.stopPropagation();
                     setMenu(menu === "Add" ? "" : "Add");
-                  }, children: /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(ChevronDown, { size: 13 }) }),
+                  }, children: /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(ChevronDown, { size: 13 }) }),
                   dropdown("Add")
                 ] })
               ] })
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { className: "binder-content", children: project ? searching ? /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(import_jsx_runtime18.Fragment, { children: items.length ? items.map((n) => /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("button", { className: "search-result " + (n.id === selectedId ? "selected" : ""), onClick: () => openNode(n.id), children: [
-              /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(NodeIcon, { n }),
-              /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("span", { children: [
-                /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("strong", { children: n.title }),
-                /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("small", { children: n.synopsis || plain(n.html).slice(0, 75) || "Empty document" })
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("div", { className: "binder-content", children: project ? searching ? /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(import_jsx_runtime19.Fragment, { children: items.length ? items.map((n) => /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("button", { className: "search-result " + (n.id === selectedId ? "selected" : ""), onClick: () => openNode(n.id), children: [
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(NodeIcon, { n }),
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("span", { children: [
+                /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("strong", { children: n.title }),
+                /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("small", { children: n.synopsis || plain(n.html).slice(0, 75) || "Empty document" })
               ] })
-            ] }, n.id)) : /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { className: "binder-empty", children: "No matching documents." }) }) : /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)(import_jsx_runtime18.Fragment, { children: [
+            ] }, n.id)) : /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("div", { className: "binder-empty", children: "No matching documents." }) }) : /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)(import_jsx_runtime19.Fragment, { children: [
               libraryItems.map((n) => tree(n)),
-              !libraryItems.length && /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "library-empty", children: [
-                libraryRoot && /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(NodeIcon, { n: libraryRoot }),
-                /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("p", { children: libraryRoot?.role === "trash" ? "Trash is empty." : "Nothing here yet." }),
-                libraryRoot?.role !== "trash" && /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("button", { onClick: () => addNode2("auto"), children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(Plus, { size: 12 }),
+              !libraryItems.length && /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "library-empty", children: [
+                libraryRoot && /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(NodeIcon, { n: libraryRoot }),
+                /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("p", { children: libraryRoot?.role === "trash" ? "Trash is empty." : "Nothing here yet." }),
+                libraryRoot?.role !== "trash" && /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("button", { onClick: () => addNode2("auto"), children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(Plus, { size: 12 }),
                   "Add your first ",
                   libraryRoot?.role === "characters" ? "character" : libraryRoot?.role === "locations" ? "location" : libraryRoot?.role === "props" ? "prop" : "document"
                 ] })
               ] })
-            ] }) : /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "binder-no-project", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(Folder, { size: 26, strokeWidth: 1 }),
-              /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("p", { children: "Your worlds will live here." }),
-              /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("button", { onClick: () => setModal("project"), children: [
-                /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(Plus, { size: 13 }),
+            ] }) : /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "binder-no-project", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(Folder, { size: 26, strokeWidth: 1 }),
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("p", { children: "Your worlds will live here." }),
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("button", { onClick: () => setModal("project"), children: [
+                /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(Plus, { size: 13 }),
                 "New world"
               ] })
             ] }) }),
-            project && /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("details", { className: "library-collections", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("summary", { children: [
-                /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(Bookmark, { size: 13 }),
+            project && /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("details", { className: "library-collections", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("summary", { children: [
+                /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(Bookmark, { size: 13 }),
                 "Collections",
-                /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("span", { children: project.collections.length })
+                /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { children: project.collections.length })
               ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { children: [
-                project.collections.map((c) => /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "collection-row", children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("button", { onClick: () => {
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { children: [
+                project.collections.map((c) => /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "collection-row", children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("button", { onClick: () => {
                     setCollectionId(c.id);
                     setQuery("");
                     setMode("corkboard");
                   }, children: [
-                    /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("span", { className: "collection-dot" }),
+                    /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { className: "collection-dot" }),
                     c.title,
-                    c.query && /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(Search, { size: 11 })
+                    c.query && /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(Search, { size: 11 })
                   ] }),
-                  /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("button", { title: "Delete collection", onClick: () => changeProject((p) => p.collections = p.collections.filter((x) => x.id !== c.id), true), children: /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(X, { size: 11 }) })
+                  /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("button", { title: "Delete collection", onClick: () => changeProject((p) => p.collections = p.collections.filter((x) => x.id !== c.id), true), children: /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(X, { size: 11 }) })
                 ] }, c.id)),
-                /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("button", { className: "text-button", onClick: createCollection, children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(Plus, { size: 12 }),
+                /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("button", { className: "text-button", onClick: createCollection, children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(Plus, { size: 12 }),
                   "New collection"
                 ] })
               ] })
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "library-footer", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "library-footer", children: [
               project && (() => {
                 const bin = project.nodes.find((n) => n.role === "trash");
-                return bin && /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("button", { className: "section-choice tree-select " + (libraryRoot?.id === bin.id ? "selected" : ""), onClick: () => chooseSection(bin), children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(Trash, { size: 14 }),
-                  /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("span", { className: "tree-title", children: "Trash" }),
-                  /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("small", { children: descendants(project, bin.id).filter((n) => n.kind !== "folder").length })
+                return bin && /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("button", { className: "section-choice tree-select " + (libraryRoot?.id === bin.id ? "selected" : ""), onClick: () => chooseSection(bin), children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(Trash, { size: 14 }),
+                  /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { className: "tree-title", children: "Trash" }),
+                  /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("small", { children: descendants(project, bin.id).filter((n) => n.kind !== "folder").length })
                 ] });
               })(),
-              /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(IconButton, { title: "Project settings", onClick: () => setModal("settings"), children: /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(Settings, { size: 15 }) }),
-              /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(IconButton, { title: "Previous Session Vault", onClick: () => setModal("vault"), children: /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(Archive, { size: 15 }) })
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(IconButton, { title: "Project settings", onClick: () => setModal("settings"), children: /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(Settings, { size: 15 }) }),
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(IconButton, { title: "Previous Session Vault", onClick: () => setModal("vault"), children: /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(Archive, { size: 15 }) })
             ] })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { className: "resize-gutter", onPointerDown: (e) => startResize(e, "binder"), role: "separator", "aria-label": "Resize Binder" })
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("div", { className: "resize-gutter", onPointerDown: (e) => startResize(e, "binder"), role: "separator", "aria-label": "Resize Binder" })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("main", { className: "main-editor " + (!stage && mode === "editor" && selected?.fields["development.kind"] === "foundation" ? "foundation-workspace" : ""), children: [
-          project && !stage && ["moodboard", "beats"].includes(mode) && /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("nav", { className: "director-nav workspace-nav", "aria-label": "Director workspace", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "workspace-tabs", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("button", { className: selected?.fields["development.kind"] === "foundation" && mode === "editor" ? "active" : "", onClick: developStory, children: [
-                /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(Lightbulb, { size: 14 }),
+        /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("main", { className: "main-editor " + (!stage && mode === "editor" && selected?.fields["development.kind"] === "foundation" ? "foundation-workspace" : ""), children: [
+          project && !stage && ["moodboard", "beats"].includes(mode) && /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("nav", { className: "director-nav workspace-nav", "aria-label": "Director workspace", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "workspace-tabs", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("button", { className: selected?.fields["development.kind"] === "foundation" && mode === "editor" ? "active" : "", onClick: developStory, children: [
+                /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(Lightbulb, { size: 14 }),
                 "Foundation"
               ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("button", { className: !["moodboard", "beats"].includes(mode) && !!draftRootForNode(project, selectedId) ? "active" : "", "aria-label": "Write screenplay", onClick: writeScreenplay, children: [
-                /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(Film, { size: 14 }),
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("button", { className: !["moodboard", "beats"].includes(mode) && !!draftRootForNode(project, selectedId) ? "active" : "", "aria-label": "Write screenplay", onClick: writeScreenplay, children: [
+                /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(Film, { size: 14 }),
                 project.template === "screenplay" ? "Screenplay" : "Writing"
               ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("button", { className: mode === "moodboard" ? "active" : "", onClick: () => openTool("moodboard"), children: [
-                /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(Palette, { size: 14 }),
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("button", { className: mode === "moodboard" ? "active" : "", onClick: () => openTool("moodboard"), children: [
+                /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(Palette, { size: 14 }),
                 "Visual language"
               ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("button", { className: mode === "beats" ? "active" : "", onClick: () => openTool("beats"), children: [
-                /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(Rows3, { size: 14 }),
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("button", { className: mode === "beats" ? "active" : "", onClick: () => openTool("beats"), children: [
+                /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(Rows3, { size: 14 }),
                 "Beat timeline"
               ] })
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "workspace-context", children: [
-              project.template === "screenplay" && !!draftRootForNode(project, selectedId) && /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "draft-version-bar", children: [
-                /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("select", { "aria-label": "Active draft version", title: "Active screenplay version", value: activeDraftRoot(project)?.id || "", onChange: (e) => switchDraft(e.target.value), children: draftVersions(project).map((n) => /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("option", { value: n.id, children: n.role === "draft" ? "Original draft" : n.title }, n.id)) }),
-                /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(IconButton, { title: "New draft version", onClick: () => {
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "workspace-context", children: [
+              project.template === "screenplay" && !!draftRootForNode(project, selectedId) && /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "draft-version-bar", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("select", { "aria-label": "Active draft version", title: "Active screenplay version", value: activeDraftRoot(project)?.id || "", onChange: (e) => switchDraft(e.target.value), children: draftVersions(project).map((n) => /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("option", { value: n.id, children: n.role === "draft" ? "Original draft" : n.title }, n.id)) }),
+                /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(IconButton, { title: "New draft version", onClick: () => {
                   setNewDraftName("Draft " + (draftVersions(project).length + 1));
                   setModal("draft-version");
-                }, children: /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(Copy, { size: 14 }) })
+                }, children: /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(Copy, { size: 14 }) })
               ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "menu-host", onClick: (e) => e.stopPropagation(), children: [
-                /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(IconButton, { title: "Workspace tools", active: menu === "workspace-tools", onClick: () => setMenu(menu === "workspace-tools" ? "" : "workspace-tools"), children: /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(SlidersHorizontal, { size: 16 }) }),
-                menu === "workspace-tools" && /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "dropdown workspace-tools-menu", role: "menu", onClick: (e) => e.stopPropagation(), children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("button", { onClick: () => action("inspector"), children: [
-                    /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("span", { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "menu-host", onClick: (e) => e.stopPropagation(), children: [
+                /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(IconButton, { title: "Workspace tools", active: menu === "workspace-tools", onClick: () => setMenu(menu === "workspace-tools" ? "" : "workspace-tools"), children: /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(SlidersHorizontal, { size: 16 }) }),
+                menu === "workspace-tools" && /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "dropdown workspace-tools-menu", role: "menu", onClick: (e) => e.stopPropagation(), children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("button", { onClick: () => action("inspector"), children: [
+                    /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("span", { children: [
                       (phone ? phonePanel === "inspector" : prefs.inspector) ? "Hide" : "Show",
                       " Inspector"
                     ] }),
-                    /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(PanelRight, { size: 14 })
+                    /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(PanelRight, { size: 14 })
                   ] }),
-                  /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("button", { onClick: () => action("split"), children: [
-                    /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("span", { children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("button", { onClick: () => action("split"), children: [
+                    /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("span", { children: [
                       splitId ? "Close" : "Open",
                       " split editor"
                     ] }),
-                    /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(Columns2, { size: 14 })
+                    /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(Columns2, { size: 14 })
                   ] }),
-                  /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("button", { onClick: () => action("focus"), children: [
-                    /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("span", { children: "Composition mode" }),
-                    /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(Maximize2, { size: 14 })
+                  /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("button", { onClick: () => action("focus"), children: [
+                    /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { children: "Composition mode" }),
+                    /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(Maximize2, { size: 14 })
                   ] }),
-                  /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("button", { onClick: () => action("scratch"), children: [
-                    /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("span", { children: "Scratchpad" }),
-                    /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(StickyNote, { size: 14 })
+                  /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("button", { onClick: () => action("scratch"), children: [
+                    /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { children: "Scratchpad" }),
+                    /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(StickyNote, { size: 14 })
                   ] }),
-                  /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("button", { onClick: () => action("import"), children: [
-                    /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("span", { children: "Import files\u2026" }),
-                    /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(Upload, { size: 14 })
+                  /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("button", { onClick: () => action("import"), children: [
+                    /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { children: "Import files\u2026" }),
+                    /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(Upload, { size: 14 })
                   ] }),
-                  /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("button", { onClick: () => action("settings"), children: [
-                    /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("span", { children: "Workspace settings" }),
-                    /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(Settings, { size: 14 })
+                  /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("button", { onClick: () => action("settings"), children: [
+                    /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { children: "Workspace settings" }),
+                    /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(Settings, { size: 14 })
                   ] })
                 ] })
               ] })
             ] })
           ] }),
-          project && !stage && !["corkboard", "moodboard", "beats"].includes(mode) && /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "document-heading compact-document-heading " + (selected?.kind === "screenplay" || mode === "scrivenings" ? "screenplay-writing-heading" : ""), children: [
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "document-identity", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("span", { className: "document-section-label", children: [
+          project && !stage && !["corkboard", "moodboard", "beats"].includes(mode) && /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "document-heading compact-document-heading " + (selected?.kind === "screenplay" || mode === "scrivenings" ? "screenplay-writing-heading" : ""), children: [
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "document-identity", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("span", { className: "document-section-label", children: [
                 libraryRoot?.title || project.title,
-                /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(ChevronRight, { size: 11 })
+                /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(ChevronRight, { size: 11 })
               ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("input", { "aria-label": "Document title", placeholder: "Choose a document", value: headingNode?.title || "", onChange: (e) => headingNode && patch(headingNode.id, { title: e.target.value }), disabled: !headingNode })
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("input", { "aria-label": "Document title", placeholder: "Choose a document", value: headingNode?.title || "", onChange: (e) => headingNode && patch(headingNode.id, { title: e.target.value }), disabled: !headingNode })
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "document-context-actions", children: [
-              project.template === "screenplay" && !!draftRootForNode(project, selectedId) && /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "draft-version-bar", children: [
-                /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("select", { "aria-label": "Active draft version", title: "Active screenplay version", value: activeDraftRoot(project)?.id || "", onChange: (e) => switchDraft(e.target.value), children: draftVersions(project).map((n) => /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("option", { value: n.id, children: n.role === "draft" ? "Original draft" : n.title }, n.id)) }),
-                /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(IconButton, { title: "New draft version", onClick: () => {
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "document-context-actions", children: [
+              project.template === "screenplay" && !!draftRootForNode(project, selectedId) && /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "draft-version-bar", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("select", { "aria-label": "Active draft version", title: "Active screenplay version", value: activeDraftRoot(project)?.id || "", onChange: (e) => switchDraft(e.target.value), children: draftVersions(project).map((n) => /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("option", { value: n.id, children: n.role === "draft" ? "Original draft" : n.title }, n.id)) }),
+                /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(IconButton, { title: "New draft version", onClick: () => {
                   setNewDraftName("Draft " + (draftVersions(project).length + 1));
                   setModal("draft-version");
-                }, children: /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(Copy, { size: 14 }) })
+                }, children: /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(Copy, { size: 14 }) })
               ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("span", { className: "document-save-status", children: saveLabel }),
-              project.template === "screenplay" && !!draftRootForNode(project, selectedId) && /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("button", { className: "scene-visual-board", onMouseDown: (e) => e.preventDefault(), onClick: () => openTool("moodboard"), children: [
-                /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(Palette, { size: 13 }),
-                /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("span", { children: "Visual board" })
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { className: "document-save-status", children: saveLabel }),
+              project.template === "screenplay" && !!draftRootForNode(project, selectedId) && /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("button", { className: "scene-visual-board", onMouseDown: (e) => e.preventDefault(), onClick: () => openTool("moodboard"), children: [
+                /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(Palette, { size: 13 }),
+                /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { children: "Visual board" })
               ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("select", { className: "editor-view-select", "aria-label": "Editor view", value: mode, onChange: (e) => {
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("select", { className: "editor-view-select", "aria-label": "Editor view", value: mode, onChange: (e) => {
                 activeEditor.current = null;
                 if (["corkboard", "outline", "scrivenings"].includes(e.target.value) && scope) setSelectedId(scope.id);
                 setMode(e.target.value);
               }, children: [
-                /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("option", { value: "editor", children: "Document" }),
-                /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("option", { value: "scrivenings", children: "Read together" }),
-                /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("option", { value: "corkboard", children: "Cards" }),
-                /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("option", { value: "outline", children: "Outline" })
+                /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("option", { value: "editor", children: "Document" }),
+                /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("option", { value: "scrivenings", children: "Read together" }),
+                /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("option", { value: "corkboard", children: "Cards" }),
+                /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("option", { value: "outline", children: "Outline" })
               ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(IconButton, { title: (phone ? phonePanel === "inspector" : prefs.inspector) ? "Hide Inspector" : "Show Inspector", onClick: () => action("inspector"), children: /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(PanelRight, { size: 16 }) }),
-              /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "menu-host", onClick: (e) => e.stopPropagation(), children: [
-                /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(IconButton, { title: "Document actions", onClick: () => setMenu(menu === "document-actions" ? "" : "document-actions"), children: /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(Ellipsis, { size: 17 }) }),
-                menu === "document-actions" && /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "dropdown document-actions-menu", role: "menu", onClick: (e) => e.stopPropagation(), children: [
-                  (selected?.kind === "screenplay" || mode === "scrivenings") && /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)(import_jsx_runtime18.Fragment, { children: [
-                    /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("button", { onClick: () => {
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(IconButton, { title: (phone ? phonePanel === "inspector" : prefs.inspector) ? "Hide Inspector" : "Show Inspector", onClick: () => action("inspector"), children: /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(PanelRight, { size: 16 }) }),
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "menu-host", onClick: (e) => e.stopPropagation(), children: [
+                /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(IconButton, { title: "Document actions", onClick: () => setMenu(menu === "document-actions" ? "" : "document-actions"), children: /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(Ellipsis, { size: 17 }) }),
+                menu === "document-actions" && /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "dropdown document-actions-menu", role: "menu", onClick: (e) => e.stopPropagation(), children: [
+                  (selected?.kind === "screenplay" || mode === "scrivenings") && /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)(import_jsx_runtime19.Fragment, { children: [
+                    /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("button", { onClick: () => {
                       setMenu("");
                       setModal("draft-version");
                     }, children: "New draft version" }),
-                    /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("button", { onClick: () => {
+                    /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("button", { onClick: () => {
                       setMenu("");
                       openTool("moodboard");
                     }, children: "Scene visual board" })
                   ] }),
-                  [{ label: "Take snapshot", id: "snapshot" }, { label: "Duplicate", id: "duplicate" }, { label: "Move to folder\u2026", id: "move" }, { label: "Move up", id: "up" }, { label: "Move down", id: "down" }, { label: "Split editor", id: "split" }, { label: "Composition mode", id: "focus" }, { label: "Scratchpad", id: "scratch" }].map((item) => /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("button", { onClick: () => action(item.id), children: item.label }, item.id)),
-                  selected && selected.kind !== "folder" && selected.kind !== "file" && selected.fields["development.kind"] !== "foundation" && /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("label", { className: "document-kind-control", children: [
+                  [{ label: "Take snapshot", id: "snapshot" }, { label: "Duplicate", id: "duplicate" }, { label: "Move to folder\u2026", id: "move" }, { label: "Move up", id: "up" }, { label: "Move down", id: "down" }, { label: "Split editor", id: "split" }, { label: "Composition mode", id: "focus" }, { label: "Scratchpad", id: "scratch" }].map((item) => /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("button", { onClick: () => action(item.id), children: item.label }, item.id)),
+                  selected && selected.kind !== "folder" && selected.kind !== "file" && selected.fields["development.kind"] !== "foundation" && /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("label", { className: "document-kind-control", children: [
                     "Document type",
-                    /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("select", { "aria-label": "Document type", value: selected.kind, onChange: (e) => patch(selected.id, { kind: e.target.value, include: ["screenplay", "text"].includes(e.target.value) }), children: [
-                      /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("option", { value: "text", children: "Notes" }),
-                      /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("option", { value: "screenplay", children: "Screenplay" }),
-                      /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("option", { value: "character", children: "Character" }),
-                      /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("option", { value: "location", children: "Location" }),
-                      /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("option", { value: "prop", children: "Prop" })
+                    /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("select", { "aria-label": "Document type", value: selected.kind, onChange: (e) => patch(selected.id, { kind: e.target.value, include: ["screenplay", "text"].includes(e.target.value) }), children: [
+                      /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("option", { value: "text", children: "Notes" }),
+                      /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("option", { value: "screenplay", children: "Screenplay" }),
+                      /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("option", { value: "character", children: "Character" }),
+                      /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("option", { value: "location", children: "Location" }),
+                      /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("option", { value: "prop", children: "Prop" })
                     ] })
                   ] })
                 ] })
               ] }),
-              headingNode && !headingNode.role && !inTrash(project, headingNode) && /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("button", { className: "document-delete delete-control", "aria-label": "Delete " + headingNode.title, onClick: () => deleteNode2(headingNode.id), children: [
-                /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(Trash, { size: 13 }),
-                /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("span", { children: "Delete" })
+              headingNode && !headingNode.role && !inTrash(project, headingNode) && /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("button", { className: "document-delete delete-control", "aria-label": "Delete " + headingNode.title, onClick: () => deleteNode2(headingNode.id), children: [
+                /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(Trash, { size: 13 }),
+                /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { children: "Delete" })
               ] })
             ] })
           ] }),
-          project && !stage && ["editor", "scrivenings"].includes(mode) && selected?.kind === "text" && (phone && selected.fields["development.kind"] === "foundation" ? /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("details", { className: "foundation-formatting", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("summary", { children: [
+          project && !stage && ["editor", "scrivenings"].includes(mode) && selected?.kind === "text" && (phone && selected.fields["development.kind"] === "foundation" ? /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("details", { className: "foundation-formatting", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("summary", { children: [
               "Free-note formatting",
-              /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(ChevronDown, { size: 14 })
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(ChevronDown, { size: 14 })
             ] }),
             formatToolbar
           ] }) : formatToolbar),
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { className: "editor-body", ref: editorBody, children: !loaded ? /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "loading-state", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(LoaderCircle, { className: "spin", size: 24 }),
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("p", { children: "Opening your writing studio\u2026" })
-          ] }) : stage && project ? /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(StoryAtlas, { project, view: stage, onView: setStage, onRename: (title) => changeProject((p) => p.title = title), onFoundation: developStory, onWrite: writeScreenplay, onMoodboard: (id) => openTool("moodboard", id), onBeats: () => openTool("beats"), onOpen: openNode, onScene: openScene, onSection: (role) => {
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("div", { className: "editor-body", ref: editorBody, children: !loaded ? /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "loading-state", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(LoaderCircle, { className: "spin", size: 24 }),
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("p", { children: "Opening your writing studio\u2026" })
+          ] }) : stage && project ? /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(StoryAtlas, { project, view: stage, onView: setStage, onRename: (title) => changeProject((p) => p.title = title), onFoundation: developStory, onWrite: writeScreenplay, onMoodboard: (id) => openTool("moodboard", id), onBeats: () => openTool("beats"), onOpen: openNode, onScene: openScene, onSection: (role) => {
             const n = project.nodes.find((n2) => n2.role === role);
             if (n) openNode(n.id);
           } }, project.id) : renderWorkspace() }),
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("span", { className: "sr-only", role: "status", children: saveLabel })
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { className: "sr-only", role: "status", children: saveLabel })
         ] }),
-        (phone ? phonePanel === "inspector" : prefs.inspector) && !focus2 && !stage && !["moodboard", "beats"].includes(mode) && /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)(import_jsx_runtime18.Fragment, { children: [
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { className: "resize-gutter", role: "separator", "aria-label": "Resize Inspector", onPointerDown: (e) => startResize(e, "inspector") }),
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("aside", { className: "inspector", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "inspector-header", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("span", { children: "Inspector" }),
-              /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(IconButton, { title: "Hide Inspector", onClick: () => {
+        (phone ? phonePanel === "inspector" : prefs.inspector) && !focus2 && !stage && !["moodboard", "beats"].includes(mode) && /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)(import_jsx_runtime19.Fragment, { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("div", { className: "resize-gutter", role: "separator", "aria-label": "Resize Inspector", onPointerDown: (e) => startResize(e, "inspector") }),
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("aside", { className: "inspector", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "inspector-header", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { children: "Inspector" }),
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(IconButton, { title: "Hide Inspector", onClick: () => {
                 setPhonePanel("");
                 if (!phone) setPrefs((p) => ({ ...p, inspector: false }));
-              }, children: /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(X, { size: 14 }) })
+              }, children: /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(X, { size: 14 }) })
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { className: "inspector-tabs", children: [["notes", StickyNote, "Synopsis & notes"], ["bookmarks", Bookmark, "Bookmarks"], ["metadata", Tags, "Metadata"], ["snapshots", Camera, "Snapshots"], ["comments", MessageSquare, "Comments & footnotes"]].map(([id, Icon2, title]) => /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(IconButton, { title, active: inspectorTab === id, onClick: () => setInspectorTab(id), children: /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(Icon2, { size: 16 }) }, id)) }),
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { className: "inspector-body", children: renderInspector() }),
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "inspector-footer", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("span", { className: "label-dot", style: { background: COLORS[selected?.label || "None"] } }),
-              /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("span", { children: selected?.status || "No document selected" })
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("div", { className: "inspector-tabs", children: [["notes", StickyNote, "Synopsis & notes"], ["bookmarks", Bookmark, "Bookmarks"], ["metadata", Tags, "Metadata"], ["snapshots", Camera, "Snapshots"], ["comments", MessageSquare, "Comments & footnotes"]].map(([id, Icon2, title]) => /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(IconButton, { title, active: inspectorTab === id, onClick: () => setInspectorTab(id), children: /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(Icon2, { size: 16 }) }, id)) }),
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("div", { className: "inspector-body", children: renderInspector() }),
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "inspector-footer", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { className: "label-dot", style: { background: COLORS[selected?.label || "None"] } }),
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { children: selected?.status || "No document selected" })
             ] })
           ] })
         ] })
       ] }),
-      project && !focus2 && phone && /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(MobileWorkspaceNav, { current: stage === "atlas" ? "atlas" : stage === "breakdown" ? "breakdown" : !stage && mode === "moodboard" ? "visuals" : !stage && mode === "beats" ? "sequence" : !stage && mode === "editor" && selected?.fields["development.kind"] === "foundation" ? "develop" : !stage && ["editor", "scrivenings"].includes(mode) && !!draftRootForNode(project, selectedId) ? "write" : "", onNavigate: (id) => {
+      project && !focus2 && phone && /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(MobileWorkspaceNav, { current: stage === "atlas" ? "atlas" : stage === "breakdown" ? "breakdown" : !stage && mode === "moodboard" ? "visuals" : !stage && mode === "beats" ? "sequence" : !stage && mode === "editor" && selected?.fields["development.kind"] === "foundation" ? "develop" : !stage && ["editor", "scrivenings"].includes(mode) && !!draftRootForNode(project, selectedId) ? "write" : "", onNavigate: (id) => {
         setPhonePanel("");
         setMenu("");
         if (id === "atlas") {
@@ -65804,66 +65888,66 @@ ${prefix}
         else if (id === "sequence") openTool("beats");
         else setStage("breakdown");
       } }),
-      project && !focus2 && !phone && (stage === "atlas" || dockOpen ? /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("nav", { id: "creative-workspace-dock", className: "creative-dock " + (stage === "atlas" ? "" : "is-work-open"), "aria-label": "Creative workspace modes", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("button", { "aria-current": stage === "atlas" ? "page" : void 0, onClick: () => {
+      project && !focus2 && !phone && (stage === "atlas" || dockOpen ? /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("nav", { id: "creative-workspace-dock", className: "creative-dock " + (stage === "atlas" ? "" : "is-work-open"), "aria-label": "Creative workspace modes", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("button", { "aria-current": stage === "atlas" ? "page" : void 0, onClick: () => {
           setDockOpen(false);
           setStage("atlas");
           setPhonePanel("");
           setPrefs((p) => ({ ...p, binder: false, inspector: false }));
         }, children: [
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(LayoutGrid, { size: 18 }),
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("span", { children: "Atlas" })
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(LayoutGrid, { size: 18 }),
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { children: "Atlas" })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("button", { "aria-current": !stage && mode === "editor" && selected?.fields["development.kind"] === "foundation" ? "page" : void 0, onClick: () => {
+        /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("button", { "aria-current": !stage && mode === "editor" && selected?.fields["development.kind"] === "foundation" ? "page" : void 0, onClick: () => {
           setDockOpen(false);
           developStory();
         }, children: [
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(Lightbulb, { size: 18 }),
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("span", { children: "Develop" })
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(Lightbulb, { size: 18 }),
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { children: "Develop" })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("button", { "aria-current": !stage && ["editor", "scrivenings"].includes(mode) && !!draftRootForNode(project, selectedId) ? "page" : void 0, onClick: () => {
+        /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("button", { "aria-current": !stage && ["editor", "scrivenings"].includes(mode) && !!draftRootForNode(project, selectedId) ? "page" : void 0, onClick: () => {
           setDockOpen(false);
           writeScreenplay();
         }, children: [
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(Film, { size: 18 }),
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("span", { children: "Write" })
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(Film, { size: 18 }),
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { children: "Write" })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("i", { "aria-hidden": "true" }),
-        /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("button", { "aria-current": !stage && mode === "moodboard" ? "page" : void 0, onClick: () => {
+        /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("i", { "aria-hidden": "true" }),
+        /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("button", { "aria-current": !stage && mode === "moodboard" ? "page" : void 0, onClick: () => {
           setDockOpen(false);
           openTool("moodboard");
         }, children: [
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(Palette, { size: 18 }),
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("span", { children: "Visuals" })
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(Palette, { size: 18 }),
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { children: "Visuals" })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("button", { "aria-current": !stage && mode === "beats" ? "page" : void 0, onClick: () => {
+        /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("button", { "aria-current": !stage && mode === "beats" ? "page" : void 0, onClick: () => {
           setDockOpen(false);
           openTool("beats");
         }, children: [
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(Rows3, { size: 18 }),
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("span", { children: "Sequence" })
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(Rows3, { size: 18 }),
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { children: "Sequence" })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("button", { "aria-current": stage === "breakdown" ? "page" : void 0, onClick: () => {
+        /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("button", { "aria-current": stage === "breakdown" ? "page" : void 0, onClick: () => {
           setDockOpen(false);
           setStage("breakdown");
           setPhonePanel("");
         }, children: [
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(Columns2, { size: 18 }),
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("span", { children: "Breakdown" })
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(Columns2, { size: 18 }),
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { children: "Breakdown" })
         ] }),
-        stage !== "atlas" && /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("button", { className: "dock-close", "aria-label": "Close workspace navigation", title: "Close navigation", onClick: () => setDockOpen(false), children: /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(X, { size: 16 }) })
-      ] }) : /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("button", { className: "dock-bubble", type: "button", "aria-label": "Open workspace navigation", "aria-controls": "creative-workspace-dock", "aria-expanded": false, title: "Switch workspace", onClick: () => setDockOpen(true), children: /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(LayoutGrid, { size: 20, strokeWidth: 1.75 }) })),
-      focus2 && /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("button", { className: "exit-composition button secondary", onClick: () => setFocus(false), children: [
-        /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(Minimize2, { size: 15 }),
+        stage !== "atlas" && /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("button", { className: "dock-close", "aria-label": "Close workspace navigation", title: "Close navigation", onClick: () => setDockOpen(false), children: /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(X, { size: 16 }) })
+      ] }) : /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("button", { className: "dock-bubble", type: "button", "aria-label": "Open workspace navigation", "aria-controls": "creative-workspace-dock", "aria-expanded": false, title: "Switch workspace", onClick: () => setDockOpen(true), children: /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(LayoutGrid, { size: 20, strokeWidth: 1.75 }) })),
+      focus2 && /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("button", { className: "exit-composition button secondary", onClick: () => setFocus(false), children: [
+        /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(Minimize2, { size: 15 }),
         "Exit composition ",
-        /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("kbd", { children: "Esc" })
+        /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("kbd", { children: "Esc" })
       ] }),
-      !!workspace.pendingAssetDeletes?.length && /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { className: "asset-cleanup-status", role: "status", children: "Removing unused deleted uploads after saving\u2026" }),
-      toast && /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "toast-message", role: "status", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(CircleCheck, { size: 15 }),
+      !!workspace.pendingAssetDeletes?.length && /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("div", { className: "asset-cleanup-status", role: "status", children: "Removing unused deleted uploads after saving\u2026" }),
+      toast && /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "toast-message", role: "status", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(CircleCheck, { size: 15 }),
         toast
       ] }),
-      modal === "command" && /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(ModalFrame, { title: "Go anywhere.", description: "Search this world or jump to a workspace.", close: closeModal, children: /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(StudioCommand, { project, onOpen: (id) => {
+      modal === "command" && /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(ModalFrame, { title: "Go anywhere.", description: "Search this world or jump to a workspace.", close: closeModal, children: /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(StudioCommand, { project, onOpen: (id) => {
         closeModal();
         openNode(id);
       }, commands: [{ label: "Story Atlas", detail: "Your whole film at a glance", run: () => setStage("atlas") }, { label: "Story Foundation", detail: "Premise, logline, world", run: developStory }, { label: "Write screenplay", detail: "Enter the writing room", run: writeScreenplay }, { label: "Visual language", detail: "Scene boards, visual intentions, and references", run: () => openTool("moodboard") }, { label: "Beat timeline", detail: "Shape the sequence", run: () => openTool("beats") }, { label: "Scene breakdown", detail: "Script, frames, and assets", run: () => setStage("breakdown") }, { label: "Director pitch", detail: "Present your story and frames", run: () => setStage("pitch") }, { label: "World library", detail: "Browse all files", run: () => {
@@ -65873,93 +65957,93 @@ ${prefix}
         closeModal();
         c.run();
       } })) }) }),
-      modal === "profile" && /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(ModalFrame, { title: "Linked profile", description: "Current details from this world.", close: closeModal, children: (() => {
+      modal === "profile" && /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(ModalFrame, { title: "Linked profile", description: "Current details from this world.", close: closeModal, children: (() => {
         const profile = project?.nodes.find((n) => n.id === profileId && !inTrash(project, n));
-        return profile ? /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "profile-preview", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { className: "eyebrow", children: profile.kind.toUpperCase() }),
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("h2", { children: profile.title }),
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(ProfileImages, { n: profile }),
-          profile.synopsis && /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("p", { children: profile.synopsis }),
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("dl", { children: Object.entries(profile.fields).filter(([key2, value]) => key2.startsWith("profile.") && value.trim()).map(([key2, value]) => /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { children: [
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("dt", { children: key2.replace("profile.", "").replace(/[-_]/g, " ") }),
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("dd", { children: value })
+        return profile ? /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "profile-preview", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("div", { className: "eyebrow", children: profile.kind.toUpperCase() }),
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("h2", { children: profile.title }),
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(ProfileImages, { n: profile }),
+          profile.synopsis && /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("p", { children: profile.synopsis }),
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("dl", { children: Object.entries(profile.fields).filter(([key2, value]) => key2.startsWith("profile.") && value.trim()).map(([key2, value]) => /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("dt", { children: key2.replace("profile.", "").replace(/[-_]/g, " ") }),
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("dd", { children: value })
           ] }, key2)) }),
-          profile.notes && /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("p", { children: profile.notes }),
-          plain(profile.html).trim() && /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { className: "profile-notes", dangerouslySetInnerHTML: { __html: sanitize(profile.html) } }),
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { className: "dialog-actions", children: /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("button", { className: "button primary", onClick: () => {
+          profile.notes && /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("p", { children: profile.notes }),
+          plain(profile.html).trim() && /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("div", { className: "profile-notes", dangerouslySetInnerHTML: { __html: sanitize(profile.html) } }),
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("div", { className: "dialog-actions", children: /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("button", { className: "button primary", onClick: () => {
             closeModal();
             openNode(profile.id);
           }, children: "Open full profile" }) })
-        ] }) : /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("p", { children: "This profile is no longer available in this world." });
+        ] }) : /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("p", { children: "This profile is no longer available in this world." });
       })() }),
-      modal === "imports" && /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)(ModalFrame, { title: "Import could not finish", description: "Your existing writing is unchanged. Successful imports remain in their destination folders.", close: closeModal, children: [
-        importProblems.map((p, i) => /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("article", { className: "import-problem", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("strong", { children: p.name }),
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("p", { children: p.message })
+      modal === "imports" && /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)(ModalFrame, { title: "Import could not finish", description: "Your existing writing is unchanged. Successful imports remain in their destination folders.", close: closeModal, children: [
+        importProblems.map((p, i) => /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("article", { className: "import-problem", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("strong", { children: p.name }),
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("p", { children: p.message })
         ] }, i)),
-        /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("p", { className: "field-hint", children: "PDFs, images, and other attachments go to Research. Fountain and Final Draft files open as editable screenplays." }),
-        /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "dialog-actions", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("button", { className: "button secondary", disabled: importBusy, onClick: () => {
+        /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("p", { className: "field-hint", children: "PDFs, images, and other attachments go to Research. Fountain and Final Draft files open as editable screenplays." }),
+        /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "dialog-actions", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("button", { className: "button secondary", disabled: importBusy, onClick: () => {
             closeModal();
             importInput.current?.click();
           }, children: "Choose another file" }),
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("button", { className: "button primary", disabled: importBusy || !failedImports.current.length, onClick: () => void importFiles(failedImports.current), children: importBusy ? "Retrying\u2026" : "Retry failed imports" })
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("button", { className: "button primary", disabled: importBusy || !failedImports.current.length, onClick: () => void importFiles(failedImports.current), children: importBusy ? "Retrying\u2026" : "Retry failed imports" })
         ] })
       ] }),
-      modal === "draft-version" && /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(ModalFrame, { title: "Create a draft version", description: "Copy the active screenplay into a new version in this world. Characters, locations, and research remain shared.", close: closeModal, children: /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("form", { onSubmit: (e) => {
+      modal === "draft-version" && /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(ModalFrame, { title: "Create a draft version", description: "Copy the active screenplay into a new version in this world. Characters, locations, and research remain shared.", close: closeModal, children: /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("form", { onSubmit: (e) => {
         e.preventDefault();
         addDraftVersion();
       }, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("label", { className: "form-label", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("label", { className: "form-label", children: [
           "Version name",
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("input", { autoFocus: true, value: newDraftName, onChange: (e) => setNewDraftName(e.target.value), placeholder: "Draft 2", maxLength: 100 })
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("input", { autoFocus: true, value: newDraftName, onChange: (e) => setNewDraftName(e.target.value), placeholder: "Draft 2", maxLength: 100 })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "dialog-actions", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("button", { type: "button", className: "button secondary", onClick: closeModal, children: "Cancel" }),
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("button", { type: "submit", className: "button primary", children: "Create draft version" })
+        /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "dialog-actions", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("button", { type: "button", className: "button secondary", onClick: closeModal, children: "Cancel" }),
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("button", { type: "submit", className: "button primary", children: "Create draft version" })
         ] })
       ] }) }),
-      modal === "project" && /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(ModalFrame, { title: "Create a new world", description: "A separate dashboard with its own writing, characters, locations, and research.", close: closeModal, children: /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("form", { onSubmit: (e) => {
+      modal === "project" && /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(ModalFrame, { title: "Create a new world", description: "A separate dashboard with its own writing, characters, locations, and research.", close: closeModal, children: /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("form", { onSubmit: (e) => {
         e.preventDefault();
         newProject();
       }, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("label", { className: "form-label", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("label", { className: "form-label", children: [
           "WORLD / PROJECT NAME",
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("input", { autoFocus: true, value: newTitle, onChange: (e) => setNewTitle(e.target.value), placeholder: "Name this world" })
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("input", { autoFocus: true, value: newTitle, onChange: (e) => setNewTitle(e.target.value), placeholder: "Name this world" })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("label", { className: "form-label", children: "START WITH" }),
-        /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { className: "template-grid", children: [["screenplay", Film, "Screenplay", "Scenes, characters, locations, and research."], ["novel", BookOpen, "Manuscript", "A flexible home for chapters and scenes."], ["blank", FileText, "Blank project", "An open structure. Make it yours."]].map(([id, Icon2, title, desc]) => /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("button", { type: "button", className: "template-card " + (newTemplate === id ? "chosen" : ""), onClick: () => setNewTemplate(id), children: [
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(Icon2, { size: 24, strokeWidth: 1.3 }),
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("strong", { children: title }),
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("span", { children: desc }),
-          newTemplate === id && /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(Check, { size: 15 })
+        /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("label", { className: "form-label", children: "START WITH" }),
+        /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("div", { className: "template-grid", children: [["screenplay", Film, "Screenplay", "Scenes, characters, locations, and research."], ["novel", BookOpen, "Manuscript", "A flexible home for chapters and scenes."], ["blank", FileText, "Blank project", "An open structure. Make it yours."]].map(([id, Icon2, title, desc]) => /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("button", { type: "button", className: "template-card " + (newTemplate === id ? "chosen" : ""), onClick: () => setNewTemplate(id), children: [
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(Icon2, { size: 24, strokeWidth: 1.3 }),
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("strong", { children: title }),
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { children: desc }),
+          newTemplate === id && /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(Check, { size: 15 })
         ] }, id)) }),
-        /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("p", { className: "form-note", children: "Starts with blank writing. You add your own story and characters." }),
-        /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "dialog-actions", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("button", { className: "button secondary", type: "button", onClick: closeModal, children: "Cancel" }),
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("button", { className: "button primary", type: "submit", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(Plus, { size: 15 }),
+        /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("p", { className: "form-note", children: "Starts with blank writing. You add your own story and characters." }),
+        /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "dialog-actions", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("button", { className: "button secondary", type: "button", onClick: closeModal, children: "Cancel" }),
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("button", { className: "button primary", type: "submit", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(Plus, { size: 15 }),
             "Create world"
           ] })
         ] })
       ] }) }),
-      modal === "projects" && /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)(ModalFrame, { title: "Your story worlds", description: "Each world has its own characters, locations, research, and draft versions.", close: closeModal, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "project-list", children: [
-          workspace.projects.filter((p) => showArchived || !p.archived).map((p) => /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "project-list-row", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("button", { onClick: () => switchProject(p.id), disabled: p.archived, children: [
-              /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("span", { className: "studio-project-mark", children: /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(StudioMark, {}) }),
-              /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("span", { children: [
-                /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("strong", { children: p.title }),
-                /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("small", { children: [
+      modal === "projects" && /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)(ModalFrame, { title: "Your story worlds", description: "Each world has its own characters, locations, research, and draft versions.", close: closeModal, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "project-list", children: [
+          workspace.projects.filter((p) => showArchived || !p.archived).map((p) => /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "project-list-row", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("button", { onClick: () => switchProject(p.id), disabled: p.archived, children: [
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { className: "studio-project-mark", children: /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(StudioMark, {}) }),
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("span", { children: [
+                /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("strong", { children: p.title }),
+                /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("small", { children: [
                   p.nodes.filter((n) => n.kind !== "folder" && !inTrash(p, n)).length,
                   " documents \xB7 ",
                   dateLabel(p.updated),
                   p.archived ? " \xB7 Archived" : ""
                 ] })
               ] }),
-              p.id === projectId && /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(Check, { size: 17 })
+              p.id === projectId && /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(Check, { size: 17 })
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(IconButton, { title: p.archived ? "Restore project" : "Archive project", onClick: () => {
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(IconButton, { title: p.archived ? "Restore project" : "Archive project", onClick: () => {
               update((s) => {
                 const target = s.projects.find((x) => x.id === p.id);
                 target.archived = !target.archived;
@@ -65973,90 +66057,90 @@ ${prefix}
                 }
               }
               notify(p.archived ? "Project restored" : "Project archived");
-            }, children: p.archived ? /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(RotateCcw, { size: 15 }) : /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(Archive, { size: 15 }) })
+            }, children: p.archived ? /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(RotateCcw, { size: 15 }) : /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(Archive, { size: 15 }) })
           ] }, p.id)),
-          !workspace.projects.length && /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { className: "empty-small", children: "Your first project starts here." })
+          !workspace.projects.length && /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("div", { className: "empty-small", children: "Your first project starts here." })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "dialog-actions spread", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("label", { className: "checkbox-label", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("input", { type: "checkbox", checked: showArchived, onChange: (e) => setShowArchived(e.target.checked) }),
+        /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "dialog-actions spread", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("label", { className: "checkbox-label", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("input", { type: "checkbox", checked: showArchived, onChange: (e) => setShowArchived(e.target.checked) }),
             "Show archived"
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("button", { className: "button primary", onClick: () => setModal("project"), children: [
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(Plus, { size: 15 }),
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("button", { className: "button primary", onClick: () => setModal("project"), children: [
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(Plus, { size: 15 }),
             "New world"
           ] })
         ] })
       ] }),
-      modal === "settings" && /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)(ModalFrame, { title: "Workspace settings", description: "Make space for the way you write.", close: closeModal, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "settings-columns", children: [
-          project && /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("section", { children: [
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("h3", { children: "Project" }),
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("label", { className: "form-label", children: [
+      modal === "settings" && /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)(ModalFrame, { title: "Workspace settings", description: "Make space for the way you write.", close: closeModal, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "settings-columns", children: [
+          project && /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("section", { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("h3", { children: "Project" }),
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("label", { className: "form-label", children: [
               "Title",
-              /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("input", { value: project.title, onChange: (e) => changeProject((p) => p.title = e.target.value) })
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("input", { value: project.title, onChange: (e) => changeProject((p) => p.title = e.target.value) })
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("label", { className: "form-label", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("label", { className: "form-label", children: [
               "Author",
-              /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("input", { value: project.author, onChange: (e) => changeProject((p) => p.author = e.target.value), placeholder: "Your name" })
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("input", { value: project.author, onChange: (e) => changeProject((p) => p.author = e.target.value), placeholder: "Your name" })
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("label", { className: "form-label", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("label", { className: "form-label", children: [
               "Project notes",
-              /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("textarea", { rows: 4, value: project.description, onChange: (e) => changeProject((p) => p.description = e.target.value), placeholder: "What would you like to explore?" })
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("textarea", { rows: 4, value: project.description, onChange: (e) => changeProject((p) => p.description = e.target.value), placeholder: "What would you like to explore?" })
             ] })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("section", { children: [
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("h3", { children: "Writing environment" }),
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "carbon-theme-summary", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("span", { className: "theme-swatches", "aria-hidden": "true", children: [
-                /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("i", {}),
-                /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("i", {}),
-                /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("i", {}),
-                /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("i", {})
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("section", { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("h3", { children: "Writing environment" }),
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "carbon-theme-summary", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("span", { className: "theme-swatches", "aria-hidden": "true", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("i", {}),
+                /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("i", {}),
+                /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("i", {}),
+                /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("i", {})
               ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { children: [
-                /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("strong", { children: "Paper Studio" }),
-                /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("p", { children: "Warm paper, plum ink, and vermilion details from your 15-month plan." })
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { children: [
+                /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("strong", { children: "Paper Studio" }),
+                /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("p", { children: "Warm paper, plum ink, and vermilion details from your 15-month plan." })
               ] })
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("label", { className: "checkbox-label", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("input", { type: "checkbox", checked: prefs.spellcheck, onChange: (e) => setPrefs((p) => ({ ...p, spellcheck: e.target.checked })) }),
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("label", { className: "checkbox-label", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("input", { type: "checkbox", checked: prefs.spellcheck, onChange: (e) => setPrefs((p) => ({ ...p, spellcheck: e.target.checked })) }),
               "Browser spellcheck (red underlines)"
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("label", { className: "checkbox-label", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("input", { type: "checkbox", checked: prefs.page, onChange: (e) => setPrefs((p) => ({ ...p, page: e.target.checked })) }),
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("label", { className: "checkbox-label", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("input", { type: "checkbox", checked: prefs.page, onChange: (e) => setPrefs((p) => ({ ...p, page: e.target.checked })) }),
               "Write on a page"
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("label", { className: "checkbox-label", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("input", { type: "checkbox", checked: prefs.dialogueFocus, onChange: (e) => setPrefs((p) => ({ ...p, dialogueFocus: e.target.checked })) }),
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("label", { className: "checkbox-label", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("input", { type: "checkbox", checked: prefs.dialogueFocus, onChange: (e) => setPrefs((p) => ({ ...p, dialogueFocus: e.target.checked })) }),
               "Focus on screenplay dialogue"
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("p", { className: "field-hint", children: "Open this same address and sign in with the same ChatGPT account on your phone and laptop. Changes sync automatically while connected. Wait for Saved before switching devices. If both devices change the same writing, saving pauses to protect both versions. A recovery copy is kept on this device when available." }),
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("button", { className: "button secondary", onClick: backup, children: [
-              /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(Download, { size: 14 }),
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("p", { className: "field-hint", children: "Open this same address and sign in with the same ChatGPT account on your phone and laptop. Changes sync automatically while connected. Wait for Saved before switching devices. If both devices change the same writing, saving pauses to protect both versions. A recovery copy is kept on this device when available." }),
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("button", { className: "button secondary", onClick: backup, children: [
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(Download, { size: 14 }),
               "Download writing backup"
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("p", { className: "field-hint", children: "The backup contains text, metadata, revisions, and links to imported research files. Original uploads remain in this private workspace." })
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("p", { className: "field-hint", children: "The backup contains text, metadata, revisions, and links to imported research files. Original uploads remain in this private workspace." })
           ] })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "settings-archive", hidden: !allowLegacyArchive, children: [
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(Archive, { size: 18 }),
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { children: [
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("strong", { children: "Your previous work is here." }),
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("p", { children: "Study entries, observations, revisions, and screenplay PDFs remain in the previous Vault." })
+        /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "settings-archive", hidden: !allowLegacyArchive, children: [
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(Archive, { size: 18 }),
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("strong", { children: "Your previous work is here." }),
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("p", { children: "Study entries, observations, revisions, and screenplay PDFs remain in the previous Vault." })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("button", { className: "button secondary", onClick: () => setModal("vault"), children: "Open Vault" })
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("button", { className: "button secondary", onClick: () => setModal("vault"), children: "Open Vault" })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { className: "dialog-actions", children: /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("button", { className: "button primary", onClick: closeModal, children: "Done" }) })
+        /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("div", { className: "dialog-actions", children: /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("button", { className: "button primary", onClick: closeModal, children: "Done" }) })
       ] }),
-      modal === "scratch" && /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)(ModalFrame, { title: "Scratchpad", description: project ? project.title + " \xB7 notes for this world" : "Choose a world to keep notes with it.", close: closeModal, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("textarea", { className: "scratchpad", autoFocus: true, placeholder: "A line, a question, an image in your mind\u2026", value: project ? project.scratch || "" : workspace.scratch, onChange: (e) => {
+      modal === "scratch" && /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)(ModalFrame, { title: "Scratchpad", description: project ? project.title + " \xB7 notes for this world" : "Choose a world to keep notes with it.", close: closeModal, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("textarea", { className: "scratchpad", autoFocus: true, placeholder: "A line, a question, an image in your mind\u2026", value: project ? project.scratch || "" : workspace.scratch, onChange: (e) => {
           if (project) changeProject((p) => p.scratch = e.target.value);
           else update((s) => s.scratch = e.target.value);
         } }),
-        /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "dialog-actions spread", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("span", { className: "field-hint", children: "Saves automatically." }),
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("button", { className: "button secondary", disabled: !project || !project.scratch?.trim(), onClick: () => {
+        /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "dialog-actions spread", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { className: "field-hint", children: "Saves automatically." }),
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("button", { className: "button secondary", disabled: !project || !project.scratch?.trim(), onClick: () => {
             if (!project) return;
             const root = project.nodes.find((n2) => n2.role === "research");
             const n = node("Scratchpad notes", "text", root.id, project.nodes.length, { html: paragraphs(project.scratch || ""), include: false });
@@ -66065,145 +66149,145 @@ ${prefix}
             setModal(null);
             notify("Scratchpad copied to Research");
           }, children: [
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(FilePlusCorner, { size: 14 }),
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(FilePlusCorner, { size: 14 }),
             "Copy to this world"
           ] })
         ] }),
-        workspace.scratch && /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("details", { className: "legacy-scratch", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("summary", { children: "Earlier shared scratchpad" }),
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("pre", { children: workspace.scratch }),
-          project && /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("button", { className: "button secondary", onClick: () => changeProject((p) => p.scratch = (p.scratch || "") + "\n" + workspace.scratch), children: "Copy earlier notes into this world" })
+        workspace.scratch && /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("details", { className: "legacy-scratch", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("summary", { children: "Earlier shared scratchpad" }),
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("pre", { children: workspace.scratch }),
+          project && /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("button", { className: "button secondary", onClick: () => changeProject((p) => p.scratch = (p.scratch || "") + "\n" + workspace.scratch), children: "Copy earlier notes into this world" })
         ] })
       ] }),
-      modal === "targets" && /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)(ModalFrame, { title: "Writing targets", description: "Optional markers for your project and documents.", close: closeModal, children: [
-        project ? /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)(import_jsx_runtime18.Fragment, { children: [
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "target-summary", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { className: "eyebrow", children: "DRAFT WORDS" }),
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("strong", { children: totalWords.toLocaleString() }),
-            project.target > 0 && /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)(import_jsx_runtime18.Fragment, { children: [
-              /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { className: "target-meter", children: /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("i", { style: { width: Math.min(100, totalWords / project.target * 100) + "%" } }) }),
-              /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("span", { children: [
+      modal === "targets" && /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)(ModalFrame, { title: "Writing targets", description: "Optional markers for your project and documents.", close: closeModal, children: [
+        project ? /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)(import_jsx_runtime19.Fragment, { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "target-summary", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("div", { className: "eyebrow", children: "DRAFT WORDS" }),
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("strong", { children: totalWords.toLocaleString() }),
+            project.target > 0 && /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)(import_jsx_runtime19.Fragment, { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("div", { className: "target-meter", children: /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("i", { style: { width: Math.min(100, totalWords / project.target * 100) + "%" } }) }),
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("span", { children: [
                 Math.round(totalWords / project.target * 100),
                 "% of ",
                 project.target.toLocaleString()
               ] })
             ] })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("label", { className: "form-label", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("label", { className: "form-label", children: [
             "Project word target",
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("input", { type: "number", min: "0", placeholder: "Optional", value: project.target || "", onChange: (e) => changeProject((p) => p.target = Math.max(0, Number(e.target.value) || 0)) })
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("input", { type: "number", min: "0", placeholder: "Optional", value: project.target || "", onChange: (e) => changeProject((p) => p.target = Math.max(0, Number(e.target.value) || 0)) })
           ] }),
-          selected && selected.kind !== "folder" && /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("label", { className: "form-label", children: [
+          selected && selected.kind !== "folder" && /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("label", { className: "form-label", children: [
             "Target for \u201C",
             selected.title,
             "\u201D",
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("input", { type: "number", min: "0", placeholder: "Optional", value: selected.target || "", onChange: (e) => patch(selected.id, { target: Math.max(0, Number(e.target.value) || 0) }) })
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("input", { type: "number", min: "0", placeholder: "Optional", value: selected.target || "", onChange: (e) => patch(selected.id, { target: Math.max(0, Number(e.target.value) || 0) }) })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("p", { className: "field-hint", children: "Word counts show volume. Revisions and feedback show how your writing develops." })
-        ] }) : /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("p", { children: "Open a project to set a target." }),
-        /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { className: "dialog-actions", children: /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("button", { className: "button primary", onClick: closeModal, children: "Done" }) })
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("p", { className: "field-hint", children: "Word counts show volume. Revisions and feedback show how your writing develops." })
+        ] }) : /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("p", { children: "Open a project to set a target." }),
+        /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("div", { className: "dialog-actions", children: /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("button", { className: "button primary", onClick: closeModal, children: "Done" }) })
       ] }),
-      modal === "history" && /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)(ModalFrame, { title: "Writing history", description: project ? project.title + " \xB7 Net word changes by day" : "Open a project to view its writing history.", close: closeModal, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "history-totals", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { children: [
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("strong", { children: totalWords.toLocaleString() }),
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("span", { children: "Draft words" })
+      modal === "history" && /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)(ModalFrame, { title: "Writing history", description: project ? project.title + " \xB7 Net word changes by day" : "Open a project to view its writing history.", close: closeModal, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "history-totals", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("strong", { children: totalWords.toLocaleString() }),
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { children: "Draft words" })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { children: [
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("strong", { children: project?.nodes.filter((n) => n.kind !== "folder" && !inTrash(project, n)).length || 0 }),
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("span", { children: "Documents" })
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("strong", { children: project?.nodes.filter((n) => n.kind !== "folder" && !inTrash(project, n)).length || 0 }),
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { children: "Documents" })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { children: [
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("strong", { children: workspace.snapshots.filter((s) => s.projectId === projectId).length }),
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("span", { children: "Saved versions" })
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("strong", { children: workspace.snapshots.filter((s) => s.projectId === projectId).length }),
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { children: "Saved versions" })
           ] })
         ] }),
-        Object.entries(workspace.history[projectId] || {}).length ? /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("table", { className: "history-table", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("thead", { children: /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("tr", { children: [
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("th", { children: "Date" }),
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("th", { children: "Net words" }),
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("th", { children: "Activity" })
+        Object.entries(workspace.history[projectId] || {}).length ? /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("table", { className: "history-table", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("thead", { children: /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("tr", { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("th", { children: "Date" }),
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("th", { children: "Net words" }),
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("th", { children: "Activity" })
           ] }) }),
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("tbody", { children: Object.entries(workspace.history[projectId] || {}).sort((a, b) => b[0].localeCompare(a[0])).map(([day, count]) => /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("tr", { children: [
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("td", { children: (/* @__PURE__ */ new Date(day + "T12:00:00")).toLocaleDateString(void 0, { day: "numeric", month: "short", year: "numeric" }) }),
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("td", { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("tbody", { children: Object.entries(workspace.history[projectId] || {}).sort((a, b) => b[0].localeCompare(a[0])).map(([day, count]) => /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("tr", { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("td", { children: (/* @__PURE__ */ new Date(day + "T12:00:00")).toLocaleDateString(void 0, { day: "numeric", month: "short", year: "numeric" }) }),
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("td", { children: [
               count > 0 ? "+" : "",
               count
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("td", { children: /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { className: "history-bar", children: /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("i", { style: { width: Math.max(2, Math.min(100, Math.abs(count) / 10)) + "%", background: count < 0 ? "#f1817b" : void 0 } }) }) })
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("td", { children: /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("div", { className: "history-bar", children: /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("i", { style: { width: Math.max(2, Math.min(100, Math.abs(count) / 10)) + "%", background: count < 0 ? "#f1817b" : void 0 } }) }) })
           ] }, day)) })
-        ] }) : /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "empty-small", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(RotateCcwClock, { size: 28 }),
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("p", { children: "Your writing history begins when you start writing." })
+        ] }) : /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "empty-small", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(RotateCcwClock, { size: 28 }),
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("p", { children: "Your writing history begins when you start writing." })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("p", { className: "field-hint", children: "Rewriting may reduce a word count. This records changes, not the quality of your work." }),
-        /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "dialog-actions", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("button", { className: "button secondary", disabled: !project, onClick: () => {
+        /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("p", { className: "field-hint", children: "Rewriting may reduce a word count. This records changes, not the quality of your work." }),
+        /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "dialog-actions", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("button", { className: "button secondary", disabled: !project, onClick: () => {
             const csv = "Date,Net words\n" + Object.entries(workspace.history[projectId] || {}).map(([date, count]) => date + "," + count).join("\n");
             download(safeFilename(project?.title || "Writing") + "-history.csv", csv, "text/csv");
           }, children: "Export history" }),
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("button", { className: "button primary", onClick: closeModal, children: "Done" })
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("button", { className: "button primary", onClick: closeModal, children: "Done" })
         ] })
       ] }),
-      modal === "compile" && /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(ModalFrame, { title: "Export your screenplay", description: "Check the title-page details, choose the draft, then preview or download.", close: closeModal, wide: true, children: project ? /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)(import_jsx_runtime18.Fragment, { children: [
-        /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "compile-layout", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("section", { children: [
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("label", { className: "form-label", children: [
+      modal === "compile" && /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(ModalFrame, { title: "Export your screenplay", description: "Check the title-page details, choose the draft, then preview or download.", close: closeModal, wide: true, children: project ? /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)(import_jsx_runtime19.Fragment, { children: [
+        /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "compile-layout", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("section", { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("label", { className: "form-label", children: [
               "Compile from",
-              /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("select", { value: compileScope, onChange: (e) => setCompileScope(e.target.value), children: [
-                /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("option", { value: "draft", children: activeDraftRoot(project)?.role === "draft" ? "Original draft" : activeDraftRoot(project)?.title || "Active draft" }),
-                /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("option", { value: "selected", children: "Selected document or folder" })
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("select", { value: compileScope, onChange: (e) => setCompileScope(e.target.value), children: [
+                /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("option", { value: "draft", children: activeDraftRoot(project)?.role === "draft" ? "Original draft" : activeDraftRoot(project)?.title || "Active draft" }),
+                /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("option", { value: "selected", children: "Selected document or folder" })
               ] })
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("label", { className: "form-label", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("label", { className: "form-label", children: [
               "Export format",
-              /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("select", { value: compileFormat, onChange: (e) => setCompileFormat(e.target.value), children: [
-                /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("option", { value: "pdf", children: "Screenplay PDF (.pdf)" }),
-                /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("option", { value: "docx", children: "Microsoft Word (.docx)" }),
-                /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("option", { value: "fdx", children: "Final Draft (.fdx)" }),
-                /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("option", { value: "fountain", children: "Fountain (.fountain)" }),
-                /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("option", { value: "txt", children: "Plain text (.txt)" }),
-                /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("option", { value: "html", children: "HTML document (.html)" }),
-                /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("option", { value: "epub", children: "EPUB ebook (.epub)" })
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("select", { value: compileFormat, onChange: (e) => setCompileFormat(e.target.value), children: [
+                /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("option", { value: "pdf", children: "Screenplay PDF (.pdf)" }),
+                /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("option", { value: "docx", children: "Microsoft Word (.docx)" }),
+                /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("option", { value: "fdx", children: "Final Draft (.fdx)" }),
+                /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("option", { value: "fountain", children: "Fountain (.fountain)" }),
+                /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("option", { value: "txt", children: "Plain text (.txt)" }),
+                /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("option", { value: "html", children: "HTML document (.html)" }),
+                /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("option", { value: "epub", children: "EPUB ebook (.epub)" })
               ] })
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("label", { className: "checkbox-label", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("input", { type: "checkbox", checked: titlePage, onChange: (e) => setTitlePage(e.target.checked) }),
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("label", { className: "checkbox-label", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("input", { type: "checkbox", checked: titlePage, onChange: (e) => setTitlePage(e.target.checked) }),
               "Include title page"
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("label", { className: "checkbox-label", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("input", { type: "checkbox", checked: includeTitles, onChange: (e) => setIncludeTitles(e.target.checked) }),
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("label", { className: "checkbox-label", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("input", { type: "checkbox", checked: includeTitles, onChange: (e) => setIncludeTitles(e.target.checked) }),
               "Include document titles"
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("p", { className: "field-hint", children: "Only documents marked \u201CInclude in Compile\u201D are included. Research stays separate from the Draft." }),
-            compileFormat === "pdf" && /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("p", { className: "field-hint", children: "Downloads a paginated Letter PDF in Courier 12, with dialogue continuation and page numbers." }),
-            ["docx", "fdx", "fountain", "epub", "txt"].includes(compileFormat) && /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("p", { className: "field-hint", children: "This format exports the writing and screenplay elements. Some rich text styling is not retained." }),
-            titlePage && /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(ScreenplayTitleForm, { value: exportOptions(), onChange: (change) => changeProject((p) => p.titlePage = { ...p.titlePage, ...change }) })
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("p", { className: "field-hint", children: "Only documents marked \u201CInclude in Compile\u201D are included. Research stays separate from the Draft." }),
+            compileFormat === "pdf" && /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("p", { className: "field-hint", children: "Downloads a paginated Letter PDF in Courier 12, with dialogue continuation and page numbers." }),
+            ["docx", "fdx", "fountain", "epub", "txt"].includes(compileFormat) && /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("p", { className: "field-hint", children: "This format exports the writing and screenplay elements. Some rich text styling is not retained." }),
+            titlePage && /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(ScreenplayTitleForm, { value: exportOptions(), onChange: (change) => changeProject((p) => p.titlePage = { ...p.titlePage, ...change }) })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("section", { className: "compile-manifest", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "section-label", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("section", { className: "compile-manifest", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "section-label", children: [
               "DOCUMENT ORDER",
-              /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("span", { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("span", { children: [
                 getCompileNodes().length,
                 " documents"
               ] })
             ] }),
-            getCompileNodes().map((n, i) => /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "compile-item", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("span", { children: String(i + 1).padStart(2, "0") }),
-              /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(FileText, { size: 14 }),
-              /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("strong", { children: n.title }),
-              /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("small", { children: wordCount(n.html) })
+            getCompileNodes().map((n, i) => /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "compile-item", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { children: String(i + 1).padStart(2, "0") }),
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(FileText, { size: 14 }),
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("strong", { children: n.title }),
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("small", { children: wordCount(n.html) })
             ] }, n.id)),
-            !getCompileNodes().length && /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { className: "empty-small", children: "No included writing in this selection." }),
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "compile-total", children: [
+            !getCompileNodes().length && /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("div", { className: "empty-small", children: "No included writing in this selection." }),
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "compile-total", children: [
               getCompileNodes().reduce((s, n) => s + wordCount(n.html), 0).toLocaleString(),
               " words"
             ] })
           ] })
         ] }),
-        compilePreview && (pdfPreviewUrl ? /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("iframe", { className: "compile-preview", title: "Screenplay PDF preview", src: pdfPreviewUrl }) : /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("iframe", { className: "compile-preview", title: "Compiled document preview", srcDoc: compileHTML(), sandbox: "" })),
-        /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "dialog-actions spread", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("button", { className: "button secondary", onClick: async () => {
+        compilePreview && (pdfPreviewUrl ? /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("iframe", { className: "compile-preview", title: "Screenplay PDF preview", src: pdfPreviewUrl }) : /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("iframe", { className: "compile-preview", title: "Compiled document preview", srcDoc: compileHTML(), sandbox: "" })),
+        /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "dialog-actions spread", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("button", { className: "button secondary", onClick: async () => {
             if (compilePreview) {
               setCompilePreview(false);
               return;
@@ -66222,46 +66306,46 @@ ${prefix}
               setCompilePreview(true);
             }
           }, children: compilePreview ? "Hide preview" : "Preview layout" }),
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("button", { className: "button primary", onClick: compile, disabled: !getCompileNodes().length, children: [
-            compileFormat === "pdf" ? /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(Printer, { size: 15 }) : /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(Download, { size: 15 }),
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("button", { className: "button primary", onClick: compile, disabled: !getCompileNodes().length, children: [
+            compileFormat === "pdf" ? /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(Printer, { size: 15 }) : /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(Download, { size: 15 }),
             " ",
             compileFormat === "pdf" ? "Download PDF" : "Compile & download"
           ] })
         ] })
-      ] }) : /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("p", { children: "Create a project to compile your writing." }) }),
-      modal === "replace" && /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(ModalFrame, { title: "Find & replace", description: "Previous text is preserved in snapshots before replacements.", close: closeModal, children: /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("form", { onSubmit: (e) => {
+      ] }) : /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("p", { children: "Create a project to compile your writing." }) }),
+      modal === "replace" && /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(ModalFrame, { title: "Find & replace", description: "Previous text is preserved in snapshots before replacements.", close: closeModal, children: /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("form", { onSubmit: (e) => {
         e.preventDefault();
         replaceAll();
       }, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("label", { className: "form-label", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("label", { className: "form-label", children: [
           "Find",
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("input", { autoFocus: true, value: replaceFind, onChange: (e) => setReplaceFind(e.target.value), placeholder: "Exact text to find" })
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("input", { autoFocus: true, value: replaceFind, onChange: (e) => setReplaceFind(e.target.value), placeholder: "Exact text to find" })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("label", { className: "form-label", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("label", { className: "form-label", children: [
           "Replace with",
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("input", { value: replaceWith, onChange: (e) => setReplaceWith(e.target.value) })
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("input", { value: replaceWith, onChange: (e) => setReplaceWith(e.target.value) })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("label", { className: "form-label", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("label", { className: "form-label", children: [
           "Within",
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("select", { value: replaceScope, onChange: (e) => setReplaceScope(e.target.value), children: [
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("option", { value: "document", children: "Current document" }),
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("option", { value: "project", children: "All project documents" })
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("select", { value: replaceScope, onChange: (e) => setReplaceScope(e.target.value), children: [
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("option", { value: "document", children: "Current document" }),
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("option", { value: "project", children: "All project documents" })
           ] })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("p", { className: "field-hint", children: "Matches exact, case-sensitive text within each formatted text run." }),
-        /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "dialog-actions", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("button", { className: "button secondary", type: "button", onClick: closeModal, children: "Cancel" }),
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("button", { className: "button primary", type: "submit", disabled: !replaceFind || !project, children: "Replace all" })
+        /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("p", { className: "field-hint", children: "Matches exact, case-sensitive text within each formatted text run." }),
+        /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "dialog-actions", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("button", { className: "button secondary", type: "button", onClick: closeModal, children: "Cancel" }),
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("button", { className: "button primary", type: "submit", disabled: !replaceFind || !project, children: "Replace all" })
         ] })
       ] }) }),
-      modal === "move" && /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(ModalFrame, { title: "Move document", description: selected?.title || "Select a document first.", close: closeModal, children: project && selected && /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)(import_jsx_runtime18.Fragment, { children: [
-        /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("label", { className: "form-label", children: [
+      modal === "move" && /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(ModalFrame, { title: "Move document", description: selected?.title || "Select a document first.", close: closeModal, children: project && selected && /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)(import_jsx_runtime19.Fragment, { children: [
+        /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("label", { className: "form-label", children: [
           "Destination folder",
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("select", { value: moveParent, onChange: (e) => setMoveParent(e.target.value), children: project.nodes.filter((n) => n.kind === "folder" && n.id !== selected.id && !descendants(project, selected.id).some((x) => x.id === n.id) && !inTrash(project, n)).map((n) => /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("option", { value: n.id, children: n.title }, n.id)) })
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("select", { value: moveParent, onChange: (e) => setMoveParent(e.target.value), children: project.nodes.filter((n) => n.kind === "folder" && n.id !== selected.id && !descendants(project, selected.id).some((x) => x.id === n.id) && !inTrash(project, n)).map((n) => /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("option", { value: n.id, children: n.title }, n.id)) })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "dialog-actions", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("button", { className: "button secondary", onClick: closeModal, children: "Cancel" }),
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("button", { className: "button primary", onClick: () => {
+        /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "dialog-actions", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("button", { className: "button secondary", onClick: closeModal, children: "Cancel" }),
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("button", { className: "button primary", onClick: () => {
             let moved = false;
             changeProject((p) => {
               moved = moveNode(p, selected.id, moveParent);
@@ -66274,177 +66358,177 @@ ${prefix}
           }, children: "Move document" })
         ] })
       ] }) }),
-      modal === "compare" && /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(ModalFrame, { title: "Compare versions", description: selected?.title, close: closeModal, wide: true, children: (() => {
+      modal === "compare" && /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(ModalFrame, { title: "Compare versions", description: selected?.title, close: closeModal, wide: true, children: (() => {
         const s = workspace.snapshots.find((s2) => s2.id === compareId);
-        return s && selected ? /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)(import_jsx_runtime18.Fragment, { children: [
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "compare-columns", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("section", { children: [
-              /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "section-label", children: [
+        return s && selected ? /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)(import_jsx_runtime19.Fragment, { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "compare-columns", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("section", { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "section-label", children: [
                 s.title,
-                /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("span", { children: [
+                /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("span", { children: [
                   wordCount(s.html),
                   " words"
                 ] })
               ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("small", { children: dateLabel(s.created) }),
-              /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { className: "compare-text", dangerouslySetInnerHTML: { __html: sanitize(s.html) } })
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("small", { children: dateLabel(s.created) }),
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("div", { className: "compare-text", dangerouslySetInnerHTML: { __html: sanitize(s.html) } })
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("section", { children: [
-              /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "section-label", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("section", { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "section-label", children: [
                 "CURRENT WRITING",
-                /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("span", { children: [
+                /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("span", { children: [
                   wordCount(selected.html),
                   " words"
                 ] })
               ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("small", { children: dateLabel(selected.updated) }),
-              /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { className: "compare-text", dangerouslySetInnerHTML: { __html: sanitize(selected.html) } })
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("small", { children: dateLabel(selected.updated) }),
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("div", { className: "compare-text", dangerouslySetInnerHTML: { __html: sanitize(selected.html) } })
             ] })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "dialog-actions", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("button", { className: "button secondary", onClick: closeModal, children: "Keep current version" }),
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("button", { className: "button primary", onClick: () => restoreSnapshot(s), children: [
-              /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(RotateCcw, { size: 14 }),
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "dialog-actions", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("button", { className: "button secondary", onClick: closeModal, children: "Keep current version" }),
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("button", { className: "button primary", onClick: () => restoreSnapshot(s), children: [
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(RotateCcw, { size: 14 }),
               "Restore snapshot"
             ] })
           ] })
-        ] }) : /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("p", { children: "This snapshot could not be found." });
+        ] }) : /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("p", { children: "This snapshot could not be found." });
       })() }),
-      allowLegacyArchive && modal === "vault" && /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)(ModalFrame, { title: "Your previous Session Vault", description: "Your saved study, observations, Korean work, and screenplay revisions.", close: closeModal, wide: true, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "vault-search", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(Search, { size: 15 }),
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("input", { autoFocus: true, "aria-label": "Search previous Vault", value: vaultQuery, onChange: (e) => setVaultQuery(e.target.value), placeholder: "Find previous work\u2026" })
+      allowLegacyArchive && modal === "vault" && /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)(ModalFrame, { title: "Your previous Session Vault", description: "Your saved study, observations, Korean work, and screenplay revisions.", close: closeModal, wide: true, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "vault-search", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(Search, { size: 15 }),
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("input", { autoFocus: true, "aria-label": "Search previous Vault", value: vaultQuery, onChange: (e) => setVaultQuery(e.target.value), placeholder: "Find previous work\u2026" })
         ] }),
-        vaultError ? /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("p", { children: vaultError }) : !vault ? /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "empty-small", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(LoaderCircle, { className: "spin", size: 20 }),
+        vaultError ? /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("p", { children: vaultError }) : !vault ? /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "empty-small", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(LoaderCircle, { className: "spin", size: 20 }),
           "Opening your archive\u2026"
-        ] }) : /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { className: "vault-entries", children: vault.entries.filter((e) => [e.title, e.content, e.type, e.archiveDate].join(" ").toLowerCase().includes(vaultQuery.toLowerCase())).map((e) => /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("details", { className: "vault-entry", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("summary", { children: [
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("span", { className: "vault-entry-kind", children: String(e.type || "Work") }),
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("strong", { children: String(e.title) }),
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("span", { children: String(e.archiveDate || "") }),
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(ChevronDown, { size: 14 })
+        ] }) : /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("div", { className: "vault-entries", children: vault.entries.filter((e) => [e.title, e.content, e.type, e.archiveDate].join(" ").toLowerCase().includes(vaultQuery.toLowerCase())).map((e) => /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("details", { className: "vault-entry", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("summary", { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { className: "vault-entry-kind", children: String(e.type || "Work") }),
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("strong", { children: String(e.title) }),
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { children: String(e.archiveDate || "") }),
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(ChevronDown, { size: 14 })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "vault-entry-content", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("pre", { children: String(e.content || "") }),
-            Array.isArray(e.attachments) && /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { className: "attachment-links", children: e.attachments.map((a, i) => /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("a", { href: safeUrl("/legacy/" + a.href.replace(/^\.\//, "")), target: "_blank", rel: "noreferrer", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(FileText, { size: 14 }),
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "vault-entry-content", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("pre", { children: String(e.content || "") }),
+            Array.isArray(e.attachments) && /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("div", { className: "attachment-links", children: e.attachments.map((a, i) => /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("a", { href: safeUrl("/legacy/" + a.href.replace(/^\.\//, "")), target: "_blank", rel: "noreferrer", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(FileText, { size: 14 }),
               a.name,
-              /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(ArrowUpRight, { size: 12 })
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(ArrowUpRight, { size: 12 })
             ] }, i)) }),
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("button", { className: "button secondary", onClick: () => addVaultEntry(e), disabled: !project, children: [
-              /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(Copy, { size: 13 }),
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("button", { className: "button secondary", onClick: () => addVaultEntry(e), disabled: !project, children: [
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(Copy, { size: 13 }),
               "Copy into current project"
             ] })
           ] })
         ] }, String(e.id))) }),
-        /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "dialog-actions spread", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("a", { className: "text-button", href: "/legacy/", target: "_blank", rel: "noreferrer", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "dialog-actions spread", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("a", { className: "text-button", href: "/legacy/", target: "_blank", rel: "noreferrer", children: [
             "Open previous workspace",
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(ExternalLink, { size: 13 })
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(ExternalLink, { size: 13 })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("button", { className: "button primary", onClick: closeModal, children: "Done" })
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("button", { className: "button primary", onClick: closeModal, children: "Done" })
         ] })
       ] }),
-      modal === "recover" && /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)(ModalFrame, { title: "Recover unfinished writing?", description: "This device has writing that was not confirmed saved to your account.", close: () => {
+      modal === "recover" && /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)(ModalFrame, { title: "Recover unfinished writing?", description: "This device has writing that was not confirmed saved to your account.", close: () => {
       }, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("p", { children: [
+        /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("p", { children: [
           "Your device copy contains ",
           recovery?.state.projects.length || 0,
           " projects. ",
           recovery?.revision !== revision.current ? "The cloud copy has also changed. Recovery will add separate project copies, keeping the saved cloud projects." : "You can resume this device copy or keep the version saved to your account."
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "dialog-actions", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("button", { className: "button secondary", onClick: () => {
+        /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "dialog-actions", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("button", { className: "button secondary", onClick: () => {
             recoverBlock.current = false;
             setRecovery(null);
             setModal(null);
             void recoverWrite(userKey.current, { state: stateRef.current, revision: revision.current, pending: false });
           }, children: "Use saved cloud version" }),
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("button", { className: "button primary", onClick: recoverDevice, children: "Recover device writing" })
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("button", { className: "button primary", onClick: recoverDevice, children: "Recover device writing" })
         ] })
       ] }),
-      modal === "conflict" && /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)(ModalFrame, { title: "Another session saved changes", description: "Saving has paused to protect both versions.", close: closeModal, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("p", { children: "Both devices changed the same writing, so neither version has been overwritten. Your writing is retained on this device. Download a copy, then reopen the saved workspace. You can recover this writing into separate projects when it reopens." }),
-        /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "dialog-actions", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("button", { className: "button secondary", onClick: backup, children: [
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(Download, { size: 14 }),
+      modal === "conflict" && /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)(ModalFrame, { title: "Another session saved changes", description: "Saving has paused to protect both versions.", close: closeModal, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("p", { children: "Both devices changed the same writing, so neither version has been overwritten. Your writing is retained on this device. Download a copy, then reopen the saved workspace. You can recover this writing into separate projects when it reopens." }),
+        /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "dialog-actions", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("button", { className: "button secondary", onClick: backup, children: [
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(Download, { size: 14 }),
             "Download my copy"
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("button", { className: "button primary", onClick: () => window.location.reload(), children: "Reopen saved workspace" })
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("button", { className: "button primary", onClick: () => window.location.reload(), children: "Reopen saved workspace" })
         ] })
       ] }),
-      modal === "help" && /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)(ModalFrame, { title: "Your writing studio", description: "An open workspace for developing your own stories.", close: closeModal, wide: true, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "help-grid", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("section", { children: [
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("h3", { children: [
-              /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(Palette, { size: 17 }),
+      modal === "help" && /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)(ModalFrame, { title: "Your writing studio", description: "An open workspace for developing your own stories.", close: closeModal, wide: true, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "help-grid", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("section", { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("h3", { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(Palette, { size: 17 }),
               "Connected director tools"
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("p", { children: "Moodboard stores your frames, palettes, lighting notes, and shot styles in this world. Beat timeline follows screenplay scenes and lets you plan emotion, tension, pressure, cast, and minutes. Board order is a planning view. Use @Name to link characters, locations, or props in the screenplay and moodboard notes. Existing #Place location tags also work. Click a tag to review the current profile and its images." }),
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("h3", { children: [
-              /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(Lightbulb, { size: 17 }),
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("p", { children: "Moodboard stores your frames, palettes, lighting notes, and shot styles in this world. Beat timeline follows screenplay scenes and lets you plan emotion, tension, pressure, cast, and minutes. Board order is a planning view. Use @Name to link characters, locations, or props in the screenplay and moodboard notes. Existing #Place location tags also work. Click a tag to review the current profile and its images." }),
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("h3", { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(Lightbulb, { size: 17 }),
               "Before the screenplay"
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("p", { children: "Open Development \u2192 Story Foundation for premises, loglines, themes, world rules, and open questions. Every field is optional. Free Exploration and additional ordinary notes give you a blank page. Development stays outside the screenplay export." }),
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("h3", { children: [
-              /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(Folder, { size: 17 }),
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("p", { children: "Open Development \u2192 Story Foundation for premises, loglines, themes, world rules, and open questions. Every field is optional. Free Exploration and additional ordinary notes give you a blank page. Development stays outside the screenplay export." }),
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("h3", { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(Folder, { size: 17 }),
               "Separate worlds"
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("p", { children: "Use the world name at the top to switch dashboards. New world creates separate characters, locations, research, and writing. Use New draft version for rewrites within the same world; Export uses only the active version." }),
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("h3", { children: [
-              /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(Folder, { size: 17 }),
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("p", { children: "Use the world name at the top to switch dashboards. New world creates separate characters, locations, research, and writing. Use New draft version for rewrites within the same world; Export uses only the active version." }),
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("h3", { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(Folder, { size: 17 }),
               "Organise"
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("p", { children: "Create a project, then add scenes, text documents, character sheets, locations, or research. Double-click a Binder title to rename it. Drag documents into folders or use Documents \u2192 Move." }),
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("h3", { children: [
-              /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(LayoutGrid, { size: 17 }),
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("p", { children: "Create a project, then add scenes, text documents, character sheets, locations, or research. Double-click a Binder title to rename it. Drag documents into folders or use Documents \u2192 Move." }),
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("h3", { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(LayoutGrid, { size: 17 }),
               "Arrange"
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("p", { children: "The Binder, corkboard, and Outliner share the same documents and order. Edit a synopsis on a card or in the Inspector. Scrivenings displays a folder\u2019s writing together." }),
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("h3", { children: [
-              /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(Film, { size: 17 }),
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("p", { children: "The Binder, corkboard, and Outliner share the same documents and order. Edit a synopsis on a card or in the Inspector. Scrivenings displays a folder\u2019s writing together." }),
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("h3", { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(Film, { size: 17 }),
               "Write"
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("p", { children: "Write screenplays inside Draft. Use Write screenplay to edit the Draft as one continuous script. Scene headings, uppercase character cues, dialogue, and parentheticals format automatically as you type. Enter moves naturally to the next element; Shift Enter continues dialogue and Tab starts a character cue with name completion. Use the optional override for unusual lines. For simultaneous dialogue, write two consecutive speeches, then put the cursor in the second and press \u2318/Ctrl Shift 2 or the two-column button. NAME ^ works too. The ABC button controls browser spellcheck. Switch ordinary documents to screenplay mode from Format." })
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("p", { children: "Write screenplays inside Draft. Use Write screenplay to edit the Draft as one continuous script. Scene headings, uppercase character cues, dialogue, and parentheticals format automatically as you type. Enter moves naturally to the next element; Shift Enter continues dialogue and Tab starts a character cue with name completion. Use the optional override for unusual lines. For simultaneous dialogue, write two consecutive speeches, then put the cursor in the second and press \u2318/Ctrl Shift 2 or the two-column button. NAME ^ works too. The ABC button controls browser spellcheck. Switch ordinary documents to screenplay mode from Format." })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("section", { children: [
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("h3", { children: [
-              /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(Camera, { size: 17 }),
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("section", { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("h3", { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(Camera, { size: 17 }),
               "Revise"
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("p", { children: "Take snapshots before changes. Compare an earlier version with your current writing and restore it when needed. Restoring also preserves the version you are replacing." }),
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("h3", { children: [
-              /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(Cloud, { size: 17 }),
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("p", { children: "Take snapshots before changes. Compare an earlier version with your current writing and restore it when needed. Restoring also preserves the version you are replacing." }),
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("h3", { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(Cloud, { size: 17 }),
               "Save & export"
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("p", { children: "Writing saves to your private account with a device recovery copy. Check the saving indicator before leaving. Compile assembles included writing in draft order. Backups include text and research links; original uploads remain here." }),
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("h3", { children: [
-              /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(Keyboard, { size: 17 }),
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("p", { children: "Writing saves to your private account with a device recovery copy. Check the saving indicator before leaving. Compile assembles included writing in draft order. Backups include text and research links; original uploads remain here." }),
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("h3", { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(Keyboard, { size: 17 }),
               "Shortcuts"
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "shortcut-list", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("span", { children: "Save now" }),
-              /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("kbd", { children: "\u2318 / Ctrl S" }),
-              /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("span", { children: "New project" }),
-              /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("kbd", { children: "\u21E7 \u2318 / Ctrl N" }),
-              /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("span", { children: "Composition mode" }),
-              /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("kbd", { children: "\u21E7 \u2318 / Ctrl F" }),
-              /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("span", { children: "Bold / italic / underline" }),
-              /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("kbd", { children: "\u2318 / Ctrl B / I / U" }),
-              /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("span", { children: "Exit composition" }),
-              /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("kbd", { children: "Esc" })
+            /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "shortcut-list", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { children: "Save now" }),
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("kbd", { children: "\u2318 / Ctrl S" }),
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { children: "New project" }),
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("kbd", { children: "\u21E7 \u2318 / Ctrl N" }),
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { children: "Composition mode" }),
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("kbd", { children: "\u21E7 \u2318 / Ctrl F" }),
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { children: "Bold / italic / underline" }),
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("kbd", { children: "\u2318 / Ctrl B / I / U" }),
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { children: "Exit composition" }),
+              /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("kbd", { children: "Esc" })
             ] })
           ] })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { className: "help-note", children: "Director\u2019s Desk is an independently built browser writing studio. Native Scrivener .scriv projects and its full publishing engine are not supported." }),
-        /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { className: "dialog-actions", children: /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("button", { className: "button primary", onClick: closeModal, children: "Start writing" }) })
+        /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("div", { className: "help-note", children: "Director\u2019s Desk is an independently built browser writing studio. Native Scrivener .scriv projects and its full publishing engine are not supported." }),
+        /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("div", { className: "dialog-actions", children: /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("button", { className: "button primary", onClick: closeModal, children: "Start writing" }) })
       ] })
     ] });
   }
 
   // portable-entry.tsx
-  var import_jsx_runtime19 = __toESM(require_jsx_runtime(), 1);
+  var import_jsx_runtime20 = __toESM(require_jsx_runtime(), 1);
   if (!crypto.randomUUID) Object.defineProperty(crypto, "randomUUID", { value: () => {
     const bytes = crypto.getRandomValues(new Uint8Array(16));
     bytes[6] = bytes[6] & 15 | 64;
@@ -66525,7 +66609,7 @@ ${prefix}
     if (originalFetch) return originalFetch(input, init2);
     throw Error("Network requests are unavailable.");
   };
-  var ErrorBoundary = class extends import_react18.default.Component {
+  var ErrorBoundary = class extends import_react19.default.Component {
     constructor() {
       super(...arguments);
       this.state = { error: "" };
@@ -66534,14 +66618,14 @@ ${prefix}
       return { error: error2.message };
     }
     render() {
-      return this.state.error ? /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("main", { style: { padding: 32 }, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("h1", { children: "Lightbox could not open" }),
-        /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("p", { children: this.state.error }),
-        /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("p", { children: "Use a current browser and enable site storage. See README.md for local-server instructions." })
+      return this.state.error ? /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("main", { style: { padding: 32 }, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("h1", { children: "Lightbox could not open" }),
+        /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("p", { children: this.state.error }),
+        /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("p", { children: "Use a current browser and enable site storage. See README.md for local-server instructions." })
       ] }) : this.props.children;
     }
   };
-  (0, import_client.createRoot)(document.getElementById("root")).render(/* @__PURE__ */ (0, import_jsx_runtime19.jsx)(ErrorBoundary, { children: /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(Studio, { accountName: "Local workspace", accountUserId: LOCAL_USER }) }));
+  (0, import_client.createRoot)(document.getElementById("root")).render(/* @__PURE__ */ (0, import_jsx_runtime20.jsx)(ErrorBoundary, { children: /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(Studio, { accountName: "Local workspace", accountUserId: LOCAL_USER }) }));
 })();
 /*! Bundled license information:
 

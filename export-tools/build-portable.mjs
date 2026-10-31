@@ -30,5 +30,13 @@ const logo='data:image/png;base64,'+fs.readFileSync(work+'/public/brand/lightbox
 if (!fs.existsSync(out+'/index.html')) fs.writeFileSync(out+'/index.html',`<!doctype html>\n<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><meta name="theme-color" content="#f5efdf"><title>Lightbox — Portable workspace (v64)</title><link rel="icon" href="${logo}"><link rel="stylesheet" href="./styles.css"></head><body class="antialiased"><div id="root"></div><noscript>Enable JavaScript to use Lightbox.</noscript><script defer src="./script.js"></script></body></html>\n`);
 }
 fs.copyFileSync(work+'/app/screenplay-polish.css',out+'/screenplay-polish.css');
+fs.copyFileSync(work+'/app/install-app.css',out+'/install-app.css');
+fs.mkdirSync(out+'/app-icons',{recursive:true});
+for (const size of [180,192,512]) fs.copyFileSync(sourceDir+'/public/brand/lightbox-approved-'+size+'.png',out+'/app-icons/lightbox-'+size+'.png');
+const manifest=JSON.parse(fs.readFileSync(sourceDir+'/public/manifest.webmanifest','utf8'));
+manifest.start_url='/';manifest.theme_color='#1c1916';manifest.background_color='#1c1916';
+manifest.icons=[192,512].map(size=>({src:'/app-icons/lightbox-'+size+'.png',sizes:size+'x'+size,type:'image/png',purpose:'any'}));
+fs.writeFileSync(out+'/manifest.webmanifest',JSON.stringify(manifest,null,2)+'\n');
+
 for (const file of (process.argv.includes('--scripts-only')?['script.js']:['script.js','styles.css'])) {const target=out+'/'+file;const value=fs.readFileSync(target,'utf8').replace(/[ \t]+$/gm,'').replace(/\r?\n/g,'\r\n');fs.writeFileSync(target,value);}
 console.log('Portable bundle created. Existing hosting HTML preserved.');

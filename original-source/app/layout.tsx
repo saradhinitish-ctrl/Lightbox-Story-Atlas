@@ -31,6 +31,7 @@ import "./refinement.css";
 import "./visual-language.css";
 import "./public.css";
 import "./screenplay-polish.css";
+import "./install-app.css";
 
 export const viewport: Viewport = { width:"device-width", initialScale:1, viewportFit:"cover", themeColor:"#f5efdf", interactiveWidget:"resizes-content" };
 

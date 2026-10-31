@@ -1,0 +1,12 @@
+.studio.atlas-shell .install-app { width:100%; text-align:left; border-top:1px solid var(--line); margin:32px 0 0; padding:24px 0 12px; color:var(--text); }
+.studio.atlas-shell .install-app-row { display:flex; align-items:center; justify-content:space-between; gap:20px; }
+.studio.atlas-shell .install-app strong { font:500 14px/1.5 var(--font-ui); }
+.studio.atlas-shell .install-app p { font:13px/1.65 var(--font-ui); color:var(--muted); margin:5px 0 0; max-width:65ch; }
+.studio.atlas-shell .install-app .button { display:inline-flex; gap:8px; align-items:center; justify-content:center; min-height:44px; white-space:nowrap; padding:10px 16px; font-size:13px; }
+.studio.atlas-shell .install-app-steps { position:relative; margin-top:18px; padding:20px; background:var(--surface); border:1px solid var(--line); border-radius:8px; }
+.studio.atlas-shell .install-app-steps>.icon-button { float:right; }
+.studio.atlas-shell .install-app-steps small { display:block; margin-top:12px; color:var(--muted); font:12px/1.6 var(--font-ui); max-width:65ch; }
+.studio.atlas-shell .welcome .install-app { max-width:560px; margin:28px auto 0; }
+@media(max-width:600px) { .studio.atlas-shell .install-app-row { align-items:flex-start; flex-direction:column; gap:14px; } .studio.atlas-shell .install-app .button { width:100%; } }
+
+.studio.atlas-shell .story-atlas>.install-app { padding-bottom:100px; }

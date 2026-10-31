@@ -1,18 +1,8 @@
-# Lightbox Studio
+# Current screenplay update
 
-This repository includes ongoing changes after the original v64 export below.
-`SOURCE_MANIFEST.json` records the original export baseline, not checksums for the current edited source.
+The original studio palette and foundation/profile layouts are retained. Screenplay tools use a compact toolbar with automatic formatting, and the phone page fills its available writing area. Research notes in `docs/studio-refresh-research.md` are proposals only.
 
-## Studio workflow refresh
-
-- Automatic screenplay formatting with a compact phone/desktop toolbar; paragraph exceptions are in More.
-- A five-chapter development room, a live story engine, ordered turning points, and copying a turning point into a new screenplay scene.
-- Character/location/object dossiers with images, links to other profiles, detected scene appearances, and per-scene object-condition notes. Existing field keys remain intact.
-- A paper-and-ink studio palette with distinct creative rooms and reduced-motion support.
-
-Run `node scripts/verify-studio-refresh.cjs`, `node scripts/verify-screenplay.cjs`, and `node scripts/verify-linked-profiles.cjs` in `original-source/` after installing its dependencies. Rebuild with `node export-tools/build-portable.mjs` after installing dependencies in both source and export-tools. The builder preserves the hosting HTML and copies `studio-refresh.css` alongside the bundled assets.
-
-## Original export notes (historical)
+Use `node export-tools/build-portable.mjs --scripts-only` to rebuild writing code while preserving the existing portable visual baseline in `styles.css`.
 
 # Lightbox v64 — complete source and portable export
 

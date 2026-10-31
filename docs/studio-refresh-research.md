@@ -1,3 +1,7 @@
+# Research proposals only
+
+The owner chose to retain the original studio UI. These are research ideas for future discussion, not features in the current release. Only the screenplay toolbar improvements are retained.
+
 # Lightbox studio workflow research
 
 ## Screenplay: make typing the primary interaction

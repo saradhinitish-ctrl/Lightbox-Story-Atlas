@@ -1,7 +1,7 @@
 import { type ScriptBlock, type ScriptElement, scriptText } from './screenplay-layout';
 
 // Independent implementation of the documented Fountain / Beat writing rules.
-export function isSceneHeading(text:string){return /^(?:(?:INT\.?\/EXT\.?|EXT\.?\/INT\.?|INT\.?|EXT\.?|I\/E\.)\s|(?:INT\.\/EXT\.|EXT\.\/INT\.|INT\.|EXT\.|I\/E\.)$)/i.test(text.trim());}
+export function isSceneHeading(text:string){return /^(?:(?:INT\.?\/EXT\.?|EXT\.?\/INT\.?|INT\.?|EXT\.?|EST\.?|I\/E\.?)\s|(?:INT\.\/EXT\.|EXT\.\/INT\.|INT\.|EXT\.|EST\.|I\/E\.?)$)/i.test(text.trim());}
 export function isCharacterCue(text:string){
  const name=text.trim().replace(/\s*\^\s*$/,'').replace(/\s*\([^)]*\)?\s*$/,'');
  return !!name && name===name.toUpperCase() && /\p{Lu}/u.test(name) && !/[.!?:]$/.test(name) && !text.includes('\n');

@@ -5,6 +5,7 @@ import { activeNodes, compileNodes, plain, wordCount, type Project } from '@/lib
 import { scenesForDraft, type DirectorScene } from '@/lib/director-model';
 import { referenceInScene } from '@/lib/visual-language';
 import { safeUrl } from '@/lib/desk-client';
+import InstallApp from '@/components/install-app';
 
 export type StageMode = 'atlas' | 'breakdown' | 'pitch' | null;
 type Props = {
@@ -68,5 +69,6 @@ export default function StoryAtlas(props:Props){
   </div>
   <section className="atlas-reel"><div className="stage-section-heading"><span>SCENE REEL / {String(scenes.length).padStart(2,'0')}</span><button onClick={onBeats}>Shape the sequence<ArrowUpRight size={14}/></button></div><SceneStrip scenes={scenes} onScene={onScene}/></section>
   {recent.length>0&&<div className="atlas-recent"><span>PICK UP A THREAD</span>{recent.map(n=><button key={n.id} onClick={()=>onOpen(n.id)}>{n.title}<ArrowUpRight size={12}/></button>)}</div>}
+  <InstallApp/>
  </div>;
 }

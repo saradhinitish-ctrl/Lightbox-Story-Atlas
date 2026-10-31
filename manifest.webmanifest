@@ -1,0 +1,25 @@
+{
+  "id": "/",
+  "name": "Lightbox · Story Atlas",
+  "short_name": "Lightbox",
+  "description": "Develop your story, write your screenplay, and connect your visual world.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#1c1916",
+  "theme_color": "#1c1916",
+  "icons": [
+    {
+      "src": "/app-icons/lightbox-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/app-icons/lightbox-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}

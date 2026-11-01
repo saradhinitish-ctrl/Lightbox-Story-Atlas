@@ -4,6 +4,15 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#EFEDE6"><meta name="robots" content="noindex">
 <title>Lightbox / Android Widgets</title>
+<script>
+(function(){
+ var ua=navigator.userAgent||'';
+ if(/Android/i.test(ua)&&(/(?:;\s*wv[);])/i.test(ua)||/LightboxNativeAndroid\//i.test(ua))) {
+   document.documentElement.classList.add('lb-native-shell');
+ }
+}());
+</script>
+
 <style>
 :root{--paper:#EFEDE6;--ink:#181916;--muted:#53564D;--lime:#C6FF00;--rule:#A9AA9F;--card:#F9F8F3}
 *{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font-family:Arial,Helvetica,sans-serif}a{color:inherit}
@@ -23,6 +32,12 @@ label{display:block;font:700 11px monospace;letter-spacing:.07em;margin-bottom:1
 footer{margin-top:50px;padding-top:17px;border-top:2px solid var(--ink);font:700 10px monospace;display:flex;justify-content:space-between;gap:12px}
 @media(max-width:700px){.previews{grid-template-columns:1fr 1fr}.preview:nth-child(3){grid-column:1/-1}.info{grid-template-columns:1fr}.top a{font-size:10px}}
 .install-card{background:#181916;color:#F2F0E9;border:2px solid #181916;border-radius:10px;margin:34px 0 44px;padding:clamp(19px,3vw,32px);box-shadow:5px 6px 0 #C6FF00;scroll-margin-top:24px}
+.native-widget-card{display:none;background:#181916;color:#EFEDE6;padding:clamp(18px,4vw,30px);border-radius:10px;margin:35px 0;border:2px solid #181916;box-shadow:5px 6px 0 #C6FF00}
+.native-widget-card h2{font-size:clamp(27px,5vw,42px);letter-spacing:-.055em;line-height:1.06;margin:4px 0 15px}
+.native-widget-card p{max-width:55ch;color:#c9ccbe;line-height:1.6;font-size:14px;margin:0 0 18px}
+.native-widget-card a{display:block;text-align:center;padding:17px 12px;text-decoration:none;color:#181916;background:#C6FF00;font:800 13px/1.5 monospace;border-radius:4px}
+html.lb-native-shell #install,html.lb-native-shell .browser-only-info{display:none!important}
+html.lb-native-shell .native-widget-card{display:block}
 .install-troubleshoot{margin:0 0 22px;padding:16px;background:#C6FF00;color:#181916;font:13px/1.55 Arial,Helvetica,sans-serif;border:2px solid #C6FF00;border-radius:4px}.install-troubleshoot[hidden]{display:none}.install-troubleshoot strong{font-weight:800}
 .install-top{display:flex;justify-content:space-between;gap:12px;border-bottom:1px solid #555950;padding-bottom:13px;font:800 10px/1.3 monospace;letter-spacing:.075em}
 .install-system{color:#C6FF00}.install-layout{display:grid;grid-template-columns:1.2fr .8fr;gap:clamp(20px,4vw,55px);align-items:center;padding:25px 0 20px}
@@ -54,7 +69,12 @@ footer{margin-top:50px;padding-top:17px;border-top:2px solid var(--ink);font:700
   <div class="preview"><p>02 / 4×2</p><span class="flag">06</span><strong>Current<br>scene.</strong><small>DRAFT / WORD COUNT</small><div class="bar">OPEN ↗ &nbsp; CAPTURE + &nbsp; REFRESH ↻</div></div>
   <div class="preview"><p>03 / 4×4</p><strong>Story in<br>progress.</strong><small>CURRENT SCENE / DRAFT</small><div class="scene">EXT. STATION PLATFORM — NIGHT</div><div class="bar">OPEN ↗ &nbsp; NOTE + &nbsp; SYNC ↗ &nbsp; ↻</div></div>
  </section>
- <section class="install-card" id="install" aria-labelledby="install-title">
+ <section id="native-widget-card" class="native-widget-card" aria-label="Manage Lightbox home screen widgets">
+    <h2>Your story, on your home screen.</h2>
+    <p>Your Lightbox Android app already includes all three native widgets. Open your widget manager, choose a size, and add it to your home screen.</p>
+    <a href="lightboxwidget://manager">OPEN WIDGET MANAGER ↗</a>
+  </section>
+  <section class="install-card" id="install" aria-labelledby="install-title">
   <p id="native-launch-help" class="install-troubleshoot" role="status" hidden><strong>The Android widget manager did not open.</strong> The native Lightbox APK may not be installed, or Chrome may be unable to launch it. If you only installed Lightbox using Chrome’s “Install app”, use <strong>INSTALL LIGHTBOX FOR ANDROID</strong> below. If the Android APK is already installed, long-press an empty space on your phone’s home screen, tap <strong>Widgets</strong>, and look for <strong>Lightbox Studio</strong>. You can add the same widgets there.</p>
   <div class="install-top"><span class="install-index">01 / BUILT INTO LIGHTBOX</span><span class="install-system">ANDROID 8.0+</span></div>
   <div class="install-layout">
@@ -87,7 +107,7 @@ footer{margin-top:50px;padding-top:17px;border-top:2px solid var(--ink);font:700
  <section class="info">
   <div><strong>03 / ADD WIDGETS</strong><p>Open the native Lightbox widget manager and use its three Add Widget buttons. Android asks you to approve the home-screen placement. You may use all three sizes at once.</p></div>
   <div><strong>04 / KEEP IT CURRENT</strong><p>Widgets show your last manual sync. Use SYNC to select your story again after writing. REFRESH redraws the stored snapshot, but does not fetch unsynced screenplay changes. Full screenplay text is never transferred.</p></div>
-  <div><strong>ABOUT YOUR INSTALLATION</strong><p>Your current Lightbox PWA and its saved projects are not replaced. Native Lightbox Android contains the widgets within the same app package.</p></div>
+  <div class="browser-only-info"><strong>ABOUT YOUR INSTALLATION</strong><p>Your current Lightbox PWA and its saved projects are not replaced. Native Lightbox Android contains the widgets within the same app package.</p></div>
   <div><strong>QUICK CAPTURE</strong><p>The large widget saves short offline notes within the native Lightbox app. Copy them into your screenplay when ready; they are not silently inserted into your draft.</p></div>
  </section>
  <footer><span>LIGHTBOX / ACID PAPER</span><span>YOUR STORY. YOUR SCREEN.</span></footer>
@@ -100,7 +120,7 @@ if(new URLSearchParams(window.location.search).get('native')==='unavailable'){
  const help=document.getElementById('native-launch-help');
  if(help) help.hidden=false;
 }
-fetch('/android-downloads/lightbox-studio.apk',{method:'HEAD',cache:'no-store'}).then(r=>{
+if(!document.documentElement.classList.contains('lb-native-shell')) fetch('/android-downloads/lightbox-studio.apk',{method:'HEAD',cache:'no-store'}).then(r=>{
   if(r.ok&&r.headers.get('Content-Type')?.includes('android.package-archive')&&(!r.headers.get('Content-Length')||Number(r.headers.get('Content-Length'))>30000)) {
     nativeReady.hidden=false;
     nativePending.hidden=true;
@@ -162,7 +182,7 @@ function update(){
  const q=new URLSearchParams(Object.entries(s).map(([k,v])=>[k,String(v)]));
  launch.href='intent://sync?'+q.toString()+'#Intent;scheme=lightboxwidget;package=com.saradhinitish.lightboxstudio;end';
  launch.setAttribute('aria-disabled','false');
- launch.onclick=()=>{status.textContent='Opening the Android widget companion. If nothing opens, install the unified native Lightbox Android app first.';};
+ launch.onclick=()=>{status.textContent=document.documentElement.classList.contains('lb-native-shell')?'Sending your selected story to the native widgets…':'Opening your installed Lightbox Android app to sync the story. Make sure the APK is installed.';};
 }
 async function load(){
  try{

@@ -57,7 +57,7 @@
     actions.append(download, browser);
     const note = document.createElement('p');
     note.className = 'lb-native-choice__notice';
-    note.textContent = "Android APK beta: native launcher repaired; verify widgets on your Android device. Chrome's Install App is a browser shortcut without native widgets. Back up projects; Chrome and APK storage are separate."
+    note.textContent = "Android APK beta: native widgets now have real Open, Note, Sync and Refresh buttons; test on your Android launcher. Chrome's Install App is a browser shortcut without native widgets. Back up projects; Chrome and APK storage are separate."
     card.append(tag, title, desc, actions, note);
     return card;
   }

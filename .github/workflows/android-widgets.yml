@@ -2,7 +2,7 @@ name: Android widgets debug build
 on:
   workflow_dispatch:
   push:
-    branches: [main, 'feature/unified-lightbox-android', 'fix/android-native-launcher-and-webview']
+    branches: [main, 'feature/unified-lightbox-android', 'fix/android-native-launcher-and-webview', 'fix/functional-native-widgets-branding']
     paths:
       - 'android-widgets/**'
       - '.github/workflows/android-widgets.yml'

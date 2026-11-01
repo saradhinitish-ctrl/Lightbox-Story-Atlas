@@ -111,6 +111,10 @@ public final class StudioLauncherActivity extends Activity {
         web = new WebView(this);
         web.setBackgroundColor(PAPER);
         WebSettings settings = web.getSettings();
+        // Make native hosting explicit so the website never shows its own
+        // "Install Android app" prompt inside an already-installed APK.
+        settings.setUserAgentString(settings.getUserAgentString()
+                + " LightboxNativeAndroid/1.0.3");
         settings.setJavaScriptEnabled(true);
         settings.setDomStorageEnabled(true);
         settings.setAllowFileAccess(false);

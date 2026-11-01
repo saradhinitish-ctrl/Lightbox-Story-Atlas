@@ -19,7 +19,7 @@ The **one-app architecture** is implemented in `android-widgets`: the launcher s
      "relation": ["delegate_permission/common.handle_all_urls"],
      "target": {
        "namespace": "android_app",
-       "package_name": "com.lightbox.widgets",
+       "package_name": "com.saradhinitish.lightbox",
        "sha256_cert_fingerprints": ["FINGERPRINT_FROM_PLAY_APP_SIGNING"]
      }
    }]
@@ -40,3 +40,6 @@ The **one-app architecture** is implemented in `android-widgets`: the launcher s
 - No Play Store listing has been created or approved.
 
 Do not merge this feature branch into the live install/download flow until its signing, trusted-site verification, real-device visual tests, and distribution are ready.
+
+
+Note: the unified application has a distinct package name from the legacy `com.lightbox.widgets` companion. This allows side-by-side installation without overwriting old private notes. The web sync intent must target the new package when this version ships.

@@ -45,19 +45,19 @@ jobs:
             cd android-widgets
             gradle --no-daemon assembleDebug
             adb install -r app/build/outputs/apk/debug/app-debug.apk
-            adb shell pm path com.lightbox.widgets
-            adb shell dumpsys package com.lightbox.widgets > ../widget-screenshots/package-dump.txt
+            adb shell pm path com.saradhinitish.lightbox
+            adb shell dumpsys package com.saradhinitish.lightbox > ../widget-screenshots/package-dump.txt
             grep -q 'QuickProvider' ../widget-screenshots/package-dump.txt
             grep -q 'WideProvider' ../widget-screenshots/package-dump.txt
             grep -q 'LargeProvider' ../widget-screenshots/package-dump.txt
             for v in 0 1 2; do
-              adb shell am force-stop com.lightbox.widgets
-              adb shell am start -n com.lightbox.widgets/.WidgetGalleryActivity --ei variant "$v"
+              adb shell am force-stop com.saradhinitish.lightbox
+              adb shell am start -n com.saradhinitish.lightbox/com.lightbox.widgets.WidgetGalleryActivity --ei variant "$v"
               sleep 3
               adb exec-out screencap -p > "../widget-screenshots/native-widget-${v}.png"
             done
-            adb shell am force-stop com.lightbox.widgets
-            adb shell am start -n com.lightbox.widgets/.WidgetHubActivity
+            adb shell am force-stop com.saradhinitish.lightbox
+            adb shell am start -n com.saradhinitish.lightbox/com.lightbox.widgets.WidgetHubActivity
             sleep 3
             adb exec-out screencap -p > ../widget-screenshots/widget-manager.png
       - name: Upload real Android screenshots

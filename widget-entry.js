@@ -7,7 +7,7 @@
   const root = document.getElementById('root');
   if (!root) return;
   const android = /\bAndroid\b/i.test(navigator.userAgent || '');
-  const fallback = encodeURIComponent('https://lightbox-studio.vercel.app/widgets.html#install');
+  const fallback = encodeURIComponent('https://lightbox-studio.vercel.app/widgets.html?native=unavailable#install');
   const manager = 'intent://manager#Intent;scheme=lightboxwidget;package=com.saradhinitish.lightbox;S.browser_fallback_url=' + fallback + ';end';
   function make(kind) {
     const a=document.createElement('a');

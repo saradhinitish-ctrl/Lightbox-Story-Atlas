@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#EFEDE6"><meta name="robots" content="noindex">
+<title>Lightbox / Android Widgets</title>
+<style>
+:root{--paper:#EFEDE6;--ink:#181916;--muted:#53564D;--lime:#C6FF00;--rule:#A9AA9F;--card:#F9F8F3}
+*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font-family:Arial,Helvetica,sans-serif}a{color:inherit}
+main{max-width:980px;margin:auto;padding:clamp(21px,4vw,48px) clamp(18px,4vw,46px) 64px}
+.top{display:flex;align-items:center;justify-content:space-between;gap:20px;padding-bottom:17px;border-bottom:2px solid var(--ink)}.top a{font-size:11px;text-decoration:none;letter-spacing:.04em}
+.id{font-size:13px;font-weight:900;letter-spacing:-.02em}.id i{font-style:normal;color:#777;padding:0 8px}
+.kicker{font:700 11px/1.4 monospace;letter-spacing:.11em;margin-top:53px}h1{font-size:clamp(46px,8vw,95px);letter-spacing:-.085em;line-height:.91;margin:15px 0 24px;max-width:10ch}h1 em{font-family:Georgia,serif;font-weight:400}.intro{max-width:53ch;font-size:15px;line-height:1.65;color:var(--muted)}
+.previews{display:grid;grid-template-columns:1fr 1fr 1fr;gap:13px;margin:36px 0 40px;align-items:start}.preview{position:relative;border:1px solid var(--ink);border-radius:16px;background:var(--card);padding:13px;min-width:0;overflow:hidden;box-shadow:4px 5px 0 var(--ink)}.preview p{font:700 9px monospace;margin:0 0 18px}.preview strong{display:block;text-transform:uppercase;letter-spacing:-.08em;font-size:clamp(18px,3vw,30px);line-height:.93;max-width:90%}.preview small{display:block;font:700 8px monospace;margin-top:9px;color:var(--muted)}.preview .bar{margin:17px -13px -13px;padding:11px 13px;background:var(--ink);color:var(--card);font:700 9px monospace}.preview .flag{position:absolute;right:0;top:47px;padding:10px 6px;background:var(--lime);font:900 20px Arial}.preview:nth-child(1){max-width:185px}.preview:nth-child(2){min-height:180px}.preview:nth-child(3){min-height:226px}.preview:nth-child(3) .scene{margin-top:19px;border-top:1px solid var(--rule);padding-top:10px;font:700 11px/1.35 Arial}.preview:nth-child(3) .bar{background:var(--lime);color:var(--ink)}
+.section-title{font:900 13px monospace;border-top:2px solid var(--ink);padding-top:20px;margin:42px 0 18px}
+#status{font-size:13px;line-height:1.5;color:var(--muted);padding:13px 0}
+.panel{border:1.5px solid var(--ink);background:#F9F8F3;border-radius:8px;padding:22px;box-shadow:4px 4px 0 var(--ink)}
+label{display:block;font:700 11px monospace;letter-spacing:.07em;margin-bottom:11px}select{width:100%;min-height:54px;background:var(--paper);padding:12px 15px;color:var(--ink);border:1px solid var(--ink);border-radius:3px;font-size:16px}
+#summary{margin:19px 0;padding:14px 0;min-height:58px;border-top:1px solid var(--rule);font-size:13px;line-height:1.6;color:var(--muted)}
+#launch{display:block;text-align:center;text-decoration:none;width:100%;padding:19px 12px;border:1px solid var(--ink);border-radius:4px;background:var(--lime);color:var(--ink);font:900 12px monospace;cursor:pointer}
+#launch[aria-disabled=true]{opacity:.45;pointer-events:none}
+.info{display:grid;grid-template-columns:1fr 1fr;gap:28px;margin-top:35px;font-size:13px;line-height:1.55;color:var(--muted)}.info strong{color:var(--ink)}
+footer{margin-top:50px;padding-top:17px;border-top:2px solid var(--ink);font:700 10px monospace;display:flex;justify-content:space-between;gap:12px}
+@media(max-width:700px){.previews{grid-template-columns:1fr 1fr}.preview:nth-child(3){grid-column:1/-1}.info{grid-template-columns:1fr}.top a{font-size:10px}}
+@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+<main>
+ <header class="top"><div class="id">LIGHTBOX <i>/</i> W.I.P.</div><a href="/">↖ BACK TO STUDIO</a></header>
+ <div class="kicker">ANDROID / HOME-SCREEN EDITION</div>
+ <h1>Keep the <em>scene</em> close.</h1>
+ <p class="intro">Three native widgets, individually composed for your home screen. Choose your current story here, send a small snapshot to the Android companion, and add whichever layouts you want.</p>
+ <section class="previews" aria-label="Widget variants">
+  <div class="preview"><p>01 / 2×2</p><strong>Quick<br>return.</strong><small>ONE TAP BACK</small><div class="bar">RESUME WRITING ↗</div></div>
+  <div class="preview"><p>02 / 4×2</p><span class="flag">06</span><strong>Current<br>scene.</strong><small>DRAFT / WORD COUNT</small><div class="bar">BACK TO THE PAGE ↗</div></div>
+  <div class="preview"><p>03 / 4×4</p><strong>Story in<br>progress.</strong><small>CURRENT SCENE / DRAFT</small><div class="scene">EXT. STATION PLATFORM — NIGHT</div><div class="bar">RESUME ↗ &nbsp;&nbsp; CAPTURE +</div></div>
+ </section>
+ <h2 class="section-title">01 / CONNECT YOUR CURRENT STORY</h2>
+ <div class="panel">
+  <label for="project">SELECT STORY WORLD</label>
+  <select id="project" disabled><option>Reading your Lightbox projects…</option></select>
+  <div id="status" role="status">Your project data stays in your browser. Only selected metadata goes to the Android widget companion.</div>
+  <div id="summary" aria-live="polite"></div>
+  <a id="launch" aria-disabled="true">SYNC SELECTED STORY TO ANDROID ↗</a>
+ </div>
+ <section class="info">
+  <div><strong>02 / ADD WIDGETS</strong><p>After the companion opens, use its three Add Widget buttons. Android asks you to approve the home-screen placement. You may use all three sizes at once.</p></div>
+  <div><strong>03 / KEEP IT CURRENT</strong><p>Widgets reflect your last manual sync. Return here after substantial writing to update the scene and word progress. Full screenplay text is never transferred.</p></div>
+  <div><strong>ABOUT YOUR INSTALLATION</strong><p>Your current Lightbox PWA and its saved projects are not replaced. This is a separate native Android widget companion, required by Android’s widget system.</p></div>
+  <div><strong>QUICK CAPTURE</strong><p>The large widget saves short offline notes inside the companion. Copy them into your screenplay when ready; they are not silently inserted into your draft.</p></div>
+ </section>
+ <footer><span>LIGHTBOX / ACID PAPER</span><span>YOUR STORY. YOUR SCREEN.</span></footer>
+</main>
+<script>
+(() => {
+'use strict';
+const $=id=>document.getElementById(id), select=$('project'),status=$('status'),summary=$('summary'),launch=$('launch');
+let projects=[];
+function openWorkspace(){
+ return new Promise((resolve,reject)=>{
+  const request=indexedDB.open('lightbox-portable-v64',1);
+  request.onupgradeneeded=()=>request.transaction.abort();
+  request.onerror=()=>reject(request.error||Error('Project storage unavailable'));
+  request.onsuccess=()=>{
+   const db=request.result;
+   if(!db.objectStoreNames.contains('workspace')){db.close();reject(Error('No workspace found in this browser'));return;}
+   const tx=db.transaction('workspace','readonly'),req=tx.objectStore('workspace').get('current');
+   req.onsuccess=()=>{resolve(req.result?.state||null);db.close();};
+   req.onerror=()=>{reject(req.error||Error('Could not read workspace'));db.close();};
+  };
+ });
+}
+function noTrash(p,node){
+ let n=node;const seen=new Set();
+ while(n&&!seen.has(n.id)){if(n.role==='trash')return false;seen.add(n.id);n=p.nodes.find(x=>x.id===n.parent);}
+ return true;
+}
+function within(p,n,root){
+ if(!root)return true;
+ let curr=n;const visited=new Set();
+ while(curr&&!visited.has(curr.id)){if(curr.id===root.id)return true;visited.add(curr.id);curr=p.nodes.find(x=>x.id===curr.parent);}
+ return false;
+}
+function words(html){
+ const el=document.createElement('div');el.innerHTML=html||'';
+ const t=(el.textContent||'').trim();return t?t.split(/\s+/u).length:0;
+}
+function snapshot(p){
+ const draftRoot=p.nodes.find(n=>n.id===p.activeDraftId&&n.role==='draft-version')||p.nodes.find(n=>n.role==='draft');
+ const docs=p.nodes.filter(n=>n.kind==='screenplay'&&n.include&&!n.archived&&noTrash(p,n)&&within(p,n,draftRoot)).sort((a,b)=>a.order-b.order);
+ const remembered=localStorage.getItem('desk-last-document:'+p.id);
+ const active=docs.find(n=>n.id===remembered)||[...docs].sort((a,b)=>String(b.updated||'').localeCompare(String(a.updated||'')))[0];
+ const number=active?String(docs.findIndex(n=>n.id===active.id)+1).padStart(2,'0'):'--';
+ let heading=active?.title||'Open Lightbox to write a scene';
+ if(active?.html){
+  const el=document.createElement('div');el.innerHTML=active.html;
+  const h=el.querySelector('[data-element="scene"]');
+  if(h?.textContent?.trim())heading=h.textContent.trim();
+ }
+ const total=docs.reduce((sum,n)=>sum+words(n.html),0);
+ return {project:p.id,node:active?.id||'',title:p.title||'Untitled story',scene:number,
+  heading:heading.slice(0,110),draft:draftRoot?.title||'CURRENT DRAFT',
+  words:total,target:Number.isFinite(+p.target)?Math.max(0,+p.target):0};
+}
+function update(){
+ const p=projects.find(x=>x.id===select.value);
+ if(!p)return;
+ const s=snapshot(p);
+ summary.textContent=s.scene+' / '+s.heading+'   •   '+s.words+' words'+(s.target>0?' of '+s.target+' target':'');
+ const q=new URLSearchParams(Object.entries(s).map(([k,v])=>[k,String(v)]));
+ launch.href='intent://sync?'+q.toString()+'#Intent;scheme=lightboxwidget;package=com.lightbox.widgets;end';
+ launch.setAttribute('aria-disabled','false');
+ launch.onclick=()=>{status.textContent='Opening the Android widget companion. If nothing opens, install the separate Lightbox Widgets Android app first.';};
+}
+async function load(){
+ try{
+  const ws=await openWorkspace();
+  projects=(ws?.projects||[]).filter(p=>p&&!p.archived&&Array.isArray(p.nodes));
+  select.replaceChildren();
+  if(!projects.length)throw Error('No active projects found here. Open Lightbox in this same Chrome browser/profile and create or restore a project first.');
+  projects.forEach(p=>{const o=document.createElement('option');o.value=p.id;o.textContent=p.title||'Untitled';select.append(o);});
+  const last=localStorage.getItem('desk-last-project');
+  if(projects.some(p=>p.id===last))select.value=last;
+  select.disabled=false;status.textContent='Ready. A project title, scene heading, selected document ID, and word progress will be shared only when you tap Sync.';
+  update();
+ }catch(e){
+  status.textContent=e.message||'Unable to access this browser’s workspace.';
+  select.innerHTML='<option>Open Lightbox and save a project first</option>';
+  summary.textContent='Your PWA data is untouched.';
+ }
+}
+select.addEventListener('change',update);load();
+})();
+</script>
+</body>
+</html>

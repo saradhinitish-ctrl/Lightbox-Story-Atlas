@@ -7,6 +7,7 @@
   const root = document.getElementById('root');
   if (!root) return;
   const android = /\bAndroid\b/i.test(navigator.userAgent || '');
+  const nativeApp = document.documentElement.classList.contains('lb-native-shell');
   const apkUrl = '/android-downloads/lightbox-studio.apk';
   const managerFallback = encodeURIComponent('https://lightbox-studio.vercel.app/widgets.html?native=unavailable#install');
   const manager = 'intent://manager#Intent;scheme=lightboxwidget;package=com.saradhinitish.lightboxstudio;S.browser_fallback_url=' + managerFallback + ';end';
@@ -71,6 +72,19 @@
   }
   let queued = false;
   function enhance() {
+    // Already inside the installed Android app: show a workspace and widget
+    // access, NEVER website-style APK or browser installation offers.
+    if (nativeApp) {
+      root.querySelectorAll('.lb-native-choice').forEach(card => card.remove());
+      root.querySelectorAll('.studio.atlas-shell .atlas-caption').forEach(el => {
+        if (!el.querySelector('.lb-widgets-atlas')) {
+          const link = managerButton('atlas');
+          link.style.marginLeft = 'auto';
+          el.appendChild(link);
+        }
+      });
+      return;
+    }
     root.querySelectorAll('.studio.atlas-shell .welcome .install-app').forEach(el => {
       if (!el.querySelector('.lb-native-choice')) el.appendChild(nativeChoice());
     });

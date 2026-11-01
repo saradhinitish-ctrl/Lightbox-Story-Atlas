@@ -94,7 +94,7 @@ footer{margin-top:50px;padding-top:17px;border-top:2px solid var(--ink);font:700
 'use strict';
 const nativeReady=document.getElementById('native-install-ready'),nativePending=document.getElementById('native-install-pending');
 fetch('/android-downloads/lightbox-studio.apk',{method:'HEAD',cache:'no-store'}).then(r=>{
-  if(r.ok&&r.headers.get('Content-Type')?.includes('android.package-archive')&&Number(r.headers.get('Content-Length')||0)>3500000) {
+  if(r.ok&&r.headers.get('Content-Type')?.includes('android.package-archive')&&(!r.headers.get('Content-Length')||Number(r.headers.get('Content-Length'))>3500000)) {
     nativeReady.hidden=false;
     nativePending.hidden=true;
   }

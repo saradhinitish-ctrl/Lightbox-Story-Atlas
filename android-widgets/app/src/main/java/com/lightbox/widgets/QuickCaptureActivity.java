@@ -69,7 +69,7 @@ public final class QuickCaptureActivity extends Activity {
         add(label("For / "+WidgetState.read(this).title,13,MUTED,false),10);
         field=new EditText(this);field.setHint("A visual. A line of dialogue. A moment worth remembering…");
         field.setTextColor(INK);field.setHintTextColor(MUTED);field.setTextSize(16);
-        field.setMinLines(5);field.setGravity(Gravity.TOP);field.setMaxLength(800);
+        field.setMinLines(5);field.setGravity(Gravity.TOP);field.setFilters(new android.text.InputFilter[]{new android.text.InputFilter.LengthFilter(800)});
         field.setPadding(px(16),px(18),px(16),px(16));field.setBackground(bg(Color.WHITE));
         add(field,24);
         button("SAVE NOTE  +",LIME,INK,this::save);

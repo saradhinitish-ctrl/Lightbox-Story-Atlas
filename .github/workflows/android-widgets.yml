@@ -21,8 +21,18 @@ jobs:
         with:
           distribution: temurin
           java-version: '17'
-      - name: Set up Android SDK
-        uses: android-actions/setup-android@v3
+      - name: Ensure Android SDK platform
+        shell: bash
+        run: |
+          set -euo pipefail
+          SDK_ROOT="${ANDROID_SDK_ROOT:-${ANDROID_HOME:-/usr/local/lib/android/sdk}}"
+          echo "SDK root: ${SDK_ROOT}"
+          if [ ! -f "${SDK_ROOT}/platforms/android-35/android.jar" ]; then
+            SDK_MANAGER="$(find "${SDK_ROOT}/cmdline-tools" -type f -name sdkmanager | head -1)"
+            test -n "${SDK_MANAGER}"
+            yes | "${SDK_MANAGER}" --licenses >/dev/null || true
+            "${SDK_MANAGER}" "platforms;android-35" "build-tools;35.0.0"
+          fi
       - name: Gradle
         uses: gradle/actions/setup-gradle@v4
         with:

@@ -6,7 +6,12 @@ pkg="com.saradhinitish.lightboxstudio"
 apk="android-widgets/app/build/outputs/apk/debug/app-debug.apk"
 gradle -p android-widgets --no-daemon assembleDebug
 test -s "$apk"
-adb install -r "$apk"
+# A reusable APK is never a one-time download: validate repeated clean installs.
+# This emulator-only test removes a test package (not a user's real project data).
+adb uninstall "$pkg" >/dev/null 2>&1 || true
+adb install -r "$apk" | tee android-launcher-qa/first-install.txt
+adb uninstall "$pkg" | tee android-launcher-qa/uninstall.txt
+adb install -r "$apk" | tee android-launcher-qa/reinstall.txt
 adb shell pm path "$pkg" | tee android-launcher-qa/package-path.txt
 
 # The native studio must remain open, not bounce back to the Android home screen.

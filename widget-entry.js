@@ -9,7 +9,7 @@
   const android = /\bAndroid\b/i.test(navigator.userAgent || '');
   const apkUrl = '/android-downloads/lightbox-studio.apk';
   const managerFallback = encodeURIComponent('https://lightbox-studio.vercel.app/widgets.html?native=unavailable#install');
-  const manager = 'intent://manager#Intent;scheme=lightboxwidget;package=com.saradhinitish.lightbox;S.browser_fallback_url=' + managerFallback + ';end';
+  const manager = 'intent://manager#Intent;scheme=lightboxwidget;package=com.saradhinitish.lightboxstudio;S.browser_fallback_url=' + managerFallback + ';end';
 
   const styleId = 'lightbox-native-download-style';
   if (!document.getElementById(styleId)) {
@@ -57,7 +57,7 @@
     actions.append(download, browser);
     const note = document.createElement('p');
     note.className = 'lb-native-choice__notice';
-    note.textContent = "Android APK beta: currently being updated after launch failures on some Oppo/ColorOS phones. Chrome's Install App is a browser shortcut without native widgets. Back up projects; Chrome and APK storage are separate."
+    note.textContent = "Android APK beta: native launcher repaired; verify widgets on your Android device. Chrome's Install App is a browser shortcut without native widgets. Back up projects; Chrome and APK storage are separate."
     card.append(tag, title, desc, actions, note);
     return card;
   }

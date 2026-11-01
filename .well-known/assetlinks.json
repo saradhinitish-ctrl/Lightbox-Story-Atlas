@@ -10,5 +10,17 @@
         "A6:11:08:F7:B3:DE:46:FA:1B:EC:EC:17:B3:7F:39:94:8E:91:4F:04:3B:B8:65:2B:A5:4C:78:96:31:13:9E:82"
       ]
     }
+  },
+  {
+    "relation": [
+      "delegate_permission/common.handle_all_urls"
+    ],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.saradhinitish.lightboxstudio",
+      "sha256_cert_fingerprints": [
+        "EA:2C:B6:63:C8:09:73:A2:90:A0:3F:7B:F2:0E:72:60:EB:22:BD:DC:33:83:0E:A5:FA:6F:A9:55:26:BA:02:DF"
+      ]
+    }
   }
 ]

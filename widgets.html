@@ -67,10 +67,10 @@ footer{margin-top:50px;padding-top:17px;border-top:2px solid var(--ink);font:700
         <a class="install-download" style="margin:14px 0" href="/android-downloads/lightbox-studio.apk" download="Lightbox-Studio-Android.apk">INSTALL LIGHTBOX FOR ANDROID <span aria-hidden="true">↓</span></a>
         <p class="install-caution">This is the complete Android app, including all three widgets. It is not a second widget installer. Android may require your approval to install an app from the website.</p>
       </div>
-      <a class="install-download" id="widget-download" href="intent://manager#Intent;scheme=lightboxwidget;package=com.saradhinitish.lightbox;S.browser_fallback_url=https%3A%2F%2Flightbox-studio.vercel.app%2Fwidgets.html%3Fnative%3Dunavailable%23install;end">ALREADY INSTALLED? ADD WIDGETS <span aria-hidden="true">↗</span></a>
+      <a class="install-download" id="widget-download" href="intent://manager#Intent;scheme=lightboxwidget;package=com.saradhinitish.lightboxstudio;S.browser_fallback_url=https%3A%2F%2Flightbox-studio.vercel.app%2Fwidgets.html%3Fnative%3Dunavailable%23install;end">ALREADY INSTALLED? ADD WIDGETS <span aria-hidden="true">↗</span></a>
       
-      <p class="install-caution" id="native-install-pending">The public download is being prepared. When verified, the Install Lightbox button will appear here automatically. Already installed the native app? Open the widget manager above.</p>
-      <a class="install-open" id="widget-open-companion" href="intent://manager#Intent;scheme=lightboxwidget;package=com.saradhinitish.lightbox;end">Widget manager ↗</a>
+      <p class="install-caution" id="native-install-pending">The signed native APK is now available. When verified, the Install Lightbox button will appear here automatically. Already installed the native app? Open the widget manager above.</p>
+      <a class="install-open" id="widget-open-companion" href="intent://manager#Intent;scheme=lightboxwidget;package=com.saradhinitish.lightboxstudio;end">Widget manager ↗</a>
     </div>
   </div>
   <div class="install-steps"><span>01 — INSTALL ONE APP</span><span>02 — OPEN LIGHTBOX</span><span>03 — SYNC STORY</span><span>04 — ADD WIDGET</span></div>
@@ -100,7 +100,7 @@ if(new URLSearchParams(window.location.search).get('native')==='unavailable'){
  if(help) help.hidden=false;
 }
 fetch('/android-downloads/lightbox-studio.apk',{method:'HEAD',cache:'no-store'}).then(r=>{
-  if(r.ok&&r.headers.get('Content-Type')?.includes('android.package-archive')&&(!r.headers.get('Content-Length')||Number(r.headers.get('Content-Length'))>3500000)) {
+  if(r.ok&&r.headers.get('Content-Type')?.includes('android.package-archive')&&(!r.headers.get('Content-Length')||Number(r.headers.get('Content-Length'))>30000)) {
     nativeReady.hidden=false;
     nativePending.hidden=true;
   }
@@ -159,7 +159,7 @@ function update(){
  const s=snapshot(p);
  summary.textContent=s.scene+' / '+s.heading+'   •   '+s.words+' words'+(s.target>0?' of '+s.target+' target':'');
  const q=new URLSearchParams(Object.entries(s).map(([k,v])=>[k,String(v)]));
- launch.href='intent://sync?'+q.toString()+'#Intent;scheme=lightboxwidget;package=com.saradhinitish.lightbox;end';
+ launch.href='intent://sync?'+q.toString()+'#Intent;scheme=lightboxwidget;package=com.saradhinitish.lightboxstudio;end';
  launch.setAttribute('aria-disabled','false');
  launch.onclick=()=>{status.textContent='Opening the Android widget companion. If nothing opens, install the unified native Lightbox Android app first.';};
 }

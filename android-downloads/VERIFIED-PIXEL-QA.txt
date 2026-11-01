@@ -1,0 +1,11 @@
+Lightbox Studio Android signed public APK / Pixel emulator smoke test
+Verified APK SHA-256: 9453702e4698a73e516ad8ef39f946d8f4cee5e74b0a9f6cf60685e6db2d3647
+Android version: 15
+Package: com.saradhinitish.lightbox
+Installation: adb install succeeded
+Widget providers: QuickProvider, WideProvider, LargeProvider present
+Native widget hub: activity launched and process remained running
+Studio launcher: activity start command succeeded
+Screenshots: GitHub Actions artifact lightbox-public-signed-apk-pixel-qa
+Verified UTC: 2026-11-01T17:08:24Z
+Limits: Home screen placement, browser TWA trust, and real ColorOS/Samsung device behavior still need manual QA.

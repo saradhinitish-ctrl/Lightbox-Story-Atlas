@@ -40,12 +40,36 @@
     <link rel="stylesheet" href="./screenplay-polish.css">
     <link rel="stylesheet" href="./install-app.css">
     <link rel="stylesheet" href="./studio-design.css">
+    <link rel="stylesheet" href="./opening.css">
     <link rel="manifest" href="./manifest.webmanifest">
     <link rel="apple-touch-icon" href="./app-icons/lightbox-180.png">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-title" content="Lightbox">
 </head>
 <body class="antialiased">
+    <!-- Typography-first opening: deliberately outside the React workspace -->
+    <div id="lb-opener" class="lb-opener" hidden aria-label="Lightbox Studio opening">
+      <header class="lb-opener__top">
+        <div class="lb-opener__identity">LIGHTBOX <span>/</span> STUDIO</div>
+        <div class="lb-opener__edition">EST. / THE NEXT FRAME</div>
+      </header>
+      <section class="lb-opener__stage">
+        <p class="lb-opener__eyebrow">A FILMMAKING WORKSPACE</p>
+        <h1 class="lb-opener__headline" aria-label="From page to frame">
+          <div class="lb-opener__line"><span class="lb-opener__word">FROM</span></div>
+          <div class="lb-opener__line lb-opener__line--page"><span class="lb-opener__word">PAGE</span></div>
+          <div class="lb-opener__line lb-opener__line--frame"><span class="lb-opener__word">TO</span><span class="lb-opener__word lb-opener__frame">FRAME.</span></div>
+        </h1>
+        <div class="lb-opener__technical">STORIES IN MOTION — Nº 001</div>
+        <div class="lb-opener__subline">WRITE / SHAPE / DIRECT</div>
+      </section>
+      <footer class="lb-opener__bottom">
+        <div class="lb-opener__bottom-label">EVERY FRAME BEGINS SOMEWHERE</div>
+        <div class="lb-opener__track" aria-hidden="true"></div>
+        <button class="lb-opener__skip" type="button" aria-label="Skip opening animation">SKIP <span aria-hidden="true">↗</span></button>
+      </footer>
+    </div>
+
     <div id="root">
       <main id="static-intro" style="max-width:840px;margin:8vh auto;padding:24px;font-family:system-ui,Arial,sans-serif;color:#35262c">
         <p style="letter-spacing:.15em;font-size:12px">LIGHTBOX STUDIO</p>
@@ -62,6 +86,7 @@
       </main>
     </div>
 
+    <script defer src="./opening.js"></script>
     <script defer src="./script.js"></script>
     <script defer src="./studio-design.js"></script>
 </body>

@@ -1,0 +1,55 @@
+name: Publish Lightbox Studio unified Android app
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'android-downloads/.publishing/**'
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: lightbox-android-publish
+  cancel-in-progress: false
+jobs:
+  publish:
+    if: github.event_name == 'workflow_dispatch' || github.event.head_commit.message != 'Publish verified Lightbox Studio Android APK'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          persist-credentials: true
+      - name: Reassemble previously signed APK and verify checksum
+        shell: bash
+        run: |
+          set -euo pipefail
+          shopt -s nullglob
+          chunks=(android-downloads/.publishing/chunk-*.b64)
+          test "${#chunks[@]}" -eq 11 || { echo "::error::Missing or extra release chunks"; exit 1; }
+          cat "${chunks[@]}" | base64 --decode > android-downloads/lightbox-studio.apk
+          test "$(stat -c%s android-downloads/lightbox-studio.apk)" -eq 3794256
+          sha256sum -c android-downloads/UNIFIED-SHA256SUMS
+          unzip -tqq android-downloads/lightbox-studio.apk
+      - name: Verify Android release signature and Lightbox signing identity
+        shell: bash
+        run: |
+          set -euo pipefail
+          SDK_ROOT="${ANDROID_SDK_ROOT:-${ANDROID_HOME:-/usr/local/lib/android/sdk}}"
+          SDK_MANAGER="$(find "${SDK_ROOT}/cmdline-tools" -type f -name sdkmanager | head -1)"
+          if [ ! -f "${SDK_ROOT}/build-tools/36.0.0/apksigner" ]; then
+            "${SDK_MANAGER}" "build-tools;36.0.0"
+          fi
+          "${SDK_ROOT}/build-tools/36.0.0/apksigner" verify --verbose --print-certs android-downloads/lightbox-studio.apk > /tmp/lightbox-apk-signature.txt
+          grep -q 'Verified using v2 scheme (APK Signature Scheme v2): true' /tmp/lightbox-apk-signature.txt
+          grep -qi 'a61108f7b3de46fa1becec17b37f39948e914f043bb8652ba54c789631139e82' /tmp/lightbox-apk-signature.txt
+      - name: Publish complete Lightbox APK to the public website repository
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf android-downloads/.publishing
+          git add -A android-downloads
+          if git diff --cached --quiet; then exit 0; fi
+          git config user.name "Lightbox Android Release"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "Publish verified Lightbox Studio Android APK"
+          git push origin HEAD:main

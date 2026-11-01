@@ -64,16 +64,16 @@ jobs:
         run: |
           set -euo pipefail
           SDK_ROOT="${ANDROID_SDK_ROOT:-${ANDROID_HOME:-/usr/local/lib/android/sdk}}"
-          mkdir -p .qa-tools
+          mkdir -p signing-qa-tools
           SIGNER="$(find "${SDK_ROOT}/build-tools" -path '*/lib/apksigner.jar' | sort -V | tail -1)"
           ALIGN="$(find "${SDK_ROOT}/build-tools" -maxdepth 2 -name 'zipalign' | sort -V | tail -1)"
           test -s "${SIGNER}"
           test -x "${ALIGN}"
-          cp "${SIGNER}" .qa-tools/apksigner.jar
-          cp "${ALIGN}" .qa-tools/zipalign
+          cp "${SIGNER}" signing-qa-tools/apksigner.jar
+          cp "${ALIGN}" signing-qa-tools/zipalign
       - name: Upload local Android sign/verify tools
         if: startsWith(github.ref, 'refs/heads/feature/')
         uses: actions/upload-artifact@v4
         with:
           name: lightbox-android-signing-tools
-          path: .qa-tools/
+          path: signing-qa-tools/

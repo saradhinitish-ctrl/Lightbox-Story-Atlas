@@ -47,6 +47,10 @@
     <style>
       /* Don't invite people to install the app while they're already in the native app. */
       html.lb-native-shell .lb-browser-install,
+      /* The old React PWA installation panel made a second, misleading
+         'Download the app' invitation. The browser keeps ONE native APK CTA
+         in the welcome screen; the installed APK has none. */
+      .studio.atlas-shell .install-app,
       html.lb-native-shell .studio.atlas-shell .install-app,
       html.lb-native-shell .lb-native-choice { display: none !important; }
     </style>

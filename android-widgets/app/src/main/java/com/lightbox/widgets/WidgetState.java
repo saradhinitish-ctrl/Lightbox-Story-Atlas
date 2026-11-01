@@ -62,24 +62,31 @@ public final class WidgetState {
     }
 
 
-    /** Android 15+ widget picker previews use the same bitmap renderer as the home screen. */
+    /** Android 15+ picker previews reuse the ACTUAL interactive widget layout.
+     * No generated artwork or decorative screenshots.
+     */
     public static void publishPreviews(Context context) {
-        if (android.os.Build.VERSION.SDK_INT < 35) return;
-        SharedPreferences p = context.getSharedPreferences(FILE, Context.MODE_PRIVATE);
-        long then = p.getLong("previewsUpdatedAt",0);
-        if (System.currentTimeMillis()-then < 60L*60*1000) return;
-        AppWidgetManager m=AppWidgetManager.getInstance(context);
+        if(android.os.Build.VERSION.SDK_INT<35) return;
+        SharedPreferences p=context.getSharedPreferences(FILE,Context.MODE_PRIVATE);
+        long now=System.currentTimeMillis();
+        long then=p.getLong("previewsUpdatedAt",0);
+        if(now-then < 60L*60*1000) return;
+        AppWidgetManager manager=AppWidgetManager.getInstance(context);
         Class<?>[] types={QuickProvider.class,WideProvider.class,LargeProvider.class};
-        int[] w={160,330,330},h={160,160,324};
-        for(int i=0;i<types.length;i++) {
-            android.widget.RemoteViews rv=new android.widget.RemoteViews(context.getPackageName(),R.layout.widget_shell);
-            rv.setImageViewBitmap(R.id.art,WidgetPainter.draw(i,read(context),w[i]*2,h[i]*2));
-            rv.setViewVisibility(R.id.captureTap,i==2?android.view.View.VISIBLE:android.view.View.GONE);
-            try{m.setWidgetPreview(new ComponentName(context,types[i]),
-                android.appwidget.AppWidgetProviderInfo.WIDGET_CATEGORY_HOME_SCREEN,rv);}
-            catch(RuntimeException ignored){}
+        int successful=0;
+        for(int kind=0;kind<types.length;kind++) {
+            try {
+                boolean ok=manager.setWidgetPreview(
+                    new ComponentName(context,types[kind]),
+                    android.appwidget.AppWidgetProviderInfo.WIDGET_CATEGORY_HOME_SCREEN,
+                    WidgetBaseProvider.views(context,0,kind,false));
+                if(ok) successful++;
+            } catch(RuntimeException ignored) {
+                // Some Android launchers do not implement generated previews.
+                // The same real layout is also set as the XML previewLayout.
+            }
         }
-        p.edit().putLong("previewsUpdatedAt",System.currentTimeMillis()).apply();
+        if(successful>0) p.edit().putLong("previewsUpdatedAt",now).apply();
     }
 
     public static void refreshAll(Context context) {

@@ -39,7 +39,12 @@ jobs:
           gradle-version: '8.11.1'
       - name: Assemble Android widget companion
         working-directory: android-widgets
-        run: gradle --no-daemon assembleDebug
+        run: gradle --no-daemon assembleDebug bundleRelease
+      - name: Upload unsigned AAB for signing preparation
+        uses: actions/upload-artifact@v4
+        with:
+          name: lightbox-unified-unsigned-aab
+          path: android-widgets/app/build/outputs/bundle/release/app-release.aab
       - name: Upload installable debug APK
         uses: actions/upload-artifact@v4
         with:

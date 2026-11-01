@@ -7,7 +7,7 @@ The **one-app architecture** is implemented in `android-widgets`: the launcher s
 - Widgets 2×2, 4×2 and 4×4 are registered in the same Android manifest.
 - Widget buttons open the native Lightbox launcher.
 - The existing website's widget setup flow syncs only project metadata via a user-triggered Android intent.
-- Android CI compiles a debug APK for development.
+- Android CI compiles a debug APK and an **unsigned** release AAB for development and signing preparation. The AAB is not uploadable to Play until signed by the account owner.
 - Android 8.0+ minSdk; no unnecessary runtime permissions.
 
 ## Required before a public, frictionless release
@@ -38,6 +38,7 @@ The **one-app architecture** is implemented in `android-widgets`: the launcher s
 - Widget metadata updates on explicit Sync (not automatically).
 - Quick Capture stores notes locally within Android companion private storage until copied to the screenplay.
 - No Play Store listing has been created or approved.
+- As of August 31, 2026, new Google Play phone apps must target Android 16 (API 36); targetSdk has been updated accordingly.
 
 Do not merge this feature branch into the live install/download flow until its signing, trusted-site verification, real-device visual tests, and distribution are ready.
 

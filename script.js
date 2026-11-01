@@ -65139,11 +65139,18 @@ ${prefix}
           /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("br", {}),
           "Write at your own pace."
         ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("p", { className: "welcome-identity", style: { maxWidth: 520, fontSize: 13, lineHeight: 1.7, margin: "0 0 24px" }, children: [
+          "Lightbox Studio is a screenwriting and filmmaking workspace created by ",
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("a", { href: "./creator.html", style: { textDecoration: "underline", textUnderlineOffset: 3 }, children: "Bitra Nitish Saradhi" }),
+          ". Develop characters, write screenplays and plan scenes with visual boards and beat timelines. ",
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("a", { href: "./about.html", style: { textDecoration: "underline", textUnderlineOffset: 3 }, children: "About Lightbox" }),
+          "."
+        ] }),
         /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("button", { className: "button primary large", onClick: () => setModal("project"), disabled: !loaded, children: [
           /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(Plus, { size: 17 }),
           "Create your first world"
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "welcome-secondary", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "welcome-secondary", "data-nosnippet": "", children: [
           /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("button", { onClick: () => restoreInput.current?.click(), children: [
             /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(Upload, { size: 14 }),
             "Restore a backup"

@@ -7,7 +7,7 @@ on:
       - 'android-widgets/**'
       - '.github/workflows/android-native-launcher-qa.yml'
 permissions:
-  contents: read
+  contents: write
 jobs:
   emulator-qa:
     name: Android 15 APK launcher and widget regression
@@ -16,7 +16,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          persist-credentials: false
+          persist-credentials: true
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
@@ -59,3 +59,29 @@ jobs:
           name: lightbox-repaired-launcher-qa
           path: android-launcher-qa/
           if-no-files-found: warn
+      - name: Record passing launch test and workflow run ID
+        if: success()
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p docs
+          {
+            echo "Lightbox native Android launcher regression result: PASS"
+            echo "Build branch: fix/android-native-launcher-and-webview"
+            echo "Android emulator: API 35 (Android 15)"
+            echo "App version: 1.0.1 (versionCode 2), debug build only"
+            echo "Native studio: stayed open after launch"
+            echo "Widget hub: opened"
+            echo "Widget providers: 2x2, 4x2, 4x4 registered"
+            echo "Run ID: ${GITHUB_RUN_ID}"
+            echo "Artifact name: lightbox-repaired-launcher-qa"
+            echo "Run URL: https://github.com/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
+            echo "Date UTC: $(date -u +'%Y-%m-%dT%H:%M:%SZ')"
+            echo "Warning: signed production update and physical ColorOS verification remain separate."
+          } > docs/ANDROID-LAUNCHER-QA-RESULT.txt
+          git add docs/ANDROID-LAUNCHER-QA-RESULT.txt
+          if git diff --cached --quiet; then exit 0; fi
+          git config user.name "Lightbox Android QA"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "Attest repaired Android launcher emulator QA"
+          git push origin HEAD:fix/android-native-launcher-and-webview

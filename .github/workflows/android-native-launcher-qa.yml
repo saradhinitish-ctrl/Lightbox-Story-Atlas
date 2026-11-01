@@ -2,7 +2,7 @@ name: Native Lightbox launcher and widgets acceptance
 on:
   workflow_dispatch:
   push:
-    branches: ['fix/android-native-launcher-and-webview']
+    branches: ['fix/android-native-launcher-and-webview', 'fix/functional-native-widgets-branding']
     paths:
       - 'android-widgets/**'
       - '.github/workflows/android-native-launcher-qa.yml'

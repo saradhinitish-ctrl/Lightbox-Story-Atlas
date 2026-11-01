@@ -69,8 +69,8 @@ public final class WidgetHubActivity extends Activity {
         }else Toast.makeText(this,"Long press your home screen → Widgets → Lightbox Widgets",Toast.LENGTH_LONG).show();
     }
     private void openSite(){
-        Intent intent=new Intent(Intent.ACTION_VIEW,Uri.parse("https://lightbox-studio.vercel.app/"));
-        intent.addCategory(Intent.CATEGORY_BROWSABLE);startActivity(intent);
+        Intent intent=new Intent(this,StudioLauncherActivity.class);
+        startActivity(intent);
     }
     private void openSync(){
         startActivity(new Intent(Intent.ACTION_VIEW,Uri.parse("https://lightbox-studio.vercel.app/widgets.html")));
@@ -80,8 +80,8 @@ public final class WidgetHubActivity extends Activity {
         root=new LinearLayout(this);root.setOrientation(LinearLayout.VERTICAL);
         root.setPadding(px(24),px(32),px(24),px(26));root.setBackgroundColor(PAPER);
         scroller.addView(root);setContentView(scroller);
-        add(text("LIGHTBOX / W.I.P.",12,INK,true),0);
-        add(text("Your stories.\nOne tap away.",35,INK,true),27);
+        add(text("LIGHTBOX / STUDIO",12,INK,true),0);
+        add(text("Your home screen.\nYour story.",35,INK,true),27);
         add(text("Three considered home-screen formats. One active project. Pick a size, then keep the scene within reach.",14,MUTED,false),17);
         WidgetState snapshot=WidgetState.read(this);
         TextView selected=text(snapshot.syncedAt==0 ? "NO STORY SYNCED YET" :

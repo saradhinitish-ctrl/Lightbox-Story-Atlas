@@ -2,7 +2,7 @@ name: Android widgets debug build
 on:
   workflow_dispatch:
   push:
-    branches: [main]
+    branches: [main, 'feature/unified-lightbox-android']
     paths:
       - 'android-widgets/**'
       - '.github/workflows/android-widgets.yml'
@@ -48,6 +48,7 @@ jobs:
 
   publish:
     name: Publish install button APK
+    if: github.ref == 'refs/heads/main'
     needs: build
     runs-on: ubuntu-latest
     permissions:

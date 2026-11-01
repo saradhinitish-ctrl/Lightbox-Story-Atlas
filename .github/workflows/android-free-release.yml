@@ -1,6 +1,11 @@
 name: Publish free unified Android download
 on:
   workflow_dispatch:
+  push:
+    branches: ['feature/unified-lightbox-android']
+    paths:
+      - 'android-widgets/**'
+      - '.github/workflows/android-free-release.yml'
 permissions:
   contents: read
 jobs:

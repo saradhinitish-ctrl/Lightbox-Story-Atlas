@@ -19,10 +19,9 @@
      if(c.querySelector('.lb-widgets-atlas'))return;
      const a=createLink('atlas');a.style.marginLeft='auto';c.appendChild(a);
    });
-   root.querySelectorAll('.studio.atlas-shell .install-app-row, .studio.atlas-shell .install-app').forEach(target=>{
-      if(target.querySelector('.lb-widgets-install'))return;
-      if(target.classList.contains('install-app')&&target.querySelector('.install-app-row'))return;
-      const a=createLink('install');a.style.marginTop='12px';target.appendChild(a);
+   root.querySelectorAll('.studio.atlas-shell .install-app').forEach(target=>{
+     if(target.querySelector('.lb-widgets-install'))return;
+     const a=createLink('install');a.style.marginTop='12px';target.appendChild(a);
    });
  }
  const observer=new MutationObserver(()=>{if(scheduled)return;scheduled=true;requestAnimationFrame(()=>{scheduled=false;enhance()})});

@@ -2,7 +2,7 @@
 # Android 15 emulator acceptance for the repaired installed native Lightbox app.
 set -euo pipefail
 mkdir -p android-launcher-qa
-pkg="com.saradhinitish.lightbox"
+pkg="com.saradhinitish.lightboxstudio"
 apk="android-widgets/app/build/outputs/apk/debug/app-debug.apk"
 gradle -p android-widgets --no-daemon assembleDebug
 test -s "$apk"

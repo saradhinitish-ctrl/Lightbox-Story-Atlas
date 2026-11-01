@@ -136,7 +136,7 @@ body { margin:0; background:var(--lb-canvas); color:var(--lb-ink); }
 .studio.atlas-shell .atlas-caption>span { color:var(--lb-ink); font-size:11px; letter-spacing:.1em; font-weight:500; }
 .studio.atlas-shell .atlas-caption>small { color:var(--lb-secondary); font-size:12px; }
 .studio.atlas-shell .atlas-viewport { background:transparent; border:0; padding:12px 4px 5px 0; height:auto; overflow:visible; }
-.studio.atlas-shell .atlas-map { width:100%; position:relative; inset:auto; transform:none; display:grid; gap:18px; grid-template-columns:1fr 1.08fr 1fr; grid-template-rows:24px minmax(282px,auto) minmax(214px,auto); grid-template-areas:"idea story world-lane" "foundation script visual" "research script world"; }
+.studio.atlas-shell .atlas-map { width:100%; min-width:0; position:relative; inset:auto; transform:none; display:grid; gap:18px; grid-template-columns:1fr 1.08fr 1fr; grid-template-rows:24px minmax(282px,auto) minmax(214px,auto); grid-template-areas:"idea story world-lane" "foundation script visual" "research script world"; }
 .studio.atlas-shell .atlas-lane { border-bottom:0; padding:0; font-size:10px; color:var(--lb-secondary); }
 .studio.atlas-shell .atlas-lane::after { display:none; }
 .studio.atlas-shell .atlas-node { border:1.5px solid var(--lb-ink); border-radius:4px; background:var(--lb-card); box-shadow:var(--lb-shadow); padding:24px; transform:none; transition:transform 140ms ease,box-shadow 140ms ease; overflow:hidden; }

@@ -74,6 +74,9 @@
     root.querySelectorAll('.studio.atlas-shell .welcome .install-app').forEach(el => {
       if (!el.querySelector('.lb-native-choice')) el.appendChild(nativeChoice());
     });
+    root.querySelectorAll('.studio.atlas-shell .welcome').forEach(el => {
+      if (!el.querySelector('.lb-native-choice')) el.appendChild(nativeChoice());
+    });
     root.querySelectorAll('.studio.atlas-shell .story-atlas > .install-app').forEach(el => {
       if (!el.querySelector('.lb-native-choice')) el.appendChild(nativeChoice());
     });

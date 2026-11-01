@@ -1,0 +1,106 @@
+name: Publish Lightbox 1.0.2 interactive Android widgets
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'android-downloads/.publishing/lightbox-v102-update.xz.b64'
+      - '.github/workflows/android-v102-publish.yml'
+permissions:
+  contents: write
+  actions: read
+concurrency:
+  group: lightbox-android-v102-publish
+  cancel-in-progress: false
+jobs:
+  publish:
+    name: Reconstruct verified release and publish
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          persist-credentials: true
+      - uses: actions/download-artifact@v4
+        with:
+          run-id: 41335611242
+          name: lightbox-unified-unsigned-release-apk
+          path: unsigned-release
+          github-token: ${{ github.token }}
+      - name: Align exact already-tested 1.0.2 Android build
+        shell: bash
+        run: |
+          set -euo pipefail
+          SDK_ROOT="${ANDROID_SDK_ROOT:-${ANDROID_HOME:-/usr/local/lib/android/sdk}}"
+          SDK_MANAGER="$(find "${SDK_ROOT}/cmdline-tools" -type f -name sdkmanager | head -1)"
+          if [ ! -x "${SDK_ROOT}/build-tools/36.0.0/zipalign" ]; then
+            "${SDK_MANAGER}" "build-tools;36.0.0"
+          fi
+          test -s unsigned-release/app-release-unsigned.apk
+          "${SDK_ROOT}/build-tools/36.0.0/zipalign" -f -p 4 unsigned-release/app-release-unsigned.apk /tmp/lightbox-102-aligned.apk
+          echo "eb59518601b724ba161cab4e7c742cc2aec9a746cdaca333fcbd5d3a3026bbc3  /tmp/lightbox-102-aligned.apk" | sha256sum -c -
+      - name: Recover exact public signed APK from verified binary delta
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import base64,hashlib,io,json,lzma,pathlib,zipfile
+          patch=pathlib.Path("android-downloads/.publishing/lightbox-v102-update.xz.b64")
+          assert patch.exists(), "Required signed release delta absent"
+          ops=json.loads(lzma.decompress(base64.b64decode(patch.read_text())).decode())
+          base=pathlib.Path("/tmp/lightbox-102-aligned.apk").read_bytes()
+          fragments=[]
+          last=0
+          for start,end,data in ops:
+              assert isinstance(start,int) and isinstance(end,int) and 0<=last<=start<=end<=len(base)
+              fragments.extend([base[last:start],base64.b64decode(data)])
+              last=end
+          fragments.append(base[last:])
+          signed=b"".join(fragments)
+          digest=hashlib.sha256(signed).hexdigest()
+          assert digest=="6bd8bd6becc60dc4cd62133b90325602f956cc6216166ce7b7673208f9528846",digest
+          assert len(signed)==42304,len(signed)
+          with zipfile.ZipFile(io.BytesIO(signed)) as archive:
+              assert archive.testzip() is None
+              manifest=archive.read("AndroidManifest.xml")
+              assert "com.saradhinitish.lightboxstudio".encode("utf-16-le") in manifest
+          pathlib.Path("android-downloads/lightbox-studio.apk").write_bytes(signed)
+          pathlib.Path("android-downloads/UNIFIED-SHA256SUMS").write_text(digest+"  android-downloads/lightbox-studio.apk\n")
+          print("Signed app recovered exactly:",len(signed),"bytes")
+          PY
+      - name: Verify authentic signing identity and native widget contents
+        shell: bash
+        run: |
+          set -euo pipefail
+          SDK_ROOT="${ANDROID_SDK_ROOT:-${ANDROID_HOME:-/usr/local/lib/android/sdk}}"
+          APK="android-downloads/lightbox-studio.apk"
+          "${SDK_ROOT}/build-tools/36.0.0/apksigner" verify --verbose --print-certs "$APK" | tee /tmp/lightbox-102-verify.txt
+          grep -q "Verified using v2 scheme (APK Signature Scheme v2): true" /tmp/lightbox-102-verify.txt
+          grep -qi "ea2cb663c80973a290a03f7bf20e7260eb22bddc33830ea5fa6fa95526ba02df" /tmp/lightbox-102-verify.txt
+          unzip -p "$APK" classes.dex | strings | grep -q "WidgetBaseProvider"
+          echo "Signed certificate, v2 signature and native widget code validated."
+      - name: Publish reviewed Android update (source + binary)
+        shell: bash
+        run: |
+          set -euo pipefail
+          {
+            echo "Lightbox Studio 1.0.2 interactive Android release"
+            echo "Package: com.saradhinitish.lightboxstudio"
+            echo "Version: 1.0.2 / versionCode 3"
+            echo "SHA-256: 6bd8bd6becc60dc4cd62133b90325602f956cc6216166ce7b7673208f9528846"
+            echo "Certificate SHA-256: EA:2C:B6:63:C8:09:73:A2:90:A0:3F:7B:F2:0E:72:60:EB:22:BD:DC:33:83:0E:A5:FA:6F:A9:55:26:BA:02:DF"
+            echo "APK signature: v2 verified"
+            echo "Widget implementation: native RemoteViews with independent Open, Capture, Sync and Refresh PendingIntents"
+            echo "Emulator tests: native layouts, capture and sync action taps passed."
+            echo "Important: Story progress refreshes after manual sync, not automatically in the background."
+            echo "Date UTC: $(date -u +'%Y-%m-%dT%H:%M:%SZ')"
+          } > android-downloads/VERIFIED-RELEASE.txt
+          rm -f android-downloads/.publishing/lightbox-v102-update.xz.b64
+          git add -A android-downloads
+          git config user.name "Lightbox Android Verified Release"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "Publish signed Lightbox 1.0.2 with real interactive Android widgets"
+          git pull --rebase origin main
+          git push origin HEAD:main

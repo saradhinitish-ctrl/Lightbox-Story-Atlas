@@ -2,12 +2,12 @@ name: Android widgets debug build
 on:
   workflow_dispatch:
   push:
-    branches: [main, 'feature/unified-lightbox-android']
+    branches: [main, 'feature/unified-lightbox-android', 'fix/android-native-launcher-and-webview']
     paths:
       - 'android-widgets/**'
       - '.github/workflows/android-widgets.yml'
 permissions:
-  contents: read
+  contents: write
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -15,7 +15,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          persist-credentials: false
+          persist-credentials: true
       - name: Set up Java
         uses: actions/setup-java@v4
         with:
@@ -53,13 +53,13 @@ jobs:
 
 
       - name: Upload unsigned native release APK for local signing verification
-        if: startsWith(github.ref, 'refs/heads/feature/')
+        if: github.ref != 'refs/heads/main'
         uses: actions/upload-artifact@v4
         with:
           name: lightbox-unified-unsigned-release-apk
           path: android-widgets/app/build/outputs/apk/release/*unsigned.apk
       - name: Upload Android SDK signing tools for isolated local verification
-        if: startsWith(github.ref, 'refs/heads/feature/')
+        if: github.ref != 'refs/heads/main'
         shell: bash
         run: |
           set -euo pipefail
@@ -71,9 +71,34 @@ jobs:
           test -x "${ALIGN}"
           cp "${SIGNER}" signing-qa-tools/apksigner.jar
           cp "${ALIGN}" signing-qa-tools/zipalign
+          LIBCXX="$(find "${SDK_ROOT}/build-tools" -path '*/lib64/libc++.so' | sort -V | tail -1)"
+          test -s "${LIBCXX}"
+          cp "${LIBCXX}" signing-qa-tools/libc++.so
       - name: Upload local Android sign/verify tools
-        if: startsWith(github.ref, 'refs/heads/feature/')
+        if: github.ref != 'refs/heads/main'
         uses: actions/upload-artifact@v4
         with:
           name: lightbox-android-signing-tools
           path: signing-qa-tools/
+      - name: Record update build and run ID
+        if: success() && github.ref == 'refs/heads/fix/android-native-launcher-and-webview'
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -s android-widgets/app/build/outputs/apk/debug/app-debug.apk
+          test -s android-widgets/app/build/outputs/apk/release/app-release-unsigned.apk
+          mkdir -p docs
+          {
+            echo "Lightbox Android 1.0.1 unsigned update artifacts: build successful"
+            echo "Workflow run ID: ${GITHUB_RUN_ID}"
+            echo "Run URL: https://github.com/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
+            echo "Artifacts: lightbox-widgets-debug-apk; lightbox-unified-unsigned-release-apk; lightbox-android-signing-tools"
+            echo "Commit: ${GITHUB_SHA}"
+            echo "Note: this is NOT a signed installable release. Existing 1.0.0 certificate must sign it before distribution."
+          } > docs/ANDROID-UPDATE-BUILD-RESULT.txt
+          git add docs/ANDROID-UPDATE-BUILD-RESULT.txt
+          if git diff --cached --quiet; then exit 0; fi
+          git config user.name "Lightbox Android CI"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "Attest unsigned Android update build artifacts"
+          git push origin HEAD:fix/android-native-launcher-and-webview

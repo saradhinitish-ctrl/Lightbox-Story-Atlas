@@ -1,22 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+ <uses-permission android:name="android.permission.INTERNET"/>
  <application android:allowBackup="false" android:label="Lightbox Studio"
    android:icon="@mipmap/ic_launcher"
    android:theme="@android:style/Theme.Material.Light.NoActionBar"
    android:usesCleartextTraffic="false">
   <meta-data android:name="asset_statements" android:resource="@string/asset_statements"/>
   <activity android:name=".StudioLauncherActivity" android:exported="true"
-    android:theme="@android:style/Theme.Translucent.NoTitleBar">
+    android:theme="@android:style/Theme.Material.Light.NoActionBar">
     <intent-filter>
       <action android:name="android.intent.action.MAIN"/>
       <category android:name="android.intent.category.LAUNCHER"/>
     </intent-filter>
-    <meta-data android:name="android.support.customtabs.trusted.DEFAULT_URL"
-      android:value="https://lightbox-studio.vercel.app/"/>
-    <meta-data android:name="android.support.customtabs.trusted.STATUS_BAR_COLOR"
-      android:resource="@color/paper"/>
-    <meta-data android:name="android.support.customtabs.trusted.NAVIGATION_BAR_COLOR"
-      android:resource="@color/paper"/>
   </activity>
   <activity android:name=".WidgetHubActivity" android:exported="true">
     <intent-filter>

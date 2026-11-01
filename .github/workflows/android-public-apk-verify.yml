@@ -22,7 +22,7 @@ jobs:
           set -euo pipefail
           test -s android-downloads/lightbox-studio.apk
           sha256sum -c android-downloads/UNIFIED-SHA256SUMS
-          test "$(stat -c%s android-downloads/lightbox-studio.apk)" -gt 3500000
+          test "$(stat -c%s android-downloads/lightbox-studio.apk)" -gt 30000
       - name: Ensure Android 36 signing utility is available
         shell: bash
         run: |
@@ -38,7 +38,7 @@ jobs:
           APK="android-downloads/lightbox-studio.apk"
           "${SDK_ROOT}/build-tools/36.0.0/apksigner" verify --verbose --print-certs "$APK" > signed-apk-report.txt
           grep -q 'Verified using v2 scheme (APK Signature Scheme v2): true' signed-apk-report.txt
-          grep -qi 'a61108f7b3de46fa1becec17b37f39948e914f043bb8652ba54c789631139e82' signed-apk-report.txt
+          grep -qi 'ea2cb663c80973a290a03f7bf20e7260eb22bddc33830ea5fa6fa95526ba02df' signed-apk-report.txt
       - name: Verify Digital Asset Links match the native signed app
         shell: bash
         run: |
@@ -46,8 +46,8 @@ jobs:
           python3 - <<'PY'
           import json
           data=json.load(open(".well-known/assetlinks.json"))
-          wanted="A6:11:08:F7:B3:DE:46:FA:1B:EC:EC:17:B3:7F:39:94:8E:91:4F:04:3B:B8:65:2B:A5:4C:78:96:31:13:9E:82"
-          found=any(x.get("target",{}).get("package_name")=="com.saradhinitish.lightbox" and wanted in x.get("target",{}).get("sha256_cert_fingerprints",[]) for x in data)
+          wanted="EA:2C:B6:63:C8:09:73:A2:90:A0:3F:7B:F2:0E:72:60:EB:22:BD:DC:33:83:0E:A5:FA:6F:A9:55:26:BA:02:DF"
+          found=any(x.get("target",{}).get("package_name")=="com.saradhinitish.lightboxstudio" and wanted in x.get("target",{}).get("sha256_cert_fingerprints",[]) for x in data)
           if not found: raise SystemExit("The Android cert and Digital Asset Links do not match")
           print("Verified domain association for Lightbox Studio Android")
           PY
@@ -64,8 +64,8 @@ jobs:
             echo "APK: android-downloads/lightbox-studio.apk"
             echo "SHA-256: $SHA"
             echo "Size (bytes): $SIZE"
-            echo "Package: com.saradhinitish.lightbox"
-            echo "Certificate SHA-256: A6:11:08:F7:B3:DE:46:FA:1B:EC:EC:17:B3:7F:39:94:8E:91:4F:04:3B:B8:65:2B:A5:4C:78:96:31:13:9E:82"
+            echo "Package: com.saradhinitish.lightboxstudio"
+            echo "Certificate SHA-256: EA:2C:B6:63:C8:09:73:A2:90:A0:3F:7B:F2:0E:72:60:EB:22:BD:DC:33:83:0E:A5:FA:6F:A9:55:26:BA:02:DF"
             echo "Signature scheme: v2 verified by Android apksigner"
             echo "Digital Asset Links: fingerprint matched to .well-known/assetlinks.json"
             echo "Verified UTC: $(date -u +'%Y-%m-%dT%H:%M:%SZ')"

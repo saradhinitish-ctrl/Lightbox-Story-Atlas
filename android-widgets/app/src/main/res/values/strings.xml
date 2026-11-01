@@ -4,4 +4,5 @@
  <string name="quick_description">W.I.P. — 2×2 Quick Return</string>
  <string name="wide_description">W.I.P. — 4×2 Current Scene</string>
  <string name="large_description">W.I.P. — 4×4 Story in Progress</string>
+ <string name="asset_statements" translatable="false">[{\"relation\":[\"delegate_permission/common.handle_all_urls\"],\"target\":{\"namespace\":\"web\",\"site\":\"https://lightbox-studio.vercel.app\"}}]</string>
 </resources>

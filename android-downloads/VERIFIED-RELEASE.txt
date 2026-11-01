@@ -1,10 +1,10 @@
 Lightbox Studio Android public release verification
 APK: android-downloads/lightbox-studio.apk
-SHA-256: 9453702e4698a73e516ad8ef39f946d8f4cee5e74b0a9f6cf60685e6db2d3647
-Size (bytes): 3794256
-Package: com.saradhinitish.lightbox
-Certificate SHA-256: A6:11:08:F7:B3:DE:46:FA:1B:EC:EC:17:B3:7F:39:94:8E:91:4F:04:3B:B8:65:2B:A5:4C:78:96:31:13:9E:82
+SHA-256: 9a51327baabaab44ecf328b62f764e7a066c9b74e0c4f0dcb252bb3b53a2b4a9
+Size (bytes): 37816
+Package: com.saradhinitish.lightboxstudio
+Certificate SHA-256: EA:2C:B6:63:C8:09:73:A2:90:A0:3F:7B:F2:0E:72:60:EB:22:BD:DC:33:83:0E:A5:FA:6F:A9:55:26:BA:02:DF
 Signature scheme: v2 verified by Android apksigner
 Digital Asset Links: fingerprint matched to .well-known/assetlinks.json
-Verified UTC: 2026-11-01T17:05:17Z
+Verified UTC: 2026-11-01T18:01:49Z
 Note: Automated cryptographic verification; real-device UI QA is separate.

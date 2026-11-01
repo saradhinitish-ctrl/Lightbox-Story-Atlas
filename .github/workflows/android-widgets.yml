@@ -51,38 +51,3 @@ jobs:
           name: lightbox-widgets-debug-apk
           path: android-widgets/app/build/outputs/apk/debug/app-debug.apk
 
-  publish:
-    name: Publish install button APK
-    if: github.ref == 'refs/heads/main'
-    needs: build
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-    steps:
-      - name: Checkout production website
-        uses: actions/checkout@v4
-        with:
-          persist-credentials: true
-          ref: main
-      - name: Retrieve tested Android APK
-        uses: actions/download-artifact@v4
-        with:
-          name: lightbox-widgets-debug-apk
-          path: .widget-apk-artifact
-      - name: Publish APK for the Lightbox install flow
-        shell: bash
-        run: |
-          set -euo pipefail
-          mkdir -p android-downloads
-          install -m 0644 .widget-apk-artifact/app-debug.apk android-downloads/lightbox-widgets.apk
-          sha256sum android-downloads/lightbox-widgets.apk > android-downloads/SHA256SUMS
-          printf 'Source commit: %s\nDebug test APK only; not a Play Store release.\n' "${{ github.sha }}" > android-downloads/BUILD.txt
-          git add android-downloads/lightbox-widgets.apk android-downloads/SHA256SUMS android-downloads/BUILD.txt
-          if git diff --cached --quiet; then
-            echo "APK unchanged; no publish commit needed"
-            exit 0
-          fi
-          git config user.name "Lightbox Widget Builder"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git commit -m "Publish Lightbox widget companion test APK"
-          git push origin HEAD:main

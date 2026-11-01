@@ -9,8 +9,6 @@
   const android = /\bAndroid\b/i.test(navigator.userAgent || '');
   const nativeApp = document.documentElement.classList.contains('lb-native-shell');
   const apkUrl = '/android-downloads/lightbox-studio.apk';
-  const managerFallback = encodeURIComponent('https://lightbox-studio.vercel.app/widgets.html?native=unavailable#install');
-  const manager = 'intent://manager#Intent;scheme=lightboxwidget;package=com.saradhinitish.lightboxstudio;S.browser_fallback_url=' + managerFallback + ';end';
 
   const styleId = 'lightbox-native-download-style';
   if (!document.getElementById(styleId)) {
@@ -74,24 +72,29 @@
   }
   let queued = false;
   function enhance() {
-    // The browser can offer one Android APK download, and the installed
-    // native app can open widget management. Neither shows duplicate promos.
-    root.querySelectorAll('.lb-native-choice').forEach(el => {
-      if (nativeApp || !el.closest('.welcome')) el.remove();
-    });
-    if (!nativeApp) {
+    // A single direct APK download offer for browser users.
+    // The old PWA/Chrome installation component is suppressed by install-app.css.
+    // Native app users never see a download or installation prompt.
+    const cards=Array.from(root.querySelectorAll('.lb-native-choice'));
+    if (nativeApp) {
+      cards.forEach(card=>card.remove());
+    } else {
       const welcome=root.querySelector('.studio.atlas-shell .welcome');
-      if (welcome && !welcome.querySelector('.lb-native-choice')) {
-        welcome.appendChild(nativeChoice());
-      }
+      const atlas=root.querySelector('.studio.atlas-shell .story-atlas');
+      const host=welcome||atlas;
+      cards.slice(1).forEach(card=>card.remove());
+      if (host) {
+        if (cards.length===0) host.appendChild(nativeChoice());
+        else if (cards[0].parentElement!==host) host.appendChild(cards[0]);
+      } else if (cards.length>0) cards[0].remove();
     }
     root.querySelectorAll('.studio.atlas-shell .atlas-caption').forEach(el => {
-      if (!el.querySelector('.lb-widgets-atlas')) {
-        const link=managerButton('atlas');
+      let link=el.querySelector('.lb-widgets-atlas');
+      if (!link) {
+        link=managerButton('atlas');
         link.style.marginLeft='auto';
         el.appendChild(link);
       } else {
-        const link=el.querySelector('.lb-widgets-atlas');
         link.href=nativeApp?'lightboxwidget://manager':'/widgets.html';
       }
     });

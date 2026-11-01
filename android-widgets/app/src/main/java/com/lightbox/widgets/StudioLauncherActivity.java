@@ -31,6 +31,7 @@ import android.widget.Toast;
  * in Chrome magically migrate into it: export/import a backup when switching.
  */
 public final class StudioLauncherActivity extends Activity {
+    public static final String EXTRA_OPEN_SYNC = "com.lightbox.widgets.OPEN_SYNC";
     private static final String STUDIO = "https://lightbox-studio.vercel.app/";
     private static final String HOST = "lightbox-studio.vercel.app";
     private static final int PICK_FILE = 712;
@@ -159,7 +160,16 @@ public final class StudioLauncherActivity extends Activity {
         shell.addView(failure, new LinearLayout.LayoutParams(-1, 0, 1));
 
         setContentView(shell);
-        web.loadUrl(STUDIO);
+        web.loadUrl(getIntent().getBooleanExtra(EXTRA_OPEN_SYNC,false)
+                    ? STUDIO+"widgets.html" : STUDIO);
+    }
+
+    @Override protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
+        if(web!=null && intent.getBooleanExtra(EXTRA_OPEN_SYNC,false)) {
+            web.loadUrl(STUDIO+"widgets.html");
+        }
     }
 
     /** Handle only our explicit, user-clicked native widget actions. */

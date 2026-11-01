@@ -65,9 +65,10 @@
     a.className = 'lb-widgets-link lb-widgets-' + kind;
     // Browser visitors see setup information, not an Android install/intent error.
     // Only the native WebView uses the app-owned deep link.
-    a.href = nativeApp ? 'lightboxwidget://manager' : '/widgets.html';
-    a.textContent = kind === 'atlas' ? 'ADD WIDGETS ↗' : 'ANDROID WIDGETS ↗';
-    a.setAttribute('aria-label', 'Open Lightbox Android widget manager');
+    a.href = nativeApp ? 'lightboxwidget://manager' : apkUrl;
+    if (!nativeApp) a.setAttribute('download', 'Lightbox-Studio-Android.apk');
+    a.textContent = nativeApp ? 'ADD WIDGETS ↗' : 'DOWNLOAD ANDROID APK ↓';
+    a.setAttribute('aria-label', nativeApp ? 'Open native widget manager' : 'Download Lightbox Studio Android APK with built-in widgets');
     return a;
   }
   let queued = false;
@@ -80,8 +81,9 @@
       cards.forEach(card=>card.remove());
     } else {
       const welcome=root.querySelector('.studio.atlas-shell .welcome');
-      const atlas=root.querySelector('.studio.atlas-shell .story-atlas');
-      const host=welcome||atlas;
+      // Only the first-use welcome view uses a card; active projects get a
+      // single, obvious direct-download action in the Atlas header.
+      const host=welcome;
       cards.slice(1).forEach(card=>card.remove());
       if (host) {
         if (cards.length===0) host.appendChild(nativeChoice());
@@ -95,7 +97,9 @@
         link.style.marginLeft='auto';
         el.appendChild(link);
       } else {
-        link.href=nativeApp?'lightboxwidget://manager':'/widgets.html';
+        link.href=nativeApp?'lightboxwidget://manager':apkUrl;
+        link.textContent=nativeApp?'ADD WIDGETS ↗':'DOWNLOAD ANDROID APK ↓';
+        if (!nativeApp) link.setAttribute('download','Lightbox-Studio-Android.apk');
       }
     });
   }

@@ -3,37 +3,40 @@
  android:id="@+id/widget_root" android:orientation="vertical"
  android:layout_width="match_parent" android:layout_height="match_parent"
  android:padding="12dp" android:background="@drawable/widget_panel">
- <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
-  android:text="LIGHTBOX / CURRENT SCENE" android:textSize="9sp" android:textStyle="bold"
-  android:textColor="#53564D" android:fontFamily="monospace"/>
- <LinearLayout android:layout_width="match_parent" android:layout_height="0dp"
-  android:layout_weight="1" android:orientation="horizontal" android:gravity="center_vertical">
-  <LinearLayout android:layout_width="0dp" android:layout_weight="1"
-    android:layout_height="wrap_content" android:orientation="vertical">
-   <TextView android:id="@+id/widget_title" android:layout_width="match_parent"
-    android:layout_height="wrap_content" android:text="YOUR NEXT STORY" android:textSize="18sp"
-    android:textStyle="bold" android:textColor="#181916" android:maxLines="1" android:ellipsize="end"/>
-   <TextView android:id="@+id/widget_count" android:layout_width="match_parent"
-    android:layout_height="wrap_content" android:text="0 WORDS" android:textSize="10sp"
-    android:textColor="#53564D" android:fontFamily="monospace"/>
-  </LinearLayout>
-  <TextView android:id="@+id/widget_scene" android:layout_width="54dp"
-   android:layout_height="54dp" android:layout_marginStart="8dp"
-   android:gravity="center" android:background="@drawable/widget_action_lime"
-   android:text="01" android:textSize="25sp" android:textStyle="bold" android:textColor="#181916"/>
+ <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+  android:orientation="horizontal" android:gravity="center_vertical">
+  <TextView android:layout_width="0dp" android:layout_weight="1"
+   android:layout_height="wrap_content" android:text="LIGHTBOX  /  IN PROGRESS"
+   android:textSize="9sp" android:textStyle="bold" android:singleLine="true"
+   android:textColor="#66685E" android:fontFamily="monospace"/>
+  <TextView android:id="@+id/widget_scene" android:layout_width="wrap_content"
+   android:layout_height="wrap_content" android:layout_marginStart="6dp"
+   android:gravity="center" android:paddingHorizontal="7dp" android:paddingVertical="4dp"
+   android:background="@drawable/widget_action_lime"
+   android:text="01" android:textSize="11sp" android:textStyle="bold" android:textColor="#181916"/>
  </LinearLayout>
- <LinearLayout android:layout_width="match_parent" android:layout_height="32dp" android:orientation="horizontal">
-  <TextView android:id="@+id/action_open" android:layout_width="0dp"
-   android:layout_weight="1" android:layout_height="match_parent" android:gravity="center"
+ <TextView android:id="@+id/widget_title" android:layout_width="match_parent"
+   android:layout_height="0dp" android:layout_weight="1" android:gravity="center_vertical"
+   android:text="Your current story" android:textSize="23sp" android:fontFamily="serif"
+   android:textColor="#181916" android:maxLines="1" android:ellipsize="end"/>
+ <LinearLayout android:layout_width="match_parent" android:layout_height="30dp"
+  android:orientation="horizontal" android:gravity="center_vertical">
+  <TextView android:id="@+id/widget_count" android:layout_width="0dp" android:layout_weight="1"
+    android:layout_height="match_parent" android:gravity="center_vertical"
+    android:text="0 WORDS" android:textSize="9sp" android:fontFamily="monospace"
+    android:textColor="#66685E"/>
+  <TextView android:id="@+id/action_open" android:layout_width="70dp"
+   android:layout_height="match_parent" android:gravity="center"
    android:clickable="true" android:background="@drawable/widget_action_ink"
-   android:text="OPEN STUDIO ↗" android:textColor="#EFEDE6" android:textSize="10sp" android:textStyle="bold"/>
-  <TextView android:id="@+id/action_capture" android:layout_width="0dp"
-   android:layout_weight="1" android:layout_height="match_parent" android:layout_marginStart="6dp"
-   android:gravity="center" android:clickable="true" android:background="@drawable/widget_action_lime"
-   android:text="CAPTURE +" android:textColor="#181916" android:textSize="10sp" android:textStyle="bold"/>
-  <TextView android:id="@+id/action_refresh" android:layout_width="52dp"
-   android:layout_height="match_parent" android:layout_marginStart="6dp"
+   android:text="OPEN ↗" android:textColor="#F9F8F3" android:textSize="10sp" android:textStyle="bold"/>
+  <TextView android:id="@+id/action_capture" android:layout_width="52dp"
+   android:layout_height="match_parent" android:layout_marginStart="5dp" android:gravity="center"
+   android:clickable="true" android:background="@drawable/widget_action_lime"
+   android:text="NOTE +" android:textColor="#181916" android:textSize="9sp" android:textStyle="bold"/>
+  <TextView android:id="@+id/action_refresh" android:layout_width="32dp"
+   android:layout_height="match_parent" android:layout_marginStart="5dp"
    android:gravity="center" android:clickable="true" android:background="@drawable/widget_action_ink"
-   android:text="↻" android:textColor="#EFEDE6" android:textSize="19sp" android:contentDescription="Refresh widget"/>
+   android:text="↻" android:textColor="#F9F8F3" android:textSize="17sp"
+   android:contentDescription="Refresh last synced data"/>
  </LinearLayout>
 </LinearLayout>

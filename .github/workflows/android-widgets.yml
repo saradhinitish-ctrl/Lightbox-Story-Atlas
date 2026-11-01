@@ -2,7 +2,7 @@ name: Android widgets debug build
 on:
   workflow_dispatch:
   push:
-    branches: [main]
+    branches: [main, 'feature/unified-lightbox-android']
     paths:
       - 'android-widgets/**'
       - '.github/workflows/android-widgets.yml'
@@ -27,11 +27,11 @@ jobs:
           set -euo pipefail
           SDK_ROOT="${ANDROID_SDK_ROOT:-${ANDROID_HOME:-/usr/local/lib/android/sdk}}"
           echo "SDK root: ${SDK_ROOT}"
-          if [ ! -f "${SDK_ROOT}/platforms/android-35/android.jar" ]; then
+          if [ ! -f "${SDK_ROOT}/platforms/android-36/android.jar" ]; then
             SDK_MANAGER="$(find "${SDK_ROOT}/cmdline-tools" -type f -name sdkmanager | head -1)"
             test -n "${SDK_MANAGER}"
             yes | "${SDK_MANAGER}" --licenses >/dev/null || true
-            "${SDK_MANAGER}" "platforms;android-35" "build-tools;35.0.0"
+            "${SDK_MANAGER}" "platforms;android-36" "build-tools;36.0.0"
           fi
       - name: Gradle
         uses: gradle/actions/setup-gradle@v4
@@ -39,44 +39,41 @@ jobs:
           gradle-version: '8.11.1'
       - name: Assemble Android widget companion
         working-directory: android-widgets
-        run: gradle --no-daemon assembleDebug
+        run: gradle --no-daemon assembleDebug assembleRelease bundleRelease
+      - name: Upload unsigned AAB for signing preparation
+        uses: actions/upload-artifact@v4
+        with:
+          name: lightbox-unified-unsigned-aab
+          path: android-widgets/app/build/outputs/bundle/release/app-release.aab
       - name: Upload installable debug APK
         uses: actions/upload-artifact@v4
         with:
           name: lightbox-widgets-debug-apk
           path: android-widgets/app/build/outputs/apk/debug/app-debug.apk
 
-  publish:
-    name: Publish install button APK
-    needs: build
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-    steps:
-      - name: Checkout production website
-        uses: actions/checkout@v4
+
+      - name: Upload unsigned native release APK for local signing verification
+        if: startsWith(github.ref, 'refs/heads/feature/')
+        uses: actions/upload-artifact@v4
         with:
-          persist-credentials: true
-          ref: main
-      - name: Retrieve tested Android APK
-        uses: actions/download-artifact@v4
-        with:
-          name: lightbox-widgets-debug-apk
-          path: .widget-apk-artifact
-      - name: Publish APK for the Lightbox install flow
+          name: lightbox-unified-unsigned-release-apk
+          path: android-widgets/app/build/outputs/apk/release/*unsigned.apk
+      - name: Upload Android SDK signing tools for isolated local verification
+        if: startsWith(github.ref, 'refs/heads/feature/')
         shell: bash
         run: |
           set -euo pipefail
-          mkdir -p android-downloads
-          install -m 0644 .widget-apk-artifact/app-debug.apk android-downloads/lightbox-widgets.apk
-          sha256sum android-downloads/lightbox-widgets.apk > android-downloads/SHA256SUMS
-          printf 'Source commit: %s\nDebug test APK only; not a Play Store release.\n' "${{ github.sha }}" > android-downloads/BUILD.txt
-          git add android-downloads/lightbox-widgets.apk android-downloads/SHA256SUMS android-downloads/BUILD.txt
-          if git diff --cached --quiet; then
-            echo "APK unchanged; no publish commit needed"
-            exit 0
-          fi
-          git config user.name "Lightbox Widget Builder"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git commit -m "Publish Lightbox widget companion test APK"
-          git push origin HEAD:main
+          SDK_ROOT="${ANDROID_SDK_ROOT:-${ANDROID_HOME:-/usr/local/lib/android/sdk}}"
+          mkdir -p signing-qa-tools
+          SIGNER="$(find "${SDK_ROOT}/build-tools" -path '*/lib/apksigner.jar' | sort -V | tail -1)"
+          ALIGN="$(find "${SDK_ROOT}/build-tools" -maxdepth 2 -name 'zipalign' | sort -V | tail -1)"
+          test -s "${SIGNER}"
+          test -x "${ALIGN}"
+          cp "${SIGNER}" signing-qa-tools/apksigner.jar
+          cp "${ALIGN}" signing-qa-tools/zipalign
+      - name: Upload local Android sign/verify tools
+        if: startsWith(github.ref, 'refs/heads/feature/')
+        uses: actions/upload-artifact@v4
+        with:
+          name: lightbox-android-signing-tools
+          path: signing-qa-tools/

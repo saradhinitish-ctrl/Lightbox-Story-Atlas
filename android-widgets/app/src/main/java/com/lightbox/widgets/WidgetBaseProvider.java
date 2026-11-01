@@ -34,11 +34,11 @@ public abstract class WidgetBaseProvider extends AppWidgetProvider {
         Bitmap art=WidgetPainter.draw(kind,WidgetState.read(context),width,height);
         RemoteViews rv=new RemoteViews(context.getPackageName(),R.layout.widget_shell);
         rv.setImageViewBitmap(R.id.art,art);
-        Intent open=new Intent(Intent.ACTION_VIEW,Uri.parse("https://lightbox-studio.vercel.app/"));
-        open.addCategory(Intent.CATEGORY_BROWSABLE);
+        Intent open=new Intent(context, StudioLauncherActivity.class);
         PendingIntent resume=PendingIntent.getActivity(context,10000+id,open,
             PendingIntent.FLAG_UPDATE_CURRENT|PendingIntent.FLAG_IMMUTABLE);
         rv.setOnClickPendingIntent(R.id.resumeTap,resume);
+        rv.setOnClickPendingIntent(R.id.art,resume);
         if(kind==2){
             rv.setViewVisibility(R.id.captureTap,View.VISIBLE);
             Intent capture=new Intent(context,QuickCaptureActivity.class);

@@ -22,6 +22,22 @@ label{display:block;font:700 11px monospace;letter-spacing:.07em;margin-bottom:1
 .info{display:grid;grid-template-columns:1fr 1fr;gap:28px;margin-top:35px;font-size:13px;line-height:1.55;color:var(--muted)}.info strong{color:var(--ink)}
 footer{margin-top:50px;padding-top:17px;border-top:2px solid var(--ink);font:700 10px monospace;display:flex;justify-content:space-between;gap:12px}
 @media(max-width:700px){.previews{grid-template-columns:1fr 1fr}.preview:nth-child(3){grid-column:1/-1}.info{grid-template-columns:1fr}.top a{font-size:10px}}
+.install-card{background:#181916;color:#F2F0E9;border:2px solid #181916;border-radius:10px;margin:34px 0 44px;padding:clamp(19px,3vw,32px);box-shadow:5px 6px 0 #C6FF00;scroll-margin-top:24px}
+.install-top{display:flex;justify-content:space-between;gap:12px;border-bottom:1px solid #555950;padding-bottom:13px;font:800 10px/1.3 monospace;letter-spacing:.075em}
+.install-system{color:#C6FF00}.install-layout{display:grid;grid-template-columns:1.2fr .8fr;gap:clamp(20px,4vw,55px);align-items:center;padding:25px 0 20px}
+.install-copy h2{font-size:clamp(28px,4.6vw,48px);letter-spacing:-.062em;line-height:1.02;margin:0 0 16px}
+.install-copy h2 em{font-family:Georgia,serif;font-weight:400}
+.install-copy p{font-size:13px;line-height:1.67;color:#C8C9BE;max-width:45ch;margin:0}
+.install-tags{display:flex;gap:8px;margin-top:20px}
+.install-tags span{font:800 10px monospace;padding:7px 9px;border:1px solid #A7AAA0}
+.install-download{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:19px;background:#C6FF00;color:#181916;text-decoration:none;border:1px solid #C6FF00;border-radius:4px;font:900 13px monospace;min-height:60px}
+.install-download:hover,.install-download:focus-visible{background:#DAFF60;outline:2px solid #F2F0E9;outline-offset:3px}
+.install-download span{font-size:19px}
+.install-caution{font:11px/1.55 Arial,sans-serif;color:#C8C9BE;margin:12px 0}
+.install-open{display:inline-block;padding:10px 0;color:#C6FF00!important;font:700 12px monospace;text-underline-offset:4px}
+.install-steps{display:flex;flex-wrap:wrap;justify-content:space-between;gap:10px;border-top:1px solid #555950;padding-top:17px;color:#D2D4C9;font:800 10px/1.4 monospace}
+@media(max-width:700px){.install-layout{grid-template-columns:1fr;gap:26px}.install-steps{display:grid;grid-template-columns:1fr 1fr}.install-download{font-size:12px}}
+
 @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
 </style>
 </head>
@@ -36,7 +52,23 @@ footer{margin-top:50px;padding-top:17px;border-top:2px solid var(--ink);font:700
   <div class="preview"><p>02 / 4×2</p><span class="flag">06</span><strong>Current<br>scene.</strong><small>DRAFT / WORD COUNT</small><div class="bar">BACK TO THE PAGE ↗</div></div>
   <div class="preview"><p>03 / 4×4</p><strong>Story in<br>progress.</strong><small>CURRENT SCENE / DRAFT</small><div class="scene">EXT. STATION PLATFORM — NIGHT</div><div class="bar">RESUME ↗ &nbsp;&nbsp; CAPTURE +</div></div>
  </section>
- <h2 class="section-title">01 / CONNECT YOUR CURRENT STORY</h2>
+ <section class="install-card" id="install" aria-labelledby="install-title">
+  <div class="install-top"><span class="install-index">01 / REQUIRED ONCE</span><span class="install-system">ANDROID 8.0+</span></div>
+  <div class="install-layout">
+    <div class="install-copy">
+      <h2 id="install-title">Give Lightbox a place <em>on your home screen.</em></h2>
+      <p>Lightbox from Chrome is the filmmaking studio. To add real Android widgets, install its small, separate native companion. Your existing Lightbox app and saved stories stay untouched.</p>
+      <div class="install-tags"><span>2 × 2</span><span>4 × 2</span><span>4 × 4</span></div>
+    </div>
+    <div class="install-action">
+      <a class="install-download" id="widget-download" href="/android-downloads/lightbox-widgets.apk" download="Lightbox-Widgets.apk" type="application/vnd.android.package-archive">GET WIDGETS FOR ANDROID <span aria-hidden="true">↓</span></a>
+      <p class="install-caution">Android will ask you to approve installing this test APK. Install only from the official Lightbox website; the test build is not a Play Store release.</p>
+      <a class="install-open" id="widget-open-companion" href="intent://sync#Intent;scheme=lightboxwidget;package=com.lightbox.widgets;end">Already installed? Open widget manager ↗</a>
+    </div>
+  </div>
+  <div class="install-steps"><span>01 — DOWNLOAD</span><span>02 — INSTALL</span><span>03 — SYNC STORY</span><span>04 — ADD WIDGET</span></div>
+ </section>
+ <h2 class="section-title" id="sync-title">02 / CONNECT YOUR CURRENT STORY</h2>
  <div class="panel">
   <label for="project">SELECT STORY WORLD</label>
   <select id="project" disabled><option>Reading your Lightbox projects…</option></select>
@@ -45,8 +77,8 @@ footer{margin-top:50px;padding-top:17px;border-top:2px solid var(--ink);font:700
   <a id="launch" aria-disabled="true">SYNC SELECTED STORY TO ANDROID ↗</a>
  </div>
  <section class="info">
-  <div><strong>02 / ADD WIDGETS</strong><p>After the companion opens, use its three Add Widget buttons. Android asks you to approve the home-screen placement. You may use all three sizes at once.</p></div>
-  <div><strong>03 / KEEP IT CURRENT</strong><p>Widgets reflect your last manual sync. Return here after substantial writing to update the scene and word progress. Full screenplay text is never transferred.</p></div>
+  <div><strong>03 / ADD WIDGETS</strong><p>After the companion opens, use its three Add Widget buttons. Android asks you to approve the home-screen placement. You may use all three sizes at once.</p></div>
+  <div><strong>04 / KEEP IT CURRENT</strong><p>Widgets reflect your last manual sync. Return here after substantial writing to update the scene and word progress. Full screenplay text is never transferred.</p></div>
   <div><strong>ABOUT YOUR INSTALLATION</strong><p>Your current Lightbox PWA and its saved projects are not replaced. This is a separate native Android widget companion, required by Android’s widget system.</p></div>
   <div><strong>QUICK CAPTURE</strong><p>The large widget saves short offline notes inside the companion. Copy them into your screenplay when ready; they are not silently inserted into your draft.</p></div>
  </section>

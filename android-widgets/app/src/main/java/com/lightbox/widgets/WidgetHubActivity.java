@@ -73,7 +73,12 @@ public final class WidgetHubActivity extends Activity {
         startActivity(intent);
     }
     private void openSync(){
-        startActivity(new Intent(Intent.ACTION_VIEW,Uri.parse("https://lightbox-studio.vercel.app/widgets.html")));
+        // Keep project sync INSIDE the native Lightbox app. Opening an
+        // external browser caused users to see APK install prompts again.
+        Intent studio=new Intent(this,StudioLauncherActivity.class);
+        studio.putExtra(StudioLauncherActivity.EXTRA_OPEN_SYNC,true);
+        studio.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(studio);
     }
     private void render(){
         ScrollView scroller=new ScrollView(this);scroller.setFillViewport(true);

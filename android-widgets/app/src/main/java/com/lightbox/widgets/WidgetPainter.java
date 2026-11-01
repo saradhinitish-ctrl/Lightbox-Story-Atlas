@@ -90,6 +90,35 @@ public final class WidgetPainter {
     private void title(String raw,float x,float baseline,float size,float leading,float maxWidth,int maxLines) {
         String value=raw==null||raw.isBlank()?"UNTITLED STORY":raw.trim();
         String[] tokens=value.split("\\s+");
+        // Editorial titles like "AFTER THE RAIN" intentionally use
+        // AFTER / the RAIN, matching the approved Lightbox design.
+        if(tokens.length>=3 && "the".equalsIgnoreCase(tokens[1])) {
+            StringBuilder right=new StringBuilder();
+            for(int i=1;i<tokens.length;i++) {
+                if(right.length()>0)right.append(" ");
+                right.append(tokens[i]);
+            }
+            float first=titleWidth(tokens[0],size);
+            float second=0;
+            String[] rest=right.toString().split("\\s+");
+            for(int i=0;i<rest.length;i++)
+                second+=titleWidth(rest[i],size)+(i>0?size*.28f:0);
+            if(first<=maxWidth && second<=maxWidth) {
+                drawText(tokens[0].toUpperCase(Locale.ROOT),x,baseline,size,INK,"sans-serif-black",true);
+                baseline+=leading;
+                float xx=x;
+                for(String word:rest) {
+                    float ww=titleWidth(word,size);
+                    if("the".equalsIgnoreCase(word)) {
+                        p.setColor(INK);p.setTextSize(size);
+                        p.setTypeface(Typeface.create("serif",Typeface.ITALIC));
+                        c.drawText("the",xx,baseline,p);
+                    } else drawText(word.toUpperCase(Locale.ROOT),xx,baseline,size,INK,"sans-serif-black",true);
+                    xx+=ww+size*.28f;
+                }
+                return;
+            }
+        }
         float font=size;
         java.util.List<java.util.List<String>> lines=new java.util.ArrayList<>();
         while(true) {
@@ -145,8 +174,9 @@ public final class WidgetPainter {
     private void wide(WidgetState s) {
         brand(20);
         label("CURRENT STORY / "+trim(s.draft,13),16,48,MUTED);
-        title(s.title,15,84,34,32,225,2);
-        label("SC. "+trim(s.scene,4)+"  /  "+s.words+" WORDS",16,113,MUTED);
+        title(s.title,15,79,32,30,225,2);
+        // Scene number is already prominent in the lime panel.
+        // A second metadata row collided with multi-line titles at 4×2.
         box(258,36,68,83,LIME);
         drawText(trim(s.scene,3),267,92,52,INK,"sans-serif-black",true);
         label("SCENE",272,109,INK);
@@ -156,11 +186,11 @@ public final class WidgetPainter {
         brand(22);
         label("CURRENT STORY / "+trim(s.draft,14),18,53,MUTED);
         title(s.title,18,95,39,36,218,2);
-        label("LAST EDITED  / SC. "+trim(s.scene,4),18,139,MUTED);
+        label("LAST EDITED  / SC. "+trim(s.scene,4),18,151,MUTED);
         box(255,38,71,96,LIME);
         drawText(trim(s.scene,3),267,102,52,INK,"sans-serif-black",true);
         label("SCENE",272,120,INK);
-        line(18,157,294,INK,1.2f);
+        line(18,166,294,INK,1.2f);
         label("UP NEXT / SCENE "+trim(s.scene,4),18,180,INK);
         box(262,169,50,17,LIME); drawText("WRITING",269,181,8,INK,"monospace",true);
         String heading = s.heading == null ? "OPEN YOUR SCREENPLAY" : s.heading.toUpperCase(Locale.ROOT);

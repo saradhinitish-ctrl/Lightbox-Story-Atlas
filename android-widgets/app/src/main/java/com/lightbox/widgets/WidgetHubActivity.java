@@ -66,7 +66,7 @@ public final class WidgetHubActivity extends Activity {
         if(m.isRequestPinAppWidgetSupported()){
             boolean requested=m.requestPinAppWidget(new ComponentName(this,provider),null,null);
             if(!requested)Toast.makeText(this,"Use your home screen's Widgets menu",Toast.LENGTH_LONG).show();
-        }else Toast.makeText(this,"Long press your home screen → Widgets → Lightbox Widgets",Toast.LENGTH_LONG).show();
+        }else Toast.makeText(this,"Long press your home screen → Widgets → Lightbox Studio",Toast.LENGTH_LONG).show();
     }
     private void openSite(){
         Intent intent=new Intent(this,StudioLauncherActivity.class);
@@ -98,6 +98,6 @@ public final class WidgetHubActivity extends Activity {
         button("SYNC PROJECT FROM LIGHTBOX  ↗",LIME,INK,this::openSync);
         button("OPEN LIGHTBOX STUDIO  ↗",PAPER,INK,this::openSite);
         button("OPEN QUICK CAPTURE  +",PAPER,INK,()->startActivity(new Intent(this,QuickCaptureActivity.class)));
-        add(text("Your installed PWA remains untouched. Only selected project metadata is copied into these widgets; screenplay contents stay in Lightbox.",11,MUTED,false),20);
+        add(text("Your widgets are built into this Lightbox Android app. Project metadata syncs when you select a story. The screenplay remains in Lightbox.",11,MUTED,false),20);
     }
 }

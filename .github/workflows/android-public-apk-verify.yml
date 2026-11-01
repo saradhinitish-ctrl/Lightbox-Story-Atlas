@@ -1,4 +1,5 @@
 name: Verify public Lightbox Android installer
+# Revalidated after publication of signed native Lightbox 1.0.2 with functional RemoteViews.
 on:
   push:
     branches: [main]

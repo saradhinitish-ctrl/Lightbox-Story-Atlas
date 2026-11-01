@@ -1,0 +1,100 @@
+name: Publish repaired co-installable Lightbox Android APK
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'android-downloads/.publishing/lightbox-signed-segment.xz.b64'
+permissions:
+  contents: write
+  actions: read
+concurrency:
+  group: lightbox-fixed-apk-release
+  cancel-in-progress: false
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/download-artifact@v4
+        with:
+          run-id: 41333507304
+          name: lightbox-unified-unsigned-release-apk
+          path: unsigned-dist
+          github-token: ${{ github.token }}
+      - name: Prepare reproducible aligned unsigned base
+        shell: bash
+        run: |
+          set -euo pipefail
+          SDK_ROOT=/usr/local/lib/android/sdk
+          SDK_MANAGER="$(find "$SDK_ROOT/cmdline-tools" -type f -name sdkmanager | head -1)"
+          test -f "$SDK_ROOT/build-tools/36.0.0/zipalign" || "$SDK_MANAGER" "build-tools;36.0.0"
+          test -s unsigned-dist/app-release-unsigned.apk
+          "$SDK_ROOT/build-tools/36.0.0/zipalign" -f -p 4 unsigned-dist/app-release-unsigned.apk /tmp/lightbox-aligned.apk
+          echo '6d7846ed63ac1ed87499432dc8e4d88f89776469e55f2518e059e93feb9cbd1e  /tmp/lightbox-aligned.apk' | sha256sum -c -
+      - name: Reassemble owner-signed release from authenticated unsigned APK
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import base64,hashlib,json,lzma,pathlib,zipfile,io
+          base=pathlib.Path('/tmp/lightbox-aligned.apk').read_bytes()
+          signed_patch=base64.b64decode(pathlib.Path('android-downloads/.publishing/lightbox-signed-segment.xz.b64').read_text().strip())
+          segment=lzma.decompress(signed_patch)
+          assert len(segment)==10926
+          assert hashlib.sha256(segment).hexdigest()=='2c3963d2484894191a929ad48c9b84c79f08554bba12f8d70a802c703bb5a613'
+          result=bytearray(base[:25938]+segment+base[28568:])
+          end=result.rfind(b'PK\x05\x06')
+          assert end>0
+          result[end+16:end+20]=(36864).to_bytes(4,'little')
+          digest=hashlib.sha256(result).hexdigest()
+          assert len(result)==37816 and digest=='9a51327baabaab44ecf328b62f764e7a066c9b74e0c4f0dcb252bb3b53a2b4a9'
+          with zipfile.ZipFile(io.BytesIO(result)) as apk:
+              manifest=apk.read('AndroidManifest.xml')
+              assert 'com.saradhinitish.lightboxstudio'.encode('utf-16-le') in manifest
+              assert apk.testzip() is None
+          pathlib.Path('android-downloads/lightbox-studio.apk').write_bytes(result)
+          pathlib.Path('android-downloads/UNIFIED-SHA256SUMS').write_text(digest+'  android-downloads/lightbox-studio.apk\n')
+          assetlinks=json.loads(pathlib.Path('.well-known/assetlinks.json').read_text())
+          new={'relation':['delegate_permission/common.handle_all_urls'],'target':{
+              'namespace':'android_app','package_name':'com.saradhinitish.lightboxstudio',
+              'sha256_cert_fingerprints':['EA:2C:B6:63:C8:09:73:A2:90:A0:3F:7B:F2:0E:72:60:EB:22:BD:DC:33:83:0E:A5:FA:6F:A9:55:26:BA:02:DF']}}
+          assetlinks=[x for x in assetlinks if x.get('target',{}).get('package_name')!='com.saradhinitish.lightboxstudio']
+          assetlinks.append(new)
+          pathlib.Path('.well-known/assetlinks.json').write_text(json.dumps(assetlinks,indent=2)+'\n')
+          print('Reconstructed exact signed release',digest,len(result))
+          PY
+      - name: Verify APK signing certificate and scheme
+        shell: bash
+        run: |
+          set -euo pipefail
+          SDK_ROOT=/usr/local/lib/android/sdk
+          "$SDK_ROOT/build-tools/36.0.0/apksigner" verify --verbose --print-certs android-downloads/lightbox-studio.apk | tee /tmp/lightbox-signature.txt
+          grep -q 'Verified using v2 scheme (APK Signature Scheme v2): true' /tmp/lightbox-signature.txt
+          grep -qi 'ea2cb663c80973a290a03f7bf20e7260eb22bddc33830ea5fa6fa95526ba02df' /tmp/lightbox-signature.txt
+      - name: Publish release with website native intent targets
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import pathlib
+          p=pathlib.Path('widgets.html')
+          s=p.read_text()
+          s=s.replace('package=com.saradhinitish.lightbox;','package=com.saradhinitish.lightboxstudio;')
+          s=s.replace("Number(r.headers.get('Content-Length'))>3500000","Number(r.headers.get('Content-Length'))>30000")
+          s=s.replace('The public download is being prepared.','The signed native APK is now available.')
+          p.write_text(s)
+          p=pathlib.Path('widget-entry.js')
+          s=p.read_text()
+          s=s.replace('package=com.saradhinitish.lightbox;','package=com.saradhinitish.lightboxstudio;')
+          s=s.replace('Android APK beta: currently being updated after launch failures on some Oppo/ColorOS phones.','Android APK beta: native launcher repaired; verify widgets on your Android device.')
+          p.write_text(s)
+          PY
+          git add android-downloads/lightbox-studio.apk android-downloads/UNIFIED-SHA256SUMS .well-known/assetlinks.json widgets.html widget-entry.js
+          git config user.name 'Lightbox Signed Android Release'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -m 'Publish repaired Lightbox Android 1.0.1 APK with native widget links'
+          git push origin HEAD:main

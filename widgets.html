@@ -46,7 +46,7 @@ footer{margin-top:50px;padding-top:17px;border-top:2px solid var(--ink);font:700
  <header class="top"><div class="id">LIGHTBOX <i>/</i> W.I.P.</div><a href="/">↖ BACK TO STUDIO</a></header>
  <div class="kicker">ANDROID / HOME-SCREEN EDITION</div>
  <h1>Keep the <em>scene</em> close.</h1>
- <p class="intro">Three native widgets, individually composed for your home screen. Choose your current story here, send a small snapshot to the Android companion, and add whichever layouts you want.</p>
+ <p class="intro">Three native Android widgets, built into one Lightbox Studio app. Install Lightbox once, then choose the layouts you want directly from the app.</p>
  <section class="previews" aria-label="Widget variants">
   <div class="preview"><p>01 / 2×2</p><strong>Quick<br>return.</strong><small>ONE TAP BACK</small><div class="bar">RESUME WRITING ↗</div></div>
   <div class="preview"><p>02 / 4×2</p><span class="flag">06</span><strong>Current<br>scene.</strong><small>DRAFT / WORD COUNT</small><div class="bar">BACK TO THE PAGE ↗</div></div>
@@ -57,17 +57,17 @@ footer{margin-top:50px;padding-top:17px;border-top:2px solid var(--ink);font:700
   <div class="install-layout">
     <div class="install-copy">
       <h2 id="install-title">Give Lightbox a place <em>on your home screen.</em></h2>
-      <p>Lightbox from Chrome is the filmmaking studio. The unified Lightbox Android app already includes all three native widgets. No second widget utility or APK download is required.</p>
+      <p>Lightbox from Chrome is the filmmaking studio. The unified Lightbox Android app includes all three native widgets. There is no separate widget utility to install.</p>
       <div class="install-tags"><span>2 × 2</span><span>4 × 2</span><span>4 × 4</span></div>
     </div>
     <div class="install-action">
-      <a class="install-download" id="widget-download" href="intent://manager#Intent;scheme=lightboxwidget;package=com.saradhinitish.lightbox;S.browser_fallback_url=https%3A%2F%2Flightbox-studio.vercel.app%2Fwidgets.html%23install;end">OPEN YOUR WIDGET MANAGER <span aria-hidden="true">↗</span></a>
-      <p class="install-caution">The unified native Lightbox Android app contains all three widgets. You never need a separate widget app. If the widget manager doesn't open, your installed version may still be the Chrome web app, which does not support Android widgets. The Chrome-installed web app does not include native widgets.</p>
       <div id="native-install-ready" hidden>
         <a class="install-download" style="margin:14px 0" href="/android-downloads/lightbox-studio.apk" download="Lightbox-Studio-Android.apk">INSTALL LIGHTBOX FOR ANDROID <span aria-hidden="true">↓</span></a>
         <p class="install-caution">This is the complete Android app, including all three widgets. It is not a second widget installer. Android may require your approval to install an app from the website.</p>
       </div>
-      <p class="install-caution" id="native-install-pending">The signed public Android installer isn't available here yet. Existing native-app users can still open the widget manager above.</p>
+      <a class="install-download" id="widget-download" href="intent://manager#Intent;scheme=lightboxwidget;package=com.saradhinitish.lightbox;S.browser_fallback_url=https%3A%2F%2Flightbox-studio.vercel.app%2Fwidgets.html%23install;end">ALREADY INSTALLED? ADD WIDGETS <span aria-hidden="true">↗</span></a>
+      
+      <p class="install-caution" id="native-install-pending">The public download is being prepared. When verified, the Install Lightbox button will appear here automatically. Already installed the native app? Open the widget manager above.</p>
       <a class="install-open" id="widget-open-companion" href="intent://manager#Intent;scheme=lightboxwidget;package=com.saradhinitish.lightbox;end">Widget manager ↗</a>
     </div>
   </div>
@@ -77,7 +77,7 @@ footer{margin-top:50px;padding-top:17px;border-top:2px solid var(--ink);font:700
  <div class="panel">
   <label for="project">SELECT STORY WORLD</label>
   <select id="project" disabled><option>Reading your Lightbox projects…</option></select>
-  <div id="status" role="status">Your project data stays in your browser. Only selected metadata goes to the Android widget companion.</div>
+  <div id="status" role="status">Your project data stays in your browser. Only selected project details are shared with the installed Lightbox Android widgets.</div>
   <div id="summary" aria-live="polite"></div>
   <a id="launch" aria-disabled="true">SYNC SELECTED STORY TO ANDROID ↗</a>
  </div>
@@ -94,7 +94,7 @@ footer{margin-top:50px;padding-top:17px;border-top:2px solid var(--ink);font:700
 'use strict';
 const nativeReady=document.getElementById('native-install-ready'),nativePending=document.getElementById('native-install-pending');
 fetch('/android-downloads/lightbox-studio.apk',{method:'HEAD',cache:'no-store'}).then(r=>{
-  if(r.ok&&r.headers.get('Content-Type')?.includes('android.package-archive')) {
+  if(r.ok&&r.headers.get('Content-Type')?.includes('android.package-archive')&&Number(r.headers.get('Content-Length')||0)>3500000) {
     nativeReady.hidden=false;
     nativePending.hidden=true;
   }

@@ -1,0 +1,54 @@
+name: Verify public Lightbox Android installer
+on:
+  push:
+    branches: [main]
+    paths:
+      - "android-downloads/lightbox-studio.apk"
+      - "android-downloads/UNIFIED-SHA256SUMS"
+      - ".well-known/assetlinks.json"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    name: Verify release checksum, signing identity and installed app ID
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Check public signed app checksum
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -s android-downloads/lightbox-studio.apk
+          sha256sum -c android-downloads/UNIFIED-SHA256SUMS
+          test "$(stat -c%s android-downloads/lightbox-studio.apk)" -gt 3500000
+      - name: Ensure Android 36 signing utility is available
+        shell: bash
+        run: |
+          set -euo pipefail
+          SDK_ROOT="${ANDROID_SDK_ROOT:-${ANDROID_HOME:-/usr/local/lib/android/sdk}}"
+          SDK_MANAGER="$(find "${SDK_ROOT}/cmdline-tools" -type f -name sdkmanager | head -1)"
+          if [ ! -f "${SDK_ROOT}/build-tools/36.0.0/apksigner" ]; then "${SDK_MANAGER}" "build-tools;36.0.0"; fi
+      - name: Verify v2 signature and exact native app signing certificate
+        shell: bash
+        run: |
+          set -euo pipefail
+          SDK_ROOT="${ANDROID_SDK_ROOT:-${ANDROID_HOME:-/usr/local/lib/android/sdk}}"
+          APK="android-downloads/lightbox-studio.apk"
+          "${SDK_ROOT}/build-tools/36.0.0/apksigner" verify --verbose --print-certs "$APK" > signed-apk-report.txt
+          grep -q 'Verified using v2 scheme (APK Signature Scheme v2): true' signed-apk-report.txt
+          grep -qi 'a61108f7b3de46fa1becec17b37f39948e914f043bb8652ba54c789631139e82' signed-apk-report.txt
+      - name: Verify Digital Asset Links match the native signed app
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json
+          data=json.load(open(".well-known/assetlinks.json"))
+          wanted="A6:11:08:F7:B3:DE:46:FA:1B:EC:EC:17:B3:7F:39:94:8E:91:4F:04:3B:B8:65:2B:A5:4C:78:96:31:13:9E:82"
+          found=any(x.get("target",{}).get("package_name")=="com.saradhinitish.lightbox" and wanted in x.get("target",{}).get("sha256_cert_fingerprints",[]) for x in data)
+          if not found: raise SystemExit("The Android cert and Digital Asset Links do not match")
+          print("Verified domain association for Lightbox Studio Android")
+          PY

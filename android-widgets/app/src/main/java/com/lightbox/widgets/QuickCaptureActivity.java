@@ -73,8 +73,7 @@ public final class QuickCaptureActivity extends Activity {
         field.setPadding(px(16),px(18),px(16),px(16));field.setBackground(bg(Color.WHITE));
         add(field,24);
         button("SAVE NOTE  +",LIME,INK,this::save);
-        button("OPEN STUDIO  ↗",PAPER,INK,()->startActivity(new Intent(Intent.ACTION_VIEW,
-            android.net.Uri.parse("https://lightbox-studio.vercel.app/"))));
+        button("OPEN STUDIO  ↗",PAPER,INK,()->startActivity(new Intent(this,StudioLauncherActivity.class)));
         add(label("SAVED ON THIS DEVICE / PRIVATE NOTES",11,MUTED,true),28);
         JSONArray list=notes();
         if(list.length()==0)add(label("No notes captured yet.",14,MUTED,false),14);

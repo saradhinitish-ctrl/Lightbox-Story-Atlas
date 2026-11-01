@@ -61,6 +61,27 @@ public final class WidgetState {
         catch (Exception ignored) { return 0; }
     }
 
+
+    /** Android 15+ widget picker previews use the same bitmap renderer as the home screen. */
+    public static void publishPreviews(Context context) {
+        if (android.os.Build.VERSION.SDK_INT < 35) return;
+        SharedPreferences p = context.getSharedPreferences(FILE, Context.MODE_PRIVATE);
+        long then = p.getLong("previewsUpdatedAt",0);
+        if (System.currentTimeMillis()-then < 60L*60*1000) return;
+        AppWidgetManager m=AppWidgetManager.getInstance(context);
+        Class<?>[] types={QuickProvider.class,WideProvider.class,LargeProvider.class};
+        int[] w={160,330,330},h={160,160,324};
+        for(int i=0;i<types.length;i++) {
+            android.widget.RemoteViews rv=new android.widget.RemoteViews(context.getPackageName(),R.layout.widget_shell);
+            rv.setImageViewBitmap(R.id.art,WidgetPainter.draw(i,read(context),w[i]*2,h[i]*2));
+            rv.setViewVisibility(R.id.captureTap,i==2?android.view.View.VISIBLE:android.view.View.GONE);
+            try{m.setWidgetPreview(new ComponentName(context,types[i]),
+                android.appwidget.AppWidgetProviderInfo.WIDGET_CATEGORY_HOME_SCREEN,rv);}
+            catch(RuntimeException ignored){}
+        }
+        p.edit().putLong("previewsUpdatedAt",System.currentTimeMillis()).apply();
+    }
+
     public static void refreshAll(Context context) {
         AppWidgetManager manager = AppWidgetManager.getInstance(context);
         Class<?>[] receivers = {QuickProvider.class, WideProvider.class, LargeProvider.class};

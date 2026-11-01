@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+ android:layout_width="match_parent" android:layout_height="match_parent"
+ android:background="@drawable/widget_preview_bg" android:orientation="vertical">
+ <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+  android:paddingTop="14dp" android:paddingLeft="12dp" android:text="LIGHTBOX / W.I.P."
+  android:textColor="@color/ink" android:textSize="9sp" android:textStyle="bold"/>
+ <TextView android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1"
+  android:gravity="center_vertical" android:paddingLeft="12dp"
+  android:text="AFTER
+THE RAIN" android:textColor="@color/ink"
+  android:textSize="24sp" android:textStyle="bold"/>
+ <TextView android:layout_width="match_parent" android:layout_height="38dp"
+  android:background="@color/ink" android:gravity="center_vertical"
+  android:paddingLeft="12dp" android:text="RESUME WRITING  ↗"
+  android:textSize="10sp" android:textStyle="bold" android:textColor="@color/paper"/>
+</LinearLayout>

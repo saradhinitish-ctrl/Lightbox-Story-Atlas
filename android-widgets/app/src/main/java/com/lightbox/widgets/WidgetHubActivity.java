@@ -26,6 +26,7 @@ public final class WidgetHubActivity extends Activity {
         super.onCreate(state);
         boolean synced=WidgetState.accept(this,getIntent().getData());
         render();
+        WidgetState.publishPreviews(this);
         if(synced)Toast.makeText(this,"Story sent to your widgets",Toast.LENGTH_LONG).show();
     }
     @Override protected void onNewIntent(Intent intent){

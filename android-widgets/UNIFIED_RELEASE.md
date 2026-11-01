@@ -44,3 +44,6 @@ Do not merge this feature branch into the live install/download flow until its s
 
 
 Note: the unified application has a distinct package name from the legacy `com.lightbox.widgets` companion. This allows side-by-side installation without overwriting old private notes. The web sync intent must target the new package when this version ships.
+
+## Prepared website widget flow
+The feature branch `widgets.html` now opens the native widget manager via `intent://manager` and routes manual sync to package `com.saradhinitish.lightbox`. It removes the old extra APK download. **Do not merge these changes to the live website until the unified app has a verified distribution channel.**

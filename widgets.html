@@ -53,20 +53,20 @@ footer{margin-top:50px;padding-top:17px;border-top:2px solid var(--ink);font:700
   <div class="preview"><p>03 / 4×4</p><strong>Story in<br>progress.</strong><small>CURRENT SCENE / DRAFT</small><div class="scene">EXT. STATION PLATFORM — NIGHT</div><div class="bar">RESUME ↗ &nbsp;&nbsp; CAPTURE +</div></div>
  </section>
  <section class="install-card" id="install" aria-labelledby="install-title">
-  <div class="install-top"><span class="install-index">01 / REQUIRED ONCE</span><span class="install-system">ANDROID 8.0+</span></div>
+  <div class="install-top"><span class="install-index">01 / BUILT INTO LIGHTBOX</span><span class="install-system">ANDROID 8.0+</span></div>
   <div class="install-layout">
     <div class="install-copy">
       <h2 id="install-title">Give Lightbox a place <em>on your home screen.</em></h2>
-      <p>Lightbox from Chrome is the filmmaking studio. To add real Android widgets, install its small, separate native companion. Your existing Lightbox app and saved stories stay untouched.</p>
+      <p>Lightbox from Chrome is the filmmaking studio. The unified Lightbox Android app already includes all three native widgets. No second widget utility or APK download is required.</p>
       <div class="install-tags"><span>2 × 2</span><span>4 × 2</span><span>4 × 4</span></div>
     </div>
     <div class="install-action">
-      <a class="install-download" id="widget-download" href="/android-downloads/lightbox-widgets.apk" download="Lightbox-Widgets.apk" type="application/vnd.android.package-archive">GET WIDGETS FOR ANDROID <span aria-hidden="true">↓</span></a>
-      <p class="install-caution">Android will ask you to approve installing this test APK. Install only from the official Lightbox website; the test build is not a Play Store release.</p>
-      <a class="install-open" id="widget-open-companion" href="intent://sync#Intent;scheme=lightboxwidget;package=com.lightbox.widgets;end">Already installed? Open widget manager ↗</a>
+      <a class="install-download" id="widget-download" href="intent://manager#Intent;scheme=lightboxwidget;package=com.saradhinitish.lightbox;end">OPEN YOUR WIDGET MANAGER <span aria-hidden="true">↗</span></a>
+      <p class="install-caution">For Android installations distributed through Google Play, these widgets are already included. If the manager doesn't open, the native Lightbox app is not installed yet. The Chrome-installed PWA does not include Android widgets.</p>
+      <a class="install-open" id="widget-open-companion" href="intent://manager#Intent;scheme=lightboxwidget;package=com.saradhinitish.lightbox;end">Widget manager ↗</a>
     </div>
   </div>
-  <div class="install-steps"><span>01 — DOWNLOAD</span><span>02 — INSTALL</span><span>03 — SYNC STORY</span><span>04 — ADD WIDGET</span></div>
+  <div class="install-steps"><span>01 — INSTALL FROM PLAY</span><span>02 — OPEN LIGHTBOX</span><span>03 — SYNC STORY</span><span>04 — ADD WIDGET</span></div>
  </section>
  <h2 class="section-title" id="sync-title">02 / CONNECT YOUR CURRENT STORY</h2>
  <div class="panel">
@@ -77,10 +77,10 @@ footer{margin-top:50px;padding-top:17px;border-top:2px solid var(--ink);font:700
   <a id="launch" aria-disabled="true">SYNC SELECTED STORY TO ANDROID ↗</a>
  </div>
  <section class="info">
-  <div><strong>03 / ADD WIDGETS</strong><p>After the companion opens, use its three Add Widget buttons. Android asks you to approve the home-screen placement. You may use all three sizes at once.</p></div>
+  <div><strong>03 / ADD WIDGETS</strong><p>Open the native Lightbox widget manager and use its three Add Widget buttons. Android asks you to approve the home-screen placement. You may use all three sizes at once.</p></div>
   <div><strong>04 / KEEP IT CURRENT</strong><p>Widgets reflect your last manual sync. Return here after substantial writing to update the scene and word progress. Full screenplay text is never transferred.</p></div>
-  <div><strong>ABOUT YOUR INSTALLATION</strong><p>Your current Lightbox PWA and its saved projects are not replaced. This is a separate native Android widget companion, required by Android’s widget system.</p></div>
-  <div><strong>QUICK CAPTURE</strong><p>The large widget saves short offline notes inside the companion. Copy them into your screenplay when ready; they are not silently inserted into your draft.</p></div>
+  <div><strong>ABOUT YOUR INSTALLATION</strong><p>Your current Lightbox PWA and its saved projects are not replaced. Native Lightbox Android contains the widgets within the same app package.</p></div>
+  <div><strong>QUICK CAPTURE</strong><p>The large widget saves short offline notes within the native Lightbox app. Copy them into your screenplay when ready; they are not silently inserted into your draft.</p></div>
  </section>
  <footer><span>LIGHTBOX / ACID PAPER</span><span>YOUR STORY. YOUR SCREEN.</span></footer>
 </main>
@@ -141,9 +141,9 @@ function update(){
  const s=snapshot(p);
  summary.textContent=s.scene+' / '+s.heading+'   •   '+s.words+' words'+(s.target>0?' of '+s.target+' target':'');
  const q=new URLSearchParams(Object.entries(s).map(([k,v])=>[k,String(v)]));
- launch.href='intent://sync?'+q.toString()+'#Intent;scheme=lightboxwidget;package=com.lightbox.widgets;end';
+ launch.href='intent://sync?'+q.toString()+'#Intent;scheme=lightboxwidget;package=com.saradhinitish.lightbox;end';
  launch.setAttribute('aria-disabled','false');
- launch.onclick=()=>{status.textContent='Opening the Android widget companion. If nothing opens, install the separate Lightbox Widgets Android app first.';};
+ launch.onclick=()=>{status.textContent='Opening the Android widget companion. If nothing opens, install the unified native Lightbox Android app first.';};
 }
 async function load(){
  try{

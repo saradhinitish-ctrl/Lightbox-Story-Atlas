@@ -7,7 +7,7 @@ on:
       - 'android-widgets/**'
       - '.github/workflows/android-widgets.yml'
 permissions:
-  contents: read
+  contents: write
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -15,7 +15,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          persist-credentials: false
+          persist-credentials: true
       - name: Set up Java
         uses: actions/setup-java@v4
         with:
@@ -77,3 +77,25 @@ jobs:
         with:
           name: lightbox-android-signing-tools
           path: signing-qa-tools/
+      - name: Record update build and run ID
+        if: success() && github.ref == 'refs/heads/fix/android-native-launcher-and-webview'
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -s android-widgets/app/build/outputs/apk/debug/app-debug.apk
+          test -s android-widgets/app/build/outputs/apk/release/app-release-unsigned.apk
+          mkdir -p docs
+          {
+            echo "Lightbox Android 1.0.1 unsigned update artifacts: build successful"
+            echo "Workflow run ID: ${GITHUB_RUN_ID}"
+            echo "Run URL: https://github.com/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
+            echo "Artifacts: lightbox-widgets-debug-apk; lightbox-unified-unsigned-release-apk; lightbox-android-signing-tools"
+            echo "Commit: ${GITHUB_SHA}"
+            echo "Note: this is NOT a signed installable release. Existing 1.0.0 certificate must sign it before distribution."
+          } > docs/ANDROID-UPDATE-BUILD-RESULT.txt
+          git add docs/ANDROID-UPDATE-BUILD-RESULT.txt
+          if git diff --cached --quiet; then exit 0; fi
+          git config user.name "Lightbox Android CI"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "Attest unsigned Android update build artifacts"
+          git push origin HEAD:fix/android-native-launcher-and-webview

@@ -35,6 +35,21 @@
     <!-- Website, creator and application identity -->
     <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebSite","@id":"https://lightbox-studio.vercel.app/#website","name":"Lightbox Studio","url":"https://lightbox-studio.vercel.app/","creator":{"@id":"https://lightbox-studio.vercel.app/creator.html#person"},"about":{"@id":"https://lightbox-studio.vercel.app/#app"}},{"@type":"Person","@id":"https://lightbox-studio.vercel.app/creator.html#person","name":"Bitra Nitish Saradhi","url":"https://lightbox-studio.vercel.app/creator.html","sameAs":["https://github.com/saradhinitish-ctrl"],"alternateName":"Nitish Saradhi"},{"@type":"WebApplication","@id":"https://lightbox-studio.vercel.app/#app","name":"Lightbox Studio","url":"https://lightbox-studio.vercel.app/","operatingSystem":"Web browser","applicationCategory":"MultimediaApplication","creator":{"@id":"https://lightbox-studio.vercel.app/creator.html#person"},"description":"Lightbox Studio is a filmmaking workspace for writing screenplays, developing characters, planning scenes and organizing visual boards.","featureList":["Fountain and Final Draft (FDX) screenplay import and export","Screenplay PDF compilation","Linked character, location and prop profiles","Scene-specific visual boards and film-wide direction","Beat timeline for emotion, tension, pressure, cast and duration","Screenplay draft versions sharing project resources","Story Atlas, scene breakdown and director pitch views"],"mainEntityOfPage":"https://lightbox-studio.vercel.app/"}]}</script>
 
+    <!-- Native Android WebView identification: browser visitors still see APK choices. -->
+    <script>
+      (function () {
+        var ua = navigator.userAgent || '';
+        if (/Android/i.test(ua) && (/(?:;\s*wv[);])/i.test(ua) || /LightboxNativeAndroid\//i.test(ua))) {
+          document.documentElement.classList.add('lb-native-shell');
+        }
+      }());
+    </script>
+    <style>
+      /* Don't invite people to install the app while they're already in the native app. */
+      html.lb-native-shell .lb-browser-install,
+      html.lb-native-shell .studio.atlas-shell .install-app,
+      html.lb-native-shell .lb-native-choice { display: none !important; }
+    </style>
     <link rel="stylesheet" href="./styles.css">
     <link rel="stylesheet" href="./mobile-refinements.css">
     <link rel="stylesheet" href="./screenplay-polish.css">
@@ -75,13 +90,13 @@
         <p style="letter-spacing:.15em;font-size:12px">LIGHTBOX STUDIO</p>
         <h1 style="font-family:Georgia,serif;font-size:clamp(36px,6vw,62px);line-height:1.1">A place for stories to become films.</h1>
         <p>Lightbox Studio is a browser-based filmmaking and screenwriting workspace. Write screenplays. Develop story foundations and characters. Organize places, visual references and the scenes that connect them. Lightbox Studio brings the creative materials behind a film into one browser-based workspace.</p>
-        <p style="border:1px solid #181916;padding:16px 18px;background:#f1efe7;max-width:650px"><strong>Two ways to use Lightbox.</strong> Continue in your browser without installing anything, or <a href="/android-downloads/lightbox-studio.apk" download="Lightbox-Studio-Android.apk" style="font-weight:700;color:#181916">download the Android APK</a> to get the app and its home-screen widgets. The native Android version is in beta.</p>
+        <p class="lb-browser-install" style="border:1px solid #181916;padding:16px 18px;background:#f1efe7;max-width:650px"><strong>Two ways to use Lightbox.</strong> Continue in your browser without installing anything, or <a href="/android-downloads/lightbox-studio.apk" download="Lightbox-Studio-Android.apk" style="font-weight:700;color:#181916">download the Android APK</a> to get the app and its home-screen widgets. The native Android version is in beta.</p>
         <nav aria-label="Information about Lightbox" style="display:flex;gap:18px;flex-wrap:wrap">
           <a href="/about.html">About Lightbox</a>
           <a href="/creator.html">Meet the creator</a>
           <a href="/how-it-works.html">How Lightbox works</a>
           <a href="/features.html">Explore Lightbox features</a>
-          <a href="/android-downloads/lightbox-studio.apk" download="Lightbox-Studio-Android.apk">Download Android APK + widgets</a>
+          <a class="lb-browser-install" href="/android-downloads/lightbox-studio.apk" download="Lightbox-Studio-Android.apk">Download Android APK + widgets</a>
           <a href="/widgets.html">Android widgets / Setup</a>
           <a href="https://github.com/saradhinitish-ctrl/Lightbox-Story-Atlas">Public source code</a>
         </nav>

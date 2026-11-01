@@ -52,18 +52,19 @@ jobs:
             echo "Lightbox Studio Android signed public APK / Pixel emulator smoke test"
             echo "Verified APK SHA-256: $APK_SHA"
             echo "Android version: $(cat android-public-qa/android-version.txt)"
-            echo "Package: com.saradhinitish.lightbox"
+            echo "Package: com.saradhinitish.lightboxstudio"
             echo "Installation: adb install succeeded"
             echo "Widget providers: QuickProvider, WideProvider, LargeProvider present"
             echo "Native widget hub: activity launched and process remained running"
             echo "Studio launcher: activity start command succeeded"
             echo "Screenshots: GitHub Actions artifact lightbox-public-signed-apk-pixel-qa"
             echo "Verified UTC: $(date -u +'%Y-%m-%dT%H:%M:%SZ')"
-            echo "Limits: Home screen placement, browser TWA trust, and real ColorOS/Samsung device behavior still need manual QA."
+            echo "Limits: Home screen placement, real ColorOS/Samsung device behavior still need manual QA."
           } > android-downloads/VERIFIED-PIXEL-QA.txt
           git add android-downloads/VERIFIED-PIXEL-QA.txt
           if git diff --cached --quiet; then exit 0; fi
           git config user.name "Lightbox Android Emulator QA"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git commit -m "Attest Pixel emulator installation of published Lightbox APK"
+          git pull --rebase origin main
           git push origin HEAD:main

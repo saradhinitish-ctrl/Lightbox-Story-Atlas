@@ -1,0 +1,8 @@
+Lightbox Android 1.0.1 native launcher acceptance — emulator smoke PASS
+Workflow run: https://github.com/saradhinitish-ctrl/Lightbox-Story-Atlas/actions/runs/41331979050
+Emulator: Android 15 (API 35), Pixel 6 profile
+App package: com.saradhinitish.lightbox
+Verified within action: installed debug APK; StudioLauncherActivity stayed open; native WidgetHubActivity opened; all QuickProvider, WideProvider, LargeProvider registered.
+Evidence: GitHub Actions artifact lightbox-repaired-launcher-qa (screenshots and logcat).
+Note: Final workflow step failed only because it attempted a git push after a concurrent branch update (non-fast-forward), not because the Android emulator test failed.
+Release status: this is a debug emulator smoke test, NOT a signed production APK update. Real ColorOS/phone testing remains required.

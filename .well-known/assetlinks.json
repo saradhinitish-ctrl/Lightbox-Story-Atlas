@@ -1,0 +1,14 @@
+[
+  {
+    "relation": [
+      "delegate_permission/common.handle_all_urls"
+    ],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.saradhinitish.lightbox",
+      "sha256_cert_fingerprints": [
+        "A6:11:08:F7:B3:DE:46:FA:1B:EC:EC:17:B3:7F:39:94:8E:91:4F:04:3B:B8:65:2B:A5:4C:78:96:31:13:9E:82"
+      ]
+    }
+  }
+]

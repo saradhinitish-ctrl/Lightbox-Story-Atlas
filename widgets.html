@@ -63,6 +63,11 @@ footer{margin-top:50px;padding-top:17px;border-top:2px solid var(--ink);font:700
     <div class="install-action">
       <a class="install-download" id="widget-download" href="intent://manager#Intent;scheme=lightboxwidget;package=com.saradhinitish.lightbox;S.browser_fallback_url=https%3A%2F%2Flightbox-studio.vercel.app%2Fwidgets.html%23install;end">OPEN YOUR WIDGET MANAGER <span aria-hidden="true">↗</span></a>
       <p class="install-caution">The unified native Lightbox Android app contains all three widgets. You never need a separate widget app. If the widget manager doesn't open, your installed version may still be the Chrome web app, which does not support Android widgets. The Chrome-installed web app does not include native widgets.</p>
+      <div id="native-install-ready" hidden>
+        <a class="install-download" style="margin:14px 0" href="/android-downloads/lightbox-studio.apk" download="Lightbox-Studio-Android.apk">INSTALL LIGHTBOX FOR ANDROID <span aria-hidden="true">↓</span></a>
+        <p class="install-caution">This is the complete Android app, including all three widgets. It is not a second widget installer. Android may require your approval to install an app from the website.</p>
+      </div>
+      <p class="install-caution" id="native-install-pending">The signed public Android installer isn't available here yet. Existing native-app users can still open the widget manager above.</p>
       <a class="install-open" id="widget-open-companion" href="intent://manager#Intent;scheme=lightboxwidget;package=com.saradhinitish.lightbox;end">Widget manager ↗</a>
     </div>
   </div>
@@ -87,6 +92,13 @@ footer{margin-top:50px;padding-top:17px;border-top:2px solid var(--ink);font:700
 <script>
 (() => {
 'use strict';
+const nativeReady=document.getElementById('native-install-ready'),nativePending=document.getElementById('native-install-pending');
+fetch('/android-downloads/lightbox-studio.apk',{method:'HEAD',cache:'no-store'}).then(r=>{
+  if(r.ok&&r.headers.get('Content-Type')?.includes('android.package-archive')) {
+    nativeReady.hidden=false;
+    nativePending.hidden=true;
+  }
+}).catch(()=>{});
 const $=id=>document.getElementById(id), select=$('project'),status=$('status'),summary=$('summary'),launch=$('launch');
 let projects=[];
 function openWorkspace(){

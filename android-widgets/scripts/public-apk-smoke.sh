@@ -2,7 +2,7 @@
 # Smoke-test the publicly released, signed APK (not an unsigned debug build).
 set -euo pipefail
 apk="android-downloads/lightbox-studio.apk"
-pkg="com.saradhinitish.lightbox"
+pkg="com.saradhinitish.lightboxstudio"
 mkdir -p android-public-qa
 test -s "$apk"
 adb wait-for-device

@@ -65,50 +65,34 @@
   function managerButton(kind) {
     const a = document.createElement('a');
     a.className = 'lb-widgets-link lb-widgets-' + kind;
-    a.href = android ? manager : '/widgets.html';
+    // Browser visitors see setup information, not an Android install/intent error.
+    // Only the native WebView uses the app-owned deep link.
+    a.href = nativeApp ? 'lightboxwidget://manager' : '/widgets.html';
     a.textContent = kind === 'atlas' ? 'ADD WIDGETS ↗' : 'ANDROID WIDGETS ↗';
     a.setAttribute('aria-label', 'Open Lightbox Android widget manager');
     return a;
   }
   let queued = false;
   function enhance() {
-    // Already inside the installed Android app: show a workspace and widget
-    // access, NEVER website-style APK or browser installation offers.
-    if (nativeApp) {
-      root.querySelectorAll('.lb-native-choice').forEach(card => card.remove());
-      root.querySelectorAll('.studio.atlas-shell .atlas-caption').forEach(el => {
-        if (!el.querySelector('.lb-widgets-atlas')) {
-          const link = managerButton('atlas');
-          link.style.marginLeft = 'auto';
-          el.appendChild(link);
-        }
-      });
-      return;
+    // The browser can offer one Android APK download, and the installed
+    // native app can open widget management. Neither shows duplicate promos.
+    root.querySelectorAll('.lb-native-choice').forEach(el => {
+      if (nativeApp || !el.closest('.welcome')) el.remove();
+    });
+    if (!nativeApp) {
+      const welcome=root.querySelector('.studio.atlas-shell .welcome');
+      if (welcome && !welcome.querySelector('.lb-native-choice')) {
+        welcome.appendChild(nativeChoice());
+      }
     }
-    root.querySelectorAll('.studio.atlas-shell .welcome .install-app').forEach(el => {
-      if (!el.querySelector('.lb-native-choice')) el.appendChild(nativeChoice());
-    });
-    root.querySelectorAll('.studio.atlas-shell .welcome').forEach(el => {
-      if (!el.querySelector('.lb-native-choice')) el.appendChild(nativeChoice());
-    });
-    root.querySelectorAll('.studio.atlas-shell .story-atlas > .install-app').forEach(el => {
-      if (!el.querySelector('.lb-native-choice')) el.appendChild(nativeChoice());
-    });
     root.querySelectorAll('.studio.atlas-shell .atlas-caption').forEach(el => {
       if (!el.querySelector('.lb-widgets-atlas')) {
-        const link = managerButton('atlas');
-        link.style.marginLeft = 'auto';
+        const link=managerButton('atlas');
+        link.style.marginLeft='auto';
         el.appendChild(link);
-      }
-    });
-    root.querySelectorAll('.studio.atlas-shell .install-app').forEach(el => {
-      if (!el.querySelector('.lb-widgets-install')) {
-        const link = managerButton('install');
-        link.style.marginTop = '12px';
-        el.appendChild(link);
-      }
-      if (!el.closest('.welcome,.story-atlas') && !el.querySelector('.lb-native-choice')) {
-        el.appendChild(nativeChoice());
+      } else {
+        const link=el.querySelector('.lb-widgets-atlas');
+        link.href=nativeApp?'lightboxwidget://manager':'/widgets.html';
       }
     });
   }

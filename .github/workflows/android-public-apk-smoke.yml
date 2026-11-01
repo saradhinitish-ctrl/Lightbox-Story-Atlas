@@ -9,7 +9,7 @@ on:
       - 'android-widgets/scripts/public-apk-smoke.sh'
       - 'android-downloads/lightbox-studio.apk'
 permissions:
-  contents: write
+  contents: read
 jobs:
   emulator:
     name: Install signed APK, verify native widgets and launcher
@@ -43,29 +43,14 @@ jobs:
           name: lightbox-public-signed-apk-pixel-qa
           path: android-public-qa/
           if-no-files-found: warn
-      - name: Record successful public APK emulator verification
+      - name: Report successful published APK emulator test
         if: success()
         shell: bash
         run: |
-          set -euo pipefail
-          APK_SHA="$(sha256sum android-downloads/lightbox-studio.apk | awk '{print $1}')"
           {
-            echo "Lightbox Studio Android signed public APK / Pixel emulator smoke test"
-            echo "Verified APK SHA-256: $APK_SHA"
-            echo "Android version: $(cat android-public-qa/android-version.txt)"
-            echo "Package: com.saradhinitish.lightboxstudio"
-            echo "Installation: adb install succeeded"
-            echo "Widget providers: QuickProvider, WideProvider, LargeProvider present"
-            echo "Native widget hub: activity launched and process remained running"
-            echo "Studio launcher: activity start command succeeded"
-            echo "Screenshots: GitHub Actions artifact lightbox-public-signed-apk-pixel-qa"
-            echo "Verified UTC: $(date -u +'%Y-%m-%dT%H:%M:%SZ')"
-            echo "Limits: Home screen placement, real ColorOS/Samsung device behavior still need manual QA."
-          } > android-downloads/VERIFIED-PIXEL-QA.txt
-          git add android-downloads/VERIFIED-PIXEL-QA.txt
-          if git diff --cached --quiet; then exit 0; fi
-          git config user.name "Lightbox Android Emulator QA"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git commit -m "Attest Pixel emulator installation of published Lightbox APK"
-          git pull --rebase origin main
-          git push origin HEAD:main
+            echo "## Public Lightbox 1.0.2 APK emulator test"
+            echo "✅ Signed APK installed on Android 15."
+            echo "✅ Native Studio and Widget Hub activities launched."
+            echo "✅ All three widget providers registered."
+            echo "See artifact lightbox-public-signed-apk-pixel-qa for screenshots."
+          } >> "${GITHUB_STEP_SUMMARY}"

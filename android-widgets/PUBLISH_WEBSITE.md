@@ -1,28 +1,29 @@
-# Lightbox Studio / free Android publication
+# Lightbox Studio Android — public APK
 
-**One install, three native widgets.** The public site provides a unified Android APK, not a separate widget companion.
+**Current native release:** 1.0.1 (package `com.saradhinitish.lightboxstudio`)
 
-## Public download path
-`https://lightbox-studio.vercel.app/android-downloads/lightbox-studio.apk`
+- Website: https://lightbox-studio.vercel.app/
+- Public APK: https://lightbox-studio.vercel.app/android-downloads/lightbox-studio.apk
+- Install page: https://lightbox-studio.vercel.app/widgets.html
+- APK SHA-256: `9a51327baabaab44ecf328b62f764e7a066c9b74e0c4f0dcb252bb3b53a2b4a9`
+- Signed with certificate SHA-256: `EA:2C:B6:63:C8:09:73:A2:90:A0:3F:7B:F2:0E:72:60:EB:22:BD:DC:33:83:0E:A5:FA:6F:A9:55:26:BA:02:DF`
+- Signing and APK are checked in `android-downloads/VERIFIED-RELEASE.txt`.
+- Signed public APK was successfully installed and launched on an Android 15 Pixel emulator, including registration of its 2×2, 4×2 and 4×4 native widget providers. See `android-downloads/VERIFIED-PIXEL-QA.txt`.
 
-The site's `/widgets.html` page shows its download button only after this actual Android package is present. The verified public signing certificate is already in `/.well-known/assetlinks.json`.
+## Two ways to use Lightbox
 
-## If you already have the signed release APK
-Save the file as **`lightbox-studio.apk`** (exact lowercase spelling), then upload **just that file** to the repository's `android-downloads/` folder using:
+Visitors can use the filmmaking workspace directly in a browser and bookmark the website. The separate **Download Android APK** link installs one native Lightbox app, with its three widgets already built in. Chrome's **Install App** shortcut is a PWA, not an APK containing widgets.
 
-`https://github.com/saradhinitish-ctrl/Lightbox-Story-Atlas/upload/main/android-downloads`
+Native app: Open the app and tap the **WIDGETS** control, then choose a widget size. If the launcher does not support native placement prompts, use the home-screen Widgets picker under **Lightbox Studio**.
 
-This requires write access to the repo. Commit the upload to main; Vercel then deploys the file. The verification workflow checks its SHA-256 digest, Android APK v2 signature and Android website association. Do not upload the private signing keystore or the owner's backup zip.
+## Why this package ID differs from the original
 
-The signed release file's expected SHA-256 is:
+The first public APK used `com.saradhinitish.lightbox` and an unrelated signing certificate. This corrected build uses `com.saradhinitish.lightboxstudio` to install alongside that older APK without forcing removal or risking its private app data. Users may see two Lightbox icons until they choose to remove the old version. Back up first.
 
-`9453702e4698a73e516ad8ef39f946d8f4cee5e74b0a9f6cf60685e6db2d3647`
+Browser Chrome data and the Android app WebView data are **not automatically shared**. Export/import projects when switching; do not uninstall or clear either environment until backups are verified.
 
-### Verify post-publication
-- The public APK URL returns a real Android package, not a 404 or HTML fallback.
-- `/widgets.html` shows **INSTALL LIGHTBOX FOR ANDROID**.
-- Install the native app once; tap **Add Widgets** inside Lightbox.
-- Test the 2×2, 4×2, 4×4 widgets and verify sync/taps across Android launchers.
-- Android 8+ is the intended OS range, but not every launcher or model has been tested.
+## Release integrity and future updates
 
-This GitHub UI upload route is an alternative to configuring signing secrets right now. For future updates, use the **same private signing key** and increase the Android version code.
+The new APK is signed with a persistent private keystore backed up outside the public GitHub repository. Keep that key secure and use the **same** signing certificate for every future update to this package. Never commit private keys, passwords, or signing backups to GitHub. App publication to Google Play is not required for direct website installation.
+
+**Compatibility:** Pixel Android 15 automated checks passed. Physical device tests on Oppo/ColorOS, Samsung and other Android launchers, including actual widget placement and lifecycle, remain device-specific. The website and public APK can be tested now, but this is not a universal compatibility guarantee.

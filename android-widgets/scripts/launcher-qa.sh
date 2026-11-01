@@ -13,6 +13,11 @@ adb install -r "$apk" | tee android-launcher-qa/first-install.txt
 adb uninstall "$pkg" | tee android-launcher-qa/uninstall.txt
 adb install -r "$apk" | tee android-launcher-qa/reinstall.txt
 adb shell pm path "$pkg" | tee android-launcher-qa/package-path.txt
+# Android's shell grants app-widget binding to the debug-only widget host.
+# Without this, RemoteViews.apply() is only a visual preview and cannot prove
+# whether home-screen PendingIntent buttons actually launch their actions.
+adb shell appwidget grantbind --package "$pkg" --user current
+
 
 # The native studio must remain open, not bounce back to the Android home screen.
 adb logcat -c
@@ -53,11 +58,17 @@ for variant in 0 1 2; do
 done
 
 # Programmatically perform a real click on the RemoteViews 'NOTE +' control.
+adb logcat -c
 adb shell am start -W -n "$pkg/com.lightbox.widgets.WidgetGalleryActivity" --ei variant 2 --ei testAction 1 > android-launcher-qa/capture-tap.txt
 sleep 2
+adb logcat -d -s LightboxWidgetQA:I > android-launcher-qa/widget-capture-click-log.txt
 adb shell dumpsys activity activities > android-launcher-qa/capture-activity.txt
+if ! grep -q 'Binding widget id=.*allowed=true' android-launcher-qa/widget-capture-click-log.txt; then
+  echo "::error::Emulator could not bind the real AppWidgetHost; click not testable"
+  exit 1
+fi
 if ! grep -q 'QuickCaptureActivity' android-launcher-qa/capture-activity.txt; then
-  echo "::error::Native RemoteViews Capture click did not open QuickCaptureActivity"
+  echo "::error::Native widget capture PendingIntent did not open QuickCaptureActivity"
   exit 1
 fi
 

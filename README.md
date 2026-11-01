@@ -1,4 +1,12 @@
-# Current screenplay update
+# Acid Paper studio redesign
+
+The live static app uses the Acid Paper design system in `studio-design.css`, loaded after the portable styles. It unifies the Atlas, development and profile fields, library cards, screenplay chrome, visual boards, sequence tools, dialogs and phone layouts. Screenplay pagination, Courier metrics, project storage and export code are unchanged.
+
+`studio-design.js` provides the reference-board canvas preference and updates the appearance description in Settings. The dark reference canvas has its own local preference and does not change project data. Keep both design files with the existing static files when deploying. No framework or build step is required.
+
+Validation: JavaScript syntax, stylesheet asset checks, palette contrast calculations, and browser checks of desktop and phone layouts, writing and local persistence, visual-reference editing, navigation and export controls.
+
+# Previous screenplay update
 
 The original studio palette and foundation/profile layouts are retained. Screenplay tools use a compact toolbar with automatic formatting, and the phone page fills its available writing area. Research notes in `docs/studio-refresh-research.md` are proposals only.
 

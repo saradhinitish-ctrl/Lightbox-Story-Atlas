@@ -6,8 +6,8 @@
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
-  "background_color": "#1c1916",
-  "theme_color": "#1c1916",
+  "background_color": "#EFEDE6",
+  "theme_color": "#EFEDE6",
   "icons": [
     {
       "src": "/app-icons/lightbox-192.png",

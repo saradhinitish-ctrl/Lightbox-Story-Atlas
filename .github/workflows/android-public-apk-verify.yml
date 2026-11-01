@@ -4,9 +4,10 @@ on:
     branches: [main]
     paths:
       - "android-downloads/lightbox-studio.apk"
+      - ".github/workflows/android-public-apk-verify.yml"
   workflow_dispatch:
 permissions:
-  contents: read
+  contents: write
 jobs:
   verify:
     name: Verify release checksum, signing identity and installed app ID
@@ -14,7 +15,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          persist-credentials: false
+          persist-credentials: true
       - name: Check public signed app checksum
         shell: bash
         run: |
@@ -50,3 +51,29 @@ jobs:
           if not found: raise SystemExit("The Android cert and Digital Asset Links do not match")
           print("Verified domain association for Lightbox Studio Android")
           PY
+      - name: Record passing signature and assetlinks verification
+        if: success()
+        shell: bash
+        run: |
+          set -euo pipefail
+          APK="android-downloads/lightbox-studio.apk"
+          SHA="$(sha256sum "$APK" | awk '{print $1}')"
+          SIZE="$(stat -c%s "$APK")"
+          {
+            echo "Lightbox Studio Android public release verification"
+            echo "APK: android-downloads/lightbox-studio.apk"
+            echo "SHA-256: $SHA"
+            echo "Size (bytes): $SIZE"
+            echo "Package: com.saradhinitish.lightbox"
+            echo "Certificate SHA-256: A6:11:08:F7:B3:DE:46:FA:1B:EC:EC:17:B3:7F:39:94:8E:91:4F:04:3B:B8:65:2B:A5:4C:78:96:31:13:9E:82"
+            echo "Signature scheme: v2 verified by Android apksigner"
+            echo "Digital Asset Links: fingerprint matched to .well-known/assetlinks.json"
+            echo "Verified UTC: $(date -u +'%Y-%m-%dT%H:%M:%SZ')"
+            echo "Note: Automated cryptographic verification; real-device UI QA is separate."
+          } > android-downloads/VERIFIED-RELEASE.txt
+          git add android-downloads/VERIFIED-RELEASE.txt
+          if git diff --cached --quiet; then exit 0; fi
+          git config user.name "Lightbox Release Verification"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "Attest verified public Lightbox Android APK"
+          git push origin HEAD:main

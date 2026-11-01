@@ -1,10 +1,10 @@
-Lightbox Studio Android public release verification
-APK: android-downloads/lightbox-studio.apk
-SHA-256: 9a51327baabaab44ecf328b62f764e7a066c9b74e0c4f0dcb252bb3b53a2b4a9
-Size (bytes): 37816
+Lightbox Studio 1.0.2 interactive Android release
 Package: com.saradhinitish.lightboxstudio
+Version: 1.0.2 / versionCode 3
+SHA-256: 6bd8bd6becc60dc4cd62133b90325602f956cc6216166ce7b7673208f9528846
 Certificate SHA-256: EA:2C:B6:63:C8:09:73:A2:90:A0:3F:7B:F2:0E:72:60:EB:22:BD:DC:33:83:0E:A5:FA:6F:A9:55:26:BA:02:DF
-Signature scheme: v2 verified by Android apksigner
-Digital Asset Links: fingerprint matched to .well-known/assetlinks.json
-Verified UTC: 2026-11-01T18:01:49Z
-Note: Automated cryptographic verification; real-device UI QA is separate.
+APK signature: v2 verified
+Widget implementation: native RemoteViews with independent Open, Capture, Sync and Refresh PendingIntents
+Emulator tests: native layouts, capture and sync action taps passed.
+Important: Story progress refreshes after manual sync, not automatically in the background.
+Date UTC: 2026-11-01T18:27:12Z

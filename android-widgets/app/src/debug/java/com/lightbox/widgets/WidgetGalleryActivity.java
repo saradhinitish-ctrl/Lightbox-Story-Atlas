@@ -1,63 +1,107 @@
 package com.lightbox.widgets;
+
 import android.app.Activity;
-import android.os.Bundle;
+import android.appwidget.AppWidgetHost;
+import android.appwidget.AppWidgetHostView;
+import android.appwidget.AppWidgetManager;
+import android.appwidget.AppWidgetProviderInfo;
+import android.content.ComponentName;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.RemoteViews;
 import android.widget.ScrollView;
 import android.widget.TextView;
-import android.widget.RemoteViews;
 
-/**
- * Debug-only emulator testing of ACTUAL Android RemoteViews, not rasterized art.
- * --ei variant 0|1|2   --ei testAction 0=open 1=capture 2=sync 3=refresh
+/** DEBUG-ONLY real widget host: binds the provider and tests actual PendingIntents.
+ * A RemoteViews.apply() preview alone is NOT a launcher and is unsuitable as
+ * proof that PendingIntent buttons work.
+ * --ei variant 0|1|2   --ei testAction 0=open 1=note 2=sync 3=session
  */
 public final class WidgetGalleryActivity extends Activity {
-    private int dp(float value){return Math.round(value*getResources().getDisplayMetrics().density);}
-    private TextView label(String value,int size,boolean bold){
-        TextView t=new TextView(this);t.setText(value);t.setTextSize(size);
-        t.setTextColor(Color.rgb(24,25,22));
-        t.setTypeface(Typeface.create("sans-serif",bold?Typeface.BOLD:Typeface.NORMAL));return t;
+    private static final String TAG="LightboxWidgetQA";
+    private AppWidgetHost host;
+    private int id=AppWidgetManager.INVALID_APPWIDGET_ID;
+    private int dp(float v){return Math.round(v*getResources().getDisplayMetrics().density);}
+    private TextView text(String value,int size,boolean bold){
+        TextView v=new TextView(this);
+        v.setText(value);v.setTextColor(Color.rgb(24,25,22));v.setTextSize(size);
+        v.setTypeface(Typeface.create("sans-serif",bold?Typeface.BOLD:Typeface.NORMAL));
+        return v;
     }
     @Override public void onCreate(Bundle state) {
         super.onCreate(state);
-        int variant=Math.max(0,Math.min(2,getIntent().getIntExtra("variant",0)));
+        final int variant=Math.max(0,Math.min(2,getIntent().getIntExtra("variant",0)));
         int width=variant==0?165:335,height=variant==2?335:166;
         ScrollView scroll=new ScrollView(this);
         scroll.setFillViewport(true);
         scroll.setBackgroundColor(Color.rgb(239,237,230));
         LinearLayout column=new LinearLayout(this);
-        column.setGravity(Gravity.CENTER_HORIZONTAL);
         column.setOrientation(LinearLayout.VERTICAL);
+        column.setGravity(Gravity.CENTER_HORIZONTAL);
         column.setPadding(dp(17),dp(56),dp(17),dp(22));
         scroll.addView(column);
-        column.addView(label("LIGHTBOX / FUNCTIONAL ANDROID QA",14,true));
-        TextView heading=label(variant==0?"2 × 2   QUICK RETURN":
-                                variant==1?"4 × 2   CURRENT SCENE":
-                                "4 × 4   STORY IN PROGRESS",17,true);
-        LinearLayout.LayoutParams textParams=new LinearLayout.LayoutParams(-2,-2);
-        textParams.topMargin=dp(20);column.addView(heading,textParams);
+        column.addView(text("LIGHTBOX / LIVE WIDGET HOST",13,true));
+        TextView heading=text(variant==0?"2 × 2  QUICK RETURN":
+          variant==1?"4 × 2  CURRENT SCENE":"4 × 4  STORY IN PROGRESS",18,true);
+        LinearLayout.LayoutParams h=new LinearLayout.LayoutParams(-2,-2);
+        h.topMargin=dp(25);column.addView(heading,h);
 
-        // This is the SAME RemoteViews hierarchy and PendingIntents used on
-        // the real launcher. Showing an ImageView here would conceal broken taps.
-        RemoteViews rv=WidgetBaseProvider.views(this,9500+variant,variant,true);
-        View real=rv.apply(this,column);
-        LinearLayout.LayoutParams params=new LinearLayout.LayoutParams(dp(width),dp(height));
-        params.topMargin=dp(25);column.addView(real,params);
-        TextView guide=label("REAL NATIVE VIEWS • TAP BUTTONS TO TEST",11,false);
+        Class<?> provider=variant==0?QuickProvider.class:
+                          variant==1?WideProvider.class:LargeProvider.class;
+        host=new AppWidgetHost(this,19001);
+        id=host.allocateAppWidgetId();
+        AppWidgetManager manager=AppWidgetManager.getInstance(this);
+        ComponentName component=new ComponentName(this,provider);
+        boolean granted=manager.bindAppWidgetIdIfAllowed(id,component);
+        Log.i(TAG,"Binding widget id="+id+" allowed="+granted);
+        View widget;
+        if(granted) {
+            AppWidgetProviderInfo info=manager.getAppWidgetInfo(id);
+            AppWidgetHostView real=host.createView(this,id,info);
+            widget=real;
+        } else {
+            // Still capture visual layout if bind permission was not granted.
+            widget=WidgetBaseProvider.views(this,id,variant,true).apply(this,column);
+        }
+        LinearLayout.LayoutParams p=new LinearLayout.LayoutParams(dp(width),dp(height));
+        p.topMargin=dp(25);column.addView(widget,p);
+        TextView guide=text(granted?"REAL APPWIDGETHOST / LIVE CONTROLS":
+            "BIND PERMISSION NOT GRANTED / VISUAL FALLBACK",11,false);
         LinearLayout.LayoutParams caption=new LinearLayout.LayoutParams(-2,-2);
         caption.topMargin=dp(20);column.addView(guide,caption);
         setContentView(scroll);
-
-        // Optional automated tap through RemoteViews PendingIntent.
-        int action=getIntent().getIntExtra("testAction",-1);
-        int target=action==0?R.id.action_open:action==1?R.id.action_capture:
-                   action==2?R.id.action_sync:action==3?R.id.action_refresh:0;
-        if(target!=0 && (variant==2 || action<2) && (variant>=1 || action!=3)) {
-            View control=real.findViewById(target);
-            if(control!=null) real.postDelayed(()->control.performClick(),450);
+        if(granted) {
+            host.startListening();
+            manager.updateAppWidget(id,WidgetBaseProvider.views(this,id,variant,true));
         }
+        final int action=getIntent().getIntExtra("testAction",-1);
+        final int target=action==0?R.id.action_open:
+            action==1?R.id.action_capture:action==2?R.id.action_sync:
+            action==3?R.id.action_session:0;
+        if(target!=0 && (variant==2 || action<2) && (variant>=1 || action!=3)) {
+            widget.postDelayed(()->{
+                View control=widget.findViewById(target);
+                Log.i(TAG,"Action="+action+" targetPresent="+(control!=null)+
+                         " clickEnabled="+(control!=null && control.isClickable()));
+                if(control!=null) {
+                    boolean dispatched=control.performClick();
+                    Log.i(TAG,"Action click dispatched="+dispatched);
+                    if(action==3) widget.postDelayed(()->Log.i(TAG,
+                        "Session active="+WidgetSession.isActive(this)),750);
+                }
+            },1200);
+        }
+    }
+    @Override protected void onDestroy() {
+        if(host!=null) {
+            host.stopListening();
+            if(id!=AppWidgetManager.INVALID_APPWIDGET_ID) host.deleteAppWidgetId(id);
+        }
+        super.onDestroy();
     }
 }

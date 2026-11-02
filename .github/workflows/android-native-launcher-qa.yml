@@ -1,8 +1,8 @@
-name: Native Lightbox launcher and widgets acceptance
+name: Lightbox APK reinstall and native launch acceptance
 on:
   workflow_dispatch:
   push:
-    branches: ['fix/android-native-launcher-and-webview', 'fix/functional-native-widgets-branding', 'fix/native-sync-no-install-prompts-103']
+    branches: ['fix/android-native-launcher-and-webview', 'fix/functional-native-widgets-branding', 'fix/native-sync-no-install-prompts-103', 'fix/lightbox-android-104-landing-widgets']
     paths:
       - 'android-widgets/**'
       - '.github/workflows/android-native-launcher-qa.yml'
@@ -10,7 +10,7 @@ permissions:
   contents: write
 jobs:
   emulator-qa:
-    name: Android 15 APK launcher and widget regression
+    name: Android 15 clean reinstall and native launch
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
@@ -34,6 +34,9 @@ jobs:
           if [ ! -f "$SDK_ROOT/platforms/android-36/android.jar" ]; then
             "$SDK_MANAGER" "platforms;android-36"
           fi
+      - name: Build app before starting Android emulator
+        shell: bash
+        run: gradle -p android-widgets --no-daemon --max-workers=2 assembleDebug
       - name: Enable KVM acceleration
         shell: bash
         run: |
@@ -67,7 +70,7 @@ jobs:
             echo "## Lightbox Android native widget verification"
             echo "✅ Emulator installed the debug app."
             echo "✅ Native studio and widget manager opened."
-            echo "✅ Live RemoteViews layouts rendered for 2×2, 4×2, 4×4."
-            echo "✅ Real RemoteViews Capture and Sync PendingIntents fired."
+            echo "✅ The three native widget providers registered with Android."
+            echo "Widget button acceptance is tested separately and not claimed by this workflow."
             echo "The screenshots and activity evidence are in the uploaded artifact."
           } >> "${GITHUB_STEP_SUMMARY}"

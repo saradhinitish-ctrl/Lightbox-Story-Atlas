@@ -129,9 +129,9 @@ public final class WidgetHubActivity extends Activity {
         add(current,22);
 
         add(text("PICK A SIZE",10,MUTED,true,false),30);
-        option("01 / 2 × 2","Quick return","Your story and a quick note.",QuickProvider.class);
-        option("02 / 4 × 2","Current scene","Scene number, word count and actions.",WideProvider.class);
-        option("03 / 4 × 4","Story in progress","Writing progress, note and sync tools.",LargeProvider.class);
+        option("01 / 2 × 2","Quick Capture","Capture ideas directly from home.",QuickProvider.class);
+        option("02 / 4 × 2","Scene Desk","Write, capture and start or finish a session.",WideProvider.class);
+        option("03 / 4 × 4","Director’s Desk","Story, latest note, sessions and sync tools.",LargeProvider.class);
 
         Button sync=button("SYNC STORY DETAILS ↗",LIME,this::openSync);
         LinearLayout.LayoutParams syncLayout=new LinearLayout.LayoutParams(-1,dp(52));

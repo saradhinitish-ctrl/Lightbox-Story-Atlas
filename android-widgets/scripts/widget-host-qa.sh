@@ -10,7 +10,7 @@ adb shell pm path "$pkg" | tee android-widget-host-qa/package.txt
 
 # Only the Android shell account can grant the debug widget host binding.
 # Real launchers have their own permission to bind installed widget providers.
-if ! adb shell cmd appwidget grantbind --package "$pkg" --user 0      > android-widget-host-qa/grantbind.txt 2>&1; then
+if ! adb shell appwidget grantbind --package "$pkg" --user 0      > android-widget-host-qa/grantbind.txt 2>&1; then
   cat android-widget-host-qa/grantbind.txt
   echo "::error::Unable to enable test AppWidgetHost binding in emulator"
   exit 1

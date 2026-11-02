@@ -8,7 +8,6 @@ adb install "$apk"
 adb shell pm path "$pkg" | grep -F 'package:'
 adb shell am start -W -n "$pkg/com.lightbox.widgets.StudioLauncherActivity"
 adb shell am start -W -n "$pkg/com.lightbox.widgets.WidgetHubActivity"
-adb shell am start -W -n "$pkg/com.lightbox.widgets.QuickCaptureActivity"
 adb shell dumpsys package "$pkg" | grep -F 'com.lightbox.widgets.QuickProvider'
 adb shell dumpsys package "$pkg" | grep -F 'com.lightbox.widgets.WideProvider'
 adb shell dumpsys package "$pkg" | grep -F 'com.lightbox.widgets.LargeProvider'

@@ -34,6 +34,7 @@ grep -q 'QuickCaptureActivity' android-widget-host-qa/capture-activities.txt || 
   echo "::error::Widget capture did not open the note composer"; exit 1;
 }
 
+adb shell am force-stop "$pkg"
 adb logcat -c
 adb shell am start -W -n "$pkg/com.lightbox.widgets.WidgetGalleryActivity" --ei variant 2   --ei testAction 2 | tee android-widget-host-qa/sync-launch.txt
 sleep 4
@@ -45,4 +46,13 @@ grep -q 'Action click dispatched=true' android-widget-host-qa/sync-log.txt
 grep -q 'StudioLauncherActivity' android-widget-host-qa/sync-activities.txt || {
   echo "::error::Widget Sync did not open the studio"; exit 1;
 }
-echo "PASS: real Android home-screen widget host Capture and Sync buttons" | tee android-widget-host-qa/result.txt
+adb shell am force-stop "$pkg"
+adb logcat -c
+adb shell am start -W -n "$pkg/com.lightbox.widgets.WidgetGalleryActivity" --ei variant 2 --ei testAction 3 | tee android-widget-host-qa/session-launch.txt
+sleep 4
+adb logcat -d -s LightboxWidgetQA:I > android-widget-host-qa/session-log.txt
+cat android-widget-host-qa/session-log.txt
+grep -q 'Session active=true' android-widget-host-qa/session-log.txt || {
+  echo "::error::Widget Start session did not persist"; exit 1;
+}
+echo "PASS: actual widget Capture, Sync and Session actions" | tee android-widget-host-qa/result.txt

@@ -41,6 +41,7 @@ public final class StudioLauncherActivity extends Activity {
 
     private LinearLayout shell;
     private WebView web;
+    private volatile boolean offlineStudio;
     private LinearLayout failure;
     private ValueCallback<Uri[]> fileCallback;
 
@@ -84,7 +85,7 @@ public final class StudioLauncherActivity extends Activity {
         // Android 15+ enforces edge-to-edge on new targets. Protect all controls.
         shell.setOnApplyWindowInsetsListener((v, insets) -> {
             if (android.os.Build.VERSION.SDK_INT >= 30) {
-                android.graphics.Insets bars = insets.getInsets(WindowInsets.Type.systemBars());
+                android.graphics.Insets bars = insets.getInsets(WindowInsets.Type.systemBars() | WindowInsets.Type.ime() | WindowInsets.Type.displayCutout());
                 shell.setPadding(bars.left, bars.top, bars.right, bars.bottom);
             } else {
                 shell.setPadding(0, insets.getSystemWindowInsetTop(), 0, insets.getSystemWindowInsetBottom());
@@ -92,31 +93,15 @@ public final class StudioLauncherActivity extends Activity {
             return insets;
         });
 
-        // The filmmaking workspace stays first. App utilities live BELOW it.
-        LinearLayout toolbar = new LinearLayout(this);
-        toolbar.setGravity(Gravity.CENTER_VERTICAL);
-        toolbar.setPadding(dp(21), dp(4), dp(20), dp(4));
-        toolbar.setBackgroundColor(PAPER);
-        TextView title = label("LIGHTBOX", 15, true);
-        title.setLetterSpacing(0.08f);
-        toolbar.addView(title, new LinearLayout.LayoutParams(0, dp(50), 1));
-        TextView edition = label("FILMMAKING STUDIO", 10, false);
-        edition.setTextColor(Color.rgb(83,86,77));
-        edition.setLetterSpacing(0.07f);
-        toolbar.addView(edition, new LinearLayout.LayoutParams(-2, dp(50)));
-        shell.addView(toolbar, new LinearLayout.LayoutParams(-1, dp(56)));
-
-        View line = new View(this);
-        line.setBackgroundColor(Color.rgb(201,202,191));
-        shell.addView(line, new LinearLayout.LayoutParams(-1, dp(1)));
-
+        if((getApplicationInfo().flags & android.content.pm.ApplicationInfo.FLAG_DEBUGGABLE)!=0)
+            WebView.setWebContentsDebuggingEnabled(true);
         web = new WebView(this);
         web.setBackgroundColor(PAPER);
         WebSettings settings = web.getSettings();
         // Make native hosting explicit so the website never shows its own
         // "Install Android app" prompt inside an already-installed APK.
         settings.setUserAgentString(settings.getUserAgentString()
-                + " LightboxNativeAndroid/1.0.4");
+                + " LightboxNativeAndroid/1.0.6");
         settings.setJavaScriptEnabled(true);
         settings.setDomStorageEnabled(true);
         settings.setAllowFileAccess(false);
@@ -126,12 +111,45 @@ public final class StudioLauncherActivity extends Activity {
         settings.setJavaScriptCanOpenWindowsAutomatically(false);
         if (android.os.Build.VERSION.SDK_INT >= 26) settings.setSafeBrowsingEnabled(true);
         web.setWebViewClient(new WebViewClient() {
+            // Only substitute the native edition of the welcome, footer and sync page.
+            // The screenplay, storage origin, uploads and routing remain the live studio's.
+            @Override public android.webkit.WebResourceResponse shouldInterceptRequest(
+                    WebView view, WebResourceRequest request) {
+                Uri url = request.getUrl();
+                if (!"https".equals(url.getScheme()) || !HOST.equals(url.getHost())
+                        || url.getPort() != -1 || !"GET".equals(request.getMethod())) return null;
+                String path = url.getPath();
+                String mime;
+                if ("/first-page.css".equals(path)) mime = "text/css";
+                else if ("/first-page.js".equals(path) || "/widget-entry.js".equals(path) || "/story-sync.js".equals(path)) mime = "application/javascript";
+                else if ("/widgets.html".equals(path)) mime = "text/html";
+                else if (offlineStudio && path!=null && path.matches("/(?:[a-zA-Z0-9_.-]+|app-icons/[a-zA-Z0-9_.-]+)?")) {
+                    if ("/".equals(path)) path="/index.html";
+                    if (path.endsWith(".html")) mime="text/html";
+                    else if (path.endsWith(".js")) mime="application/javascript";
+                    else if (path.endsWith(".css")) mime="text/css";
+                    else if (path.endsWith(".png")) mime="image/png";
+                    else if (path.endsWith(".webmanifest")) mime="application/manifest+json";
+                    else return null;
+                } else return null;
+                try {
+                    java.util.Map<String,String> headers=java.util.Collections.singletonMap("Cache-Control","no-store");
+                    return new android.webkit.WebResourceResponse(mime, "image/png".equals(mime)?null:"UTF-8",
+                        200,"OK",headers,getAssets().open("studio" + path));
+                } catch (java.io.IOException missing) {
+                    return null;
+                }
+            }
             @Override public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
                 if (!request.isForMainFrame()) return false;
                 return handleNavigation(request.getUrl().toString());
             }
             @Override public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
-                if (request.isForMainFrame()) showError();
+                if (request.isForMainFrame()) recoverStudio(request.getUrl());
+            }
+            @Override public void onReceivedHttpError(WebView view, WebResourceRequest request,
+                    android.webkit.WebResourceResponse response) {
+                if (request.isForMainFrame() && response.getStatusCode()>=400) recoverStudio(request.getUrl());
             }
         });
         web.setWebChromeClient(new WebChromeClient() {
@@ -163,29 +181,8 @@ public final class StudioLauncherActivity extends Activity {
         }), new LinearLayout.LayoutParams(-1, dp(60)));
         failure.addView(action("OPEN IN CHROME", false, this::openInChrome),
             new LinearLayout.LayoutParams(-1, dp(60)));
+        failure.addView(action("Widgets", false, this::openWidgets));
         shell.addView(failure, new LinearLayout.LayoutParams(-1, 0, 1));
-
-        // Bottom actions stay out of the story's header.
-        // Widget management is one tap away but never dominates the workspace.
-        View bottomRule = new View(this);
-        bottomRule.setBackgroundColor(Color.rgb(201,202,191));
-        shell.addView(bottomRule,new LinearLayout.LayoutParams(-1,dp(1)));
-        LinearLayout bottom = new LinearLayout(this);
-        bottom.setPadding(dp(13),dp(7),dp(13),dp(8));
-        bottom.setBackgroundColor(PAPER);
-        bottom.setGravity(Gravity.CENTER_VERTICAL);
-        Button studio = action("STUDIO", false, () -> {
-            if(web != null) web.loadUrl(STUDIO);
-        });
-        Button notes = action("NOTES +", false, () ->
-            startActivity(new Intent(this,QuickCaptureActivity.class)));
-        Button widgets = action("WIDGETS", true, this::openWidgets);
-        for (Button button : new Button[]{studio,notes,widgets}) {
-            LinearLayout.LayoutParams cell=new LinearLayout.LayoutParams(0,dp(46),1);
-            cell.setMargins(dp(4),0,dp(4),0);
-            bottom.addView(button,cell);
-        }
-        shell.addView(bottom,new LinearLayout.LayoutParams(-1,dp(62)));
 
         setContentView(shell);
         web.loadUrl(getIntent().getBooleanExtra(EXTRA_OPEN_SYNC,false)
@@ -195,8 +192,16 @@ public final class StudioLauncherActivity extends Activity {
     @Override protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         setIntent(intent);
-        if(web!=null && intent.getBooleanExtra(EXTRA_OPEN_SYNC,false)) {
+        if(web==null)return;
+        if(intent.getBooleanExtra(EXTRA_OPEN_SYNC,false)) {
+            failure.setVisibility(View.GONE);
+            web.setVisibility(View.VISIBLE);
             web.loadUrl(STUDIO+"widgets.html");
+        } else if ("com.lightbox.widgets.OPEN".equals(intent.getAction()) &&
+                (web.getVisibility()!=View.VISIBLE || (STUDIO+"widgets.html").equals(web.getUrl()))) {
+            failure.setVisibility(View.GONE);
+            web.setVisibility(View.VISIBLE);
+            web.loadUrl(STUDIO);
         }
     }
 
@@ -241,6 +246,14 @@ public final class StudioLauncherActivity extends Activity {
             }
         }
         return true;
+    }
+
+    private void recoverStudio(Uri failed) {
+        if (!offlineStudio && HOST.equals(failed.getHost()) &&
+                ("/".equals(failed.getPath()) || "/index.html".equals(failed.getPath()))) {
+            offlineStudio=true;
+            web.post(()->{ if(web!=null)web.loadUrl(STUDIO); });
+        } else showError();
     }
 
     private void showError() {

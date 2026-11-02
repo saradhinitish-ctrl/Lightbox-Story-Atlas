@@ -76,26 +76,26 @@ html.lb-native-shell .native-widget-card{display:block}
   </section>
   <section class="install-card" id="install" aria-labelledby="install-title">
   <span id="android-105-test" aria-hidden="true"></span>
-  <p id="native-launch-help" class="install-troubleshoot" role="status" hidden><strong>The Android widget manager did not open.</strong> The native Lightbox APK may not be installed, or Chrome may be unable to launch it. If you installed Lightbox using Chrome’s “Install app”, use <strong>DOWNLOAD LIGHTBOX PREVIEW 1.0.5</strong> below. If the Android APK is already installed, long-press an empty space on your phone’s home screen, tap <strong>Widgets</strong>, and look for <strong>Lightbox Preview</strong>. You can add the same widgets there.</p>
-  <div class="install-top"><span class="install-index">01 / LIGHTBOX PREVIEW 1.0.5</span><span class="install-system">ANDROID 8.0+</span></div>
+  <p id="native-launch-help" class="install-troubleshoot" role="status" hidden><strong>The Android widget manager did not open.</strong> The native Lightbox APK may not be installed, or Chrome may be unable to launch it. If you installed Lightbox using Chrome’s “Install app”, use <strong>DOWNLOAD LIGHTBOX STUDIO 1.0.6</strong> below. If the Android APK is already installed, long-press an empty space on your phone’s home screen, tap <strong>Widgets</strong>, and look for <strong>Lightbox Studio</strong>. You can add the same widgets there.</p>
+  <div class="install-top"><span class="install-index">01 / LIGHTBOX STUDIO 1.0.6</span><span class="install-system">ANDROID 8.0+</span></div>
   <div class="install-layout">
     <div class="install-copy">
       <h2 id="install-title">Give Lightbox a place <em>on your home screen.</em></h2>
-      <p>The Android Preview build is 4.04 MB and includes all three native widgets. It installs as a separate app named Lightbox Preview, with its own project storage.</p>
+      <p>Lightbox Studio 1.0.6 includes the writing workspace and all three home-screen widgets in one Android app.</p>
       <div class="install-tags"><span>2 × 2</span><span>4 × 2</span><span>4 × 4</span></div>
     </div>
     <div class="install-action">
       <div id="native-install-ready" hidden>
-        <a class="install-download" style="margin:14px 0" href="/android-downloads/lightbox-studio-1.0.5-preview.apk" download="Lightbox-Studio-1.0.5-PREVIEW.apk">DOWNLOAD LIGHTBOX PREVIEW 1.0.5 <span aria-hidden="true">↓</span></a>
-        <p class="install-caution">This is the actual 4.04 MB Android Preview APK with three native widgets, not the older 50 KB installer. Android may require your approval to install a website-downloaded app.</p>
+        <a class="install-download" style="margin:14px 0" href="/android-downloads/lightbox-studio-1.0.6.apk" download="Lightbox-Studio-1.0.6.apk">DOWNLOAD LIGHTBOX STUDIO 1.0.6 <span aria-hidden="true">↓</span></a>
+        <p class="install-caution">Open the downloaded APK in Android’s package installer.</p>
       </div>
-      <p class="install-caution" style="font-size:13px;padding:14px 0"><strong style="color:#EFEDE6">Already have Lightbox Preview?</strong> Open Lightbox Preview from your phone's app drawer and tap <strong style="color:#C6FF00">WIDGETS</strong>. Add the widget there. You do not need to download or reinstall anything.</p>
+      <p class="install-caution">After installation, open Lightbox Studio and tap Widgets.</p>
       
-      <p class="install-caution" id="native-install-pending">If you have installed Lightbox Preview already, use WIDGETS inside the app.</p>
+      <p class="install-caution" id="native-install-pending">Checking the Android download…</p>
 
     </div>
   </div>
-  <p class="install-caution" style="font-size:12px;padding-bottom:8px"><strong style="color:#C6FF00">Preview build, not a production update.</strong> The Preview installs alongside older Lightbox apps and does not automatically transfer their saved projects. Android 15 emulator testing passed; installation on your phone has not yet been confirmed.</p>
+  <p class="install-caution" style="font-size:12px;padding-bottom:8px">Coming from 1.0.5? Keep the old app installed. Export your worlds from it and import them in Studio. Copy any notebook entries you want to keep.</p>
   <div class="install-steps"><span>01 — INSTALL ONE APP</span><span>02 — OPEN LIGHTBOX</span><span>03 — SYNC STORY</span><span>04 — ADD WIDGET</span></div>
  </section>
 
@@ -123,7 +123,7 @@ if(new URLSearchParams(window.location.search).get('native')==='unavailable'){
  const help=document.getElementById('native-launch-help');
  if(help) help.hidden=false;
 }
-if(!document.documentElement.classList.contains('lb-native-shell')) fetch('/android-downloads/lightbox-studio-1.0.5-preview.apk',{method:'HEAD',cache:'no-store'}).then(r=>{
+if(!document.documentElement.classList.contains('lb-native-shell')) fetch('/android-downloads/lightbox-studio-1.0.6.apk',{method:'HEAD',cache:'no-store'}).then(r=>{
   if(r.ok&&r.headers.get('Content-Type')?.includes('android.package-archive')&&(!r.headers.get('Content-Length')||Number(r.headers.get('Content-Length'))>30000)) {
     nativeReady.hidden=false;
     nativePending.hidden=true;
@@ -183,7 +183,7 @@ function update(){
  const s=snapshot(p);
  summary.textContent=s.scene+' / '+s.heading+'   •   '+s.words+' words'+(s.target>0?' of '+s.target+' target':'');
  const q=new URLSearchParams(Object.entries(s).map(([k,v])=>[k,String(v)]));
- launch.href='intent://sync?'+q.toString()+'#Intent;scheme=lightboxwidget;package=com.saradhinitish.lightboxstudio.preview;end';
+ launch.href='intent://sync?'+q.toString()+'#Intent;scheme=lightboxwidget;package=com.saradhinitish.lightboxstudio.android;end';
  launch.setAttribute('aria-disabled','false');
  launch.onclick=()=>{status.textContent=document.documentElement.classList.contains('lb-native-shell')?'Sending your selected story to the native widgets…':'Opening your installed Lightbox Android app to sync the story. Make sure the APK is installed.';};
 }

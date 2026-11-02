@@ -62716,7 +62716,7 @@ ${prefix}
             }, placeholder: "Name your world" }),
             /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(Pencil, { size: 17 })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("p", { children: idea || "An idea becomes a world. Make room for yours." })
+          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("p", { className:idea?"":"atlas-empty-premise", children: idea || "An idea becomes a world. Make room for yours." })
         ] }),
         /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("button", { className: "pitch-launch", onClick: () => onView("pitch"), children: [
           /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(Play, { size: 16 }),
@@ -63610,7 +63610,7 @@ ${prefix}
     const [replaceFind, setReplaceFind] = (0, import_react18.useState)(""), [replaceWith, setReplaceWith] = (0, import_react18.useState)(""), [replaceScope, setReplaceScope] = (0, import_react18.useState)("document"), [snapshotId, setSnapshotId] = (0, import_react18.useState)(""), [compareId, setCompareId] = (0, import_react18.useState)(""), [moveParent, setMoveParent] = (0, import_react18.useState)("");
     const [vault, setVault] = (0, import_react18.useState)(null), [vaultError, setVaultError] = (0, import_react18.useState)(""), [vaultQuery, setVaultQuery] = (0, import_react18.useState)("");
     const [recovery, setRecovery] = (0, import_react18.useState)(null), [lastSaved, setLastSaved] = (0, import_react18.useState)(""), [selectionQuote, setSelectionQuote] = (0, import_react18.useState)("");
-    const activeEditor = (0, import_react18.useRef)(null), range2 = (0, import_react18.useRef)(null), importInput = (0, import_react18.useRef)(null), restoreInput = (0, import_react18.useRef)(null), toastTimer = (0, import_react18.useRef)(null);
+    const activeEditor = (0, import_react18.useRef)(null), range2 = (0, import_react18.useRef)(null), importInput = (0, import_react18.useRef)(null), restoreInput = (0, import_react18.useRef)(null), toastTimer = (0, import_react18.useRef)(null), toastSequence = (0, import_react18.useRef)(0);
     const editorBody = (0, import_react18.useRef)(null);
     const undoStack = (0, import_react18.useRef)([]), redoStack = (0, import_react18.useRef)([]), lastMutation = (0, import_react18.useRef)("structure");
     const project = workspace.projects.find((p) => p.id === projectId && !p.archived) || null, selected = project?.nodes.find((n) => n.id === selectedId) || null;
@@ -63627,7 +63627,7 @@ ${prefix}
     if (sort === "title") items = [...items].sort((a, b) => a.title.localeCompare(b.title));
     if (sort === "updated") items = [...items].sort((a, b) => b.updated.localeCompare(a.updated));
     function notify(s) {
-      setToast(s);
+      setToast({message:s, key:(toastSequence.current++)});
       if (toastTimer.current) clearTimeout(toastTimer.current);
       toastTimer.current = setTimeout(() => setToast(""), 3500);
     }
@@ -64071,7 +64071,7 @@ ${prefix}
       setNewTitle("");
       setModal(null);
       switchProject(p.id);
-      notify("World created. Its characters, locations, research, and drafts are separate.");
+      notify("World created · Characters, locations and drafts are ready.");
     }
     function writeScreenplay() {
       setStage(null);
@@ -65952,8 +65952,9 @@ ${prefix}
       !!workspace.pendingAssetDeletes?.length && /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("div", { className: "asset-cleanup-status", role: "status", children: "Removing unused deleted uploads after saving\u2026" }),
       toast && /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "toast-message", role: "status", children: [
         /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(CircleCheck, { size: 15 }),
-        toast
-      ] }),
+        (0, import_jsx_runtime19.jsx)("span", {children: toast.message}),
+        (0, import_jsx_runtime19.jsx)("button", {type:"button", "aria-label":"Dismiss notification", onClick:()=>{clearTimeout(toastTimer.current);setToast("");}, children:(0, import_jsx_runtime19.jsx)(X,{size:15})})
+      ] }, toast.key),
       modal === "command" && /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(ModalFrame, { title: "Go anywhere.", description: "Search this world or jump to a workspace.", close: closeModal, children: /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(StudioCommand, { project, onOpen: (id) => {
         closeModal();
         openNode(id);

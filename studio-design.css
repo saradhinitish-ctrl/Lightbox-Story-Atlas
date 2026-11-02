@@ -520,3 +520,41 @@ body { margin:0; background:var(--lb-canvas); color:var(--lb-ink); }
 @media print {
   .lb-canvas-toggle { display:none!important; }
 }
+
+/* Compact feedback stays clear of the canvas and never takes focus. */
+.studio.atlas-shell .toast-message {
+  position:fixed; inset:max(8px,env(safe-area-inset-top)) auto auto 50%;
+  transform:translateX(-50%); z-index:3000; box-sizing:border-box;
+  display:flex; align-items:center; gap:8px; width:max-content; min-height:40px;
+  max-width:min(360px,calc(100vw - 20px)); margin:0; padding:2px 3px 2px 12px;
+  border:1px solid var(--lb-ink); border-radius:9px; overflow:hidden;
+  background:var(--lb-ink); color:var(--lb-paper); box-shadow:0 3px 12px #18191630;
+  font:500 13px/1.35 var(--font-ui); animation:lb-notice-enter .16s ease-out both;
+}
+.studio.atlas-shell .toast-message>svg {flex:none;color:var(--lb-lime)}
+.studio.atlas-shell .toast-message>button {flex:none;display:grid;place-items:center;width:40px;height:40px;padding:0;background:none;color:inherit;border:0;box-shadow:none}
+.studio.atlas-shell .toast-message::after {content:"";position:absolute;inset:auto 0 0;height:2px;background:var(--lb-lime);transform-origin:left;animation:lb-notice-clock 3.5s linear forwards}
+@keyframes lb-notice-clock {to {transform:scaleX(0)}}
+@keyframes lb-notice-enter {from {opacity:0;transform:translate(-50%,-5px)}}
+@media(prefers-reduced-motion:reduce) {
+  .studio.atlas-shell .toast-message,.studio.atlas-shell .toast-message::after {animation:none}
+}
+@media(max-width:767px) {
+  .studio.atlas-shell .app-header.compact-header {flex:0 0 auto;height:auto;min-height:0;margin:0;padding:0}
+  .studio.atlas-shell .compact-header .menubar {height:48px;min-height:48px;padding:0 6px;align-content:center}
+  .studio.atlas-shell .story-atlas {padding-top:12px!important}
+  .studio.atlas-shell .atlas-heading {gap:6px!important;margin-bottom:10px!important}
+  .studio.atlas-shell .atlas-heading p {margin-top:4px}
+}
+@media(max-width:767px) {
+  .studio.atlas-shell .story-atlas .atlas-heading {display:grid!important;grid-template-columns:minmax(0,1fr) auto;align-items:center!important;column-gap:8px!important}
+  .studio.atlas-shell .atlas-heading .pitch-launch {align-self:center!important;min-height:44px}
+  .studio.atlas-shell .atlas-heading .pitch-launch>span {display:none}
+  .studio.atlas-shell .atlas-heading .atlas-world-name input {font-size:clamp(27px,8vw,36px)!important;min-height:40px}
+}
+.studio.atlas-shell .toast-message {background:var(--lb-ink)!important;color:var(--lb-paper)!important;box-shadow:0 3px 12px #18191630!important}
+@media(max-width:767px) {
+  .studio.atlas-shell .atlas-heading .pitch-launch>span {display:block;position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}
+  .studio.atlas-shell .atlas-heading .atlas-empty-premise {display:none}
+  .studio.atlas-shell .atlas-heading {min-height:0;padding-bottom:4px}
+}

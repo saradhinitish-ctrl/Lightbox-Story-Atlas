@@ -47,8 +47,8 @@ public final class WidgetState {
         int target = safeNumber(uri.getQueryParameter("target"));
         context.getSharedPreferences(FILE, Context.MODE_PRIVATE).edit()
             .putString("title", title).putString("scene", scene.isEmpty() ? "--" : scene)
-            .putString("heading", heading.isEmpty() ? "Continue your story." : heading)
-            .putString("draft", draft.isEmpty() ? "WORK IN PROGRESS" : draft)
+            .putString("heading", heading)
+            .putString("draft", draft)
             .putString("project", project).putString("node", node)
             .putInt("words", words).putInt("target", target)
             .putLong("synced", System.currentTimeMillis()).apply();

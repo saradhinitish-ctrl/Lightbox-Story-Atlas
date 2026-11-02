@@ -25,6 +25,7 @@ import android.widget.TextView;
 public final class WidgetGalleryActivity extends Activity {
     private static final String TAG="LightboxWidgetQA";
     private AppWidgetHost host;
+    private int twinId=AppWidgetManager.INVALID_APPWIDGET_ID;
     private int id=AppWidgetManager.INVALID_APPWIDGET_ID;
     private int dp(float v){return Math.round(v*getResources().getDisplayMetrics().density);}
     private TextView text(String value,int size,boolean bold){
@@ -74,6 +75,18 @@ public final class WidgetGalleryActivity extends Activity {
             "BIND PERMISSION NOT GRANTED / VISUAL FALLBACK",11,false);
         LinearLayout.LayoutParams caption=new LinearLayout.LayoutParams(-2,-2);
         caption.topMargin=dp(20);column.addView(guide,caption);
+        // A second, independently bound instance must reflect the first widget's action.
+        boolean twin=getIntent().getBooleanExtra("twin",false);
+        AppWidgetHostView second=null;
+        if(twin && granted){
+            twinId=host.allocateAppWidgetId();
+            if(!manager.bindAppWidgetIdIfAllowed(twinId,component))
+                throw new AssertionError("Second widget binding denied");
+            second=host.createView(this,twinId,manager.getAppWidgetInfo(twinId));
+            column.addView(second,new LinearLayout.LayoutParams(dp(width),dp(height)));
+            manager.updateAppWidget(twinId,WidgetBaseProvider.views(this,twinId,variant,true));
+        }
+        final AppWidgetHostView twinView=second;
         setContentView(scroll);
         if(granted) {
             host.startListening();
@@ -82,8 +95,8 @@ public final class WidgetGalleryActivity extends Activity {
         final int action=getIntent().getIntExtra("testAction",-1);
         final int target=action==0?R.id.action_open:
             action==1?R.id.action_capture:action==2?R.id.action_sync:
-            action==3?R.id.action_session:0;
-        if(target!=0 && (variant==2 || action<2) && (variant>=1 || action!=3)) {
+            action==3?R.id.action_session:action==4?R.id.recent_area:0;
+        if(target!=0 && (action!=2 || variant==2) && (action!=3 || variant>=1)) {
             widget.postDelayed(()->{
                 View control=widget.findViewById(target);
                 Log.i(TAG,"Action="+action+" targetPresent="+(control!=null)+
@@ -93,6 +106,10 @@ public final class WidgetGalleryActivity extends Activity {
                     Log.i(TAG,"Action click dispatched="+dispatched);
                     if(action==3) widget.postDelayed(()->Log.i(TAG,
                         "Session active="+WidgetSession.isActive(this)),750);
+                    if(twinView!=null)widget.postDelayed(()->{
+                        TextView status=twinView.findViewById(R.id.action_session);
+                        Log.i(TAG,"Second widget session="+(status==null?"missing":status.getText()));
+                    },1600);
                 }
             },1200);
         }
@@ -100,6 +117,7 @@ public final class WidgetGalleryActivity extends Activity {
     @Override protected void onDestroy() {
         if(host!=null) {
             host.stopListening();
+            if(twinId!=AppWidgetManager.INVALID_APPWIDGET_ID)host.deleteAppWidgetId(twinId);
             if(id!=AppWidgetManager.INVALID_APPWIDGET_ID) host.deleteAppWidgetId(id);
         }
         super.onDestroy();

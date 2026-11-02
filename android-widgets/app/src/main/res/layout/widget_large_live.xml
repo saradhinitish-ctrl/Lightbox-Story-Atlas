@@ -1,60 +1,76 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
- android:id="@+id/widget_root" android:orientation="vertical"
  android:layout_width="match_parent" android:layout_height="match_parent"
- android:padding="17dp" android:background="@drawable/widget_panel">
- <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
-  android:text="LIGHTBOX  /  THE CURRENT STORY" android:textColor="#66685E"
-  android:fontFamily="monospace" android:textStyle="bold" android:textSize="10sp"/>
+ android:orientation="vertical" android:padding="17dp"
+ android:background="@drawable/widget_panel_ink">
+ <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+  android:orientation="horizontal" android:gravity="center_vertical">
+  <TextView android:layout_width="0dp" android:layout_weight="1"
+   android:layout_height="wrap_content" android:text="LIGHTBOX  /  DIRECTOR'S DESK"
+   android:fontFamily="monospace" android:textColor="#C6FF00"
+   android:textSize="10sp" android:textStyle="bold" android:singleLine="true"/>
+  <TextView android:id="@+id/widget_session" android:layout_width="wrap_content"
+   android:layout_height="wrap_content" android:text="READY"
+   android:fontFamily="monospace" android:textColor="#B5C1A7"
+   android:textSize="10sp" android:textStyle="bold"/>
+ </LinearLayout>
  <TextView android:id="@+id/widget_title" android:layout_width="match_parent"
-  android:layout_height="wrap_content" android:layout_marginTop="14dp"
-  android:text="Your next story" android:textColor="#181916"
-  android:fontFamily="serif" android:textSize="29sp" android:maxLines="2"
-  android:ellipsize="end"/>
+  android:layout_height="wrap_content" android:layout_marginTop="16dp"
+  android:fontFamily="serif" android:text="Your film." android:textColor="#F5F3EB"
+  android:textSize="32sp" android:maxLines="2" android:ellipsize="end"/>
  <TextView android:id="@+id/widget_draft" android:layout_width="match_parent"
-  android:layout_height="wrap_content" android:layout_marginTop="2dp"
-  android:text="CURRENT DRAFT" android:textColor="#66685E"
-  android:textSize="10sp" android:fontFamily="monospace"/>
- <View android:layout_width="match_parent" android:layout_height="1dp"
-  android:layout_marginTop="17dp" android:background="#C7C7BD"/>
+  android:layout_height="wrap_content" android:layout_marginTop="4dp"
+  android:fontFamily="monospace" android:text="CURRENT DRAFT"
+  android:textColor="#A8B09D" android:textSize="9sp" android:singleLine="true"/>
  <TextView android:id="@+id/widget_scene" android:layout_width="match_parent"
-  android:layout_height="wrap_content" android:layout_marginTop="15dp"
-  android:text="SCENE --" android:textColor="#53564D" android:textSize="10sp"
-  android:textStyle="bold" android:fontFamily="monospace"/>
+  android:layout_height="wrap_content" android:layout_marginTop="17dp"
+  android:fontFamily="monospace" android:text="SCENE --"
+  android:textColor="#C6FF00" android:textSize="11sp"
+  android:textStyle="bold" android:singleLine="true"/>
  <TextView android:id="@+id/widget_heading" android:layout_width="match_parent"
-  android:layout_height="0dp" android:layout_weight="1" android:layout_marginTop="8dp"
-  android:text="A scene worth writing." android:textColor="#181916"
-  android:fontFamily="serif" android:textSize="19sp" android:maxLines="3"
-  android:ellipsize="end"/>
+  android:layout_height="0dp" android:layout_weight="1" android:gravity="top"
+  android:layout_marginTop="6dp" android:text="Your next scene begins here."
+  android:textColor="#F5F3EB" android:textSize="16sp" android:fontFamily="serif"
+  android:maxLines="3" android:ellipsize="end"/>
  <TextView android:id="@+id/widget_count" android:layout_width="match_parent"
-  android:layout_height="wrap_content" android:text="0 WORDS" android:textColor="#53564D"
-  android:textSize="10sp" android:fontFamily="monospace"/>
+  android:layout_height="wrap_content" android:fontFamily="monospace"
+  android:text="NO STORY SYNCED" android:textColor="#B5C1A7" android:textSize="10sp"/>
  <ProgressBar android:id="@+id/widget_progress" style="?android:attr/progressBarStyleHorizontal"
   android:layout_width="match_parent" android:layout_height="4dp"
   android:layout_marginTop="8dp" android:max="100" android:progress="0"
   android:progressDrawable="@drawable/widget_progress_track"/>
+ <TextView android:id="@+id/widget_recent" android:layout_width="match_parent"
+  android:layout_height="wrap_content" android:layout_marginTop="12dp"
+  android:background="@drawable/widget_soft_ink" android:padding="11dp"
+  android:text="NEW IDEA? TAP NOTE + TO CAPTURE."
+  android:textColor="#E5E6D9" android:textSize="11sp" android:maxLines="2"
+  android:ellipsize="end" android:clickable="true"
+  android:contentDescription="Open your captured notes"/>
  <TextView android:id="@+id/widget_sync_status" android:layout_width="match_parent"
-  android:layout_height="wrap_content" android:layout_marginTop="8dp"
-  android:text="LAST MANUAL SYNC" android:textColor="#66685E"
-  android:textSize="9sp" android:fontFamily="monospace" android:maxLines="1"/>
+  android:layout_height="wrap_content" android:layout_marginTop="12dp"
+  android:fontFamily="monospace" android:text="SYNC A STORY TO BEGIN"
+  android:textColor="#A8B09D" android:textSize="9sp" android:maxLines="1"/>
  <LinearLayout android:layout_width="match_parent" android:layout_height="38dp"
-  android:layout_marginTop="16dp" android:orientation="horizontal">
-  <TextView android:id="@+id/action_open" android:layout_width="0dp"
-   android:layout_weight="1" android:layout_height="match_parent" android:gravity="center"
-   android:clickable="true" android:background="@drawable/widget_action_ink"
-   android:text="OPEN ↗" android:textStyle="bold" android:textColor="#F9F8F3" android:textSize="10sp"/>
-  <TextView android:id="@+id/action_capture" android:layout_width="0dp"
-   android:layout_weight="1" android:layout_height="match_parent" android:layout_marginStart="6dp"
-   android:gravity="center" android:clickable="true" android:background="@drawable/widget_action_lime"
-   android:text="NOTE +" android:textStyle="bold" android:textColor="#181916" android:textSize="10sp"/>
-  <TextView android:id="@+id/action_sync" android:layout_width="0dp"
-   android:layout_weight="1" android:layout_height="match_parent" android:layout_marginStart="6dp"
-   android:gravity="center" android:clickable="true" android:background="@drawable/widget_action_ink"
-   android:text="SYNC ↗" android:textStyle="bold" android:textColor="#F9F8F3" android:textSize="10sp"/>
-  <TextView android:id="@+id/action_refresh" android:layout_width="38dp"
-   android:layout_height="match_parent" android:layout_marginStart="6dp"
-   android:gravity="center" android:clickable="true" android:background="@drawable/widget_action_lime"
-   android:text="↻" android:textColor="#181916" android:textSize="18sp"
-   android:contentDescription="Refresh last synced data"/>
+  android:layout_marginTop="12dp" android:orientation="horizontal">
+  <TextView android:id="@+id/action_open" android:layout_width="0dp" android:layout_weight="1"
+   android:layout_height="match_parent" android:gravity="center" android:clickable="true"
+   android:background="@drawable/widget_action_lime" android:text="WRITE ↗"
+   android:textColor="#191B18" android:textSize="10sp" android:textStyle="bold"
+   android:contentDescription="Open Lightbox studio"/>
+  <TextView android:id="@+id/action_capture" android:layout_width="0dp" android:layout_weight="1"
+   android:layout_height="match_parent" android:layout_marginStart="5dp" android:gravity="center"
+   android:clickable="true" android:background="@drawable/widget_soft_ink"
+   android:text="NOTE +" android:textColor="#F5F3EB" android:textSize="10sp"
+   android:textStyle="bold" android:contentDescription="Capture a new note"/>
+  <TextView android:id="@+id/action_session" android:layout_width="0dp" android:layout_weight="1"
+   android:layout_height="match_parent" android:layout_marginStart="5dp" android:gravity="center"
+   android:clickable="true" android:background="@drawable/widget_soft_ink"
+   android:text="START" android:textColor="#F5F3EB" android:textSize="10sp"
+   android:textStyle="bold" android:contentDescription="Start or finish session"/>
+  <TextView android:id="@+id/action_sync" android:layout_width="0dp" android:layout_weight="1"
+   android:layout_height="match_parent" android:layout_marginStart="5dp" android:gravity="center"
+   android:clickable="true" android:background="@drawable/widget_soft_ink"
+   android:text="SYNC ↗" android:textColor="#F5F3EB" android:textSize="10sp"
+   android:textStyle="bold" android:contentDescription="Open story synchronization"/>
  </LinearLayout>
 </LinearLayout>

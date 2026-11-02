@@ -23,7 +23,8 @@ jobs:
           gradle-version: '8.11.1'
       - name: Build current APKs and upgrade fixture
         run: |
-          sdkmanager 'platforms;android-36' 'build-tools;36.0.0'
+          manager="$(find "$ANDROID_HOME/cmdline-tools" -type f -name sdkmanager | head -1)"
+          "$manager" 'platforms;android-36' 'build-tools;36.0.0' 
           git worktree add --detach /tmp/lightbox-old 9b26f1689c12bf2e48834b5d8efaf8bd1e8443a6
           gradle -p /tmp/lightbox-old/android-widgets --max-workers=2 assembleDebug
           gradle -p android-widgets --max-workers=2 assembleDebug assembleRelease lintRelease

@@ -1,6 +1,10 @@
 name: Publish free unified Android download
 on:
   workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/android-free-release.yml'
 permissions:
   contents: read
 jobs:
@@ -63,6 +67,7 @@ jobs:
           SDK_ROOT="${ANDROID_SDK_ROOT:-${ANDROID_HOME:-/usr/local/lib/android/sdk}}"
           "${SDK_ROOT}/build-tools/36.0.0/apksigner" verify --verbose --print-certs "${APK}" | tee "${RUNNER_TEMP}/apk-verification.txt"
           grep -q 'Verified using v2 scheme (APK Signature Scheme v2): true' "${RUNNER_TEMP}/apk-verification.txt"
+          grep -qi 'ea2cb663c80973a290a03f7bf20e7260eb22bddc33830ea5fa6fa95526ba02df' "${RUNNER_TEMP}/apk-verification.txt" || { echo 'Incompatible release signing certificate'; exit 1; }
       - name: Prepare website download and verified Android domain association
         env:
           LIGHTBOX_ANDROID_RELEASE_KEYSTORE: ${{ runner.temp }}/lightbox-release.jks
@@ -79,11 +84,11 @@ jobs:
           FINGERPRINT="${FINGERPRINT}" python3 - <<'PY'
           import json,os,pathlib
           data=[{"relation":["delegate_permission/common.handle_all_urls"],"target":{
-            "namespace":"android_app","package_name":"com.saradhinitish.lightbox",
+            "namespace":"android_app","package_name":"com.saradhinitish.lightboxstudio",
             "sha256_cert_fingerprints":[os.environ["FINGERPRINT"]]}}]
           pathlib.Path("release-package/assetlinks.json").write_text(json.dumps(data,indent=2)+"\n")
           PY
-          sha256sum release-package/lightbox-studio.apk > release-package/SHA256SUMS
+          sha256sum release-package/lightbox-studio.apk | sed 's@release-package/lightbox-studio.apk@android-downloads/lightbox-studio.apk@' > release-package/SHA256SUMS
           test -s release-package/assetlinks.json
       - name: Upload testable release assets
         uses: actions/upload-artifact@v4
@@ -119,6 +124,7 @@ jobs:
           install -m 0644 release-package/lightbox-studio.apk android-downloads/lightbox-studio.apk
           install -m 0644 release-package/assetlinks.json .well-known/assetlinks.json
           install -m 0644 release-package/SHA256SUMS android-downloads/UNIFIED-SHA256SUMS
+          sha256sum -c android-downloads/UNIFIED-SHA256SUMS
           git add android-downloads/lightbox-studio.apk android-downloads/UNIFIED-SHA256SUMS .well-known/assetlinks.json
           if git diff --cached --quiet; then exit 0; fi
           git config user.name "Lightbox Android Release"

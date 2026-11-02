@@ -8,7 +8,7 @@
   if (!root) return;
   const android = /\bAndroid\b/i.test(navigator.userAgent || '');
   const nativeApp = document.documentElement.classList.contains('lb-native-shell');
-  const apkUrl = '/android-downloads/lightbox-studio.apk';
+  const apkUrl = '/android-downloads/lightbox-studio-1.0.5-preview.apk';
 
   const styleId = 'lightbox-native-download-style';
   if (!document.getElementById(styleId)) {
@@ -50,15 +50,15 @@
     const download = document.createElement('a');
     download.className = 'lb-native-choice__download';
     download.href = apkUrl;
-    download.setAttribute('download', 'Lightbox-Studio-Android.apk');
-    download.textContent = 'DOWNLOAD ANDROID APK  ↓';
+    download.setAttribute('download', 'Lightbox-Studio-1.0.5-PREVIEW.apk');
+    download.textContent = 'DOWNLOAD LIGHTBOX PREVIEW 1.0.5 ↓';
     const browser = document.createElement('span');
     browser.className = 'lb-native-choice__browser';
     browser.textContent = 'Already on Lightbox? Keep using it here — no download needed.';
     actions.append(download, browser);
     const note = document.createElement('p');
     note.className = 'lb-native-choice__notice';
-    note.textContent = "Lightbox Android 1.0.4 includes three functional native widgets: Quick Capture, Scene Desk, and Director Desk. You can save notes, open the workspace, start or finish a writing session, and manually sync story progress. Chrome's Install App is only a browser shortcut without native widgets. Back up projects before switching installations."
+    note.textContent = "Lightbox Preview 1.0.5 includes three functional native widgets: Quick Capture, Scene Desk, and Director Desk. You can save notes, open the workspace, start or finish a writing session, and manually sync story progress. Chrome's Install App is only a browser shortcut without native widgets. Lightbox Preview installs separately and maintains its own local data; it is a test build."
     card.append(tag, title, desc, actions, note);
     return card;
   }
@@ -68,9 +68,9 @@
     // Browser visitors see setup information, not an Android install/intent error.
     // Only the native WebView uses the app-owned deep link.
     a.href = nativeApp ? 'lightboxwidget://manager' : apkUrl;
-    if (!nativeApp) a.setAttribute('download', 'Lightbox-Studio-Android.apk');
-    a.textContent = nativeApp ? 'ADD WIDGETS ↗' : 'DOWNLOAD ANDROID APK ↓';
-    a.setAttribute('aria-label', nativeApp ? 'Open native widget manager' : 'Download Lightbox Studio Android APK with built-in widgets');
+    if (!nativeApp) a.setAttribute('download', 'Lightbox-Studio-1.0.5-PREVIEW.apk');
+    a.textContent = nativeApp ? 'ADD WIDGETS ↗' : 'DOWNLOAD LIGHTBOX PREVIEW ↓';
+    a.setAttribute('aria-label', nativeApp ? 'Open native widget manager' : 'Download Lightbox Preview 1.0.5 APK with built-in widgets');
     return a;
   }
   let queued = false;
@@ -112,8 +112,8 @@
         copy.textContent='LIGHTBOX / ON ANDROID';
         const download=document.createElement('a');
         download.href=apkUrl;
-        download.download='Lightbox-Studio-Android.apk';
-        download.textContent='DOWNLOAD ANDROID APP ↓';
+        download.download='Lightbox-Studio-1.0.5-PREVIEW.apk';
+        download.textContent='DOWNLOAD LIGHTBOX PREVIEW ↓';
         footer.append(copy,download);
         atlas.appendChild(footer);
       }

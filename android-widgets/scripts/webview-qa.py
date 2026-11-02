@@ -116,9 +116,16 @@ check()}""")
     sock.close()
     sock=connect()
     until("!!document.querySelector('.story-atlas')")
+    until("!!document.querySelector('.native-utilities a') && !document.getElementById('lb-opener')")
     evaluate("document.querySelector('.native-utilities a').click()")
-    time.sleep(1)
-    assert 'WidgetHubActivity' in adb('shell','dumpsys','activity','activities').split('topResumedActivity=')[-1][:260]
+    for _ in range(25):
+        activities=adb('shell','dumpsys','activity','activities')
+        if any('topResumedActivity=' in line and 'WidgetHubActivity' in line for line in activities.splitlines()):
+            break
+        time.sleep(.4)
+    else:
+        (OUT/'footer-activities.txt').write_text(activities)
+        raise AssertionError('Footer did not open native widget manager')
     adb('shell','input','keyevent','4')
     evaluate("location.href='/widgets.html'")
     until("document.querySelector('#project')?.selectedOptions[0]?.textContent==='Rain Check'")

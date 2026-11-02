@@ -31,7 +31,7 @@ def tap(label):
         adb('shell', 'uiautomator', 'dump', '/data/local/tmp/lightbox.xml')
         tree = ET.fromstring(adb('shell', 'cat', '/data/local/tmp/lightbox.xml'))
         for node in tree.iter('node'):
-            if label in (node.get('text'), node.get('content-desc'), node.get('class')):
+            if label.casefold() in {node.get(key,'').casefold() for key in ('text','content-desc','class')}:
                 x, y, right, bottom = map(int, re.findall(r'\d+', node.get('bounds')))
                 adb('shell', 'input', 'tap', str((x+right)//2), str((y+bottom)//2))
                 return

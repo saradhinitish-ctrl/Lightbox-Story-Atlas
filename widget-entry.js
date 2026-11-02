@@ -25,6 +25,8 @@
       '.lb-native-choice__browser{font:12px/1.6 Arial,sans-serif;color:#53564d}',
       '.lb-native-choice__notice{font:11px/1.55 Arial,sans-serif;color:#666c60;margin:14px 0 0}',
       '.lb-widgets-link{display:inline-flex;align-items:center;justify-content:center;min-height:42px;padding:9px 14px;border:1.5px solid #181916;border-radius:4px;background:#C6FF00;color:#181916;font:800 11px/1.2 monospace;letter-spacing:.035em;text-decoration:none;white-space:nowrap}',
+      '.lb-android-footer{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;margin:40px 0 95px;padding:22px 0;border-top:1px solid #B7B7AE;color:#53564D;font:700 10px/1.5 monospace;letter-spacing:.07em}',
+      '.lb-android-footer a{display:inline-block;color:#181916;text-decoration:underline;text-underline-offset:5px;font:700 12px/1.5 monospace;letter-spacing:0}',
       '@media(max-width:600px){.lb-native-choice{width:100%;margin:18px 0;padding:17px}.lb-native-choice__actions{flex-direction:column;align-items:stretch}.lb-native-choice__download{width:100%;min-height:48px}}'
     ].join('\n');
     document.head.appendChild(sheet);
@@ -90,16 +92,30 @@
         else if (cards[0].parentElement!==host) host.appendChild(cards[0]);
       } else if (cards.length>0) cards[0].remove();
     }
-    root.querySelectorAll('.studio.atlas-shell .atlas-caption').forEach(el => {
-      let link=el.querySelector('.lb-widgets-atlas');
-      if (!link) {
-        link=managerButton('atlas');
-        link.style.marginLeft='auto';
-        el.appendChild(link);
-      } else {
-        link.href=nativeApp?'lightboxwidget://manager':apkUrl;
-        link.textContent=nativeApp?'ADD WIDGETS ↗':'DOWNLOAD ANDROID APK ↓';
-        if (!nativeApp) link.setAttribute('download','Lightbox-Studio-Android.apk');
+    // Never place widget management in the Story Atlas header.
+    root.querySelectorAll('.studio.atlas-shell .atlas-caption .lb-widgets-atlas')
+      .forEach(link=>link.remove());
+
+    // In the installed app, the native bottom dock owns the widgets action.
+    // In Chrome, a quiet utility link near the BOTTOM of the Story Atlas
+    // downloads the standalone APK rather than attempting a PWA install.
+    root.querySelectorAll('.studio.atlas-shell .story-atlas').forEach(atlas => {
+      let footer=atlas.querySelector(':scope > .lb-android-footer');
+      if(nativeApp) {
+        if(footer) footer.remove();
+        return;
+      }
+      if(!footer) {
+        footer=document.createElement('div');
+        footer.className='lb-android-footer';
+        const copy=document.createElement('span');
+        copy.textContent='LIGHTBOX / ON ANDROID';
+        const download=document.createElement('a');
+        download.href=apkUrl;
+        download.download='Lightbox-Studio-Android.apk';
+        download.textContent='DOWNLOAD ANDROID APP ↓';
+        footer.append(copy,download);
+        atlas.appendChild(footer);
       }
     });
   }

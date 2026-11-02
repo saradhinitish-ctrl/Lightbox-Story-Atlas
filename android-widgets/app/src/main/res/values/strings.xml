@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
  <string name="app_name">Lightbox Studio</string>
- <string name="quick_description">W.I.P. — 2×2 Quick Return</string>
- <string name="wide_description">W.I.P. — 4×2 Current Scene</string>
- <string name="large_description">W.I.P. — 4×4 Story in Progress</string>
+ <string name="quick_description">2×2 Quick Capture — a note and a one-tap return to your story</string>
+ <string name="wide_description">4×2 Scene Desk — writing session, note and current scene</string>
+ <string name="large_description">4×4 Director's Desk — synced story, latest note, sessions and progress</string>
  <string name="asset_statements" translatable="false">[{\"relation\":[\"delegate_permission/common.handle_all_urls\"],\"target\":{\"namespace\":\"web\",\"site\":\"https://lightbox-studio.vercel.app\"}}]</string>
 </resources>

@@ -54,3 +54,13 @@ html.lb-native-shell #static-intro { visibility:hidden }
 }
 .lb-native-shell .welcome > .manuscript-title input::placeholder {color:#68705f}
 .lb-native-shell .welcome > .manuscript-title input:focus {outline:none;border-bottom:2px solid #476427}
+/* A clean cover on first use. Keep the actual world switcher available here. */
+.lb-native-shell .studio.manuscript-shelf .app-header {display:none!important}
+.lb-native-shell .studio.manuscript-shelf .welcome {min-height:100svh}
+.lb-native-shell .welcome .shelf-projects {
+  margin-inline-start:auto; border:0; background:transparent; box-shadow:none;
+  min-height:44px; padding:0 2px 0 10px; color:#404b3e; font:500 14px/1.4 system-ui;
+  letter-spacing:0; text-transform:none;
+}
+.lb-native-shell .studio.atlas-shell .welcome>.eyebrow {padding-bottom:4px}
+.lb-native-shell .studio.atlas-shell .welcome>.manuscript-title input {font:400 24px/1.35 Georgia,serif!important}

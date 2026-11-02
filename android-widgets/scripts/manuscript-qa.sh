@@ -3,6 +3,7 @@ set -euo pipefail
 pkg=com.saradhinitish.lightboxstudio
 debug=android-widgets/app/build/outputs/apk/debug/app-debug.apk
 bash android-widgets/scripts/launcher-qa.sh
+python3 android-widgets/scripts/webview-qa.py
 bash android-widgets/scripts/widget-host-qa.sh
 python3 android-widgets/scripts/notebook-qa.py
 adb uninstall "$pkg"

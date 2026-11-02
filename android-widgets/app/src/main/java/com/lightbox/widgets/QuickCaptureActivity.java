@@ -57,7 +57,7 @@ public final class QuickCaptureActivity extends PaperActivity {
         LinearLayout page=column(); page.setPadding(dp(22),dp(10),dp(22),dp(10));
         LinearLayout bar=row(); add(page,bar,0);
         bar.addView(button("Cancel",false,this::cancel));
-        flex(bar,new View(this));
+        bar.addView(new View(this),new LinearLayout.LayoutParams(0,1,1));
         Button save=button("Save note",true,this::save); bar.addView(save);
         rule(page,8);
         boolean compact=getResources().getConfiguration().screenHeightDp<460;

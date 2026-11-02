@@ -15,12 +15,23 @@
       }
     }
     const welcome = root.querySelector('.welcome');
+    const shell = root.querySelector('.studio');
+    if (shell) shell.classList.toggle('manuscript-shelf', Boolean(welcome));
     if (!welcome || welcome.dataset.manuscript) return;
     const title = welcome.querySelector(':scope > h1');
     const create = welcome.querySelector(':scope > button.primary');
     if (!title || !create) return;
     welcome.dataset.manuscript = 'true';
     welcome.querySelector(':scope > .eyebrow').textContent = 'LIGHTBOX   /   STUDIO';
+    const switcher = root.querySelector('.header-world');
+    if (switcher) {
+      const projects = document.createElement('button');
+      projects.className = 'shelf-projects';
+      projects.type = 'button';
+      projects.textContent = 'Projects';
+      projects.addEventListener('click', () => switcher.click());
+      welcome.querySelector(':scope > .eyebrow').append(projects);
+    }
     title.replaceChildren('Story ', Object.assign(document.createElement('em'), {textContent:'shelf'}));
     welcome.querySelector(':scope > p').textContent = 'Give your first story a working title. Choose its format on the next page.';
     const label = [...create.childNodes].find(n => n.nodeType === Node.TEXT_NODE);

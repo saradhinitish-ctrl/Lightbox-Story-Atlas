@@ -6,7 +6,7 @@ function openWorkspace(){
  return new Promise((resolve,reject)=>{
   const request=indexedDB.open('lightbox-portable-v64',1);
   request.onupgradeneeded=()=>request.transaction.abort();
-  request.onerror=()=>reject(request.error||Error('Project storage unavailable'));
+  request.onerror=()=>reject(Error('Create or restore a story in this workspace, then return to sync.'));
   request.onsuccess=()=>{
    const db=request.result;
    if(!db.objectStoreNames.contains('workspace')){db.close();reject(Error('No workspace found in this browser'));return;}

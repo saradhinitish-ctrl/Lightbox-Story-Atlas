@@ -62,6 +62,7 @@ jobs:
           path: |
             android-widgets/app/build/outputs/apk/debug/*.apk
             android-widgets/app/build/outputs/apk/release/*unsigned.apk
+      - run: pip install websocket-client==1.8.0
       - name: Enable emulator acceleration
         run: |
           echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules

@@ -1,4 +1,5 @@
 """Exercise visible controls and persisted widget state on an isolated emulator."""
+from pathlib import Path
 import re
 import subprocess
 import time
@@ -30,14 +31,17 @@ def tap(label):
         adb('shell', 'uiautomator', 'dump', '/data/local/tmp/lightbox.xml')
         tree = ET.fromstring(adb('shell', 'cat', '/data/local/tmp/lightbox.xml'))
         for node in tree.iter('node'):
-            if node.get('text') == label or node.get('content-desc') == label:
+            if label in (node.get('text'), node.get('content-desc'), node.get('class')):
                 x, y, right, bottom = map(int, re.findall(r'\d+', node.get('bounds')))
                 adb('shell', 'input', 'tap', str((x+right)//2), str((y+bottom)//2))
                 return
+    Path('android-widget-host-qa/missing-control.xml').write_bytes(ET.tostring(tree))
+    Path('android-widget-host-qa/missing-control.png').write_bytes(subprocess.check_output(['adb','exec-out','screencap','-p']))
     raise AssertionError('Missing control: '+label)
 
 
 host(0, 1)
+tap('android.widget.EditText')
 adb('shell', 'input', 'text', 'Rooftop')
 adb('shell', 'input', 'keyevent', '66')
 adb('shell', 'input', 'text', 'Rain')

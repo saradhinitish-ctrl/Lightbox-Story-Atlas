@@ -41,6 +41,7 @@ public final class StudioLauncherActivity extends Activity {
 
     private LinearLayout shell;
     private WebView web;
+    private volatile boolean offlineStudio;
     private LinearLayout failure;
     private ValueCallback<Uri[]> fileCallback;
 
@@ -92,6 +93,8 @@ public final class StudioLauncherActivity extends Activity {
             return insets;
         });
 
+        if((getApplicationInfo().flags & android.content.pm.ApplicationInfo.FLAG_DEBUGGABLE)!=0)
+            WebView.setWebContentsDebuggingEnabled(true);
         web = new WebView(this);
         web.setBackgroundColor(PAPER);
         WebSettings settings = web.getSettings();
@@ -120,9 +123,19 @@ public final class StudioLauncherActivity extends Activity {
                 if ("/first-page.css".equals(path)) mime = "text/css";
                 else if ("/first-page.js".equals(path) || "/widget-entry.js".equals(path) || "/story-sync.js".equals(path)) mime = "application/javascript";
                 else if ("/widgets.html".equals(path)) mime = "text/html";
-                else return null;
+                else if (offlineStudio && path!=null && path.matches("/(?:[a-zA-Z0-9_.-]+|app-icons/[a-zA-Z0-9_.-]+)?")) {
+                    if ("/".equals(path)) path="/index.html";
+                    if (path.endsWith(".html")) mime="text/html";
+                    else if (path.endsWith(".js")) mime="application/javascript";
+                    else if (path.endsWith(".css")) mime="text/css";
+                    else if (path.endsWith(".png")) mime="image/png";
+                    else if (path.endsWith(".webmanifest")) mime="application/manifest+json";
+                    else return null;
+                } else return null;
                 try {
-                    return new android.webkit.WebResourceResponse(mime, "UTF-8", getAssets().open("studio" + path));
+                    java.util.Map<String,String> headers=java.util.Collections.singletonMap("Cache-Control","no-store");
+                    return new android.webkit.WebResourceResponse(mime, "image/png".equals(mime)?null:"UTF-8",
+                        200,"OK",headers,getAssets().open("studio" + path));
                 } catch (java.io.IOException missing) {
                     return null;
                 }
@@ -132,7 +145,11 @@ public final class StudioLauncherActivity extends Activity {
                 return handleNavigation(request.getUrl().toString());
             }
             @Override public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
-                if (request.isForMainFrame()) showError();
+                if (request.isForMainFrame()) recoverStudio(request.getUrl());
+            }
+            @Override public void onReceivedHttpError(WebView view, WebResourceRequest request,
+                    android.webkit.WebResourceResponse response) {
+                if (request.isForMainFrame() && response.getStatusCode()>=400) recoverStudio(request.getUrl());
             }
         });
         web.setWebChromeClient(new WebChromeClient() {
@@ -229,6 +246,14 @@ public final class StudioLauncherActivity extends Activity {
             }
         }
         return true;
+    }
+
+    private void recoverStudio(Uri failed) {
+        if (!offlineStudio && HOST.equals(failed.getHost()) &&
+                ("/".equals(failed.getPath()) || "/index.html".equals(failed.getPath()))) {
+            offlineStudio=true;
+            web.post(()->{ if(web!=null)web.loadUrl(STUDIO); });
+        } else showError();
     }
 
     private void showError() {

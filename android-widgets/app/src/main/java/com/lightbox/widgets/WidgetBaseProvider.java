@@ -80,12 +80,10 @@ public abstract class WidgetBaseProvider extends AppWidgetProvider {
                 ?"A THOUGHT, BEFORE IT'S GONE"
                 :captures+" SAVED NOTE"+(captures==1?"":"S")+"  /  TAP +");
         } else {
-            v.setTextViewText(R.id.widget_scene,hasStory?
-                (kind==2?"SCENE ":"")+"SCENE "+clip(state.scene,6,"--"):
-                (kind==2?"SCENE NOT LINKED":"--"));
-            // The scene badge on the wide format is intentionally compact.
-            if(kind==1) v.setTextViewText(R.id.widget_scene,
-                hasStory?clip(state.scene,6,"--"):"--");
+            // Compact scene number on wide; descriptive scene heading on large.
+            v.setTextViewText(R.id.widget_scene,kind==1?
+                (hasStory?clip(state.scene,6,"--"):"--"):
+                (hasStory?"SCENE "+clip(state.scene,6,"--"):"SCENE NOT LINKED"));
             v.setTextViewText(R.id.widget_count,hasStory
                 ?(state.target>0?state.words+" / "+state.target+" WORDS":state.words+" WORDS")
                 :"SYNC A STORY IN LIGHTBOX");

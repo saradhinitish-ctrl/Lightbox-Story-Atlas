@@ -1,5 +1,5 @@
 name: Test public Lightbox Android APK on Pixel emulator
-# Revalidated after publication of signed native Lightbox 1.0.2 with functional RemoteViews.
+# Revalidated after publication of signed native Lightbox 1.0.4 with functional RemoteViews.
 on:
   workflow_dispatch:
   push:
@@ -48,7 +48,7 @@ jobs:
         shell: bash
         run: |
           {
-            echo "## Public Lightbox 1.0.2 APK emulator test"
+            echo "## Public Lightbox 1.0.4 APK emulator test"
             echo "✅ Signed APK installed on Android 15."
             echo "✅ Native Studio and Widget Hub activities launched."
             echo "✅ All three widget providers registered."

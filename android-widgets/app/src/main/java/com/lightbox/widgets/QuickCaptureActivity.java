@@ -55,6 +55,8 @@ public final class QuickCaptureActivity extends Activity {
             note.put("created",System.currentTimeMillis());next.put(note);
             for(int i=0;i<Math.min(29,items.length());i++)next.put(items.get(i));
             getSharedPreferences(PREFS,MODE_PRIVATE).edit().putString("notes",next.toString()).apply();
+            // Immediately update the widget count and latest-note preview.
+            WidgetState.refreshAll(this);
             Toast.makeText(this,"Captured privately on this device",Toast.LENGTH_SHORT).show();
             render();
         }catch(Exception e){Toast.makeText(this,"Couldn't save note",Toast.LENGTH_LONG).show();}

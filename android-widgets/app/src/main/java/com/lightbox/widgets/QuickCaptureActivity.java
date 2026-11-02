@@ -91,6 +91,6 @@ public final class QuickCaptureActivity extends Activity {
             });
             copy.setTextSize(11);
         }
-        add(label("Notes stay in this companion app until copied. They are not silently inserted into a screenplay.",11,MUTED,false),21);
+        add(label("Notes stay inside this Lightbox app until copied. They are not silently inserted into a screenplay.",11,MUTED,false),21);
     }
 }

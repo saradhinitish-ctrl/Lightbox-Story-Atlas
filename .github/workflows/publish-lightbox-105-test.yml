@@ -1,0 +1,40 @@
+name: Publish Lightbox 1.0.5 test APK (not production)
+on:
+  push:
+    paths:
+      - '.github/workflows/publish-lightbox-105-test.yml'
+permissions:
+  contents: write
+  actions: read
+jobs:
+  publish-test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - name: Fetch the verified 1.0.5 debug test artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: manuscript-builds
+          run-id: 41388687665
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          path: .android-test-artifact
+      - name: Verify exact test APK SHA-256
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo '576b3d80e5cbe227c65739d0738d1b5d504d3301f3ea2a2731ed87182d735c9f  .android-test-artifact/debug/app-debug.apk' | sha256sum -c -
+          install -m 644 .android-test-artifact/debug/app-debug.apk android-downloads/lightbox-studio-1.0.5-test.apk
+      - name: Publish only the separate test APK
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -- android-downloads/lightbox-studio-1.0.5-test.apk
+          if ! git diff --cached --quiet; then
+            git commit -m 'Publish checksum-verified 1.0.5 debug test APK separately'
+            git push origin HEAD:main
+          fi

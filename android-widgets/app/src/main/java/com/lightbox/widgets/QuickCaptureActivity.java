@@ -1,96 +1,176 @@
 package com.lightbox.widgets;
 
-import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.ClipData;
 import android.content.ClipboardManager;
-import android.content.Context;
-import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.Typeface;
-import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.InputType;
+import android.text.TextWatcher;
 import android.view.Gravity;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.LinearLayout;
-import android.widget.ScrollView;
-import android.widget.TextView;
-import android.widget.Toast;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.*;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
+import java.text.DateFormat;
+import java.util.Date;
 
-public final class QuickCaptureActivity extends Activity {
+public final class QuickCaptureActivity extends PaperActivity {
+    static final String ARCHIVE="archive";
     private static final String PREFS="lightbox.widget.capture.v1";
-    private final int PAPER=Color.rgb(239,237,230),INK=Color.rgb(24,25,22),
-        MUTED=Color.rgb(83,86,77),LIME=Color.rgb(198,255,0);
-    private LinearLayout root;
-    private EditText field;
-    private int px(float dp){return (int)(dp*getResources().getDisplayMetrics().density+.5f);}
-    private GradientDrawable bg(int color){GradientDrawable d=new GradientDrawable();d.setColor(color);d.setCornerRadius(px(10));d.setStroke(px(1),INK);return d;}
-    private TextView label(String str,int size,int color,boolean bold){
-        TextView v=new TextView(this);v.setText(str);v.setTextSize(size);v.setTextColor(color);
-        v.setTypeface(Typeface.create("sans-serif",bold?Typeface.BOLD:Typeface.NORMAL));return v;
-    }
-    private void add(android.view.View v,int gap) {
-        LinearLayout.LayoutParams p=new LinearLayout.LayoutParams(-1,-2);p.topMargin=px(gap);root.addView(v,p);
-    }
-    private Button button(String text,int color,int textColor,Runnable f) {
-        Button b=new Button(this);b.setText(text);b.setAllCaps(false);
-        b.setTextColor(textColor);b.setTypeface(Typeface.DEFAULT,Typeface.BOLD);
-        b.setBackground(bg(color));b.setOnClickListener(v->f.run());add(b,12);return b;
-    }
-    @Override public void onCreate(Bundle b){super.onCreate(b);render();}
-    private JSONArray notes(){
-        try{return new JSONArray(getSharedPreferences(PREFS,MODE_PRIVATE).getString("notes","[]"));}
-        catch(Exception ignored){return new JSONArray();}
-    }
-    private void save(){
-        String value=field.getText().toString().trim();
-        if(value.isEmpty()){field.setError("Write a thought first.");return;}
-        value=WidgetState.shortText(value,800);
-        WidgetState state=WidgetState.read(this);
-        try {
-            JSONArray items=notes();JSONArray next=new JSONArray();
-            JSONObject note=new JSONObject();note.put("text",value);note.put("project",state.title);
-            note.put("created",System.currentTimeMillis());next.put(note);
-            for(int i=0;i<Math.min(29,items.length());i++)next.put(items.get(i));
-            getSharedPreferences(PREFS,MODE_PRIVATE).edit().putString("notes",next.toString()).apply();
-            // Immediately update the widget count and latest-note preview.
-            WidgetState.refreshAll(this);
-            Toast.makeText(this,"Captured privately on this device",Toast.LENGTH_SHORT).show();
-            render();
-        }catch(Exception e){Toast.makeText(this,"Couldn't save note",Toast.LENGTH_LONG).show();}
-    }
-    private void render(){
-        ScrollView s=new ScrollView(this);s.setFillViewport(true);
-        root=new LinearLayout(this);root.setOrientation(LinearLayout.VERTICAL);
-        root.setPadding(px(24),px(34),px(24),px(36));root.setBackgroundColor(PAPER);
-        s.addView(root);setContentView(s);
-        add(label("LIGHTBOX / QUICK CAPTURE",12,INK,true),0);
-        add(label("Hold that thought.",34,INK,true),28);
-        add(label("For / "+WidgetState.read(this).title,13,MUTED,false),10);
-        field=new EditText(this);field.setHint("A visual. A line of dialogue. A moment worth remembering…");
-        field.setTextColor(INK);field.setHintTextColor(MUTED);field.setTextSize(16);
-        field.setMinLines(5);field.setGravity(Gravity.TOP);field.setFilters(new android.text.InputFilter[]{new android.text.InputFilter.LengthFilter(800)});
-        field.setPadding(px(16),px(18),px(16),px(16));field.setBackground(bg(Color.WHITE));
-        add(field,24);
-        button("SAVE NOTE  +",LIME,INK,this::save);
-        button("OPEN STUDIO  ↗",PAPER,INK,()->startActivity(new Intent(this,StudioLauncherActivity.class)));
-        add(label("SAVED ON THIS DEVICE / PRIVATE NOTES",11,MUTED,true),28);
-        JSONArray list=notes();
-        if(list.length()==0)add(label("No notes captured yet.",14,MUTED,false),14);
-        for(int i=0;i<Math.min(20,list.length());i++){
-            JSONObject item=list.optJSONObject(i);if(item==null)continue;
-            String value=item.optString("text","");
-            TextView v=label(value,14,INK,false);
-            v.setPadding(px(14),px(14),px(14),px(14));v.setBackground(bg(Color.WHITE));add(v,11);
-            Button copy=button("COPY TO LIGHTBOX  ↗",PAPER,INK,()->{
-                ClipboardManager cb=(ClipboardManager)getSystemService(Context.CLIPBOARD_SERVICE);
-                cb.setPrimaryClip(ClipData.newPlainText("Lightbox capture",value));
-                Toast.makeText(this,"Copied — paste into your project in Lightbox",Toast.LENGTH_SHORT).show();
-            });
-            copy.setTextSize(11);
+    private EditText editor;
+    private String draft="";
+    private boolean reviewing;
+    private JSONArray items;
+
+    @Override public void onCreate(Bundle state) {
+        super.onCreate(state);
+        draft=state==null?"":state.getString("draft","");
+        reviewing=state==null?getIntent().getBooleanExtra(ARCHIVE,false):state.getBoolean(ARCHIVE);
+        try { items=readNotes(); }
+        catch(JSONException corrupt) {
+            new AlertDialog.Builder(this).setMessage("The saved notebook could not be read. Its contents have been preserved.")
+                .setPositiveButton("Close",(d,w)->finish()).setOnCancelListener(d->finish()).show();
+            return;
         }
-        add(label("Notes stay inside this Lightbox app until copied. They are not silently inserted into a screenplay.",11,MUTED,false),21);
+        if(reviewing) archive(); else compose();
+    }
+    @Override protected void onNewIntent(android.content.Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
+        if(intent.getBooleanExtra(ARCHIVE,false))archive();
+        else if(reviewing)compose();
+    }
+    private JSONArray readNotes() throws JSONException {
+        return new JSONArray(getSharedPreferences(PREFS,MODE_PRIVATE).getString("notes","[]"));
+    }
+    @Override protected void onSaveInstanceState(Bundle out) {
+        super.onSaveInstanceState(out);
+        out.putString("draft",editor==null?draft:editor.getText().toString());
+        out.putBoolean(ARCHIVE,reviewing);
+    }
+    private void compose() {
+        reviewing=false;
+        LinearLayout page=column(); page.setPadding(dp(22),dp(10),dp(22),dp(10));
+        LinearLayout bar=row(); add(page,bar,0);
+        bar.addView(button("Cancel",false,this::cancel));
+        bar.addView(new View(this),new LinearLayout.LayoutParams(0,1,1));
+        Button save=button("Save note",true,this::save); bar.addView(save);
+        rule(page,8);
+        boolean compact=getResources().getConfiguration().screenHeightDp<460;
+        if(!compact)add(page,folio("FIELD NOTES"),16);
+        WidgetState story=WidgetState.read(this);
+        TextView heading=text(story.syncedAt==0?"Unfiled idea":story.title,24,INK,"serif");
+        heading.setMaxLines(1); heading.setEllipsize(android.text.TextUtils.TruncateAt.END); if(!compact)add(page,heading,3);
+        editor=new EditText(this);
+        editor.setInputType(InputType.TYPE_CLASS_TEXT|InputType.TYPE_TEXT_FLAG_MULTI_LINE|InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
+        editor.setGravity(Gravity.TOP|Gravity.START); editor.setBackgroundColor(PAPER);
+        editor.setPadding(0,dp(15),0,dp(8)); editor.setTextSize(20);
+        editor.setTypeface(android.graphics.Typeface.SERIF); editor.setTextColor(INK);
+        editor.setHintTextColor(SUB); editor.setHint("Write a line, a scene, or something you noticed…");
+        editor.setText(draft); editor.setSelection(editor.length());
+        editor.setImeOptions(android.view.inputmethod.EditorInfo.IME_FLAG_NO_EXTRACT_UI);
+        page.addView(editor,new LinearLayout.LayoutParams(-1,0,1));
+        Runnable validate=()->{boolean ok=!editor.getText().toString().trim().isEmpty();save.setEnabled(ok);save.setAlpha(ok?1:.48f);};
+        editor.addTextChangedListener(new TextWatcher(){
+            public void beforeTextChanged(CharSequence s,int a,int n,int f){}
+            public void onTextChanged(CharSequence s,int a,int b,int c){validate.run();}
+            public void afterTextChanged(Editable e){}
+        });
+        validate.run();
+        rule(page,0);
+        add(page,button("Saved notes ("+items.length()+")",false,this::archive),0);
+        install(page); editor.requestFocus();
+        EditText target=editor;
+        target.post(()->getSystemService(InputMethodManager.class).showSoftInput(target,InputMethodManager.SHOW_IMPLICIT));
+    }
+    private void cancel() {
+        if(editor==null || editor.getText().toString().trim().isEmpty()){finish();return;}
+        new AlertDialog.Builder(this).setMessage("Discard this unsaved note?")
+            .setNegativeButton("Keep writing",null).setPositiveButton("Discard",(d,w)->finish()).show();
+    }
+    private boolean persist(JSONArray next) {
+        if(!getSharedPreferences(PREFS,MODE_PRIVATE).edit().putString("notes",next.toString()).commit()) {
+            Toast.makeText(this,"Could not save changes",Toast.LENGTH_LONG).show(); return false;
+        }
+        items=next; WidgetState.refreshAll(this); return true;
+    }
+    private void save() {
+        String value=editor.getText().toString().trim();
+        if(value.isEmpty())return;
+        try {
+            WidgetState state=WidgetState.read(this);
+            JSONObject note=new JSONObject().put("text",value).put("created",System.currentTimeMillis())
+                .put("project",state.syncedAt>0?state.title:"");
+            JSONArray old=readNotes(),next=new JSONArray().put(note);
+            for(int i=0;i<old.length();i++)next.put(old.get(i));
+            if(!persist(next))return;
+            editor.setText(""); draft="";
+            Toast.makeText(this,"Note saved",Toast.LENGTH_SHORT).show(); archive();
+        } catch(JSONException e){Toast.makeText(this,"Could not read the notebook",Toast.LENGTH_LONG).show();}
+    }
+    private void archive() {
+        if(editor!=null){
+            draft=editor.getText().toString();
+            getSystemService(InputMethodManager.class).hideSoftInputFromWindow(editor.getWindowToken(),0);
+            editor=null;
+        }
+        reviewing=true;
+        try {items=readNotes();} catch(JSONException e){finish();return;}
+        LinearLayout page=column(); page.setPadding(dp(22),dp(12),dp(22),dp(12));
+        LinearLayout bar=row(); add(page,bar,0);flex(bar,folio("FIELD NOTES"));
+        bar.addView(button(draft.isEmpty()?"New note":"Resume note",true,this::compose));
+        rule(page,8);add(page,text("Notebook",36,INK,"serif"),18);
+        add(page,text(items.length()+" saved on this device",14,SUB,"sans-serif"),2);
+        if(items.length()==0) add(page,text("Your saved ideas will appear here.",18,SUB,"serif"),30);
+        ListView list=new ListView(this);list.setDividerHeight(dp(1));
+        list.setAdapter(new BaseAdapter(){
+            public int getCount(){return items.length();}
+            public JSONObject getItem(int i){return items.optJSONObject(i);}
+            public long getItemId(int i){return i;}
+            public View getView(int i,View recycled,ViewGroup parent){
+                JSONObject note=getItem(i); LinearLayout cell=column();cell.setPadding(0,dp(16),0,dp(16));
+                if(note==null)return cell;
+                long date=note.optLong("created");
+                String project=note.optString("project","");
+                String stamp=date>0?DateFormat.getDateTimeInstance(DateFormat.MEDIUM,DateFormat.SHORT).format(new Date(date)):"";
+                add(cell,text(project.isEmpty()?stamp:project+"  ·  "+stamp,12,SUB,"sans-serif"),0);
+                TextView body=text(note.optString("text"),18,INK,"serif");
+                body.setMaxLines(3);body.setEllipsize(android.text.TextUtils.TruncateAt.END);add(cell,body,5);return cell;
+            }
+        });
+        list.setOnItemClickListener((parent,v,pos,id)->detail(items.optJSONObject(pos)));
+        page.addView(list,new LinearLayout.LayoutParams(-1,0,1));install(page);
+    }
+    private void detail(JSONObject note) {
+        if(note==null)return;
+        String value=note.optString("text");
+        new AlertDialog.Builder(this).setTitle("Saved note").setMessage(value)
+            .setPositiveButton("Copy",(d,w)->{
+                getSystemService(ClipboardManager.class).setPrimaryClip(ClipData.newPlainText("Lightbox note",value));
+                Toast.makeText(this,"Copied",Toast.LENGTH_SHORT).show();
+            }).setNeutralButton("Delete",(d,w)->new AlertDialog.Builder(this)
+                .setMessage("Delete this saved note?").setNegativeButton("Keep",null)
+                .setPositiveButton("Delete",(dialog,which)->remove(note)).show())
+            .setNegativeButton("Close",null).show();
+    }
+    private void remove(JSONObject note) {
+        try {
+            JSONArray fresh=readNotes();
+            for(int i=0;i<fresh.length();i++) {
+                if(note.toString().equals(fresh.get(i).toString())) {
+                    fresh.remove(i); if(persist(fresh))archive(); return;
+                }
+            }
+            archive();
+        } catch(JSONException e){Toast.makeText(this,"Could not remove note",Toast.LENGTH_LONG).show();}
+    }
+    @Override public void onBackPressed() {
+        if(reviewing && !draft.isEmpty())compose();
+        else if(reviewing)finish();
+        else cancel();
     }
 }

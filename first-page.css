@@ -1,0 +1,120 @@
+/* Lightbox / The First Page
+   A restrained editorial first-project screen, not an onboarding advertisement.
+   Alters presentation only; React's create/restore/vault behavior stays intact. */
+.studio.atlas-shell .welcome {
+  box-sizing:border-box;
+  min-height:calc(100dvh - 150px);
+  width:100%;
+  max-width:900px;
+  margin-inline:auto;
+  display:flex;
+  flex-direction:column;
+  align-items:flex-start;
+  justify-content:center;
+  padding:clamp(58px,11vh,124px) clamp(24px,7vw,88px) clamp(60px,9vh,100px)!important;
+  text-align:left;
+  background:#EFEDE6;
+}
+.studio.atlas-shell .welcome-symbol,
+.studio.atlas-shell .welcome-identity,
+.studio.atlas-shell .welcome-bottom,
+.studio.atlas-shell .welcome .install-app {
+  display:none!important;
+}
+.studio.atlas-shell .welcome>.eyebrow {
+  display:block;
+  font:700 11px/1.5 "DM Mono",monospace;
+  letter-spacing:.12em;
+  color:#53564D;
+  margin:0 0 26px;
+}
+.studio.atlas-shell .welcome>.eyebrow::before {
+  content:"";
+  display:inline-block;
+  vertical-align:middle;
+  width:9px;height:9px;
+  margin:0 12px 2px 0;
+  border-radius:50%;
+  background:#C6FF00;
+  border:1px solid #181916;
+}
+.studio.atlas-shell .welcome>h1 {
+  max-width:740px;
+  font:400 clamp(53px,8vw,102px)/.97 "Instrument Serif",Georgia,serif!important;
+  letter-spacing:-.055em!important;
+  margin:0 0 25px!important;
+  color:#181916;
+}
+.studio.atlas-shell .welcome>h1 em {
+  font:inherit!important;
+  font-style:italic!important;
+  background:none!important;
+  color:#181916!important;
+  padding:0!important;
+  box-decoration-break:initial!important;
+}
+.studio.atlas-shell .welcome>p:not(.welcome-identity) {
+  font:400 clamp(15px,2vw,18px)/1.55 "DM Sans",Arial,sans-serif!important;
+  color:#53564D!important;
+  max-width:440px;
+  margin:0 0 34px!important;
+  text-wrap:pretty;
+}
+.studio.atlas-shell .welcome>.button.primary {
+  display:inline-flex;
+  align-items:center;justify-content:center;
+  gap:12px;
+  padding:14px 28px;
+  min-width:215px;
+  min-height:56px;
+  border:1px solid #181916;
+  border-radius:4px;
+  background:#C6FF00;
+  box-shadow:none!important;
+  color:#181916;
+  font:700 14px/1.2 "DM Sans",sans-serif;
+  transition:background-color .2s ease;
+}
+.studio.atlas-shell .welcome>.button.primary:hover {background:#D8FF58;transform:none}
+.studio.atlas-shell .welcome>.button.primary:focus-visible,
+.studio.atlas-shell .welcome-secondary button:focus-visible {
+  outline:2px solid #181916;outline-offset:3px;
+}
+.studio.atlas-shell .welcome-secondary {
+  display:flex;align-items:center;flex-wrap:wrap;gap:14px;
+  margin-top:16px!important;
+}
+.studio.atlas-shell .welcome-secondary button {
+  background:transparent!important;
+  box-shadow:none!important;
+  border:0!important;
+  color:#53564D!important;
+  font:500 13px/1.4 "DM Sans",sans-serif!important;
+  padding:8px 3px!important;
+  text-decoration:underline;
+  text-underline-offset:3px;
+}
+.studio.atlas-shell .welcome-secondary button:hover {color:#181916!important}
+@media(max-width:600px) {
+  .studio.atlas-shell .welcome {
+    min-height:calc(100dvh - 178px);
+    padding:60px 24px 90px!important;
+  }
+  .studio.atlas-shell .welcome>h1 {
+    font-size:clamp(54px,13vw,76px)!important;
+    max-width:530px;
+    margin-bottom:23px!important;
+  }
+  .studio.atlas-shell .welcome>h1 br {display:none}
+  .studio.atlas-shell .welcome>h1 em::before {content:" "}
+  .studio.atlas-shell .welcome>.button.primary {
+    width:100%;
+    max-width:360px;
+  }
+  .studio.atlas-shell .welcome-secondary {
+    flex-direction:column;align-items:flex-start;gap:4px;
+  }
+}
+@media(prefers-reduced-motion:reduce) {
+  .studio.atlas-shell .welcome>.button.primary {transition:none}
+}

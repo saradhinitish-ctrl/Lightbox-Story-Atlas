@@ -52,8 +52,7 @@ jobs:
           path: android-widgets/app/build/outputs/apk/debug/app-debug.apk
 
 
-      - name: Upload unsigned native release APK for local signing verification
-        if: github.ref != 'refs/heads/main'
+      - name: Upload unsigned native release APK for reproducible signing verification
         uses: actions/upload-artifact@v4
         with:
           name: lightbox-unified-unsigned-release-apk

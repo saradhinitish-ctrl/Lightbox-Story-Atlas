@@ -83,7 +83,7 @@ public final class WidgetGalleryActivity extends Activity {
         final int target=action==0?R.id.action_open:
             action==1?R.id.action_capture:action==2?R.id.action_sync:
             action==3?R.id.action_session:0;
-        if(target!=0 && (variant==2 || action<2) && (variant>=1 || action!=3)) {
+        if(target!=0 && (action!=2 || variant==2) && (action!=3 || variant>=1)) {
             widget.postDelayed(()->{
                 View control=widget.findViewById(target);
                 Log.i(TAG,"Action="+action+" targetPresent="+(control!=null)+

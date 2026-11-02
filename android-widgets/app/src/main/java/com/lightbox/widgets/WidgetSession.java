@@ -31,7 +31,9 @@ public final class WidgetSession {
         if(active){
             e.putBoolean("active",false).putLong("started",0L);
             e.putInt("completed",Math.max(0,p.getInt("completed",0))+1);
-            e.putLong("lastFinished",System.currentTimeMillis());
+            long finish=System.currentTimeMillis();
+            e.putLong("lastFinished",finish);
+            e.putLong("lastDurationMillis",Math.max(0,finish-p.getLong("started",finish)));
         }else{
             e.putBoolean("active",true).putLong("started",System.currentTimeMillis());
         }

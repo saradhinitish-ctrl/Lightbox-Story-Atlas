@@ -1,53 +1,16 @@
-<?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
- android:layout_width="match_parent" android:layout_height="match_parent"
- android:padding="13dp" android:orientation="vertical"
- android:background="@drawable/widget_panel_paper">
- <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
-  android:orientation="horizontal" android:gravity="center_vertical">
-  <TextView android:layout_width="0dp" android:layout_weight="1"
-   android:layout_height="wrap_content" android:text="LIGHTBOX  /  SCENE DESK"
-   android:textColor="#656A5D" android:textSize="9sp"
-   android:textStyle="bold" android:fontFamily="monospace" android:singleLine="true"/>
-  <TextView android:id="@+id/widget_scene" android:layout_width="wrap_content"
-   android:layout_height="wrap_content" android:paddingHorizontal="8dp"
-   android:paddingVertical="3dp" android:background="@drawable/widget_action_lime"
-   android:text="01" android:textColor="#191B18" android:textStyle="bold"
-   android:textSize="10sp" android:fontFamily="monospace" android:maxLines="1"/>
- </LinearLayout>
- <TextView android:id="@+id/widget_title" android:layout_width="match_parent"
-  android:layout_height="0dp" android:layout_weight="1" android:gravity="center_vertical"
-  android:text="Your scene" android:textColor="#191B18" android:fontFamily="serif"
-  android:textSize="23sp" android:maxLines="1" android:ellipsize="end"/>
- <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
-  android:orientation="horizontal" android:gravity="center_vertical"
-  android:layout_marginBottom="7dp">
-  <TextView android:id="@+id/widget_count" android:layout_width="0dp" android:layout_weight="1"
-   android:layout_height="wrap_content" android:text="SYNC YOUR STORY"
-   android:textColor="#53584E" android:fontFamily="monospace"
-   android:textSize="9sp" android:singleLine="true"/>
-  <TextView android:id="@+id/widget_session" android:layout_width="wrap_content"
-   android:layout_height="wrap_content" android:text="READY"
-   android:textColor="#53584E" android:fontFamily="monospace" android:textSize="9sp"/>
- </LinearLayout>
- <LinearLayout android:layout_width="match_parent" android:layout_height="33dp"
-  android:orientation="horizontal">
-  <TextView android:id="@+id/action_open" android:layout_width="0dp" android:layout_weight="1"
-   android:layout_height="match_parent" android:gravity="center" android:clickable="true"
-   android:background="@drawable/widget_action_ink" android:text="WRITE ↗"
-   android:textColor="#F5F3EB" android:textSize="10sp" android:textStyle="bold"
-   android:contentDescription="Open writing workspace"/>
-  <TextView android:id="@+id/action_capture" android:layout_width="0dp" android:layout_weight="1"
-   android:layout_height="match_parent" android:layout_marginStart="5dp"
-   android:gravity="center" android:clickable="true"
-   android:background="@drawable/widget_soft_paper" android:text="NOTE +"
-   android:textColor="#191B18" android:textSize="10sp" android:textStyle="bold"
-   android:contentDescription="Capture a note"/>
-  <TextView android:id="@+id/action_session" android:layout_width="0dp" android:layout_weight="1"
-   android:layout_height="match_parent" android:layout_marginStart="5dp"
-   android:gravity="center" android:clickable="true"
-   android:background="@drawable/widget_action_lime" android:text="START"
-   android:textColor="#191B18" android:textSize="10sp" android:textStyle="bold"
-   android:contentDescription="Start or finish writing session"/>
- </LinearLayout>
+<?xml version='1.0' encoding='utf-8'?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent" android:layout_height="match_parent" android:orientation="vertical" android:background="@drawable/widget_panel_ink" android:paddingHorizontal="12dp">
+  <LinearLayout android:layout_width="match_parent" android:layout_height="0dp" android:orientation="horizontal" android:layout_weight="1" android:gravity="center_vertical">
+    <TextView android:layout_width="44dp" android:layout_height="wrap_content" android:text="—" android:textSize="25sp" android:textColor="#D3F37C" android:fontFamily="serif" android:maxLines="1" android:ellipsize="end" android:includeFontPadding="false" android:id="@+id/widget_scene" />
+    <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:orientation="vertical" android:layout_weight="1">
+      <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Scene desk" android:textSize="21sp" android:textColor="#F4F1E8" android:fontFamily="serif" android:maxLines="1" android:ellipsize="end" android:includeFontPadding="false" android:id="@+id/widget_title" />
+      <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Story not synced" android:textSize="12sp" android:textColor="#BCC6B6" android:fontFamily="sans-serif" android:maxLines="1" android:ellipsize="end" android:includeFontPadding="false" android:layout_marginTop="3dp" android:id="@+id/widget_count" />
+    </LinearLayout>
+  </LinearLayout>
+  <TextView android:layout_width="match_parent" android:layout_height="1dp" android:background="#535B50" />
+  <LinearLayout android:layout_width="match_parent" android:layout_height="44dp" android:orientation="horizontal">
+    <TextView android:layout_width="0dp" android:layout_height="match_parent" android:text="Studio" android:textSize="14sp" android:textColor="#F4F1E8" android:fontFamily="sans-serif-medium" android:maxLines="1" android:ellipsize="end" android:includeFontPadding="false" android:layout_weight="1" android:gravity="center" android:clickable="true" android:id="@+id/action_open" />
+    <TextView android:layout_width="0dp" android:layout_height="match_parent" android:text="Note +" android:textSize="14sp" android:textColor="#F4F1E8" android:fontFamily="sans-serif-medium" android:maxLines="1" android:ellipsize="end" android:includeFontPadding="false" android:layout_weight="1" android:gravity="center" android:clickable="true" android:id="@+id/action_capture" />
+    <TextView android:layout_width="0dp" android:layout_height="match_parent" android:text="Start" android:textSize="14sp" android:textColor="#F4F1E8" android:fontFamily="sans-serif-medium" android:maxLines="1" android:ellipsize="end" android:includeFontPadding="false" android:layout_weight="1" android:gravity="center" android:clickable="true" android:id="@+id/action_session" />
+  </LinearLayout>
 </LinearLayout>

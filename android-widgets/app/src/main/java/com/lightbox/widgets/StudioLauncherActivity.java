@@ -84,7 +84,7 @@ public final class StudioLauncherActivity extends Activity {
         // Android 15+ enforces edge-to-edge on new targets. Protect all controls.
         shell.setOnApplyWindowInsetsListener((v, insets) -> {
             if (android.os.Build.VERSION.SDK_INT >= 30) {
-                android.graphics.Insets bars = insets.getInsets(WindowInsets.Type.systemBars());
+                android.graphics.Insets bars = insets.getInsets(WindowInsets.Type.systemBars() | WindowInsets.Type.ime() | WindowInsets.Type.displayCutout());
                 shell.setPadding(bars.left, bars.top, bars.right, bars.bottom);
             } else {
                 shell.setPadding(0, insets.getSystemWindowInsetTop(), 0, insets.getSystemWindowInsetBottom());
@@ -92,31 +92,13 @@ public final class StudioLauncherActivity extends Activity {
             return insets;
         });
 
-        // The filmmaking workspace stays first. App utilities live BELOW it.
-        LinearLayout toolbar = new LinearLayout(this);
-        toolbar.setGravity(Gravity.CENTER_VERTICAL);
-        toolbar.setPadding(dp(21), dp(4), dp(20), dp(4));
-        toolbar.setBackgroundColor(PAPER);
-        TextView title = label("LIGHTBOX", 15, true);
-        title.setLetterSpacing(0.08f);
-        toolbar.addView(title, new LinearLayout.LayoutParams(0, dp(50), 1));
-        TextView edition = label("FILMMAKING STUDIO", 10, false);
-        edition.setTextColor(Color.rgb(83,86,77));
-        edition.setLetterSpacing(0.07f);
-        toolbar.addView(edition, new LinearLayout.LayoutParams(-2, dp(50)));
-        shell.addView(toolbar, new LinearLayout.LayoutParams(-1, dp(56)));
-
-        View line = new View(this);
-        line.setBackgroundColor(Color.rgb(201,202,191));
-        shell.addView(line, new LinearLayout.LayoutParams(-1, dp(1)));
-
         web = new WebView(this);
         web.setBackgroundColor(PAPER);
         WebSettings settings = web.getSettings();
         // Make native hosting explicit so the website never shows its own
         // "Install Android app" prompt inside an already-installed APK.
         settings.setUserAgentString(settings.getUserAgentString()
-                + " LightboxNativeAndroid/1.0.4");
+                + " LightboxNativeAndroid/1.0.5");
         settings.setJavaScriptEnabled(true);
         settings.setDomStorageEnabled(true);
         settings.setAllowFileAccess(false);
@@ -126,6 +108,25 @@ public final class StudioLauncherActivity extends Activity {
         settings.setJavaScriptCanOpenWindowsAutomatically(false);
         if (android.os.Build.VERSION.SDK_INT >= 26) settings.setSafeBrowsingEnabled(true);
         web.setWebViewClient(new WebViewClient() {
+            // Only substitute the native edition of the welcome, footer and sync page.
+            // The screenplay, storage origin, uploads and routing remain the live studio's.
+            @Override public android.webkit.WebResourceResponse shouldInterceptRequest(
+                    WebView view, WebResourceRequest request) {
+                Uri url = request.getUrl();
+                if (!"https".equals(url.getScheme()) || !HOST.equals(url.getHost())
+                        || url.getPort() != -1 || !"GET".equals(request.getMethod())) return null;
+                String path = url.getPath();
+                String mime;
+                if ("/first-page.css".equals(path)) mime = "text/css";
+                else if ("/first-page.js".equals(path) || "/widget-entry.js".equals(path) || "/story-sync.js".equals(path)) mime = "application/javascript";
+                else if ("/widgets.html".equals(path)) mime = "text/html";
+                else return null;
+                try {
+                    return new android.webkit.WebResourceResponse(mime, "UTF-8", getAssets().open("studio" + path));
+                } catch (java.io.IOException missing) {
+                    return null;
+                }
+            }
             @Override public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
                 if (!request.isForMainFrame()) return false;
                 return handleNavigation(request.getUrl().toString());
@@ -163,29 +164,8 @@ public final class StudioLauncherActivity extends Activity {
         }), new LinearLayout.LayoutParams(-1, dp(60)));
         failure.addView(action("OPEN IN CHROME", false, this::openInChrome),
             new LinearLayout.LayoutParams(-1, dp(60)));
+        failure.addView(action("Widgets", false, this::openWidgets));
         shell.addView(failure, new LinearLayout.LayoutParams(-1, 0, 1));
-
-        // Bottom actions stay out of the story's header.
-        // Widget management is one tap away but never dominates the workspace.
-        View bottomRule = new View(this);
-        bottomRule.setBackgroundColor(Color.rgb(201,202,191));
-        shell.addView(bottomRule,new LinearLayout.LayoutParams(-1,dp(1)));
-        LinearLayout bottom = new LinearLayout(this);
-        bottom.setPadding(dp(13),dp(7),dp(13),dp(8));
-        bottom.setBackgroundColor(PAPER);
-        bottom.setGravity(Gravity.CENTER_VERTICAL);
-        Button studio = action("STUDIO", false, () -> {
-            if(web != null) web.loadUrl(STUDIO);
-        });
-        Button notes = action("NOTES +", false, () ->
-            startActivity(new Intent(this,QuickCaptureActivity.class)));
-        Button widgets = action("WIDGETS", true, this::openWidgets);
-        for (Button button : new Button[]{studio,notes,widgets}) {
-            LinearLayout.LayoutParams cell=new LinearLayout.LayoutParams(0,dp(46),1);
-            cell.setMargins(dp(4),0,dp(4),0);
-            bottom.addView(button,cell);
-        }
-        shell.addView(bottom,new LinearLayout.LayoutParams(-1,dp(62)));
 
         setContentView(shell);
         web.loadUrl(getIntent().getBooleanExtra(EXTRA_OPEN_SYNC,false)

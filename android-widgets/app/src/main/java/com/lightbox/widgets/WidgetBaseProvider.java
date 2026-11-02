@@ -60,7 +60,8 @@ public abstract class WidgetBaseProvider extends AppWidgetProvider {
     }
     private static PendingIntent activity(Context c,Class<?> target,int requestCode,boolean sync) {
         Intent i=new Intent(c,target);
-        i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        i.setAction(sync?"com.lightbox.widgets.OPEN_SYNC":"com.lightbox.widgets.OPEN");
+        i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_SINGLE_TOP);
         if(sync)i.putExtra(StudioLauncherActivity.EXTRA_OPEN_SYNC,true);
         return PendingIntent.getActivity(c,requestCode,i,
             PendingIntent.FLAG_UPDATE_CURRENT|PendingIntent.FLAG_IMMUTABLE);
@@ -72,38 +73,26 @@ public abstract class WidgetBaseProvider extends AppWidgetProvider {
         boolean hasStory=state.syncedAt>0;
         boolean active=WidgetSession.isActive(context);
         int captures=WidgetSession.captureCount(context);
-        String title=hasStory?clip(state.title,58,"Untitled world"):"Your next story";
+        String title=hasStory?state.title:(kind==0?"Field notes":"No story linked");
         v.setTextViewText(R.id.widget_title,title);
-
         if(kind==0) {
-            v.setTextViewText(R.id.widget_meta,captures==0
-                ?"A THOUGHT, BEFORE IT'S GONE"
-                :captures+" SAVED NOTE"+(captures==1?"":"S")+"  /  TAP +");
+            v.setTextViewText(R.id.widget_meta,captures+(captures==1?" note":" notes"));
         } else {
-            // Compact scene number on wide; descriptive scene heading on large.
-            v.setTextViewText(R.id.widget_scene,kind==1?
-                (hasStory?clip(state.scene,6,"--"):"--"):
-                (hasStory?"SCENE "+clip(state.scene,6,"--"):"SCENE NOT LINKED"));
-            v.setTextViewText(R.id.widget_count,hasStory
-                ?(state.target>0?state.words+" / "+state.target+" WORDS":state.words+" WORDS")
-                :"SYNC A STORY IN LIGHTBOX");
-            v.setTextViewText(R.id.widget_session,active?"● LIVE":"○ READY");
-            v.setTextViewText(R.id.action_session,active?"FINISH":"START");
+            String scene="--".equals(state.scene) || !hasStory ? "—" : state.scene;
+            v.setTextViewText(R.id.widget_scene,kind==1?scene:"SCENE   "+scene);
+            String words=java.text.NumberFormat.getIntegerInstance().format(state.words)+" words";
+            v.setTextViewText(R.id.widget_count,hasStory ? words+" · last sync":"Sync a story to see progress");
+            v.setTextViewText(R.id.action_session,active?"Finish ●":"Start ◷");
+            v.setContentDescription(R.id.action_session,active?"Finish active writing session":"Start writing session");
+            v.setTextColor(R.id.action_session,kind==1?0xffd3f37c:0xff405627);
         }
         if(kind==2){
-            v.setTextViewText(R.id.widget_heading,hasStory?
-                clip(state.heading,140,"Continue your scene."):
-                "The next scene is yours to write.");
-            v.setTextViewText(R.id.widget_draft,hasStory?
-                clip(state.draft,42,"CURRENT DRAFT"):"NO STORY LINKED YET");
+            v.setTextViewText(R.id.widget_heading,hasStory?state.heading:"");
+            v.setTextViewText(R.id.widget_draft,hasStory?state.draft:"Choose a story using Sync");
             String latest=WidgetSession.latestNote(context);
-            v.setTextViewText(R.id.widget_recent,
-                latest.isEmpty()?"YOUR LAST CAPTURE WILL APPEAR HERE. TAP NOTE +.":"✎  "+clip(latest,115,""));
-            v.setTextViewText(R.id.widget_sync_status,hasStory?
-                "SYNCED  "+DateFormat.getDateTimeInstance(DateFormat.SHORT,DateFormat.SHORT)
-                    .format(new Date(state.syncedAt))+
-                    "  /  "+WidgetSession.completedCount(context)+" SESSIONS":
-                "MANUAL SYNC • SCREENPLAY TEXT STAYS PRIVATE");
+            v.setTextViewText(R.id.widget_recent,latest.isEmpty()?"No saved notes":latest);
+            v.setTextViewText(R.id.widget_sync_status,hasStory?"Synced "+DateFormat.getDateTimeInstance(
+                DateFormat.SHORT,DateFormat.SHORT).format(new Date(state.syncedAt)):"Manual story sync");
             if(!hasStory||state.target<=0){
                 v.setViewVisibility(R.id.widget_progress,View.GONE);
             }else{
@@ -116,7 +105,7 @@ public abstract class WidgetBaseProvider extends AppWidgetProvider {
 
         PendingIntent open=activity(context,StudioLauncherActivity.class,10000+widgetId,false);
         PendingIntent capture=activity(context,QuickCaptureActivity.class,20000+widgetId,false);
-        v.setOnClickPendingIntent(R.id.widget_title,open);
+        if(kind!=0) v.setOnClickPendingIntent(R.id.widget_title,open);
         v.setOnClickPendingIntent(R.id.action_open,open);
         v.setOnClickPendingIntent(R.id.action_capture,capture);
 
@@ -131,7 +120,10 @@ public abstract class WidgetBaseProvider extends AppWidgetProvider {
         if(kind==2) {
             PendingIntent sync=activity(context,StudioLauncherActivity.class,40000+widgetId,true);
             v.setOnClickPendingIntent(R.id.action_sync,sync);
-            v.setOnClickPendingIntent(R.id.widget_recent,capture);
+            Intent notes=new Intent(context,QuickCaptureActivity.class).putExtra(QuickCaptureActivity.ARCHIVE,true);
+            notes.setAction("com.lightbox.widgets.NOTEBOOK");
+            v.setOnClickPendingIntent(R.id.recent_area,PendingIntent.getActivity(context,widgetId,notes,
+                PendingIntent.FLAG_UPDATE_CURRENT|PendingIntent.FLAG_IMMUTABLE));
         }
         return v;
     }

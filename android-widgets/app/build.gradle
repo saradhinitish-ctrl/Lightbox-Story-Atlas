@@ -11,8 +11,8 @@ android {
         applicationId 'com.saradhinitish.lightboxstudio'
         minSdk 26
         targetSdk 36
-        versionCode 5
-        versionName '1.0.4'
+        versionCode 6
+        versionName '1.0.5'
     }
     signingConfigs {
         upload {
@@ -38,3 +38,11 @@ android {
 dependencies {
     // Native Android WebView and home-screen widget APIs require no external libraries.
 }
+
+// Package the same read-only snapshot logic used by the public sync page.
+def syncAssets = tasks.register('prepareSyncAssets', Copy) {
+    from rootProject.file('../story-sync.js')
+    into layout.buildDirectory.dir('generated/syncAssets/studio')
+}
+android.sourceSets.main.assets.srcDir(layout.buildDirectory.dir('generated/syncAssets'))
+tasks.named('preBuild').configure { dependsOn syncAssets }

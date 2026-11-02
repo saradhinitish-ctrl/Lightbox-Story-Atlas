@@ -1,0 +1,30 @@
+name: Verify actual public Lightbox Preview download
+on:
+  push:
+    paths:
+      - '.github/workflows/verify-public-lightbox-preview.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - name: Check live APK headers, bytes, checksum, and web page link
+        shell: bash
+        run: |
+          set -euo pipefail
+          URL='https://lightbox-studio.vercel.app/android-downloads/lightbox-studio-1.0.5-preview.apk'
+          curl -fL -sS --retry 3 --retry-delay 2 --max-time 45 -D /tmp/public-headers -o /tmp/lightbox-preview.apk "$URL"
+          echo 'HTTP response:'
+          grep -iE '^(http/|content-type:|content-length:|content-disposition:|cache-control:)' /tmp/public-headers
+          echo 'File metadata:'
+          file /tmp/lightbox-preview.apk
+          ls -lh /tmp/lightbox-preview.apk
+          sha256sum /tmp/lightbox-preview.apk
+          echo 'dded8c6b5ab7a6d70373e06fd616083f6374290f02d5c4905b822bad8b6fe026  /tmp/lightbox-preview.apk' | sha256sum -c -
+          unzip -t /tmp/lightbox-preview.apk | tail -1
+          curl -fLsS --retry 3 --retry-delay 2 'https://lightbox-studio.vercel.app/widgets.html' -o /tmp/widgets.html
+          grep -F 'href="/android-downloads/lightbox-studio-1.0.5-preview.apk"' /tmp/widgets.html
+          echo 'PASS: public website serves complete, checksum-matching Preview APK and links to it'

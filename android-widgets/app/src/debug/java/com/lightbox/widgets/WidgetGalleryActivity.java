@@ -20,7 +20,7 @@ import android.widget.TextView;
 /** DEBUG-ONLY real widget host: binds the provider and tests actual PendingIntents.
  * A RemoteViews.apply() preview alone is NOT a launcher and is unsuitable as
  * proof that PendingIntent buttons work.
- * --ei variant 0|1|2   --ei testAction 0=open 1=note 2=sync 3=refresh
+ * --ei variant 0|1|2   --ei testAction 0=open 1=note 2=sync 3=session
  */
 public final class WidgetGalleryActivity extends Activity {
     private static final String TAG="LightboxWidgetQA";
@@ -82,7 +82,7 @@ public final class WidgetGalleryActivity extends Activity {
         final int action=getIntent().getIntExtra("testAction",-1);
         final int target=action==0?R.id.action_open:
             action==1?R.id.action_capture:action==2?R.id.action_sync:
-            action==3?R.id.action_refresh:0;
+            action==3?R.id.action_session:0;
         if(target!=0 && (variant==2 || action<2) && (variant>=1 || action!=3)) {
             widget.postDelayed(()->{
                 View control=widget.findViewById(target);

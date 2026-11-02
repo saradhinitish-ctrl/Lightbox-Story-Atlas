@@ -2,11 +2,15 @@
 set -euo pipefail
 pkg=com.saradhinitish.lightboxstudio
 debug=android-widgets/app/build/outputs/apk/debug/app-debug.apk
-bash android-widgets/scripts/launcher-qa.sh
-python3 android-widgets/scripts/webview-qa.py
-bash android-widgets/scripts/widget-host-qa.sh
-python3 android-widgets/scripts/notebook-qa.py
-python3 android-widgets/scripts/pin-qa.py
+result=0
+check() {
+  if "$@"; then echo "PASS: $*"; else echo "::error::Failed: $*"; result=1; fi
+}
+check bash android-widgets/scripts/launcher-qa.sh
+check python3 android-widgets/scripts/webview-qa.py
+check bash android-widgets/scripts/widget-host-qa.sh
+check python3 android-widgets/scripts/notebook-qa.py
+check python3 android-widgets/scripts/pin-qa.py
 adb uninstall "$pkg"
 adb install /tmp/lightbox-old/android-widgets/app/build/outputs/apk/debug/app-debug.apk
 # Seed a legacy capture in the old sandbox, then upgrade in place with the same debug key.
@@ -29,3 +33,5 @@ if [[ -f candidate/lightbox-studio.apk ]]; then
 else
   echo "Debug upgrade passed. Production-signed upgrade blocked pending matching key." >> "$GITHUB_STEP_SUMMARY"
 fi
+
+exit "$result"

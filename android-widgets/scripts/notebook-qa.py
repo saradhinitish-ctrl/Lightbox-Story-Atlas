@@ -30,6 +30,15 @@ def tap(label):
     for _ in range(6):
         adb('shell', 'uiautomator', 'dump', '/data/local/tmp/lightbox.xml')
         tree = ET.fromstring(adb('shell', 'cat', '/data/local/tmp/lightbox.xml'))
+        # Some CI system images surface a launcher ANR after an adb force-stop.
+        # Record the system dialog. Never dismiss or ignore a Lightbox ANR.
+        if any(n.get('text')=="Pixel Launcher isn't responding" for n in tree.iter('node')):
+            Path('android-widget-host-qa/launcher-anr.xml').write_bytes(ET.tostring(tree))
+            close=next(n for n in tree.iter('node') if n.get('text')=='Close app')
+            x,y,r,b=map(int,re.findall(r'\d+',close.get('bounds')))
+            adb('shell','input','tap',str((x+r)//2),str((y+b)//2))
+            time.sleep(1)
+            continue
         for node in tree.iter('node'):
             if label.casefold() in {node.get(key,'').casefold() for key in ('text','content-desc','class')}:
                 x, y, right, bottom = map(int, re.findall(r'\d+', node.get('bounds')))

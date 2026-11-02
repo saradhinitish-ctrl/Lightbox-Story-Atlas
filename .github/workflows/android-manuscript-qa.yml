@@ -74,6 +74,10 @@ jobs:
           arch: x86_64
           target: google_apis
           profile: pixel_6
+          ram-size: 4096M
+          disk-size: 6144M
+          heap-size: 512M
+          cores: 4
           disable-animations: true
           emulator-options: -no-window -no-snapshot -noaudio -no-boot-anim -gpu swiftshader_indirect
           script: bash android-widgets/scripts/manuscript-qa.sh

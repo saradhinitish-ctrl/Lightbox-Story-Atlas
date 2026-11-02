@@ -6,7 +6,7 @@ on:
     paths:
       - 'android-widgets/scripts/widget-host-qa.sh'
       - 'android-widgets/app/src/debug/java/com/lightbox/widgets/WidgetGalleryActivity.java'
-      - 'android-widgets/app/src/main/java/com/lightbox/widgets/WidgetBaseProvider.java'
+      - 'android-widgets/app/src/main/**'
       - '.github/workflows/android-widget-host-qa.yml'
 permissions:
   contents: read

@@ -91,6 +91,8 @@ public final class WidgetGalleryActivity extends Activity {
                 if(control!=null) {
                     boolean dispatched=control.performClick();
                     Log.i(TAG,"Action click dispatched="+dispatched);
+                    if(action==3) widget.postDelayed(()->Log.i(TAG,
+                        "Session active="+WidgetSession.isActive(this)),750);
                 }
             },1200);
         }

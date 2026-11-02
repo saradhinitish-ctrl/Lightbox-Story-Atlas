@@ -4,7 +4,7 @@ set -euo pipefail
 mkdir -p android-launcher-qa
 pkg="com.saradhinitish.lightboxstudio"
 apk="android-widgets/app/build/outputs/apk/debug/app-debug.apk"
-gradle -p android-widgets --no-daemon assembleDebug
+# Debug APK built before the emulator boots, keeping Gradle out of the\n# memory-constrained emulator acceptance environment.
 test -s "$apk"
 # A reusable APK is never a one-time download: validate repeated clean installs.
 # This emulator-only test removes a test package (not a user's real project data).

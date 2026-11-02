@@ -58,7 +58,7 @@
     actions.append(download, browser);
     const note = document.createElement('p');
     note.className = 'lb-native-choice__notice';
-    note.textContent = "Android APK beta: native widgets now have real Open, Note, Sync and Refresh buttons; test on your Android launcher. Chrome's Install App is a browser shortcut without native widgets. Back up projects; Chrome and APK storage are separate."
+    note.textContent = "Lightbox Android 1.0.4 includes three functional native widgets: Quick Capture, Scene Desk, and Director Desk. You can save notes, open the workspace, start or finish a writing session, and manually sync story progress. Chrome's Install App is only a browser shortcut without native widgets. Back up projects before switching installations."
     card.append(tag, title, desc, actions, note);
     return card;
   }

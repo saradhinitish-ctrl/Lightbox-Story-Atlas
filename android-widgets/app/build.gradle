@@ -13,6 +13,7 @@ android {
         targetSdk 36
         versionCode 6
         versionName '1.0.5'
+        resValue 'string', 'lightbox_app_label', 'Lightbox Studio'
     }
     signingConfigs {
         upload {
@@ -25,6 +26,12 @@ android {
         }
     }
     buildTypes {
+        preview {
+            initWith debug
+            applicationIdSuffix '.preview'
+            versionNameSuffix '-preview'
+            resValue 'string', 'lightbox_app_label', 'Lightbox Preview'
+        }
         release {
             minifyEnabled false
             if (releaseStorePath) signingConfig signingConfigs.upload

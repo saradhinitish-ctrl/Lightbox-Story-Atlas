@@ -98,5 +98,12 @@
         }
       ]
     }
+  ],
+  "redirects": [
+    {
+      "source": "/android-downloads/lightbox-studio.apk",
+      "destination": "/android-downloads/lightbox-studio-1.0.5-preview.apk",
+      "permanent": false
+    }
   ]
 }

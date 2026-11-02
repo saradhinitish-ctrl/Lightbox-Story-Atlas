@@ -1,10 +1,20 @@
-Lightbox Studio 1.0.2 interactive Android release
+Lightbox Studio 1.0.4 — native Android interactive widgets release
 Package: com.saradhinitish.lightboxstudio
-Version: 1.0.2 / versionCode 3
-SHA-256: 6bd8bd6becc60dc4cd62133b90325602f956cc6216166ce7b7673208f9528846
+Version: 1.0.4 / versionCode 5
+SHA-256: 316c67147d56ba8667becd54879099af410c7db508aedbdfdd2e18c3b13b7c70
 Certificate SHA-256: EA:2C:B6:63:C8:09:73:A2:90:A0:3F:7B:F2:0E:72:60:EB:22:BD:DC:33:83:0E:A5:FA:6F:A9:55:26:BA:02:DF
-APK signature: v2 verified
-Widget implementation: native RemoteViews with independent Open, Capture, Sync and Refresh PendingIntents
-Emulator tests: native layouts, capture and sync action taps passed.
-Important: Story progress refreshes after manual sync, not automatically in the background.
-Date UTC: 2026-11-01T18:27:12Z
+Signature: v2 verified, same release signing identity as Lightbox 1.0.3.
+Distribution: lightbox-studio.vercel.app/android-downloads/lightbox-studio.apk
+Widget implementation: native Android RemoteViews (not images)
+2x2 Quick Capture: open studio, capture device-local note, display capture count.
+4x2 Scene Desk: title, scene, last synced word count, Open Studio, Note, Start/Finish session.
+4x4 Director Desk: synced story and scene heading, target progress (when set), most recent local note, Open, Note, Start/Finish, Sync.
+Writing session control: persisted locally and reflected in the widgets. It does not pretend to measure actual writing time or word counts automatically.
+Sync: manual, transfers metadata only; no screenplay text is silently transferred.
+Emulator verification:
+- APK compile: passed.
+- Android 15 clean install -> uninstall -> reinstall: passed.
+- Native app and widget manager launch: passed.
+- Three native widget providers: registered.
+- Android 13 real AppWidgetHost Capture, Sync and Start Session button taps: passed.
+Real-device compatibility note: Oppo/ColorOS home-screen behavior still requires real-device testing.

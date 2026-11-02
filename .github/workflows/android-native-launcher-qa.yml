@@ -34,6 +34,9 @@ jobs:
           if [ ! -f "$SDK_ROOT/platforms/android-36/android.jar" ]; then
             "$SDK_MANAGER" "platforms;android-36"
           fi
+      - name: Build app before starting Android emulator
+        shell: bash
+        run: gradle -p android-widgets --no-daemon --max-workers=2 assembleDebug
       - name: Enable KVM acceleration
         shell: bash
         run: |

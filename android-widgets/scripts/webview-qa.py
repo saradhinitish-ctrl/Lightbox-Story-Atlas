@@ -1,5 +1,7 @@
 """Verify the actual APK WebView, including same-origin offline use, from the debug socket."""
+import base64
 import json
+import sys
 from pathlib import Path
 import subprocess
 import time
@@ -48,6 +50,48 @@ def screenshot(name):
     (OUT/name).write_bytes(subprocess.check_output(['adb','exec-out','screencap','-p']))
 
 
+def read_state_js():
+    return """window.qaState=null;const req=indexedDB.open('lightbox-portable-v64',1);
+req.onsuccess=()=>{const d=req.result;const t=d.transaction('workspace').objectStore('workspace').get('current');
+t.onsuccess=()=>{window.qaState=t.result;d.close()}}"""
+
+
+if len(sys.argv)>1:
+    mode=sys.argv[1]
+    sock=connect()
+    if mode=='seed-old':
+        # The old debug WebView stores the fixture under its real studio origin.
+        url='https://lightbox-studio.vercel.app/upgrade-fixture'
+        sock.send(json.dumps({'id':7,'method':'Fetch.enable','params':{'patterns':[{'urlPattern':url}]}}))
+        while json.loads(sock.recv()).get('id')!=7:
+            pass
+        sock.send(json.dumps({'id':8,'method':'Page.navigate','params':{'url':url}}))
+        while True:
+            event=json.loads(sock.recv())
+            if event.get('method')=='Fetch.requestPaused':
+                sock.send(json.dumps({'id':9,'method':'Fetch.fulfillRequest','params':{
+                    'requestId':event['params']['requestId'],'responseCode':200,
+                    'responseHeaders':[{'name':'Content-Type','value':'text/html'}],
+                    'body':base64.b64encode(b'<!doctype html><title>Upgrade fixture</title>').decode()}}))
+                break
+        until("document.title==='Upgrade fixture'")
+        fixture=Path('/tmp/lightbox-workspace-fixture.json').read_text()
+        evaluate("""let r=indexedDB.open('lightbox-portable-v64',1);
+r.onupgradeneeded=()=>r.result.createObjectStore('workspace');
+r.onsuccess=()=>{let t=r.result.transaction('workspace','readwrite');t.objectStore('workspace').put("""+
+                 fixture+""",'current');t.oncomplete=()=>{window.seeded=true;r.result.close()}}""")
+        until("window.seeded")
+    elif mode=='verify-upgrade':
+        until("!!document.querySelector('.story-atlas')")
+        evaluate(read_state_js())
+        until("window.qaState?.state?.projects?.some(p=>p.title==='Rain Check')")
+        print('PASS: existing 1.0.4 WebView workspace survived the same-key debug update')
+    else:
+        raise AssertionError(mode)
+    sock.close()
+    sys.exit(0)
+
+
 adb('shell','svc','wifi','disable')
 adb('shell','svc','data','disable')
 try:
@@ -66,6 +110,9 @@ db.onsuccess=()=>{const check=()=>{const r=db.result.transaction('workspace').ob
 r.onsuccess=()=>{if(r.result?.state?.projects?.some(p=>p.title==='Rain Check')){window.qaSaved=true;db.result.close()}else setTimeout(check,100)}};
 check()}""")
     until("window.qaSaved")
+    evaluate(read_state_js())
+    until("!!window.qaState")
+    Path('/tmp/lightbox-workspace-fixture.json').write_text(json.dumps(evaluate("window.qaState")))
     sock.close()
     sock=connect()
     until("!!document.querySelector('.story-atlas')")

@@ -6,14 +6,16 @@ bash android-widgets/scripts/launcher-qa.sh
 python3 android-widgets/scripts/webview-qa.py
 bash android-widgets/scripts/widget-host-qa.sh
 python3 android-widgets/scripts/notebook-qa.py
+python3 android-widgets/scripts/pin-qa.py
 adb uninstall "$pkg"
 adb install /tmp/lightbox-old/android-widgets/app/build/outputs/apk/debug/app-debug.apk
 # Seed a legacy capture in the old sandbox, then upgrade in place with the same debug key.
-adb shell am start -W -n "$pkg/com.lightbox.widgets.WidgetHubActivity"
+python3 android-widgets/scripts/webview-qa.py seed-old
 adb shell am force-stop "$pkg"
 adb shell run-as "$pkg" mkdir -p shared_prefs
 printf '%s' '<map><string name="notes">[{"text":"Legacy capture","created":1700000000000}]</string></map>' | adb shell "run-as $pkg sh -c 'cat > shared_prefs/lightbox.widget.capture.v1.xml'"
 adb install -r "$debug"
+python3 android-widgets/scripts/webview-qa.py verify-upgrade
 adb shell am start -W -n "$pkg/com.lightbox.widgets.WidgetHubActivity"
 adb shell run-as "$pkg" cat shared_prefs/lightbox.widget.capture.v1.xml | grep -F 'Legacy capture'
 if [[ -f candidate/lightbox-studio.apk ]]; then

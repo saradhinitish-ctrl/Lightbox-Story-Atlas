@@ -55,6 +55,11 @@ with webdriver.Chrome(options=options) as driver:
     wait.until(lambda d: not d.find_elements(By.CSS_SELECTOR,'.welcome'))
     visible('.story-atlas')
     assert len(driver.find_elements(By.CSS_SELECTOR,'.story-atlas .native-utilities')) == 1
+    # Atlas opens before the portable workspace finishes its asynchronous save.
+    wait.until(lambda d: d.execute_async_script("""
+      const done=arguments[0], r=indexedDB.open('lightbox-portable-v64',1);
+      r.onsuccess=()=>{const db=r.result, q=db.transaction('workspace').objectStore('workspace').get('current');
+        q.onsuccess=()=>{done(!!q.result?.state?.projects?.some(p=>p.title==='The Blue Room'));db.close()}}"""))
     driver.refresh()
     visible('.story-atlas')
     driver.get(origin+'/widgets.html')

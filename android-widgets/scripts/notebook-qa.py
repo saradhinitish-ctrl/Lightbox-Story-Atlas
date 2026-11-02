@@ -42,6 +42,8 @@ def tap(label):
 
 host(0, 1)
 tap('android.widget.EditText')
+time.sleep(.5)
+Path('android-widget-host-qa/composer-open.png').write_bytes(subprocess.check_output(['adb','exec-out','screencap','-p']))
 adb('shell', 'input', 'text', 'Rooftop')
 adb('shell', 'input', 'keyevent', '66')
 adb('shell', 'input', 'text', 'Rain')
@@ -67,3 +69,12 @@ snapshot = adb('shell', 'run-as', PKG, 'cat', 'shared_prefs/lightbox.widget.snap
 assert 'Test Film' in snapshot and 'value="325"' in snapshot, snapshot
 host(2, 0)
 print('PASS: manual metadata sync, studio open and independent widget refresh')
+
+for size, name in enumerate(('quick','scene','director')):
+    adb('shell','am','force-stop',PKG)
+    adb('logcat','-c')
+    adb('shell','am','start','-W','-n',PKG+'/com.lightbox.widgets.WidgetGalleryActivity',
+        '--ei','variant',str(size))
+    time.sleep(2)
+    assert 'allowed=true' in adb('logcat','-d','-s','LightboxWidgetQA:I')
+    Path('android-widget-host-qa/'+name+'-widget.png').write_bytes(subprocess.check_output(['adb','exec-out','screencap','-p']))

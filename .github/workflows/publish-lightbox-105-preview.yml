@@ -60,21 +60,7 @@ jobs:
           cores: 4
           disable-animations: true
           emulator-options: -no-window -no-snapshot -noaudio -no-boot-anim -gpu swiftshader_indirect
-          script: |
-            set -euo pipefail
-            pkg=com.saradhinitish.lightboxstudio.preview
-            apk=source/android-widgets/app/build/outputs/apk/preview/app-preview.apk
-            adb install "$apk"
-            adb shell pm path "$pkg" | grep -F 'package:'
-            adb shell am start -W -n "$pkg/com.lightbox.widgets.StudioLauncherActivity"
-            adb shell am start -W -n "$pkg/com.lightbox.widgets.WidgetHubActivity"
-            adb shell am start -W -n "$pkg/com.lightbox.widgets.QuickCaptureActivity"
-            adb shell dumpsys package "$pkg" | grep -F 'com.lightbox.widgets.QuickProvider'
-            adb shell dumpsys package "$pkg" | grep -F 'com.lightbox.widgets.WideProvider'
-            adb shell dumpsys package "$pkg" | grep -F 'com.lightbox.widgets.LargeProvider'
-            adb uninstall "$pkg"
-            adb install "$apk"
-            adb shell pm path "$pkg" | grep -F 'package:'
+          script: bash publish/android-widgets/scripts/preview-install-qa.sh
       - name: Preserve independently installable preview build
         uses: actions/upload-artifact@v4
         with:

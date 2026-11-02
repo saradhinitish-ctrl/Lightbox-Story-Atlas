@@ -1,0 +1,82 @@
+name: Publish tested Lightbox 1.0.4 widget release
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'android-downloads/.publishing/lightbox-104-signed-tail.xz.b64'
+  workflow_dispatch:
+permissions:
+  contents: write
+  actions: read
+concurrency:
+  group: lightbox-104-verified-release
+  cancel-in-progress: false
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/download-artifact@v4
+        with:
+          run-id: 41383694710
+          name: lightbox-unified-unsigned-release-apk
+          path: unsigned-release
+          github-token: ${{ github.token }}
+      - name: Align known compiled APK with Android SDK
+        shell: bash
+        run: |
+          set -euo pipefail
+          SDK_ROOT="${ANDROID_SDK_ROOT:-${ANDROID_HOME:-/usr/local/lib/android/sdk}}"
+          MANAGER="$(find "$SDK_ROOT/cmdline-tools" -type f -name sdkmanager | head -1)"
+          test -x "$SDK_ROOT/build-tools/36.0.0/zipalign" || "$MANAGER" "build-tools;36.0.0"
+          test -s unsigned-release/app-release-unsigned.apk
+          "$SDK_ROOT/build-tools/36.0.0/zipalign" -f -p 4 unsigned-release/app-release-unsigned.apk /tmp/lightbox-104-aligned.apk
+          echo 'eabad877fb8ff2c6d1f47c4d3590f3db78902973e7304fa5f7c64d85bb9f9101  /tmp/lightbox-104-aligned.apk' | sha256sum -c -
+      - name: Assemble EXACT verified owner-signed Android APK
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          import base64,hashlib,lzma,struct,zipfile,io
+          unsigned=Path('/tmp/lightbox-104-aligned.apk').read_bytes()
+          blob=Path('android-downloads/.publishing/lightbox-104-signed-tail.xz.b64').read_text().strip()
+          patch=lzma.decompress(base64.b64decode(blob,validate=True))
+          assert len(patch)==13891 and hashlib.sha256(patch).hexdigest()=='0cb2b704bcaa607770c208934c2da82b12a5fa8fa6f5140ff2a96370220fabd1'
+          assert unsigned.rfind(b'PK\\x05\\x06')==40874
+          assert struct.unpack_from('<I',unsigned,40874+16)[0]==39328
+          result=bytearray(unsigned[:35261]+patch+unsigned[39328:])
+          eocd=result.rfind(b'PK\\x05\\x06')
+          assert eocd==50698
+          struct.pack_into('<I',result,eocd+16,49152)
+          assert len(result)==50720
+          assert hashlib.sha256(result).hexdigest()=='316c67147d56ba8667becd54879099af410c7db508aedbdfdd2e18c3b13b7c70'
+          with zipfile.ZipFile(io.BytesIO(result)) as z:
+              assert z.testzip() is None
+              assert b'com.saradhinitish.lightboxstudio'.replace(b'.',b'.') in z.read('AndroidManifest.xml') or 'com.saradhinitish.lightboxstudio'.encode('utf-16-le') in z.read('AndroidManifest.xml')
+          Path('android-downloads/lightbox-studio.apk').write_bytes(result)
+          Path('android-downloads/UNIFIED-SHA256SUMS').write_text(hashlib.sha256(result).hexdigest()+'  android-downloads/lightbox-studio.apk\\n')
+          print('Reconstructed signed Android 1.0.4',len(result),'bytes')
+          PY
+      - name: Verify signing scheme and certificate match previous Lightbox
+        shell: bash
+        run: |
+          set -euo pipefail
+          SDK_ROOT="${ANDROID_SDK_ROOT:-${ANDROID_HOME:-/usr/local/lib/android/sdk}}"
+          "$SDK_ROOT/build-tools/36.0.0/apksigner" verify --verbose --print-certs android-downloads/lightbox-studio.apk | tee signed-release-report.txt
+          grep -q 'Verified using v2 scheme (APK Signature Scheme v2): true' signed-release-report.txt
+          grep -qi 'ea2cb663c80973a290a03f7bf20e7260eb22bddc33830ea5fa6fa95526ba02df' signed-release-report.txt
+          sha256sum -c android-downloads/UNIFIED-SHA256SUMS
+      - name: Update public Android APK used by Lightbox website
+        shell: bash
+        run: |
+          set -euo pipefail
+          git add android-downloads/lightbox-studio.apk android-downloads/UNIFIED-SHA256SUMS
+          git diff --cached --quiet && { echo "Exact APK already published"; exit 0; }
+          git config user.name "Lightbox Release Automation"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "Publish verified Lightbox Studio 1.0.4 interactive widgets APK"
+          git push origin HEAD:main

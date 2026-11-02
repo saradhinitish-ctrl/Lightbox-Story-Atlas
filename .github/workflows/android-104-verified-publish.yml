@@ -4,6 +4,7 @@ on:
     branches: [main]
     paths:
       - 'android-downloads/.publishing/lightbox-104-signed-tail.xz.b64'
+      - '.github/workflows/android-104-verified-publish.yml'
   workflow_dispatch:
 permissions:
   contents: write

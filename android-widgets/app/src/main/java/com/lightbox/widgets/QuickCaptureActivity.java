@@ -38,6 +38,12 @@ public final class QuickCaptureActivity extends PaperActivity {
         }
         if(reviewing) archive(); else compose();
     }
+    @Override protected void onNewIntent(android.content.Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
+        if(intent.getBooleanExtra(ARCHIVE,false))archive();
+        else if(reviewing)compose();
+    }
     private JSONArray readNotes() throws JSONException {
         return new JSONArray(getSharedPreferences(PREFS,MODE_PRIVATE).getString("notes","[]"));
     }
@@ -54,10 +60,11 @@ public final class QuickCaptureActivity extends PaperActivity {
         flex(bar,new View(this));
         Button save=button("Save note",true,this::save); bar.addView(save);
         rule(page,8);
-        add(page,folio("FIELD NOTES"),16);
+        boolean compact=getResources().getConfiguration().screenHeightDp<460;
+        if(!compact)add(page,folio("FIELD NOTES"),16);
         WidgetState story=WidgetState.read(this);
         TextView heading=text(story.syncedAt==0?"Unfiled idea":story.title,24,INK,"serif");
-        heading.setMaxLines(1); heading.setEllipsize(android.text.TextUtils.TruncateAt.END); add(page,heading,3);
+        heading.setMaxLines(1); heading.setEllipsize(android.text.TextUtils.TruncateAt.END); if(!compact)add(page,heading,3);
         editor=new EditText(this);
         editor.setInputType(InputType.TYPE_CLASS_TEXT|InputType.TYPE_TEXT_FLAG_MULTI_LINE|InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
         editor.setGravity(Gravity.TOP|Gravity.START); editor.setBackgroundColor(PAPER);

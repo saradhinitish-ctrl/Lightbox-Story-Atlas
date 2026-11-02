@@ -53,11 +53,6 @@ public abstract class WidgetBaseProvider extends AppWidgetProvider {
         return kind==0 ? R.layout.widget_quick_live :
                kind==1 ? R.layout.widget_wide_live : R.layout.widget_large_live;
     }
-    private static String clip(String value,int limit,String fallback) {
-        if(value==null||value.trim().isEmpty())return fallback;
-        String safe=value.replaceAll("[\\p{Cntrl}]+"," ").trim();
-        return safe.length()<=limit?safe:safe.substring(0,Math.max(0,limit-1))+"…";
-    }
     private static PendingIntent activity(Context c,Class<?> target,int requestCode,boolean sync) {
         Intent i=new Intent(c,target);
         i.setAction(sync?"com.lightbox.widgets.OPEN_SYNC":"com.lightbox.widgets.OPEN");
@@ -91,8 +86,10 @@ public abstract class WidgetBaseProvider extends AppWidgetProvider {
             v.setTextViewText(R.id.widget_draft,hasStory?state.draft:"Choose a story using Sync");
             String latest=WidgetSession.latestNote(context);
             v.setTextViewText(R.id.widget_recent,latest.isEmpty()?"No saved notes":latest);
-            v.setTextViewText(R.id.widget_sync_status,hasStory?"Synced "+DateFormat.getDateTimeInstance(
-                DateFormat.SHORT,DateFormat.SHORT).format(new Date(state.syncedAt)):"Manual story sync");
+            String sync=hasStory?"Synced "+DateFormat.getDateTimeInstance(DateFormat.SHORT,DateFormat.SHORT)
+                .format(new Date(state.syncedAt)):"Manual story sync";
+            v.setTextViewText(R.id.widget_sync_status,active?
+                "Session since "+DateFormat.getTimeInstance(DateFormat.SHORT).format(new Date(WidgetSession.startedAt(context))):sync);
             if(!hasStory||state.target<=0){
                 v.setViewVisibility(R.id.widget_progress,View.GONE);
             }else{

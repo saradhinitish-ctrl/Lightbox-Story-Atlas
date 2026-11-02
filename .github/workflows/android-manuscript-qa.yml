@@ -88,3 +88,17 @@ jobs:
         with:
           name: owner-signed-tested
           path: candidate/lightbox-studio.apk
+  welcome:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - run: pip install selenium==4.29.0
+      - run: python3 android-widgets/scripts/welcome-qa.py
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: manuscript-welcome-screens
+          path: android-welcome-qa/

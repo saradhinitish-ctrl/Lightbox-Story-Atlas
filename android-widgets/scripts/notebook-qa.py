@@ -11,14 +11,15 @@ def adb(*args):
     return subprocess.check_output(['adb', *args], text=True)
 
 
-def host(size, action):
+def host(size, action, twin=False):
     adb('shell', 'am', 'force-stop', PKG)
     adb('logcat', '-c')
     adb('shell', 'am', 'start', '-W', '-n', PKG+'/com.lightbox.widgets.WidgetGalleryActivity',
-        '--ei', 'variant', str(size), '--ei', 'testAction', str(action))
+        '--ei', 'variant', str(size), '--ei', 'testAction', str(action), '--ez', 'twin', str(twin).lower())
     for _ in range(25):
         log = adb('logcat', '-d', '-s', 'LightboxWidgetQA:I')
-        if 'allowed=true' in log and 'Action click dispatched=true' in log:
+        if ('allowed=true' in log and 'Action click dispatched=true' in log
+                and (not twin or 'Second widget session=Start' in log)):
             return
         time.sleep(.5)
     raise AssertionError(log)
@@ -43,15 +44,22 @@ adb('shell', 'input', 'text', 'Rain')
 tap('Save note')
 tap('Rooftop\nRain')
 tap('Copy')
-host(1, 3)  # The existing host suite left the timer running.
+host(1, 3, twin=True)  # The existing host suite left the timer running.
 time.sleep(1)
 state = adb('shell', 'run-as', PKG, 'cat', 'shared_prefs/lightbox.widget.session.v1.xml')
 assert 'name="active" value="false"' in state and 'name="completed" value="1"' in state, state
-host(0, 1)
-tap('Saved notes (1)')
+host(2, 4)
 tap('Rooftop\nRain')
 tap('Delete')
 tap('Delete')
 tap('New note')
 tap('Cancel')
 print('PASS: quick-widget launch, multiline save, review, copy, restart, deletion, cancel and wide-widget finish')
+
+# The external sync URI uses the same WidgetState.accept path as the native sync page.
+adb('shell', "am start -W -a android.intent.action.VIEW -d 'lightboxwidget://sync?title=Test%20Film&project=qa&draft=Draft%20A&scene=04&heading=EXT.%20PARK&words=325&target=800' " + PKG)
+time.sleep(1)
+snapshot = adb('shell', 'run-as', PKG, 'cat', 'shared_prefs/lightbox.widget.snapshot.v1.xml')
+assert 'Test Film' in snapshot and 'value="325"' in snapshot, snapshot
+host(2, 0)
+print('PASS: manual metadata sync, studio open and independent widget refresh')

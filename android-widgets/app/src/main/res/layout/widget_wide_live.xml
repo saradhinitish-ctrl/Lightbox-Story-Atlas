@@ -8,7 +8,7 @@
     </LinearLayout>
   </LinearLayout>
   <TextView android:layout_width="match_parent" android:layout_height="1dp" android:background="#535B50" />
-  <LinearLayout android:layout_width="match_parent" android:layout_height="44dp" android:orientation="horizontal">
+  <LinearLayout android:layout_width="match_parent" android:layout_height="48dp" android:orientation="horizontal">
     <TextView android:layout_width="0dp" android:layout_height="match_parent" android:text="Studio" android:textSize="14sp" android:textColor="#F4F1E8" android:fontFamily="sans-serif-medium" android:maxLines="1" android:ellipsize="end" android:includeFontPadding="false" android:layout_weight="1" android:gravity="center" android:clickable="true" android:id="@+id/action_open" />
     <TextView android:layout_width="0dp" android:layout_height="match_parent" android:text="Note +" android:textSize="14sp" android:textColor="#F4F1E8" android:fontFamily="sans-serif-medium" android:maxLines="1" android:ellipsize="end" android:includeFontPadding="false" android:layout_weight="1" android:gravity="center" android:clickable="true" android:id="@+id/action_capture" />
     <TextView android:layout_width="0dp" android:layout_height="match_parent" android:text="Start" android:textSize="14sp" android:textColor="#F4F1E8" android:fontFamily="sans-serif-medium" android:maxLines="1" android:ellipsize="end" android:includeFontPadding="false" android:layout_weight="1" android:gravity="center" android:clickable="true" android:id="@+id/action_session" />

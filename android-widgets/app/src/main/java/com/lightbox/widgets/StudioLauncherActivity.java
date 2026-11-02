@@ -175,8 +175,16 @@ public final class StudioLauncherActivity extends Activity {
     @Override protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         setIntent(intent);
-        if(web!=null && intent.getBooleanExtra(EXTRA_OPEN_SYNC,false)) {
+        if(web==null)return;
+        if(intent.getBooleanExtra(EXTRA_OPEN_SYNC,false)) {
+            failure.setVisibility(View.GONE);
+            web.setVisibility(View.VISIBLE);
             web.loadUrl(STUDIO+"widgets.html");
+        } else if ("com.lightbox.widgets.OPEN".equals(intent.getAction()) &&
+                (web.getVisibility()!=View.VISIBLE || (STUDIO+"widgets.html").equals(web.getUrl()))) {
+            failure.setVisibility(View.GONE);
+            web.setVisibility(View.VISIBLE);
+            web.loadUrl(STUDIO);
         }
     }
 

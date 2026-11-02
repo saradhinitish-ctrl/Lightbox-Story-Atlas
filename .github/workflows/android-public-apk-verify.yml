@@ -1,10 +1,11 @@
 name: Verify public Lightbox Android installer
-# Revalidated after publication of signed native Lightbox 1.0.2 with functional RemoteViews.
+# Revalidated after publication of signed native Lightbox 1.0.4 with functional RemoteViews.
 on:
   push:
     branches: [main]
     paths:
       - "android-downloads/lightbox-studio.apk"
+      - "android-downloads/UNIFIED-SHA256SUMS"
       - ".github/workflows/android-public-apk-verify.yml"
   workflow_dispatch:
 permissions:
@@ -57,7 +58,7 @@ jobs:
         shell: bash
         run: |
           {
-            echo "## Lightbox 1.0.2 public APK verification"
+            echo "## Lightbox 1.0.4 public APK verification"
             echo "✅ SHA-256 checksum matched."
             echo "✅ Android APK v2 signature verified."
             echo "✅ Signing certificate and Digital Asset Links match."

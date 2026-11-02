@@ -83,15 +83,15 @@ public final class StudioLauncherActivity extends Activity {
         shell.setOrientation(LinearLayout.VERTICAL);
         shell.setBackgroundColor(PAPER);
         // Android 15+ enforces edge-to-edge on new targets. Protect all controls.
-        shell.setOnApplyWindowInsetsListener((v, insets) -> {
-            if (android.os.Build.VERSION.SDK_INT >= 30) {
-                android.graphics.Insets bars = insets.getInsets(WindowInsets.Type.systemBars() | WindowInsets.Type.ime() | WindowInsets.Type.displayCutout());
+        if (android.os.Build.VERSION.SDK_INT >= 30) {
+            getWindow().setDecorFitsSystemWindows(false);
+            shell.setOnApplyWindowInsetsListener((v, insets) -> {
+                android.graphics.Insets bars = insets.getInsets(WindowInsets.Type.systemBars()
+                    | WindowInsets.Type.ime() | WindowInsets.Type.displayCutout());
                 shell.setPadding(bars.left, bars.top, bars.right, bars.bottom);
-            } else {
-                shell.setPadding(0, insets.getSystemWindowInsetTop(), 0, insets.getSystemWindowInsetBottom());
-            }
-            return insets;
-        });
+                return WindowInsets.CONSUMED;
+            });
+        }
 
         if((getApplicationInfo().flags & android.content.pm.ApplicationInfo.FLAG_DEBUGGABLE)!=0)
             WebView.setWebContentsDebuggingEnabled(true);
@@ -101,7 +101,7 @@ public final class StudioLauncherActivity extends Activity {
         // Make native hosting explicit so the website never shows its own
         // "Install Android app" prompt inside an already-installed APK.
         settings.setUserAgentString(settings.getUserAgentString()
-                + " LightboxNativeAndroid/1.0.6");
+                + " LightboxNativeAndroid/1.0.7");
         settings.setJavaScriptEnabled(true);
         settings.setDomStorageEnabled(true);
         settings.setAllowFileAccess(false);

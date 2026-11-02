@@ -76,17 +76,17 @@ html.lb-native-shell .native-widget-card{display:block}
   </section>
   <section class="install-card" id="install" aria-labelledby="install-title">
   <span id="android-105-test" aria-hidden="true"></span>
-  <p id="native-launch-help" class="install-troubleshoot" role="status" hidden><strong>The Android widget manager did not open.</strong> The native Lightbox APK may not be installed, or Chrome may be unable to launch it. If you installed Lightbox using Chrome’s “Install app”, use <strong>DOWNLOAD LIGHTBOX STUDIO 1.0.6</strong> below. If the Android APK is already installed, long-press an empty space on your phone’s home screen, tap <strong>Widgets</strong>, and look for <strong>Lightbox Studio</strong>. You can add the same widgets there.</p>
-  <div class="install-top"><span class="install-index">01 / LIGHTBOX STUDIO 1.0.6</span><span class="install-system">ANDROID 8.0+</span></div>
+  <p id="native-launch-help" class="install-troubleshoot" role="status" hidden><strong>The Android widget manager did not open.</strong> The native Lightbox APK may not be installed, or Chrome may be unable to launch it. If you installed Lightbox using Chrome’s “Install app”, use <strong>DOWNLOAD LIGHTBOX STUDIO 1.0.7</strong> below. If the Android APK is already installed, long-press an empty space on your phone’s home screen, tap <strong>Widgets</strong>, and look for <strong>Lightbox Studio</strong>. You can add the same widgets there.</p>
+  <div class="install-top"><span class="install-index">01 / LIGHTBOX STUDIO 1.0.7</span><span class="install-system">ANDROID 8.0+</span></div>
   <div class="install-layout">
     <div class="install-copy">
       <h2 id="install-title">Give Lightbox a place <em>on your home screen.</em></h2>
-      <p>Lightbox Studio 1.0.6 includes the writing workspace and all three home-screen widgets in one Android app.</p>
+      <p>Lightbox Studio 1.0.7 includes the writing workspace and all three home-screen widgets in one Android app.</p>
       <div class="install-tags"><span>2 × 2</span><span>4 × 2</span><span>4 × 4</span></div>
     </div>
     <div class="install-action">
       <div id="native-install-ready" hidden>
-        <a class="install-download" style="margin:14px 0" href="/android-downloads/lightbox-studio-1.0.6.apk" download="Lightbox-Studio-1.0.6.apk">DOWNLOAD LIGHTBOX STUDIO 1.0.6 <span aria-hidden="true">↓</span></a>
+        <a class="install-download" style="margin:14px 0" href="/android-downloads/lightbox-studio-1.0.7.apk" download="Lightbox-Studio-1.0.7.apk">DOWNLOAD LIGHTBOX STUDIO 1.0.7 <span aria-hidden="true">↓</span></a>
         <p class="install-caution">Open the downloaded APK in Android’s package installer.</p>
       </div>
       <p class="install-caution">After installation, open Lightbox Studio and tap Widgets.</p>
@@ -123,7 +123,7 @@ if(new URLSearchParams(window.location.search).get('native')==='unavailable'){
  const help=document.getElementById('native-launch-help');
  if(help) help.hidden=false;
 }
-if(!document.documentElement.classList.contains('lb-native-shell')) fetch('/android-downloads/lightbox-studio-1.0.6.apk',{method:'HEAD',cache:'no-store'}).then(r=>{
+if(!document.documentElement.classList.contains('lb-native-shell')) fetch('/android-downloads/lightbox-studio-1.0.7.apk',{method:'HEAD',cache:'no-store'}).then(r=>{
   if(r.ok&&r.headers.get('Content-Type')?.includes('android.package-archive')&&(!r.headers.get('Content-Length')||Number(r.headers.get('Content-Length'))>30000)) {
     nativeReady.hidden=false;
     nativePending.hidden=true;

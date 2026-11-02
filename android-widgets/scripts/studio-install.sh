@@ -1,11 +1,10 @@
 #!/usr/bin/env bash
 set -euo pipefail
 pkg=com.saradhinitish.lightboxstudio.android
-apk=android-downloads/lightbox-studio-1.0.6.apk
-adb install android-downloads/lightbox-studio-1.0.5-preview.apk
-adb install "$apk"
+apk=android-downloads/lightbox-studio-1.0.7.apk
+adb install android-downloads/lightbox-studio-1.0.6.apk
 adb install -r "$apk"
-adb shell pm path com.saradhinitish.lightboxstudio.preview
+adb shell dumpsys package "$pkg" | grep "versionName=1.0.7"
 adb shell dumpsys package "$pkg" > /tmp/lightbox-package
 for provider in QuickProvider WideProvider LargeProvider; do grep -F "$provider" /tmp/lightbox-package; done
 adb shell am start -W -n "$pkg/com.lightbox.widgets.StudioLauncherActivity"

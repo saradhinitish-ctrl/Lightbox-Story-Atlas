@@ -8,7 +8,7 @@
   if (!root) return;
   const android = /\bAndroid\b/i.test(navigator.userAgent || '');
   const nativeApp = document.documentElement.classList.contains('lb-native-shell');
-  const apkUrl = '/android-downloads/lightbox-studio-1.0.6.apk';
+  const apkUrl = '/android-downloads/lightbox-studio-1.0.7.apk';
 
   const styleId = 'lightbox-native-download-style';
   if (!document.getElementById(styleId)) {
@@ -50,15 +50,15 @@
     const download = document.createElement('a');
     download.className = 'lb-native-choice__download';
     download.href = apkUrl;
-    download.setAttribute('download', 'Lightbox-Studio-1.0.6.apk');
-    download.textContent = 'DOWNLOAD LIGHTBOX STUDIO 1.0.6 ↓';
+    download.setAttribute('download', 'Lightbox-Studio-1.0.7.apk');
+    download.textContent = 'DOWNLOAD LIGHTBOX STUDIO 1.0.7 ↓';
     const browser = document.createElement('span');
     browser.className = 'lb-native-choice__browser';
     browser.textContent = 'Already on Lightbox? Keep using it here — no download needed.';
     actions.append(download, browser);
     const note = document.createElement('p');
     note.className = 'lb-native-choice__notice';
-    note.textContent = "Lightbox Studio 1.0.6 includes three functional native widgets: Quick Capture, Scene Desk, and Director Desk. You can save notes, open the workspace, start or finish a writing session, and manually sync story progress. Chrome's Install App is only a browser shortcut without native widgets. If you are moving from 1.0.5, export your worlds and copy any saved notes before removing the old app."
+    note.textContent = "Lightbox Studio 1.0.7 includes three functional native widgets: Quick Capture, Scene Desk, and Director Desk. You can save notes, open the workspace, start or finish a writing session, and manually sync story progress. Chrome's Install App is only a browser shortcut without native widgets. If you are moving from 1.0.5, export your worlds and copy any saved notes before removing the old app."
     card.append(tag, title, desc, actions, note);
     return card;
   }
@@ -68,9 +68,9 @@
     // Browser visitors see setup information, not an Android install/intent error.
     // Only the native WebView uses the app-owned deep link.
     a.href = nativeApp ? 'lightboxwidget://manager' : apkUrl;
-    if (!nativeApp) a.setAttribute('download', 'Lightbox-Studio-1.0.6.apk');
+    if (!nativeApp) a.setAttribute('download', 'Lightbox-Studio-1.0.7.apk');
     a.textContent = nativeApp ? 'ADD WIDGETS ↗' : 'DOWNLOAD LIGHTBOX STUDIO ↓';
-    a.setAttribute('aria-label', nativeApp ? 'Open native widget manager' : 'Download Lightbox Studio 1.0.6 APK with built-in widgets');
+    a.setAttribute('aria-label', nativeApp ? 'Open native widget manager' : 'Download Lightbox Studio 1.0.7 APK with built-in widgets');
     return a;
   }
   let queued = false;
@@ -112,7 +112,7 @@
         copy.textContent='LIGHTBOX / ON ANDROID';
         const download=document.createElement('a');
         download.href=apkUrl;
-        download.download='Lightbox-Studio-1.0.6.apk';
+        download.download='Lightbox-Studio-1.0.7.apk';
         download.textContent='DOWNLOAD LIGHTBOX STUDIO ↓';
         footer.append(copy,download);
         atlas.appendChild(footer);

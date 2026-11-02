@@ -76,13 +76,13 @@ public abstract class WidgetBaseProvider extends AppWidgetProvider {
             String scene="--".equals(state.scene) || !hasStory ? "—" : state.scene;
             v.setTextViewText(R.id.widget_scene,kind==1?scene:"SCENE   "+scene);
             String words=java.text.NumberFormat.getIntegerInstance().format(state.words)+" words";
-            v.setTextViewText(R.id.widget_count,hasStory ? words+" · last sync":"Sync a story to see progress");
-            v.setTextViewText(R.id.action_session,active?"Finish ●":"Start ◷");
+            v.setTextViewText(R.id.widget_count,hasStory ? words+" · last sync":"No story linked");
+            v.setTextViewText(R.id.action_session,active?"Finish":"Start");
             v.setContentDescription(R.id.action_session,active?"Finish active writing session":"Start writing session");
             v.setTextColor(R.id.action_session,0xff181916);
         }
         if(kind==2){
-            v.setTextViewText(R.id.widget_heading,hasStory?state.heading:"");
+            v.setTextViewText(R.id.widget_heading,hasStory?state.heading:"Link your first scene");
             v.setTextViewText(R.id.widget_draft,hasStory?state.draft:"Choose a story using Sync");
             String latest=WidgetSession.latestNote(context);
             v.setTextViewText(R.id.widget_recent,latest.isEmpty()?"No saved notes":latest);

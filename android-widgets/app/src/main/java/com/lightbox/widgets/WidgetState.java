@@ -69,7 +69,7 @@ public final class WidgetState {
         if(android.os.Build.VERSION.SDK_INT<35) return;
         SharedPreferences p=context.getSharedPreferences(FILE,Context.MODE_PRIVATE);
         long now=System.currentTimeMillis();
-        long then=p.getLong("previewsUpdatedAt",0);
+        long then=p.getLong("previewsUpdatedAt107",0);
         if(now-then < 60L*60*1000) return;
         AppWidgetManager manager=AppWidgetManager.getInstance(context);
         Class<?>[] types={QuickProvider.class,WideProvider.class,LargeProvider.class};
@@ -86,7 +86,7 @@ public final class WidgetState {
                 // The same real layout is also set as the XML previewLayout.
             }
         }
-        if(successful>0) p.edit().putLong("previewsUpdatedAt",now).apply();
+        if(successful>0) p.edit().putLong("previewsUpdatedAt107",now).apply();
     }
 
     public static void refreshAll(Context context) {

@@ -37,7 +37,7 @@ public final class WidgetHubActivity extends PaperActivity {
         sample.setGravity(android.view.Gravity.CENTER);
         sample.setPadding(dp(12),dp(12),dp(12),dp(12));
         android.graphics.drawable.GradientDrawable mat = new android.graphics.drawable.GradientDrawable();
-        mat.setColor(kind == 1 ? LILAC : 0xffdfded4);
+        mat.setColor(0xffe1dfd6);
         mat.setCornerRadius(dp(18));
         sample.setBackground(mat);
         android.view.View widget = WidgetBaseProvider.views(this,0,kind,false).apply(this,sample);

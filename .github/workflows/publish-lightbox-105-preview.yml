@@ -3,6 +3,7 @@ on:
   push:
     paths:
       - '.github/workflows/publish-lightbox-105-preview.yml'
+      - 'android-widgets/scripts/preview-install-qa.sh'
   workflow_dispatch:
 permissions:
   contents: write

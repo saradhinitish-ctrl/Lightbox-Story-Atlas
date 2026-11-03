@@ -86,6 +86,42 @@
     const cx=w/2,r=s.radius;
     const base=s.centerY+s.cardHeight/2+7;
 
+    // The five separated card plates are mounted on ONE understated round
+    // shell. Paint only the spaces behind them: softly luminous ivory with
+    // a faint lavender interior at the top. No opaque wall, hard outer
+    // edge, or grey ellipse stroke (the earlier 'lavender tub' failure).
+    const crownY=s.centerY-s.cardHeight/2+(s.mobile?11:15);
+    const crownRy=s.mobile?25:34;
+    ctx.save();
+    ctx.filter='blur(11px)';
+    const shellWash=ctx.createLinearGradient(0,crownY-crownRy,0,base+8);
+    shellWash.addColorStop(0,'rgba(215,191,225,0)');
+    shellWash.addColorStop(.11,'rgba(215,191,225,.14)');
+    shellWash.addColorStop(.30,'rgba(231,221,237,.075)');
+    shellWash.addColorStop(.76,'rgba(232,222,236,.055)');
+    shellWash.addColorStop(1,'rgba(171,147,185,.10)');
+    ctx.fillStyle=shellWash;
+    ctx.beginPath();
+    ctx.moveTo(cx-r,crownY);
+    ctx.bezierCurveTo(cx-r,crownY-crownRy*.58,
+      cx+r,crownY-crownRy*.58,cx+r,crownY);
+    ctx.lineTo(cx+r,base);
+    ctx.bezierCurveTo(cx+r*.55,base+crownRy*.32,
+      cx-r*.55,base+crownRy*.32,cx-r,base);
+    ctx.closePath();ctx.fill();
+    ctx.restore();
+
+    ctx.save();
+    ctx.filter='blur(5px)';
+    const innerGlow=ctx.createLinearGradient(0,crownY-crownRy,0,crownY+crownRy);
+    innerGlow.addColorStop(0,'rgba(211,180,223,0)');
+    innerGlow.addColorStop(.38,'rgba(196,162,211,.13)');
+    innerGlow.addColorStop(.62,'rgba(225,208,234,.18)');
+    innerGlow.addColorStop(1,'rgba(194,166,210,.07)');
+    ctx.beginPath();ctx.ellipse(cx,crownY,r*.97,crownRy,0,0,Math.PI*2);
+    ctx.fillStyle=innerGlow;ctx.fill();
+    ctx.restore();
+
     // Fade the glow to zero *before* the stage edge, so there is never a
     // clipped horizontal band. On small phones the CSS aura is sufficient.
     if(!s.mobile){

@@ -152,16 +152,14 @@
     // The old radius (up to 605px) left cards like a flat product row.
     // Radius and angular pitch now share the SAME chord geometry, with
     // modest gaps between tangent cards and nearly edge-on far stations.
-    // Keep far side stations visible: too sharp a pitch hides the
-    // outer two cards completely behind the nearer panels.
-    s.radius=s.mobile?Math.max(s.cardWidth*1.38,w*.94):
-      Math.max(s.cardWidth*1.38,360);
-    // Near stations open about 39 degrees; far stations wrap around
-    // roughly 69 degrees. A uniform 35-degree interval made side cards
-    // overlap and obscure the active card; a uniform 41-degree interval
-    // hid the far cards. This front-hemisphere easing keeps both visible.
-    s.pitch=2*Math.asin(clamp(s.cardWidth*.925/(2*s.radius),0,.49))*180/Math.PI;
-    s.outerAngle=s.pitch*1.75;
+    // Solve the actual projected card boundaries, not only center points:
+    // at a 1.76:1 radius/width ratio, stations at 0°, ±33.5°, ±68.5°
+    // retain soft ~12–17px inter-card gutters and expose all five panels.
+    // This is a coherent front-facing cylinder arc, not a row of cards or
+    // five equally spaced positions around a hidden full 360° turn.
+    s.radius=s.cardWidth*1.76;
+    s.pitch=33.5;
+    s.outerAngle=68.5;
     s.centerY=s.height*.50;
 
     s.host.style.setProperty('--lb-card-width',s.cardWidth+'px');

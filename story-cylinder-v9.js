@@ -156,7 +156,12 @@
     // outer two cards completely behind the nearer panels.
     s.radius=s.mobile?Math.max(s.cardWidth*1.38,w*.94):
       Math.max(s.cardWidth*1.38,360);
-    s.pitch=2*Math.asin(clamp(s.cardWidth*.93/(2*s.radius),0,.49))*180/Math.PI*.88;
+    // Near stations open about 39 degrees; far stations wrap around
+    // roughly 69 degrees. A uniform 35-degree interval made side cards
+    // overlap and obscure the active card; a uniform 41-degree interval
+    // hid the far cards. This front-hemisphere easing keeps both visible.
+    s.pitch=2*Math.asin(clamp(s.cardWidth*.925/(2*s.radius),0,.49))*180/Math.PI;
+    s.outerAngle=s.pitch*1.75;
     s.centerY=s.height*.50;
 
     s.host.style.setProperty('--lb-card-width',s.cardWidth+'px');
@@ -179,7 +184,11 @@
     for(let i=0;i<N;i++){
       const card=s.cards[i];
       const rel=relativeToCenter(i,s.value);
-      const angle=rel*s.pitch;
+      const absRel=Math.abs(rel);
+      const turned=absRel<=1
+        ?absRel*s.pitch
+        :s.pitch+(absRel-1)*(s.outerAngle-s.pitch);
+      const angle=Math.sign(rel)*turned;
       const theta=angle*rad;
       const x=radius*Math.sin(theta);
       const z=radius*(Math.cos(theta)-1);

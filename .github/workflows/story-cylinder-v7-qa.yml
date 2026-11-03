@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - feat/story-cylinder-v7-studio-geometry
+      - feat/story-cylinder-v8-curved-studio
   workflow_dispatch:
 permissions:
   contents: read

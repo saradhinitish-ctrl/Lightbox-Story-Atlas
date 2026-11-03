@@ -107,7 +107,7 @@
     0 7px 9px -4px rgba(50,34,56,.33),
     0 22px 25px -13px rgba(52,38,56,.30),
     0 37px 34px -29px rgba(52,38,56,.24);
-  transform:translateZ(-7px)
+  transform:translateZ(-23px)
 }
 .lb-cylinder-card.is-active .lb-cylinder-plaque{
   box-shadow:
@@ -124,7 +124,7 @@
   position:absolute;left:50%;top:0;bottom:0;
   overflow:hidden;pointer-events:auto;
   transform-style:flat;
-  box-shadow:inset -1px 0 rgba(92,71,95,.045);
+  box-shadow:none;
   -webkit-backface-visibility:hidden;backface-visibility:hidden
 }
 .lb-cylinder-segment.is-first{border-radius:9px 0 0 9px}
@@ -132,7 +132,7 @@
 .lb-cylinder-segment:after{
   content:"";position:absolute;inset:0;z-index:4;pointer-events:none;
   background:linear-gradient(90deg,
-    rgba(70,50,80,.055),transparent 19%,rgba(255,255,255,.08) 65%,rgba(60,43,70,.055))
+    rgba(70,50,80,.018),transparent 19%,rgba(255,255,255,.025) 65%,rgba(60,43,70,.018))
 }
 .lb-cylinder-sheen{
   position:absolute;inset:3px;z-index:4;pointer-events:none;border-radius:11px;
@@ -368,3 +368,5 @@
 @media(prefers-reduced-motion:reduce){
  .lb-cylinder-v8 .lb-cylinder-card,.lb-cylinder-v8 .lb-cylinder-dots i{transition:none!important}
 }
+/* Deep charcoal backing prevents light bleed at the curved screenplay edge. */
+.lb-cylinder-script .lb-cylinder-plaque{background:#202021}

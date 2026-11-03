@@ -70,6 +70,9 @@
   // The cards themselves form the cylinder. Do not draw an enclosing wall:
   // just two quiet orbital edges and a contact shadow for physical grounding.
   // The guide curves and card orbit use the same radius; draw only on resize.
+  // Only ambient light and ground contact are drawn behind the cards.
+  // No explicit orbital ellipse strokes: they read as grey divider lines
+  // above and below the carousel rather than believable physical shadows.
   function drawShell(s) {
     const c=s.canvas,w=s.width,h=s.height;
     const dpr=Math.min(devicePixelRatio||1,1.75);
@@ -79,57 +82,49 @@
     if(!ctx)return;
     ctx.setTransform(dpr,0,0,dpr,0,0);
     ctx.clearRect(0,0,w,h);
-    const cx=w/2,r=s.radius;
-    const cy=s.centerY-s.cardHeight/2+13;
-    const base=s.centerY+s.cardHeight/2+7;
-    const elevation=s.mobile?22:36;
 
-    // A soft, low-contrast halo sits behind the gallery instead of a purple tub.
-    const glow=ctx.createRadialGradient(cx,s.centerY+16,Math.max(12,r*.07),
-      cx,s.centerY+16,r*1.03);
-    glow.addColorStop(0,'rgba(183,166,192,.09)');
-    glow.addColorStop(.58,'rgba(193,181,202,.048)');
+    const cx=w/2,r=s.radius;
+    const base=s.centerY+s.cardHeight/2+7;
+
+    // Quiet ambient glow behind the orbit, faded fully into the cream page.
+    const glow=ctx.createRadialGradient(
+      cx,s.centerY+12,Math.max(12,r*.08),
+      cx,s.centerY+12,r*1.04
+    );
+    glow.addColorStop(0,'rgba(183,166,192,.073)');
+    glow.addColorStop(.56,'rgba(193,181,202,.031)');
     glow.addColorStop(1,'rgba(193,181,202,0)');
     ctx.fillStyle=glow;
-    ctx.beginPath();ctx.ellipse(cx,s.centerY+18,r*1.07,s.cardHeight*.74,0,0,2*Math.PI);ctx.fill();
-
-    // Back edge of a circular orbit. A hint of a guide, not a visible container.
     ctx.beginPath();
-    ctx.ellipse(cx,cy,r,elevation,0,Math.PI*1.025,Math.PI*1.975);
-    ctx.strokeStyle='rgba(101,82,110,.135)';
-    ctx.lineWidth=s.mobile?1.25:1.55;
-    ctx.stroke();
+    ctx.ellipse(cx,s.centerY+18,r*1.06,s.cardHeight*.71,0,0,2*Math.PI);
+    ctx.fill();
 
-    // Lower orbit, visible only in the empty space beneath the cards.
-    // Elliptical projection gives a reliable shared baseline for the panels.
-    ctx.beginPath();
-    ctx.ellipse(cx,base,r,elevation*.55,0,0,Math.PI);
-    ctx.strokeStyle='rgba(103,91,110,.16)';
-    ctx.lineWidth=s.mobile?1:1.35;
-    ctx.stroke();
-
-    // Contact pool: wider ambient layer with an unusually restrained core.
+    // Diffuse ambient occlusion; radial gradients reach zero alpha at the
+    // edge so there is no visible elliptical outline or rectangular cutoff.
     ctx.save();
-    ctx.translate(cx,base+elevation*.52+11);
-    ctx.scale(1,.115);
-    const shadow=ctx.createRadialGradient(0,0,r*.11,0,0,r*1.08);
-    shadow.addColorStop(0,'rgba(38,29,44,.17)');
-    shadow.addColorStop(.28,'rgba(51,38,57,.13)');
-    shadow.addColorStop(.65,'rgba(68,54,75,.048)');
-    shadow.addColorStop(1,'rgba(67,53,75,0)');
+    ctx.translate(cx,base+(s.mobile?18:22));
+    ctx.scale(1,s.mobile?.115:.13);
+    const shadow=ctx.createRadialGradient(0,0,r*.05,0,0,r*.94);
+    shadow.addColorStop(0,'rgba(42,33,47,.19)');
+    shadow.addColorStop(.27,'rgba(53,41,57,.135)');
+    shadow.addColorStop(.58,'rgba(74,59,77,.056)');
+    shadow.addColorStop(.83,'rgba(74,59,77,.016)');
+    shadow.addColorStop(1,'rgba(74,59,77,0)');
     ctx.fillStyle=shadow;
-    ctx.beginPath();ctx.arc(0,0,r*1.08,0,Math.PI*2);ctx.fill();
+    ctx.beginPath();ctx.arc(0,0,r*.94,0,Math.PI*2);ctx.fill();
     ctx.restore();
 
-    // A short central reflection keeps the front card anchored to a stage.
-    const reflection=ctx.createLinearGradient(cx-r*.22,0,cx+r*.22,0);
-    reflection.addColorStop(0,'rgba(255,255,255,0)');
-    reflection.addColorStop(.5,'rgba(255,255,255,.32)');
-    reflection.addColorStop(1,'rgba(255,255,255,0)');
-    ctx.fillStyle=reflection;
-    ctx.beginPath();
-    ctx.ellipse(cx,base+elevation*.45,r*.31,s.mobile?4:6,0,0,2*Math.PI);
-    ctx.fill();
+    // Tighter contact directly beneath the central card, also fully faded.
+    ctx.save();
+    ctx.translate(cx,base+11);
+    ctx.scale(1,.095);
+    const contact=ctx.createRadialGradient(0,0,0,0,0,r*.34);
+    contact.addColorStop(0,'rgba(43,33,48,.11)');
+    contact.addColorStop(.48,'rgba(56,43,61,.046)');
+    contact.addColorStop(1,'rgba(56,43,61,0)');
+    ctx.fillStyle=contact;
+    ctx.beginPath();ctx.arc(0,0,r*.34,0,Math.PI*2);ctx.fill();
+    ctx.restore();
   }
 
   function resize(s) {

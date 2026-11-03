@@ -2,6 +2,7 @@
 // Run locally with: npm install playwright && npx playwright install chromium
 // then PLAYWRIGHT_MODULE=<resolved path to playwright/index.mjs> node tests/story-cylinder-qa.mjs
 import {createServer} from 'node:http';
+import {existsSync} from 'node:fs';
 import {readFile, mkdir, writeFile} from 'node:fs/promises';
 import {resolve, extname, sep} from 'node:path';
 import process from 'node:process';
@@ -33,7 +34,9 @@ const server=createServer(async (request,response)=>{
  }
 });
 await new Promise(done=>server.listen(4173,'127.0.0.1',done));
-const browser=await chromium.launch({headless:true});
+const systemBrowser=['/usr/bin/google-chrome','/usr/bin/google-chrome-stable','/usr/bin/chromium','/usr/bin/chromium-browser'].find(existsSync);
+console.log('Browser executable:',systemBrowser||'Playwright bundled Chromium');
+const browser=await chromium.launch({headless:true,...(systemBrowser?{executablePath:systemBrowser}:{})});
 const results=[];
 const errors=[];
 const sizes=[320,390,768,1200,1440,1920];

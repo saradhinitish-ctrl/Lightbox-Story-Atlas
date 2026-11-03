@@ -135,10 +135,6 @@
     ctx.restore();
   }
 
-  // The cards occupy five tangent stations around a round shell.
-  // Only the five parent cards animate. Internal faces keep their native
-  // React content, and a small depth-dependent Y correction prevents
-  // vertical perspective shrink without flattening the 3D camera.
   function resize(s) {
     if(!s.host.isConnected)return;
     const w=s.view.clientWidth||innerWidth;
@@ -148,28 +144,12 @@
     const desiredHeight=s.mobile?clamp(w*1.065,362,420):clamp(w*.279,352,399);
     s.cardHeight=s.mobile?desiredHeight:Math.min(desiredHeight,
       innerHeight<735?300:clamp(innerHeight*.435,332,392));
-
-    // The old radius (up to 605px) left cards like a flat product row.
-    // Radius and angular pitch now share the SAME chord geometry, with
-    // modest gaps between tangent cards and nearly edge-on far stations.
-    // Solve the actual projected card boundaries, not only center points:
-    // at a 1.76:1 radius/width ratio, stations at 0°, ±33.5°, ±68.5°
-    // retain soft ~12–17px inter-card gutters and expose all five panels.
-    // This is a coherent front-facing cylinder arc, not a row of cards or
-    // five equally spaced positions around a hidden full 360° turn.
-    s.radius=s.cardWidth*1.76;
-    s.pitch=33.5;
-    s.outerAngle=68.5;
-    s.centerY=s.height*.50;
-
+    s.radius=s.mobile?Math.max(s.cardWidth*1.43,w*.91):clamp(w*.393,470,605);
+    s.pitch=2*Math.asin(clamp((s.cardWidth+26)/(2*s.radius),0,.49))*180/Math.PI*.96;
+    s.centerY=s.height*(s.mobile?.514:.472);
     s.host.style.setProperty('--lb-card-width',s.cardWidth+'px');
     s.host.style.setProperty('--lb-card-height',s.cardHeight+'px');
-    const camera=getComputedStyle(s.view);
-    const perspective=parseFloat(camera.perspective);
-    s.perspective=Number.isFinite(perspective)&&perspective>0
-      ?perspective:(s.mobile?1950:2350);
-    drawShell(s);
-    paint(s);
+    drawShell(s);paint(s);
   }
 
   function relativeToCenter(index, position) {
@@ -177,51 +157,38 @@
   }
   function paint(s) {
     if (!s.host.isConnected) return;
-    const radius=s.radius,rad=Math.PI/180;
-    const activeIndex=wrapped(Math.round(s.target));
-    for(let i=0;i<N;i++){
-      const card=s.cards[i];
-      const rel=relativeToCenter(i,s.value);
-      const absRel=Math.abs(rel);
-      const turned=absRel<=1
-        ?absRel*s.pitch
-        :s.pitch+(absRel-1)*(s.outerAngle-s.pitch);
-      const angle=Math.sign(rel)*turned;
-      const theta=angle*rad;
-      const x=radius*Math.sin(theta);
-      const z=radius*(Math.cos(theta)-1);
-
-      // True perspective + circular placement. The nearest vertical card
-      // corner controls its visible height, not the card's center depth.
-      // Counter-scale the native face vertically so all projected tops and
-      // bottoms stay aligned while the sides still wrap into real z-depth.
-      const nearDepth=z+s.cardWidth*.5*Math.abs(Math.sin(theta));
-      const compensateY=(s.perspective-nearDepth)/s.perspective;
-      card.style.transform='translate3d(-50%,-50%,0) translate3d('
-        +x.toFixed(3)+'px,0,'+z.toFixed(3)+'px) rotateY('
-        +angle.toFixed(3)+'deg) scaleY('+compensateY.toFixed(5)+')';
-
-      // The edge-on cards are far around the circumference and should
-      // tuck BEHIND the nearer cards, instead of hovering at equal depth.
-      const alpha=clamp(1-Math.max(0,Math.abs(rel)-1.35)*.16,.79,1);
-      if(card._alpha!==alpha){card.style.opacity=String(alpha);card._alpha=alpha;}
-      const disabled=Math.abs(rel)>=2.48;
-      if(card._disabled!==disabled){
-        card.style.pointerEvents=disabled?'none':'auto';
-        card.setAttribute('aria-hidden',String(disabled));
-        card._disabled=disabled;
+    const radius = s.radius, rad = Math.PI / 180;
+    const activeIndex = wrapped(Math.round(s.target));
+    for (let i = 0; i < N; i++) {
+      const card = s.cards[i];
+      const rel = relativeToCenter(i, s.value);
+      const angle = rel * s.pitch;
+      const theta = angle * rad;
+      const x = radius * Math.sin(theta);
+      const z = radius * (Math.cos(theta) - 1);
+      const dy = z * (s.mobile ? .026 : .035);
+      card.style.transform = 'translate3d(-50%,-50%,0) translate3d('
+        + x.toFixed(2) + 'px,' + dy.toFixed(2) + 'px,' + z.toFixed(2)
+        + 'px) rotateY(' + angle.toFixed(3) + 'deg)';
+      // The outermost panels turn almost edge-on: quiet their stray clipped text.
+      const alpha = Math.abs(rel) <= 1.35 ? 1 : clamp(1-(Math.abs(rel)-1.35)*.65,.34,1);
+      if (card._alpha !== alpha) { card.style.opacity = String(alpha); card._alpha = alpha; }
+      const disabled = Math.abs(rel) >= 2.48;
+      if (card._disabled !== disabled) {
+        card.style.pointerEvents = disabled ? 'none' : 'auto';
+        card.setAttribute('aria-hidden', String(disabled));
+        card._disabled = disabled;
       }
-      const depth=100+Math.round((2.6-Math.abs(rel))*12);
-      if(card._depth!==depth){card.style.zIndex=String(depth);card._depth=depth;}
-      const selected=i===activeIndex;
-      if(card._selected!==selected){
-        card.classList.toggle('is-active',selected);
-        card.setAttribute('aria-current',String(selected));
-        card._selected=selected;
+      const depth = 100 + Math.round((2.6 - Math.abs(rel)) * 12);
+      if (card._depth !== depth) { card.style.zIndex = String(depth); card._depth = depth; }
+      const selected = i === activeIndex;
+      if (card._selected !== selected) {
+        card.classList.toggle('is-active', selected);
+        card.setAttribute('aria-current', String(selected));
+        card._selected = selected;
       }
     }
   }
-
   function updateControls(s) {
     const index = wrapped(Math.round(s.target));
     if (s.lastIndex === index) return;

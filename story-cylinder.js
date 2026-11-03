@@ -1,4 +1,4 @@
-/* Lightbox Studio / Story Cylinder IV — horizontal studio-lit five-card carousel.
+/* Lightbox Studio / Story Cylinder V — physically curved cylindrical card surfaces.
  * The native React Atlas remains mounted and owns every workspace, project, and save.
  * Clone only its visual cards; relay activations to the corresponding original controls. */
 (() => {
@@ -15,7 +15,10 @@
     { id:'foundation', source:'.atlas-foundation', label:'Story Foundation' }
   ];
   const TOTAL = PANELS.length;
-  const UNIT = 360 / TOTAL;
+  const UNIT = 360 / TOTAL; // indexing; geometry uses a separate, true front-facing circular arc
+  const PITCH = 24;  // degrees between panel centres along the cylindrical wall
+  const PANEL_ARC = 22.8; // each panel occupies a curved segment, with a deliberate hairline gap
+  const SLICES = 11; // eleven tangent slices form genuinely curved, not flat, card faces
   const clamp = (n,min,max) => Math.min(max,Math.max(min,n));
   const wrap = (n,m) => (n % m + m) % m;
   const reduced = window.matchMedia?.('(prefers-reduced-motion: reduce)');
@@ -55,6 +58,8 @@
     if(replica.matches('button')){replica.tabIndex=-1;replica.setAttribute('aria-hidden','true');}
     for(const el of replica.querySelectorAll('[id]'))el.removeAttribute('id');
     for(const el of replica.querySelectorAll('a'))el.removeAttribute('href');
+    // A curved card has 11 visual cuts of one source; never create 11 tab stops.
+    replica.querySelectorAll('button,a,input,textarea,select').forEach(n=>n.tabIndex=-1);
     if(panel.id==='world') {
       replica.querySelectorAll('.world-index button').forEach((btn,i)=>{
         btn.dataset.cylinderWorld = ['characters','locations','props'][i] || 'characters';
@@ -75,7 +80,12 @@
       state.snapshots[i]=markup;
       const replacement=copyOriginal(panel);
       if(!replacement)continue;
-      card.querySelector('.lb-cylinder-source')?.replaceWith(replacement);
+      // Every slice displays its own clipped portion of the current ORIGINAL React card.
+      const fragments=card.querySelectorAll('.lb-cylinder-slice > .lb-cylinder-source');
+      fragments.forEach((old,j)=>{
+        const newReplica=j===0?replacement:copyOriginal(panel);
+        if(newReplica){newReplica.style.left=old.style.left;old.replaceWith(newReplica);}
+      });
     }
   }
 
@@ -89,9 +99,10 @@
       card.classList.toggle('is-active',isCurrent);
       card.classList.toggle('is-behind',false);
       card.classList.toggle('is-outer',distance>1.5);
-      card.tabIndex=0;
+      const hidden=distance>2.38;
+      card.tabIndex=hidden?-1:0;
       card.setAttribute('aria-current',isCurrent?'true':'false');
-      card.setAttribute('aria-hidden','false');
+      card.setAttribute('aria-hidden',hidden?'true':'false');
       card.style.zIndex=String(100+Math.round((3-distance)*30));
       card.style.setProperty('--distance',String(distance));
       if(isCurrent)state.liveLabel.textContent=PANELS[i].label;
@@ -101,23 +112,25 @@
   }
   function paint(state){
     if(!state.host.isConnected)return;
-    const base=state.cardWidth;
-    const mobile=state.view.clientWidth<=700;
+    const w=state.cardWidth, R=state.radius;
     for(let i=0;i<TOTAL;i++){
+      // The nearest front five panels are distributed around the *actual* ellipse
+      // of a vertical cylindrical wall. Their yaw, depth and position all derive
+      // from the SAME theta, rather than unrelated offsets and flat card scaling.
       const position=wrap(i-state.angle/UNIT+TOTAL*20+TOTAL/2,TOTAL)-TOTAL/2;
-      const abs=Math.abs(position);
-      const side=Math.sign(position);
-      // The five cards move as one continuous, horizontal curved carousel.
-      // Neighbouring panels retain their own visible physical edges.
-      const x=side*(Math.min(abs,1)*base*.965+Math.max(0,abs-1)*base*.845);
-      const scale=1-abs*(mobile?.115:.094)-(abs>1?(abs-1)*.012:0);
-      const y=(1-scale)*state.cardHeight*.54 + abs*3 - 3;
-      const z=-abs*27;
-      const yaw=-position*(mobile?12:13.5);
+      const theta=position*PITCH*Math.PI/180;
+      const x=R*Math.sin(theta);
+      const z=R*(Math.cos(theta)-1);
+      const yaw=theta*180/Math.PI;
+      const rise=Math.abs(position)*12.5;
       const card=state.cards[i];
-      card.style.transform=`translate3d(calc(-50% + ${x.toFixed(2)}px), calc(-50% + ${y.toFixed(2)}px), ${z.toFixed(2)}px) rotateY(${yaw.toFixed(2)}deg) scale(${scale.toFixed(4)})`;
-      card.style.opacity=(mobile&&abs>1.65)?'0':'1';
-      card.style.pointerEvents=(mobile&&abs>1.65)?'none':'auto';
+      card.style.transform=`translate3d(calc(-50% + ${x.toFixed(3)}px), calc(-50% - ${rise.toFixed(2)}px), ${z.toFixed(3)}px) rotateY(${yaw.toFixed(3)}deg)`;
+      // Rear travel fades through the unseen side of the shell rather than
+      // teleporting visibly between left and right boundaries.
+      const distance=Math.abs(position);
+      const opacity=clamp((2.51-distance)/.24,0,1);
+      card.style.opacity=String(opacity);
+      card.style.pointerEvents=opacity>.45?'auto':'none';
     }
     decorate(state);
   }
@@ -160,12 +173,31 @@
     if(!state.host.isConnected)return;
     const w=state.view.clientWidth||innerWidth;
     const mobile=w<=700;
-    const width=mobile?clamp(w*.72,238,290):clamp(w*.232,245,309);
-    const height=mobile?clamp(w*1.18,350,430):clamp(w*.34,375,468);
+    // The radius derives from the surface arc and actual card width, ensuring
+    // adjacent panel seams follow one continuous circular surface.
+    const width=mobile?clamp(w*.77,232,290):clamp(w*.232,249,304);
+    const height=mobile?clamp(w*1.10,360,418):clamp(w*.276,392,405);
+    const radius=width/(2*Math.sin(PANEL_ARC*Math.PI/360));
     state.cardWidth=width;
     state.cardHeight=height;
+    state.radius=radius;
     state.host.style.setProperty('--lb-card-width',width+'px');
     state.host.style.setProperty('--lb-card-height',height+'px');
+    state.host.style.setProperty('--lb-radius',radius+'px');
+    // A card itself bends through 32.2 degrees; each sub-panel is a tangent to
+    // the same cylinder. Source markup is clipped, never redrawn as a texture.
+    state.cards.forEach(card=>{
+      const strips=card.querySelectorAll('.lb-cylinder-slice');
+      strips.forEach((strip,j)=>{
+        const alpha=((j+.5)/SLICES-.5)*PANEL_ARC*Math.PI/180;
+        const xx=radius*Math.sin(alpha);
+        const zz=radius*(Math.cos(alpha)-1);
+        const panel=strip.querySelector('.lb-cylinder-source');
+        strip.style.width=(width/SLICES+1.1)+'px';
+        strip.style.transform=`translate3d(calc(-50% + ${xx.toFixed(3)}px), 0px, ${zz.toFixed(3)}px) rotateY(${(alpha*180/Math.PI).toFixed(3)}deg)`;
+        if(panel){panel.style.width=width+'px';panel.style.left=(-j*width/SLICES)+'px';}
+      });
+    });
     paint(state);
   }
   function openCard(state,index,section){
@@ -183,30 +215,23 @@
       state.velocity=0;
       paint(state);
       const card=state.cards[index];
-      const box=card.getBoundingClientRect();
-      const miniature=card.cloneNode(true);
-      miniature.className='lb-cylinder-opening-card lb-cylinder-card';
-      miniature.removeAttribute('role');
-      miniature.setAttribute('aria-hidden','true');
-      miniature.querySelectorAll('button').forEach(b=>b.tabIndex=-1);
-      miniature.style.cssText=`position:fixed;left:${box.left}px;top:${box.top}px;width:${box.width}px;height:${box.height}px;z-index:99999;transform:none;pointer-events:none;`;
-      document.body.append(miniature);
-      cloneOverlay=miniature;
       let completed=false;
       const finish=()=>{
         if(completed)return;
         completed=true;
-        // Navigate using native React control only when the presentation completes.
+        state.host.classList.remove('lb-cylinder-entering');
         const ok=nativeOpen(panel.id,section);
-        if(!ok)console.error('Lightbox Story Cylinder: native card missing',panel.id,section);
-        setTimeout(()=>{miniature.remove();if(cloneOverlay===miniature)cloneOverlay=null;opening=false;sync();},100);
+        if(!ok)console.error('Lightbox Story Cylinder: original React control unavailable',panel.id,section);
+        setTimeout(()=>{opening=false;sync();},80);
       };
       if(reduced?.matches){finish();return;}
-      const anim=miniature.animate([
-        {left:box.left+'px',top:box.top+'px',width:box.width+'px',height:box.height+'px',opacity:1,transform:'perspective(1450px) rotateY(0deg)'},
-        {offset:.45,left:box.left+'px',top:Math.max(14,box.top-10)+'px',width:box.width+'px',height:box.height+'px',opacity:1,transform:'perspective(1450px) rotateY(-8deg) scale(1.045)'},
-        {left:'0px',top:'0px',width:innerWidth+'px',height:innerHeight+'px',opacity:1,transform:'perspective(1450px) rotateY(0deg)'}
-      ],{duration:470,easing:'cubic-bezier(.22,.8,.2,1)',fill:'forwards'});
+      state.host.classList.add('lb-cylinder-entering');
+      // Animate the real curved surface, not a detached flat reproduction.
+      const anim=card.animate([
+        {filter:'brightness(1)',opacity:1},
+        {filter:'brightness(1.07)',opacity:1,offset:.50},
+        {filter:'brightness(1.1)',opacity:.48}
+      ],{duration:280,easing:'cubic-bezier(.22,.84,.25,1)'});
       anim.onfinish=finish;
       anim.oncancel=finish;
     };
@@ -218,7 +243,7 @@
     const host=document.createElement('section');
     host.className='lb-cylinder';
     host.setAttribute('aria-label','Story Cylinder');
-    host.innerHTML=`<div class="lb-cylinder-environment"><div class="lb-cylinder-rim" aria-hidden="true"></div><div class="lb-cylinder-horizon" aria-hidden="true"></div><div class="lb-cylinder-ground" aria-hidden="true"></div><div class="lb-cylinder-contact" aria-hidden="true"></div><div class="lb-cylinder-view" tabindex="0" role="region" aria-roledescription="3D carousel" aria-label="Story Cylinder. Drag or swipe horizontally, or use arrow keys, to rotate the original story cards."><div class="lb-cylinder-rotor"></div></div></div><nav class="lb-cylinder-controls" aria-label="Story Cylinder navigation"><button class="lb-cylinder-prev" type="button" aria-label="Previous card">‹</button><span class="lb-cylinder-control-label">ROTATE THE STORY CYLINDER <span class="lb-cylinder-dots" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span><small class="lb-cylinder-counter sr-only" aria-live="off">03 / 05</small></span><button class="lb-cylinder-next" type="button" aria-label="Next card">›</button></nav><span class="lb-cylinder-live sr-only" aria-live="polite"></span>`;
+    host.innerHTML=`<div class="lb-cylinder-environment"><div class="lb-cylinder-rim" aria-hidden="true"></div><div class="lb-cylinder-shell" aria-hidden="true"></div><div class="lb-cylinder-horizon" aria-hidden="true"></div><div class="lb-cylinder-ground" aria-hidden="true"></div><div class="lb-cylinder-contact" aria-hidden="true"></div><div class="lb-cylinder-view" tabindex="0" role="region" aria-roledescription="3D carousel" aria-label="Story Cylinder. Drag or swipe horizontally, or use arrow keys, to rotate the original story cards."><div class="lb-cylinder-rotor"></div></div></div><nav class="lb-cylinder-controls" aria-label="Story Cylinder navigation"><button class="lb-cylinder-prev" type="button" aria-label="Previous card">‹</button><span class="lb-cylinder-control-label">ROTATE THE STORY CYLINDER <span class="lb-cylinder-dots" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span><small class="lb-cylinder-counter sr-only" aria-live="off">03 / 05</small></span><button class="lb-cylinder-next" type="button" aria-label="Next card">›</button></nav><span class="lb-cylinder-live sr-only" aria-live="polite"></span>`;
     viewport.append(host);
     const state={host,view:host.querySelector('.lb-cylinder-view'),rotor:host.querySelector('.lb-cylinder-rotor'),cards:[],counter:host.querySelector('.lb-cylinder-counter'),dots:[...host.querySelectorAll('.lb-cylinder-dots i')],liveLabel:host.querySelector('.lb-cylinder-live'),snapshots:[],angle:savedAngle,target:savedAngle,velocity:0,radius:0,raf:0,wheelTimer:0,down:null,ignoreClick:0};
     PANELS.forEach((panel,i)=>{
@@ -229,7 +254,22 @@
       card.setAttribute('aria-label',panel.label);
       card.tabIndex=0;
       state.snapshots[i]=original(panel).innerHTML;
-      card.append(copyOriginal(panel));
+      const bent=document.createElement('div');
+      bent.className='lb-cylinder-bent';
+      for(let j=0;j<SLICES;j++){
+        const strip=document.createElement('div');
+        strip.className='lb-cylinder-slice';
+        strip.dataset.slice=String(j);
+        if(j!==Math.floor(SLICES/2))strip.setAttribute('aria-hidden','true');
+        strip.style.setProperty('--slice-index',String(j));
+        const replica=copyOriginal(panel);
+        strip.append(replica);
+        // World actions are pointer-accessible through the slices; the single
+        // card container is the keyboard destination, avoiding 33 duplicate tabs.
+        replica.querySelectorAll('button,a,input,textarea,select').forEach(n=>n.tabIndex=-1);
+        bent.append(strip);
+      }
+      card.append(bent);
       state.rotor.append(card);
       state.cards.push(card);
       card.addEventListener('click',e=>{
@@ -306,6 +346,9 @@
     const atlas=studio?.querySelector('.story-atlas');
     if(current&&!current.host.isConnected){
       current.resizeObserver?.disconnect();
+      // The Atlas may be detached then reattached by React; remove the stale
+      // cylinder from that detached subtree so it can remount with live wiring.
+      current.host.remove();
       clearTimeout(current.wheelTimer);
       if(current.raf)cancelAnimationFrame(current.raf);
       current=null;opening=false;

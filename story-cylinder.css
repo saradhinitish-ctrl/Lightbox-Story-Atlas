@@ -542,3 +542,141 @@
  .lb-cylinder-card{top:52%!important;}
  .lb-cylinder-rim{top:5.5%;}
 }
+
+
+/* ================================================================
+   STORY CYLINDER V / MATHEMATICALLY CURVED CYLINDRICAL SURFACES
+   The front five live panels follow a circular wall, not a flat row.
+   Each original React card is segmented into eleven perspective-tangent
+   strips to curve its *actual content and typography* around the form.
+   ================================================================ */
+.studio.atlas-shell.lb-cylinder-atlas .story-atlas{
+  background:#fffdfa!important;
+  background-image:radial-gradient(ellipse at 50% 83%,#f4eefa 0%,#fffdfa 70%)!important;
+}
+.lb-cylinder-environment{
+  height:clamp(440px,39vw,530px)!important;
+  overflow:hidden;isolation:isolate;
+}
+.lb-cylinder-view{
+  z-index:3;perspective:2150px;perspective-origin:50% 44%;
+  overflow:visible;clip-path:inset(-7% 0 -7% 0);transform-style:preserve-3d;
+}
+.lb-cylinder-rotor{transform-style:preserve-3d!important;pointer-events:none;}
+.lb-cylinder-card{
+  top:54%!important;overflow:visible!important;
+  background:transparent!important;border:0!important;border-radius:0!important;
+  box-shadow:none!important;transform-style:preserve-3d;
+  backface-visibility:visible!important;
+  -webkit-backface-visibility:visible!important;
+  transition:opacity .14s ease;
+}
+.lb-cylinder-card::before,.lb-cylinder-card::after{display:none!important;}
+.lb-cylinder-card.is-active{border:0!important;box-shadow:none!important;}
+.lb-cylinder-bent{
+  position:absolute;inset:0;transform-style:preserve-3d;pointer-events:none;
+}
+.lb-cylinder-slice{
+  position:absolute;left:50%;top:0;height:100%;overflow:hidden;
+  border-top:5px solid #faf7f3;border-bottom:5px solid #f4eeeb;
+  pointer-events:auto;backface-visibility:visible;
+  background:#f9f7f2;
+  box-shadow:0 12px 17px -14px rgba(42,25,46,.45);
+}
+.lb-cylinder-slice:first-child{
+  border-left:5px solid #f7f1eb;border-top-left-radius:13px;border-bottom-left-radius:13px;
+}
+.lb-cylinder-slice:last-child{
+  border-right:5px solid #f8f5f0;border-top-right-radius:13px;border-bottom-right-radius:13px;
+}
+.lb-cylinder-slice>.lb-cylinder-source{
+  display:flex!important;position:absolute!important;top:-5px!important;
+  height:calc(100% + 10px)!important;min-height:0!important;
+  left:0;max-width:none!important;overflow:hidden!important;
+  border:0!important;border-radius:0!important;
+  box-shadow:none!important;pointer-events:auto!important;
+}
+.lb-cylinder-slice>.lb-cylinder-source *{pointer-events:auto;}
+.lb-cylinder-slice>.lb-cylinder-source:focus-visible{outline:none;}
+.lb-cylinder-card.is-active .lb-cylinder-slice{
+  border-top-color:#fffefa;border-bottom-color:#fffdfa;
+  box-shadow:0 17px 27px -15px #392b3c61;
+}
+.lb-cylinder-card.is-active .lb-cylinder-slice:first-child{border-left-color:#fffefa;}
+.lb-cylinder-card.is-active .lb-cylinder-slice:last-child{border-right-color:#fffefa;}
+/* Top opening, front apron and floor shadow are the shell of one broad cylinder. */
+.lb-cylinder-rim{
+  top:4%!important;height:27%!important;width:min(95%,1310px)!important;
+  border:12px solid #f8f3ef!important;
+  background:radial-gradient(ellipse at 52% 67%,#e9dff0 0%,#cbb7da 75%,#b5a1c6 98%)!important;
+  box-shadow:0 4px 18px #95819d33,inset 0 19px 25px #7e639e36,0 -3px 14px white!important;
+}
+.lb-cylinder-horizon{display:none!important;}
+.lb-cylinder-ground{
+  z-index:0;bottom:2%!important;width:min(91%,1250px)!important;height:120px!important;
+  background:radial-gradient(ellipse at center,#30223963 0%,#67506e33 39%,#b99eae14 65%,transparent 79%)!important;
+  filter:blur(19px)!important;
+}
+.lb-cylinder-contact{
+  z-index:0;bottom:9%!important;width:min(82%,1110px)!important;height:54px!important;
+  background:radial-gradient(ellipse,#47304c66,transparent 76%)!important;
+  filter:blur(16px)!important;
+}
+.lb-cylinder-controls{margin:-5px auto 0!important;height:62px!important;}
+@media(max-width:700px){
+  .lb-cylinder-environment{height:clamp(417px,112vw,505px)!important;}
+  .lb-cylinder-card{top:51.5%!important;}
+  .lb-cylinder-rim{width:160%!important;left:50%;top:7%!important;height:20%!important;border-width:7px!important;}
+  .lb-cylinder-view{perspective:1320px;overflow:hidden;clip-path:none;}
+  .lb-cylinder-slice{border-top-width:4px;border-bottom-width:4px;}
+  .lb-cylinder-controls{margin:0 auto!important;}
+}
+@media(prefers-reduced-motion:reduce){.lb-cylinder-card,.lb-cylinder-slice{transition:none!important;}}
+/* A slice is only a window onto the FULL original panel, never a reflowed mini card. */
+.studio.atlas-shell.lb-cylinder-atlas .lb-cylinder-card .lb-cylinder-slice>.lb-cylinder-source{
+  width:var(--lb-card-width)!important;min-width:var(--lb-card-width)!important;
+  max-width:var(--lb-card-width)!important;
+  flex:none!important;
+}
+.studio.atlas-shell.lb-cylinder-atlas .lb-cylinder-card .lb-cylinder-slice>.lb-cylinder-source{
+ position:absolute!important;inset:auto!important;top:-5px!important;
+ left:calc(-1 * var(--slice-index) * var(--lb-card-width) / 11)!important;
+ height:calc(100% + 10px)!important;
+}
+/* Subtle physical wall between separate independent card surfaces. */
+.lb-cylinder-shell{
+  position:absolute;z-index:1;pointer-events:none;
+  left:50%;top:15.5%;width:min(80.5%,1155px);height:73%;transform:translateX(-50%);
+  border:1px solid #e7ddd9;border-top:7px solid #fffefa;border-bottom:9px solid #ece3de;
+  border-radius:49% 49% 17% 17% / 13% 13% 8% 8%;
+  background:linear-gradient(90deg,#e0d5d0 0%,#faf6ef 5%,#fffaf3 50%,#faf7f2 95%,#e0d7d0 100%);
+  box-shadow:0 11px 17px #57465c19,0 34px 26px -21px #55405b4a,
+    inset 0 12px 9px -8px #c6b8b23d,inset 11px 0 24px #ac9ba331,inset -11px 0 24px #ac9ba331;
+}
+.lb-cylinder-rim{top:0%!important;height:22%!important;}
+.lb-cylinder-slice,.lb-cylinder-card.is-active .lb-cylinder-slice{box-shadow:none!important;}
+.lb-cylinder-bent{
+  filter:drop-shadow(0 17px 12px #3d304638) drop-shadow(0 5px 3px #75678129);
+}
+@media(max-width:700px){.lb-cylinder-shell{top:15%;height:73%;width:196%;}.lb-cylinder-rim{top:5%!important;height:17%!important;}}
+/* Preserve sub-strip 3D geometry: filtering a whole bent surface flattens it. */
+.lb-cylinder-bent{filter:none!important;}
+/* Match real laptop viewport height: leave carousel controls above the native dock. */
+@media(min-width:701px){
+ .lb-cylinder-environment{height:clamp(435px,30.5vw,464px)!important;}
+ .lb-cylinder-card{top:55%!important;}
+ .lb-cylinder-controls{height:51px!important;margin:-4px auto 0!important;}
+}
+/* Preserve the full screenplay CTA inside laptop-height card geometry. */
+@media(min-width:701px){
+ .studio.atlas-shell.lb-cylinder-atlas .lb-cylinder-card .atlas-script h2{
+   font-size:47px!important;line-height:1.01!important;margin:7px 0 5px!important;
+ }
+ .studio.atlas-shell.lb-cylinder-atlas .lb-cylinder-card .atlas-script .script-page-preview{
+   min-height:120px!important;height:133px!important;max-height:133px!important;
+   flex:0 0 133px!important;margin:6px auto 6px!important;
+ }
+ .studio.atlas-shell.lb-cylinder-atlas .lb-cylinder-card .atlas-script .node-footer{
+   min-height:38px!important;padding:9px 11px!important;
+ }
+}

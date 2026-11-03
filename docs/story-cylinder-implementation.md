@@ -1,18 +1,21 @@
-# Lightbox Story Cylinder IV — November 3, 2026
+# Lightbox Story Cylinder V — physically curved surfaces
 
-## Horizontal cinema on white
-User-approved horizontal cylinder direction: five native React Atlas cards are copied into an independent, studio-lit carousel, with a pure white backdrop, delicate lavender elliptical inner rim, softly blended grounded shadows, elegant serif type and the screenplay in the featured dark/acid-lime center position. The five surfaces are Story World Building, Research & Exploration, Screenplay, Visual Language, and Story Foundation. There is no sixth cylinder card.
+Updated November 3, 2026.
 
-## Real content and workspaces
-The native React Atlas remains mounted and is the source for card content, scene counts, notes, manuscript preview, and World Building's Characters / Locations / Objects controls. Each card delegates activations to existing original controls, retaining the real workspace and projects. Navigation supports arrows, Mac horizontal trackpad/wheel, dragging and keyboard. Return from workspace preserves cylinder focus. No databases, editors or app source bundles were altered.
+## Geometry and visual system
+The carousel keeps the user-approved white studio-lit rendering, purple ellipse, acid-lime screenplay accent and grounded shadows, but now positions and bends five genuine Story Atlas cards around a common circle. Each of the five cards uses eleven 3D strips with perspective, depth and rotation derived from the same cylindrical radius. A subtle shell connects the silhouette visually without replacing the cards with an image. This is a CSS/JavaScript implementation, not a raster mockup.
 
-## QA
-Local Chromium test harness passed responsive widths 320, 375, 390, 768, 1200, 1440 and 1920 with zero horizontal overflow and exactly five cards. Interaction tests passed original workspace actions (including World Locations), actual side-card pointer click, horizontal wheel, drag without accidental open, keyboard navigation, return with selected index restored. Local test harness is representative, not a substitute for live production IndexedDB testing.
+Five original sections only: World Building, Research & Exploration, Screenplay, Visual Language, Story Foundation. Original React Atlas markup is the source of displayed card content. No sixth card and no replacement editor.
 
-## Files changed
-Only story-cylinder.js, story-cylinder.css, index.html references (?v=4), and this note. All other application files and persistent state remain unchanged.
+## Interaction and stability
+Existing React controls perform all workspace opening, including original World Building Characters/Locations/Objects. Rotation supports pointer drag, horizontal trackpad/wheel, arrows and keyboard controls. The original Atlas remounts on return; the selected card is preserved and React data changes update all 11 surface strips.
 
-## Rollback
-Pre-v4 commit: `9449d1dcb3d835e36d027001eede965964f578f0`.
-Backup: `backup/pre-white-cinematic-cylinder-v4-2026-11-03`.
-To restore, revert the v4 commit. Do not clear stored projects or local storage.
+## Local QA
+Chromium smoke checks passed on viewports 320, 375, 390, 768, 1200, 1440, 1920 without horizontal overflow. Local tests passed native React workspace navigation, real click on World→Locations and on side cards, drag without accidental opening, wheel, keyboard, returning to Atlas and live card-content synchronization after changes. No uncaught browser JS errors. These are harness checks, not a complete live production IndexedDB/persistence audit.
+
+## Scope and rollback
+Changed files: `story-cylinder.js`, `story-cylinder.css`, `index.html` reference versions (?v=5), and this document. The React bundle, editors, IndexedDB data, projects, imports/exports, and other site functions were not modified.
+
+Previous production SHA: `21ccdf532efec9981d7d4ee088b5da97aeb4f946`.
+Backup branch: `backup/pre-physically-curved-cylinder-v5-2026-11-03`.
+Revert the v5 commit to roll back. Do not clear site storage.

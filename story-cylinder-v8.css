@@ -88,7 +88,7 @@
   position:absolute;inset:0;pointer-events:none;transform-style:preserve-3d
 }
 .lb-cylinder-card{
-  position:absolute;top:53.5%;left:50%;
+  position:absolute;top:50%;left:50%;
   width:var(--lb-card-width);height:var(--lb-card-height);
   border:0!important;border-radius:0!important;background:transparent!important;
   transform-origin:center center;transform-style:preserve-3d;
@@ -131,8 +131,7 @@
 .lb-cylinder-segment.is-last{border-radius:0 9px 9px 0}
 .lb-cylinder-segment:after{
   content:"";position:absolute;inset:0;z-index:4;pointer-events:none;
-  background:linear-gradient(90deg,
-    rgba(70,50,80,.018),transparent 19%,rgba(255,255,255,.025) 65%,rgba(60,43,70,.018))
+  background:none
 }
 .lb-cylinder-sheen{
   position:absolute;inset:3px;z-index:4;pointer-events:none;border-radius:11px;
@@ -338,7 +337,7 @@
  .studio.atlas-shell.lb-cylinder-atlas .pitch-launch{display:none!important}
  .lb-cylinder-studio{height:clamp(478px,130vw,545px)!important}
  .lb-cylinder-stage{perspective:1100px;perspective-origin:50% 44%}
- .lb-cylinder-card{top:54.2%}
+ .lb-cylinder-card{top:52%}
  .lb-cylinder-v8 .lb-cylinder-card .lb-cylinder-source{padding:17px!important}
  .lb-cylinder-v8 .lb-cylinder-source h2{font-size:38px!important}
  .lb-cylinder-v8 .atlas-world .world-card-heading{margin-top:26px!important}

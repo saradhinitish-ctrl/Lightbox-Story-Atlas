@@ -324,6 +324,32 @@
 @media(min-width:701px) and (max-height:735px){
   .lb-cylinder-studio{height:385px!important}
   .lb-cylinder-v8 .lb-cylinder-controls{margin-top:-4px!important}
+  /* Short laptops must retain functional footer buttons, not crop them. */
+  .lb-cylinder-v8 .lb-cylinder-card .lb-cylinder-source{padding:13px!important}
+  .lb-cylinder-v8 .lb-cylinder-source .node-overline{
+    padding-bottom:7px!important;font-size:8px!important
+  }
+  .lb-cylinder-v8 .lb-cylinder-source h2{
+    font-size:36px!important;margin:7px 0 5px!important
+  }
+  .lb-cylinder-v8 .lb-cylinder-source>.node-footer{
+    min-height:30px!important;padding-top:5px!important;font-size:9px!important
+  }
+  .lb-cylinder-v8 .atlas-script h2{font-size:39px!important;margin:5px 0 3px!important}
+  .lb-cylinder-v8 .atlas-script .script-page-preview{
+    height:94px!important;min-height:94px!important;max-height:94px!important;
+    flex:0 0 94px!important;margin:5px auto 6px!important;padding:8px 11px!important
+  }
+  .lb-cylinder-v8 .atlas-script>.node-footer{
+    min-height:34px!important;padding:7px 10px!important
+  }
+  .lb-cylinder-v8 .atlas-world .world-card-heading{margin-top:10px!important}
+  .lb-cylinder-v8 .atlas-world .world-card-heading strong{font-size:35px!important}
+  .lb-cylinder-v8 .atlas-world .world-index>button{min-height:29px!important}
+  .lb-cylinder-v8 .atlas-foundation h2,
+  .lb-cylinder-v8 .atlas-research h2,
+  .lb-cylinder-v8 .atlas-visual h2{margin-top:18px!important;font-size:37px!important}
+  .lb-cylinder-v8 .atlas-visual .atlas-visual-scenes{max-height:90px!important}
 }
 @media(max-width:700px){
  .studio.atlas-shell.lb-cylinder-atlas .story-atlas{padding:14px 0 24px!important}

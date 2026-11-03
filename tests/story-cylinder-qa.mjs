@@ -50,9 +50,14 @@ try{
   await page.goto('http://127.0.0.1:4173/index.html',{waitUntil:'domcontentloaded'});
   const skip=page.locator('.lb-opener__skip');
   if(await skip.isVisible().catch(()=>false))await skip.click().catch(()=>{});
-  // Fresh profiles should initialize with a default project. If not, fail rather
-  // than mutating or importing somebody else's saved data.
-  try { await page.locator('.lb-cylinder-v7').waitFor({state:'visible',timeout:30000}); }
+  // Start a disposable project in this fresh, isolated browser profile only.
+  const begin=page.locator('.welcome > .button.primary');
+  await begin.waitFor({state:'visible',timeout:15000}).catch(()=>{});
+  if(await begin.isVisible().catch(()=>false)){
+    await begin.click();
+    await page.getByRole('button',{name:'Create world',exact:true}).click();
+  }
+  try { await page.locator('.lb-cylinder-v7').waitFor({state:'visible',timeout:20000}); }
   catch(e) {
    const body=(await page.locator('body').innerText().catch(()=>''))?.slice(0,1200);
    await page.screenshot({path:resolve(dir, 'startup-'+width+'.png'),fullPage:true});
@@ -106,16 +111,38 @@ try{
     const moved=await page.locator('.lb-cylinder-card.is-active').getAttribute('data-index');
     assert.notEqual(moved,'2','Horizontal wheel moves cylinder');
    }
-   // Card clicks must navigate through native React, not placeholder interfaces.
-   await page.locator('.lb-cylinder-script').click({force:true});
+   // Test a REAL pointer click after centering the native Screenplay panel.
+   for(let attempt=0;attempt<5;attempt++){
+    const i=await page.locator('.lb-cylinder-card.is-active').getAttribute('data-index');
+    if(i==='2')break;
+    await page.locator('.lb-cylinder-prev').click();
+    await page.waitForTimeout(150);
+   }
+   await page.waitForTimeout(550);
+   await page.locator('.lb-cylinder-script').click();
    await page.waitForTimeout(450);
    const atlasVisible=await page.locator('.story-atlas').isVisible().catch(()=>false);
-   assert.equal(atlasVisible,false,'Screenplay leaves Atlas');
+   assert.equal(atlasVisible,false,'Screenplay leaves Atlas through native action');
    const goBack=page.locator('.lb-cylinder-back');
-   if(await goBack.isVisible().catch(()=>false)){
-    await goBack.click();
-    await page.locator('.lb-cylinder-v7').waitFor({state:'visible',timeout:5000});
+   assert.ok(await goBack.isVisible(),'Atlas return control visible');
+   await goBack.click();
+   await page.locator('.lb-cylinder-v7').waitFor({state:'visible',timeout:5000});
+   // World Building nested action must navigate to the original Locations view.
+   for(let attempt=0;attempt<5;attempt++){
+    const i=await page.locator('.lb-cylinder-card.is-active').getAttribute('data-index');
+    if(i==='0')break;
+    await page.locator('.lb-cylinder-prev').click();
+    await page.waitForTimeout(150);
    }
+   await page.waitForTimeout(550);
+   await page.locator('.lb-cylinder-world .world-index button').nth(1).click();
+   await page.waitForTimeout(450);
+   assert.equal(await page.locator('.story-atlas').isVisible().catch(()=>false),false,
+     'World Locations launches native workspace');
+   await page.locator('.lb-cylinder-back').click();
+   await page.locator('.lb-cylinder-v7').waitFor({state:'visible',timeout:5000});
+   assert.equal(await page.locator('.lb-cylinder-card.is-active').getAttribute('data-index'),'0',
+     'Return remembers selected World card');
   }
   results.push({width,status:'passed',measure,errors:browserErrors});
   if(browserErrors.length) errors.push({width,browserErrors});

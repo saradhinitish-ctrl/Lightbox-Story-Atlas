@@ -218,7 +218,6 @@
       card.style.transform = 'translate3d(-50%,-50%,0) translate3d('
         + x.toFixed(2) + 'px,' + dy.toFixed(2) + 'px,' + z.toFixed(2)
         + 'px) rotateY(' + angle.toFixed(3) + 'deg)';
-      card.style.setProperty('--lb-light-angle', (50 - angle * .85) + '%');
       const alpha = clamp((2.51 - Math.abs(rel)) / .18, 0, 1);
       if (card._alpha !== alpha) { card.style.opacity = String(alpha); card._alpha = alpha; }
       const disabled = Math.abs(rel) >= 2.48;
@@ -380,7 +379,7 @@
       if (opening || Math.abs(event.deltaX) < 1 || Math.abs(event.deltaX) < Math.abs(event.deltaY) * .7) return;
       event.preventDefault();
       const multiplier = event.deltaMode === 1 ? 20 : event.deltaMode === 2 ? s.cardWidth : 1;
-      aim(s, s.target + clamp(event.deltaX * multiplier / (s.cardWidth * .85),-.28,.28));
+      aim(s, s.target + clamp(event.deltaX * multiplier / (s.cardWidth * .85),-.89,.89));
       clearTimeout(s.wheelTimeout);
       s.wheelTimeout = setTimeout(() => snap(s),145);
     }, {passive:false});

@@ -1,6 +1,6 @@
 /* Lightbox Studio Story Cylinder IX
- * One DOM representation per real React card, one stationary geometry-backed
- * canvas shell, five inexpensive GPU transforms during interaction.
+ * One intact replica per React card, one stationary subtle orbital guide,
+ * and five hardware accelerated transforms. No segmented card seams.
  * This module never writes project data or replaces a native workspace.
  */
 (() => {
@@ -137,35 +137,15 @@
     const w=s.view.clientWidth||innerWidth;
     s.width=w;s.height=s.view.clientHeight||520;
     s.mobile=w<=700;
-    // Roomy face panels; their arc, not an enclosing object, forms the cylinder.
     s.cardWidth=s.mobile?clamp(w*.705,224,282):clamp(w*.218,260,312);
     const desiredHeight=s.mobile?clamp(w*1.065,362,420):clamp(w*.279,352,399);
     s.cardHeight=s.mobile?desiredHeight:Math.min(desiredHeight,
       innerHeight<735?300:clamp(innerHeight*.435,332,392));
-    s.radius=s.mobile?Math.max(s.cardWidth*1.43,w*.91):
-      clamp(w*.393,470,605);
-    // Distinct cards with generous seams. Angles are mathematically derived
-    // from their chord separation rather than guessed viewport translations.
+    s.radius=s.mobile?Math.max(s.cardWidth*1.43,w*.91):clamp(w*.393,470,605);
     s.pitch=2*Math.asin(clamp((s.cardWidth+26)/(2*s.radius),0,.49))*180/Math.PI*.96;
     s.centerY=s.height*(s.mobile?.514:.472);
     s.host.style.setProperty('--lb-card-width',s.cardWidth+'px');
     s.host.style.setProperty('--lb-card-height',s.cardHeight+'px');
-    const segments=5;
-    const segmentW=s.cardWidth/segments;
-    const localRadius=s.cardWidth*1.08;
-    s.cards.forEach(card=>{
-      card.querySelectorAll('.lb-cylinder-segment').forEach((panel,j)=>{
-        const theta=((j+.5)/segments-.5)*s.cardWidth/localRadius;
-        const x=localRadius*Math.sin(theta);
-        const z=localRadius*(Math.cos(theta)-1);
-        panel.style.width=(segmentW+1.05)+'px';
-        panel.style.transform='translate3d(-50%,0,0) translate3d('
-          +x.toFixed(3)+'px,0,'+z.toFixed(3)+'px) rotateY('
-          +(theta*180/Math.PI).toFixed(4)+'deg)';
-        panel.style.setProperty('--lb-slice-shift',(-j*segmentW)+'px');
-        panel.style.setProperty('--lb-panel-width',s.cardWidth+'px');
-      });
-    });
     drawShell(s);paint(s);
   }
 
@@ -273,11 +253,9 @@
       const html=source.innerHTML;
       if(html===s.snapshots[i])return;
       s.snapshots[i]=html;
-      s.cards[i].querySelectorAll('.lb-cylinder-segment').forEach((segment,j)=>{
-        const replacement=copySource(item,j===2);
-        const previous=segment.querySelector('.lb-cylinder-source');
-        if(previous&&replacement)previous.replaceWith(replacement);
-      });
+      const replacement=copySource(item);
+      const previous=s.cards[i].querySelector('.lb-cylinder-source');
+      if(previous&&replacement)previous.replaceWith(replacement);
     });
   }
 
@@ -317,18 +295,10 @@
       card.tabIndex = 0;
       card.setAttribute('role', item.id === 'world' ? 'group' : 'button');
       card.setAttribute('aria-label', item.title);
-      card.innerHTML = '<div class="lb-cylinder-plaque" aria-hidden="true"></div>'
-        + '<div class="lb-cylinder-curvature"></div><div class="lb-cylinder-sheen" aria-hidden="true"></div>';
-      const surface=card.querySelector('.lb-cylinder-curvature');
-      for(let j=0;j<5;j++){
-        const segment=document.createElement('div');
-        segment.className='lb-cylinder-segment';
-        segment.style.setProperty('--lb-slice-index',String(j));
-        if(j===0)segment.classList.add('is-first');
-        if(j===4)segment.classList.add('is-last');
-        segment.append(copySource(item,j===2));
-        surface.append(segment);
-      }
+      card.innerHTML='<div class="lb-cylinder-plaque">'
+        + '<div class="lb-cylinder-content"></div>'
+        + '<div class="lb-cylinder-sheen" aria-hidden="true"></div></div>';
+      card.querySelector('.lb-cylinder-content').append(copySource(item));
       s.snapshots[index] = sourceFor(item).innerHTML;
       s.rotor.append(card);
       s.cards.push(card);

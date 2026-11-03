@@ -1,8 +1,12 @@
-name: Story Cylinder v8 curved studio QA
+name: Story Cylinder v7 browser QA
 on:
   push:
     branches:
-      - feat/story-cylinder-v8-studio-geometry
+      - feat/story-cylinder-v7-studio-geometry
+      - feat/story-cylinder-v8-curved-studio
+  pull_request:
+    branches:
+      - main
   workflow_dispatch:
 permissions:
   contents: read
@@ -28,6 +32,6 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: story-cylinder-v8-browser-qa
+          name: story-cylinder-v7-browser-qa
           path: qa-artifacts/
           if-no-files-found: ignore

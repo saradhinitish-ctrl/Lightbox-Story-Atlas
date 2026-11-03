@@ -174,9 +174,14 @@
       const theta = angle * rad;
       const x = radius * Math.sin(theta);
       const z = radius * (Math.cos(theta) - 1);
-      // z is negative at the sides. Shift those cards DOWN just enough for
-      // their projected lower edges to match the centered card's baseline.
-      const dy = -z * s.floorLevelFactor;
+      // The projected bottom is determined by the NEAREST rotated corner,
+      // not the depth of the card's center. Compensating using only z made
+      // the two outer panels visibly sink below the front card (10–15px).
+      // The precise floor correction uses perspective and the nearest corner:
+      // zNearest = orbital depth + half-width * abs(sin(angle)).
+      // This keeps every panel's lower edge on the same screen-space line.
+      const zNearest = z + s.cardWidth * .5 * Math.abs(Math.sin(theta));
+      const dy = -zNearest * s.floorLevelFactor;
       card.style.transform = 'translate3d(-50%,-50%,0) translate3d('
         + x.toFixed(2) + 'px,' + dy.toFixed(2) + 'px,' + z.toFixed(2)
         + 'px) rotateY(' + angle.toFixed(3) + 'deg)';

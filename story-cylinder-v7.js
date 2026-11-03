@@ -82,8 +82,9 @@
     ctx.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
     ctx.clearRect(0, 0, w, h);
     const cx = w / 2, radius = s.radius;
-    const cy = s.mobile ? 83 : 113;
-    const ry = s.mobile ? 49 : Math.min(83, radius * .105);
+    const ry = s.mobile ? 49 : Math.min(85, radius * .105);
+    // The top lip is positioned by the same card wall silhouette, not viewport percentages.
+    const cy = s.centerY - s.cardHeight / 2 + (s.mobile ? 24 : 18);
     const floor = s.centerY + s.cardHeight / 2 + 5;
     const earthY = Math.min(h - 10, floor + 21);
 
@@ -184,12 +185,14 @@
     s.width = w;
     s.height = s.view.clientHeight || 520;
     s.mobile = w <= 700;
-    s.cardWidth = s.mobile ? clamp(w * .69, 218, 275) : clamp(w * .204, 213, 281);
+    s.cardWidth = s.mobile ? clamp(w * .69, 218, 275) : clamp(w * .207, 220, 322);
     s.cardHeight = s.mobile ? clamp(w * 1.03, 357, 407) : clamp(w * .305, 380, 418);
-    s.pitch = s.mobile ? 26 : 18.8;
-    // A front arc leaves 2.2% of the pitch as narrow seams between plates.
-    const cardAngle = s.pitch * .978 * Math.PI / 180;
-    s.radius = s.cardWidth / (2 * Math.sin(cardAngle / 2));
+    // On desktop the *entire* upper ellipse fits the stage. Mobile deliberately
+    // crops the shell while keeping a readable central plate and nearby glimpses.
+    s.radius = s.mobile ? Math.max(s.cardWidth * 1.4, w * .9) : w * .477;
+    // The plate chord length determines panel pitch along the circular wall.
+    // The tiny additional pitch yields a consistent physical panel seam.
+    s.pitch = 2 * Math.asin(clamp(s.cardWidth / (2 * s.radius), 0, .49)) * 180 / Math.PI * 1.025;
     s.centerY = s.height * (s.mobile ? .535 : .527);
     s.host.style.setProperty('--lb-card-width', s.cardWidth + 'px');
     s.host.style.setProperty('--lb-card-height', s.cardHeight + 'px');

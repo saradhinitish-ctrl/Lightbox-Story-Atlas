@@ -305,6 +305,10 @@
  }
  .lb-cylinder-v7 .lb-cylinder-controls{min-height:56px;height:56px!important;margin-top:-22px!important}
 }
+@media(min-width:701px) and (max-height:735px){
+  .lb-cylinder-studio{height:385px!important}
+  .lb-cylinder-v7 .lb-cylinder-controls{margin-top:-6px!important}
+}
 @media(max-width:700px){
  .studio.atlas-shell.lb-cylinder-atlas .story-atlas{padding:14px 0 24px!important}
  .studio.atlas-shell.lb-cylinder-atlas .atlas-heading{min-height:126px;padding:0 13px!important}

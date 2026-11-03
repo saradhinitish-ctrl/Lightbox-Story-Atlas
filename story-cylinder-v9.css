@@ -76,7 +76,7 @@
 }
 .lb-cylinder-stage{
   position:absolute;inset:0;overflow:hidden;outline:none;
-  perspective:1750px;perspective-origin:50% 48%;
+  perspective:1850px;perspective-origin:50% 46%;
   touch-action:pan-y;cursor:grab;user-select:none;-webkit-user-select:none
 }
 .lb-cylinder-stage:focus-visible{outline:2px solid #a0bc54;outline-offset:-3px}
@@ -96,42 +96,46 @@
   will-change:transform;transition:opacity .13s linear;
   backface-visibility:hidden;-webkit-backface-visibility:hidden
 }
-.lb-cylinder-card:focus-visible .lb-cylinder-card::before{
-  content:"";position:absolute;left:7%;right:7%;bottom:-23px;height:35px;
-  border-radius:50%;pointer-events:none;
+.lb-cylinder-card::before{
+  content:"";position:absolute;left:6%;right:6%;bottom:-25px;height:39px;
+  pointer-events:none;border-radius:50%;
   background:radial-gradient(ellipse,
-    rgba(39,31,44,.24) 0%,rgba(51,40,56,.11) 46%,transparent 76%);
-  filter:blur(9px);transform:translateZ(-10px)
+    rgba(40,29,44,.29) 0%,rgba(54,41,59,.15) 42%,transparent 75%);
+  filter:blur(11px);transform:translateZ(-12px);
 }
-/* No flat backing behind a curved surface: it created white strips at both edges. */
-.lb-cylinder-plaque{display:none!important}
-.lb-cylinder-curvature{
-  position:absolute;inset:3px 3px 4px;z-index:2;
-  transform-style:preserve-3d;pointer-events:none
+.lb-cylinder-card:focus-visible .lb-cylinder-plaque{
+  outline:3px solid #c8e75c;outline-offset:4px
 }
-.lb-cylinder-segment{
-  position:absolute;left:50%;top:0;bottom:0;
-  overflow:hidden;pointer-events:auto;
-  transform-style:flat;
-  box-shadow:none;
-  -webkit-backface-visibility:hidden;backface-visibility:hidden
+.lb-cylinder-plaque{
+  position:relative;width:100%;height:100%;padding:3px;
+  border:1px solid rgba(255,253,248,.95);border-radius:13px;
+  background:linear-gradient(110deg,#e4d7e4,#fffefa 16%,#f9f6f1 77%,#d8cedc);
+  box-shadow:0 2px 4px rgba(38,26,43,.22),
+    0 14px 21px -11px rgba(48,35,55,.28),
+    0 31px 27px -22px rgba(48,35,55,.23);
+  transform:translateZ(0);overflow:hidden
 }
-.lb-cylinder-segment.is-first{border-radius:10px 0 0 10px}
-.lb-cylinder-segment.is-last{border-radius:0 10px 10px 0}
-.lb-cylinder-segment:after{
-  content:"";position:absolute;inset:0;z-index:4;pointer-events:none;
-  background:none
+.lb-cylinder-card.is-active .lb-cylinder-plaque{
+  box-shadow:0 4px 6px -3px rgba(38,26,43,.18),
+    0 20px 27px -13px rgba(48,35,55,.32),
+    0 39px 34px -29px rgba(48,35,55,.27)
 }
-.lb-cylinder-segment.is-first::after{
- background:linear-gradient(90deg,rgba(47,31,51,.16),rgba(255,255,255,.09) 26%,transparent 88%)
+.lb-cylinder-content{
+  position:absolute;inset:3px;overflow:hidden;border-radius:9px;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.33)
 }
-.lb-cylinder-segment.is-last::after{
- background:linear-gradient(90deg,transparent 14%,rgba(255,255,255,.065) 59%,rgba(47,31,51,.14))
+.lb-cylinder-sheen{
+  position:absolute;inset:3px;pointer-events:none;border-radius:10px;
+  background:linear-gradient(90deg,
+    rgba(60,43,65,.16) 0%,transparent 10%,
+    rgba(255,255,255,.045) 36%,transparent 67%,
+    rgba(59,40,69,.15) 100%);
+  opacity:.63
 }
-.lb-cylinder-sheen{display:none!important}
+.lb-cylinder-card.is-active .lb-cylinder-sheen{opacity:.40}
 .lb-cylinder-v9 .lb-cylinder-card .lb-cylinder-source{
-  display:flex!important;flex-direction:column!important;position:absolute!important;left:var(--lb-slice-shift)!important;top:0!important;
-  width:var(--lb-panel-width)!important;height:100%!important;min-height:0!important;
+  display:flex!important;flex-direction:column!important;position:relative!important;left:auto!important;top:auto!important;
+  width:100%!important;height:100%!important;min-height:0!important;
   max-height:none!important;max-width:none!important;
   margin:0!important;padding:clamp(16px,1.55vw,23px)!important;
   border:0!important;border-radius:0!important;box-shadow:none!important;
@@ -381,11 +385,8 @@
 @media(prefers-reduced-motion:reduce){
  .lb-cylinder-v9 .lb-cylinder-card,.lb-cylinder-v9 .lb-cylinder-dots i{transition:none!important}
 }
-/* Deep charcoal backing prevents light bleed at the curved screenplay edge. */
-.lb-cylinder-script .lb-cylinder-plaque{background:#202021}
+/* The screenplay retains its deep black glass face. */
+.lb-cylinder-script .lb-cylinder-plaque{background:#252527}
 
-/* The cards form the object. No enclosing wall, purple tank or front mask. */
-.lb-cylinder-v9 .lb-cylinder-segment{background-clip:padding-box}
-.lb-cylinder-v9 .lb-cylinder-content{isolation:isolate}
-/* Keep the card's 3D transform chain unflattened: only its ground shadow is blurred. */
+/* Cards, not a painted background tub, define the cylindrical volume. */
 .lb-cylinder-v9 .lb-cylinder-card.is-active::before{opacity:1;transform:translateZ(-14px) scale(1.04)}

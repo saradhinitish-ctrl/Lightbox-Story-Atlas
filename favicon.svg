@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512" role="img" aria-label="Lightbox Studio Focus Cinematic logo">
+  <defs>
+    <radialGradient id="tile" cx="50%" cy="52%" r="70%">
+      <stop offset="0" stop-color="#1c2011"/>
+      <stop offset="0.52" stop-color="#10130d"/>
+      <stop offset="1" stop-color="#0a0c0a"/>
+    </radialGradient>
+    <radialGradient id="acid" cx="50%" cy="50%" r="67%">
+      <stop offset="0" stop-color="#dfff0c"/>
+      <stop offset="0.23" stop-color="#c7fa00"/>
+      <stop offset="0.59" stop-color="#b9ee00"/>
+      <stop offset="1" stop-color="#739500"/>
+    </radialGradient>
+    <radialGradient id="halo" cx="50%" cy="50%" r="50%">
+      <stop offset="0" stop-color="#bbfa00" stop-opacity="0.63"/>
+      <stop offset="0.30" stop-color="#a6eb00" stop-opacity="0.36"/>
+      <stop offset="0.72" stop-color="#8db900" stop-opacity="0.07"/>
+      <stop offset="1" stop-color="#8db900" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="soft" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="26"/></filter>
+    <filter id="edge" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="7.5"/></filter>
+    <clipPath id="round"><rect x="0" y="0" width="512" height="512" rx="94"/></clipPath>
+    <path id="focus" d="M256 19 C256 188 303 254 493 256 C303 258 257 317 256 493 C255 317 209 258 19 256 C209 254 256 188 256 19 Z"/>
+  </defs>
+  <g clip-path="url(#round)">
+    <rect width="512" height="512" fill="url(#tile)"/>
+    <circle cx="256" cy="256" r="226" fill="url(#halo)"/>
+    <use href="#focus" fill="#b7f400" opacity=".8" filter="url(#soft)"/>
+    <use href="#focus" fill="#b0ed00" opacity=".50" filter="url(#edge)"/>
+    <path d="M256 4V508 M4 256H508" stroke="#bafa00" stroke-width="1.5" opacity=".17"/>
+    <use href="#focus" fill="url(#acid)"/>
+    <circle cx="256" cy="256" r="27" fill="#e2ff00" opacity=".18" filter="url(#edge)"/>
+    <path d="M256 20V105 M256 407V492 M20 256H105 M407 256H492" stroke="#bbfa08" stroke-width="1.1" opacity=".26"/>
+  </g>
+</svg>

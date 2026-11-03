@@ -1,94 +1,225 @@
-/* STORY CYLINDER / ACID PAPER — structural 3D stage, not attached card strips. */
-.studio.atlas-shell.lb-cylinder-atlas .story-atlas{box-sizing:border-box;max-width:1460px;width:100%;padding:clamp(12px,2vw,26px) clamp(14px,3vw,40px) 16px;margin:0 auto;}
-.studio.atlas-shell.lb-cylinder-atlas .atlas-heading{margin-bottom:9px;align-items:center;}
-.studio.atlas-shell.lb-cylinder-atlas .atlas-world-name{min-width:0;max-width:100%;display:flex;}
-.studio.atlas-shell.lb-cylinder-atlas .atlas-world-name>input{min-width:0;width:100%;max-width:100%;font-size:clamp(28px,3vw,42px);line-height:1.07;}
-.studio.atlas-shell.lb-cylinder-atlas .atlas-heading p{max-width:650px;font-size:12px;margin-top:4px;}
-.studio.atlas-shell.lb-cylinder-atlas .atlas-caption{display:none;}
+/* LIGHTBOX / STORY CYLINDER III
+   Five genuine Atlas cards. Portrait cinema, tactile cards, invisible 5-sided axis.
+   This layer does not restyle any editor or affect saved projects. */
+.studio.atlas-shell.lb-cylinder-atlas .story-atlas{
+  box-sizing:border-box;isolation:isolate;width:100%;max-width:1480px;margin:0 auto;
+  padding:clamp(24px,3vw,43px) clamp(12px,3vw,46px) clamp(24px,3vw,42px);
+  background:#1b201e;color:#f3f1e8;
+  background-image:radial-gradient(ellipse at 50% 34%,#303630 0%,#202622 51%,#171c1a 100%);
+  border:1px solid #414740;
+}
+.studio.atlas-shell.lb-cylinder-atlas .atlas-heading{align-items:flex-end;margin:0 auto 8px;gap:24px;max-width:1300px;}
+.studio.atlas-shell.lb-cylinder-atlas .atlas-heading>div{min-width:0;flex:1;}
+.studio.atlas-shell.lb-cylinder-atlas .atlas-heading .atlas-eyebrow{
+  display:flex;align-items:center;gap:8px;color:#c1d29d!important;font:500 10px/1.6 "DM Mono",monospace!important;letter-spacing:.13em;
+}
+.studio.atlas-shell.lb-cylinder-atlas .atlas-heading .live-dot{background:#c4ec50!important;border-color:#c4ec50!important;width:6px;height:6px;}
+.studio.atlas-shell.lb-cylinder-atlas .atlas-world-name{margin-top:9px;display:flex;max-width:760px;min-width:0;gap:12px;}
+.studio.atlas-shell.lb-cylinder-atlas .atlas-world-name>input{
+  min-width:0;width:100%;font-family:"Instrument Serif",Georgia,serif!important;
+  font-size:clamp(35px,4.4vw,66px)!important;line-height:1.02!important;letter-spacing:-.025em!important;
+  color:#f2efe5!important;border:0!important;border-bottom:1px solid transparent!important;padding:0 0 4px;
+}
+.studio.atlas-shell.lb-cylinder-atlas .atlas-world-name>input:focus{border-bottom-color:#d7e9bd!important;outline:none;}
+.studio.atlas-shell.lb-cylinder-atlas .atlas-world-name>svg{color:#b9bdb1;opacity:.55;}
+.studio.atlas-shell.lb-cylinder-atlas .atlas-heading p{max-width:620px;color:#aaaFA5!important;font-size:12px!important;line-height:1.5;margin-top:7px;}
+.studio.atlas-shell.lb-cylinder-atlas .pitch-launch{align-self:flex-end;background:transparent;color:#dde3cf;border:1px solid #657064;border-radius:1px;box-shadow:none;font:500 10px "DM Mono",monospace;letter-spacing:.035em;padding:12px 15px;min-height:40px;}
+.studio.atlas-shell.lb-cylinder-atlas .pitch-launch:hover{background:#343e33;border-color:#8e9e87;color:#fff;}
+.studio.atlas-shell.lb-cylinder-atlas .atlas-caption,
 .studio.atlas-shell.lb-cylinder-atlas .atlas-reel,
 .studio.atlas-shell.lb-cylinder-atlas .atlas-recent,
 .studio.atlas-shell.lb-cylinder-atlas .install-app,
 .studio.atlas-shell.lb-cylinder-atlas .creative-dock,
-.studio.atlas-shell.lb-cylinder-atlas .mobile-workspace-nav {display:none!important;}
-.studio.atlas-shell.lb-cylinder-atlas .atlas-viewport{position:relative;height:auto;min-height:0;overflow:visible;background:transparent;border:0;padding:0;}
-.studio.atlas-shell.lb-cylinder-atlas .atlas-viewport > .atlas-map{position:absolute!important;visibility:hidden!important;pointer-events:none!important;width:1px!important;height:1px!important;overflow:hidden!important;z-index:-1!important;}
-.studio.atlas-shell.lb-cylinder-atlas .lb-cylinder{--lb-card-width:358px;--lb-card-height:476px;--lb-radius:430px;position:relative;width:100%;max-width:100%;isolation:isolate;color:#242620;}
-.lb-cylinder *{box-sizing:border-box;}
-.lb-cylinder-environment{height:clamp(475px,63vh,660px);position:relative;overflow:hidden;perspective:1400px;perspective-origin:50% 46%;background:transparent;}
-.lb-cylinder-environment:before{content:"";position:absolute;left:50%;top:7%;height:1px;width:min(86%,1000px);transform:translateX(-50%);background:linear-gradient(90deg,transparent,#aaa99f 22%,#aaa99f 78%,transparent);opacity:.37;}
-.lb-cylinder-view{position:absolute;inset:0;outline:none;overflow:hidden;touch-action:pan-y;cursor:grab;user-select:none;-webkit-user-select:none;perspective:1400px;perspective-origin:50% 47%;}
-.lb-cylinder-view:active{cursor:grabbing;}
-.lb-cylinder-view:focus-visible{outline:2px solid #9cb52b;outline-offset:-5px;}
-.lb-cylinder-rotor{position:absolute;inset:0;transform-style:preserve-3d;will-change:transform;pointer-events:none;}
-.lb-cylinder-ground{position:absolute;z-index:-1;left:50%;bottom:3.3%;width:min(82%,850px);height:110px;transform:translateX(-50%);border-radius:50%;background:radial-gradient(ellipse at center,rgba(29,32,25,.20) 0%,rgba(31,33,27,.13) 31%,rgba(33,32,29,.055) 56%,transparent 78%);filter:blur(10px);pointer-events:none;}
-.lb-cylinder-contact{position:absolute;z-index:-1;bottom:6.5%;left:50%;width:min(41%,380px);height:44px;transform:translateX(-50%);border-radius:50%;background:radial-gradient(ellipse,rgba(30,32,26,.22),transparent 73%);filter:blur(11px);pointer-events:none;}
-.lb-cylinder-card{position:absolute;top:48%;left:50%;width:var(--lb-card-width);height:var(--lb-card-height);margin-left:calc(var(--lb-card-width) / -2);margin-top:calc(var(--lb-card-height) / -2);transform-style:preserve-3d;backface-visibility:hidden;-webkit-backface-visibility:hidden;overflow:hidden;pointer-events:auto;cursor:pointer;border:1px solid #8b8d82;border-radius:3px;background:#f4f2e9;color:#252720;box-shadow:0 5px 7px rgba(20,22,16,.07),0 23px 34px -14px rgba(24,26,20,.22),0 47px 53px -39px rgba(25,27,20,.28);transition:box-shadow .22s ease,border-color .22s ease;outline:none;}
-.lb-cylinder-card:not(.is-rear):hover{border-color:#505746;box-shadow:0 8px 12px rgba(20,22,16,.10),0 27px 42px -14px rgba(24,26,20,.29),0 50px 60px -39px rgba(25,27,20,.33);}
-.lb-cylinder-card:focus-visible{outline:3px solid #aec539;outline-offset:-4px;}
-.lb-cylinder-card:after{content:"";position:absolute;left:0;right:0;bottom:0;height:12%;background:linear-gradient(to top,rgba(0,0,0,.055),transparent);pointer-events:none;}
-.lb-cylinder-card-inner{position:relative;height:100%;width:100%;display:flex;flex-direction:column;padding:25px 27px 22px;overflow:hidden;}
-.lb-cylinder-top{display:flex;align-items:center;justify-content:space-between;gap:16px;font:600 10px/1.4 "DM Mono",monospace;letter-spacing:.095em;text-transform:uppercase;border-bottom:1px solid currentColor;padding-bottom:14px;opacity:.9;}
-.lb-cylinder-cross{font-size:17px;font-weight:400;line-height:1;}
-.lb-cylinder-body{display:flex;flex:1;flex-direction:column;align-items:flex-start;min-height:0;padding-top:24px;position:relative;}
-.lb-cylinder-number{font:400 11px/1 "DM Mono",monospace;letter-spacing:.07em;opacity:.63;}
-.lb-cylinder-body h2{font-family:"Instrument Serif",Georgia,serif!important;font-weight:400!important;font-size:clamp(40px,3.75vw,55px)!important;line-height:1.035!important;letter-spacing:-.03em!important;margin:auto 0 14px!important;max-width:8.6ch;color:inherit!important;}
-.lb-cylinder-body p{font:400 12.5px/1.65 "DM Sans",Arial,sans-serif!important;letter-spacing:.005em;opacity:.77;max-width:31ch;min-height:40px;max-height:80px;overflow:hidden;margin:0 0 21px!important;color:inherit!important;}
-.lb-cylinder-foot{border-top:1px solid currentColor;padding-top:13px;display:flex;align-items:center;justify-content:space-between;gap:12px;font:500 10px/1.5 "DM Mono",monospace;letter-spacing:.03em;opacity:.86;}
-.lb-cylinder-foot>span:last-child{font-size:21px;line-height:1;}
-.lb-cylinder-script{background:#222520;color:#f2efe5;border-color:#0f140f;}
-.lb-cylinder-script .lb-cylinder-top{color:#c7eb41;}
-.lb-cylinder-script .lb-cylinder-foot{color:#d3dfae;}
-.lb-cylinder-script-rule{width:69%;height:112px;margin-top:24px;padding:15px;background:#e7e5da;color:#272920;box-shadow:8px 9px 0 rgba(225,231,209,.15);transform:rotate(-3deg);font:400 9px "Courier Prime",monospace;}
-.lb-cylinder-script-rule span{display:block;margin-bottom:17px;}.lb-cylinder-script-rule i{display:block;height:4px;margin:8px 0;background:#7c7e75;opacity:.3;width:95%;}.lb-cylinder-script-rule i:last-child{width:61%;}
-.lb-cylinder-foundation{background:#e8e9d7;color:#252822;}
-.lb-cylinder-spark{font:300 145px/1 Georgia,serif;color:#a4b92b;align-self:flex-end;transform:translate(-5px,-8px);}
-.lb-cylinder-research{background:#e6e5dd;color:#282a26;}
-.lb-cylinder-quote{font:300 175px/.8 Georgia,serif;color:#c3c9a3;margin-top:22px;}
-.lb-cylinder-visual{background:#eeede4;}
-.lb-cylinder-frame{margin-top:24px;position:relative;width:78%;height:128px;border:1px solid #85897c;padding:10px;display:flex;flex-direction:column;justify-content:space-between;}
-.lb-cylinder-frame span{font:500 9px "DM Mono",monospace;letter-spacing:.1em;}
-.lb-cylinder-frame i{position:absolute;inset:30px 20px 20px;border:1px solid #a3aa94;transform:translate(6px,3px);}.lb-cylinder-frame i:last-child{inset:42px 30px 32px;transform:translate(-1px,-1px);}
-.lb-cylinder-sequence{background:#dfe7c9;}
-.lb-cylinder-beats{display:flex;align-items:flex-end;gap:8px;height:120px;width:100%;margin-top:24px;border-bottom:1px solid #8c9c6c;}
-.lb-cylinder-beats i{flex:1;height:39%;border-top:2px solid #536245;background:rgba(109,134,74,.12);}.lb-cylinder-beats i:nth-child(2){height:57%;}.lb-cylinder-beats i:nth-child(3){height:44%;}.lb-cylinder-beats i:nth-child(4){height:78%;}.lb-cylinder-beats i:nth-child(5){height:67%;}.lb-cylinder-beats i:nth-child(6){height:95%;background:#aeca45;}
-.lb-cylinder-world{background:#f0eee4;}
-.lb-cylinder-world .lb-cylinder-body h2{margin-top:24px!important;margin-bottom:10px!important;}
-.lb-cylinder-world .lb-cylinder-body p{min-height:0;margin-bottom:12px!important;}
-.lb-cylinder-world-links{width:100%;display:grid;gap:4px;margin-top:auto;margin-bottom:10px;}
-.lb-cylinder-world-links button{width:100%;display:flex;align-items:center;gap:9px;padding:9px 0;border:0;border-top:1px solid #9a9e90;background:transparent;color:inherit;text-align:left;cursor:pointer;font:500 11px/1.4 "DM Sans",sans-serif;}
-.lb-cylinder-world-links button:last-child{border-bottom:1px solid #9a9e90;}
-.lb-cylinder-world-links button:hover,.lb-cylinder-world-links button:focus-visible{color:#4f6815;background:rgba(171,192,80,.12);outline:none;}
-.lb-cylinder-world-links small{margin-left:auto;font:11px "DM Mono",monospace;}.lb-cylinder-world-links b{font-size:16px;font-weight:400;margin-left:7px;}
-.lb-cylinder-controls{position:relative;z-index:2;display:flex;align-items:center;justify-content:center;gap:4px;min-height:59px;width:max-content;max-width:calc(100% - 20px);margin:0 auto;background:#eae9df;border:1px solid #b4b7aa;border-radius:2px;box-shadow:0 7px 19px -12px rgba(20,22,20,.18);}
-.lb-cylinder-controls>button{display:flex;justify-content:center;align-items:center;width:60px;height:57px;color:#222722;border:0;background:transparent;cursor:pointer;font:400 25px/1 Georgia,serif;transition:background .18s ease;}
-.lb-cylinder-controls>button:hover,.lb-cylinder-controls>button:focus-visible{background:#c9d6a4;outline:none;}
-.lb-cylinder-controls>button:active{background:#a9c54c;}
-.lb-cylinder-control-label{min-width:186px;display:flex;align-items:center;justify-content:center;gap:10px;height:57px;border-left:1px solid #b4b7aa;border-right:1px solid #b4b7aa;font:600 11px/1 "DM Mono",monospace;letter-spacing:.08em;white-space:nowrap;}
-.lb-cylinder-counter{font:400 9px "DM Mono",monospace;opacity:.58;letter-spacing:0;}
-.lb-cylinder-back{position:fixed;z-index:990;bottom:20px;left:calc(50% + 0px);transform:translateX(-50%);padding:13px 22px;border:1px solid #4d5940;border-radius:2px;background:#e5edc8;color:#252a20;font:600 11px/1.3 "DM Mono",monospace;letter-spacing:.065em;box-shadow:0 6px 19px -12px rgba(20,20,16,.32);cursor:pointer;}
-.lb-cylinder-back:hover{background:#c9e072;}.lb-cylinder-back[hidden]{display:none!important;}
-.lb-cylinder-opening-card{margin:0!important;backface-visibility:visible!important;-webkit-backface-visibility:visible!important;overflow:hidden!important;}
-@media(max-width:700px){
-.studio.atlas-shell.lb-cylinder-atlas .story-atlas{padding:14px 0 13px;}
-.studio.atlas-shell.lb-cylinder-atlas .atlas-heading{padding:0 18px 0;margin-bottom:8px;}
-.studio.atlas-shell.lb-cylinder-atlas .pitch-launch{display:none!important;}
-.studio.atlas-shell.lb-cylinder-atlas .atlas-world-name{min-width:0;max-width:100%;display:flex;}
-.studio.atlas-shell.lb-cylinder-atlas .atlas-world-name>input{min-width:0;width:100%;max-width:100%;font-size:30px;}
-.studio.atlas-shell.lb-cylinder-atlas .atlas-heading p{font-size:11px;}
-.lb-cylinder-environment{height:min(66vh,510px);min-height:415px;perspective:1050px;}
-.lb-cylinder-view{perspective:1050px;}
-.lb-cylinder-card-inner{padding:19px 21px 17px;}
-.lb-cylinder-top{font-size:9px;padding-bottom:12px;}
-.lb-cylinder-body{padding-top:17px;}
-.lb-cylinder-body h2{font-size:43px!important;}
-.lb-cylinder-spark{font-size:122px;}
-.lb-cylinder-script-rule{height:100px;}
-.lb-cylinder-frame{height:112px;}
-.lb-cylinder-beats{height:103px;}
-.lb-cylinder-controls{min-height:52px;}
-.lb-cylinder-controls>button{height:51px;width:52px;}
-.lb-cylinder-control-label{height:51px;min-width:174px;font-size:10px;}
-.lb-cylinder-back{bottom:calc(12px + env(safe-area-inset-bottom));}
+.studio.atlas-shell.lb-cylinder-atlas .mobile-workspace-nav{display:none!important;}
+.studio.atlas-shell.lb-cylinder-atlas .atlas-viewport{position:relative;height:auto;min-height:0;padding:0;margin:0;border:0;overflow:visible;background:none;}
+/* Keep original React buttons alive, but never expose the grid behind the cylinder. */
+.studio.atlas-shell.lb-cylinder-atlas .atlas-viewport > .atlas-map{
+  position:absolute!important;visibility:hidden!important;pointer-events:none!important;overflow:hidden!important;
+  width:1px!important;height:1px!important;min-width:0!important;margin:0!important;inset:0 auto auto 0!important;z-index:-1!important;
 }
-@media(max-width:390px){.lb-cylinder-card-inner{padding:16px 18px 14px;}.lb-cylinder-body h2{font-size:39px!important;}.lb-cylinder-body p{font-size:11px!important;}.lb-cylinder-controls>button{width:45px;}.lb-cylinder-control-label{min-width:166px;}.lb-cylinder-environment{min-height:405px;}}
-@media(prefers-reduced-motion:reduce){.lb-cylinder-card,.lb-cylinder-controls button{transition:none!important;}.lb-cylinder-ground{filter:none;}}
+.lb-cylinder{--lb-card-width:332px;--lb-card-height:640px;--lb-radius:306px;position:relative;width:100%;max-width:100%;color:#f4f0e5;}
+.lb-cylinder *{box-sizing:border-box;}
+.lb-cylinder-environment{position:relative;height:clamp(660px,82vh,800px);min-height:0;overflow:hidden;isolation:isolate;background:transparent;}
+.lb-cylinder-environment:before{
+  content:"";pointer-events:none;position:absolute;z-index:-2;inset:8% 6% 11%;
+  background:radial-gradient(ellipse at 50% 39%,rgba(166,185,151,.055),transparent 63%);
+}
+.lb-cylinder-environment:after{
+  content:"";pointer-events:none;position:absolute;z-index:-1;left:50%;bottom:10.5%;transform:translateX(-50%);
+  width:min(91%,1020px);height:1px;background:linear-gradient(90deg,transparent,rgba(208,219,187,.3) 15%,rgba(208,219,187,.31) 85%,transparent);
+}
+.lb-cylinder-horizon{position:absolute;z-index:-2;left:0;right:0;bottom:10.5%;height:23%;background:linear-gradient(180deg,transparent 5%,rgba(10,15,12,.18) 85%);pointer-events:none;}
+.lb-cylinder-ground{
+  position:absolute;z-index:-1;left:50%;bottom:4%;width:min(77%,840px);height:102px;
+  transform:translateX(-50%);border-radius:50%;pointer-events:none;
+  background:radial-gradient(ellipse at center,rgba(0,0,0,.76) 0%,rgba(0,0,0,.57) 22%,rgba(0,0,0,.20) 56%,transparent 80%);
+  filter:blur(17px);
+}
+.lb-cylinder-contact{position:absolute;z-index:-1;left:50%;bottom:8%;width:min(39%,400px);height:35px;transform:translateX(-50%);border-radius:50%;pointer-events:none;background:radial-gradient(ellipse,rgba(0,0,0,.78),transparent 73%);filter:blur(8px);}
+.lb-cylinder-view{position:absolute;inset:0;outline:none;overflow:hidden;perspective:1660px;perspective-origin:50% 43%;touch-action:pan-y;cursor:grab;user-select:none;-webkit-user-select:none;}
+.lb-cylinder-view:active{cursor:grabbing;}
+.lb-cylinder-view:focus-visible{outline:2px solid #c2ed4b;outline-offset:-3px;}
+.lb-cylinder-rotor{position:absolute;inset:0;transform-style:preserve-3d;will-change:transform;pointer-events:none;}
+.lb-cylinder-card{
+  position:absolute;top:45.2%;left:50%;width:var(--lb-card-width);height:var(--lb-card-height);
+  margin-left:calc(var(--lb-card-width)/-2);margin-top:calc(var(--lb-card-height)/-2);
+  border:1px solid rgba(240,239,220,.30);border-radius:2px;
+  overflow:hidden;backface-visibility:hidden;-webkit-backface-visibility:hidden;
+  pointer-events:auto;cursor:pointer;outline:none;background:#e9e9dd;
+  transform-style:preserve-3d;box-shadow:0 13px 17px -12px rgba(0,0,0,.55),0 30px 45px -23px rgba(0,0,0,.61),0 70px 70px -49px rgba(0,0,0,.52);
+  transition:border-color .18s ease,box-shadow .18s ease;
+}
+.lb-cylinder-card:before{content:"";position:absolute;z-index:3;pointer-events:none;inset:0;border:1px solid rgba(255,255,255,.09);}
+.lb-cylinder-card:after{content:"";position:absolute;z-index:4;pointer-events:none;left:0;right:0;top:0;bottom:0;background:linear-gradient(94deg,rgba(0,0,0,.14) 0%,transparent 15%,transparent 80%,rgba(0,0,0,.10) 100%);}
+.lb-cylinder-card.is-active{border-color:#a8b6a0;box-shadow:0 12px 20px -12px rgba(0,0,0,.70),0 32px 54px -24px rgba(0,0,0,.8),0 76px 78px -48px rgba(0,0,0,.71);}
+.lb-cylinder-card:hover:not(.is-behind){border-color:#d0e2ad;}
+.lb-cylinder-card:focus-visible{outline:3px solid #c4f044;outline-offset:-4px;}
+.lb-cylinder-card.is-behind{pointer-events:none;}
+/* The contents below are exact React Atlas clones, not redesigned HTML tiles. */
+.studio.atlas-shell.lb-cylinder-atlas .lb-cylinder-card .lb-cylinder-source{
+  display:flex!important;flex-direction:column!important;position:relative!important;inset:auto!important;
+  width:100%!important;height:100%!important;min-height:0!important;max-height:none!important;
+  margin:0!important;padding:clamp(22px,2.5vw,30px)!important;gap:0!important;
+  border:0!important;border-radius:0!important;box-shadow:none!important;transform:none!important;
+  overflow:hidden!important;text-align:left!important;cursor:pointer!important;
+}
+.studio.atlas-shell.lb-cylinder-atlas .lb-cylinder-card .lb-cylinder-source:active,
+.studio.atlas-shell.lb-cylinder-atlas .lb-cylinder-card .lb-cylinder-source:hover{transform:none!important;box-shadow:none!important;}
+.studio.atlas-shell.lb-cylinder-atlas .lb-cylinder-source .node-overline{
+  flex:0 0 auto;display:flex!important;align-items:center;gap:8px;min-width:0;
+  font:600 10px/1.5 "DM Mono",monospace!important;letter-spacing:.065em!important;
+  border-bottom:1px solid currentColor!important;padding-bottom:17px!important;margin:0!important;
+}
+.studio.atlas-shell.lb-cylinder-atlas .lb-cylinder-source .node-overline>svg:last-child{margin-left:auto;width:14px;flex:0 0 auto;}
+.studio.atlas-shell.lb-cylinder-atlas .lb-cylinder-source h2{
+  display:block!important;max-width:100%!important;min-width:0!important;
+  font-family:"Instrument Serif",Georgia,serif!important;font-weight:400!important;
+  font-size:clamp(43px,4.2vw,59px)!important;line-height:1.035!important;letter-spacing:-.037em!important;
+  margin:26px 0 13px!important;overflow-wrap:break-word;
+}
+.studio.atlas-shell.lb-cylinder-atlas .lb-cylinder-source>.node-footer{
+  display:flex!important;align-items:center!important;justify-content:space-between!important;gap:9px!important;
+  width:100%;min-height:50px;flex:0 0 auto;margin-top:auto!important;
+  padding:16px 0 0!important;border:0!important;border-top:1px solid currentColor!important;
+  border-radius:0!important;background:none!important;font:600 11px/1.4 "DM Sans",sans-serif!important;
+}
+.studio.atlas-shell.lb-cylinder-atlas .lb-cylinder-source>.node-footer>svg{width:17px;flex:0 0 auto;}
+/* ORIGINAL Screenplay / original page preview, now arranged as a portrait film poster. */
+.studio.atlas-shell.lb-cylinder-atlas .lb-cylinder-card .atlas-script{background:#1e2520!important;color:#f3f0e7!important;align-content:initial!important;}
+.studio.atlas-shell.lb-cylinder-atlas .lb-cylinder-card .atlas-script .node-overline{color:#c6e956!important;}
+.studio.atlas-shell.lb-cylinder-atlas .lb-cylinder-card .atlas-script h2{margin-top:18px!important;color:#f1eee5!important;}
+.studio.atlas-shell.lb-cylinder-atlas .lb-cylinder-card .atlas-script>p{flex:0 0 auto;margin:0 0 24px!important;color:#c9cec4!important;font-size:12px!important;line-height:1.5!important;}
+.studio.atlas-shell.lb-cylinder-atlas .lb-cylinder-card .atlas-script .script-page-preview{
+  width:80%!important;max-width:238px!important;min-height:214px!important;height:clamp(205px,30%,260px)!important;max-height:none!important;
+  flex:1 1 auto!important;align-self:center!important;margin:29px auto 0!important;padding:22px 20px!important;
+  background:#f3f0e6!important;color:#272c26!important;border:1px solid #bfc2b8!important;
+  border-radius:1px!important;transform:rotate(-3deg)!important;box-shadow:6px 7px 0 #9aa588!important;
+}
+.studio.atlas-shell.lb-cylinder-atlas .lb-cylinder-card .atlas-script .script-page-preview :is(span,strong,p,em){color:#272c26!important;}
+.studio.atlas-shell.lb-cylinder-atlas .lb-cylinder-card .atlas-script .script-page-excerpt{max-height:115px;overflow:hidden;}
+.studio.atlas-shell.lb-cylinder-atlas .lb-cylinder-card .atlas-script>.node-footer{color:#d8e99b!important;}
+/* ORIGINAL Foundation: retains the actual premise and original spark note. */
+.studio.atlas-shell.lb-cylinder-atlas .lb-cylinder-card .atlas-foundation{background:#f2f1e8!important;color:#262d26!important;}
+.studio.atlas-shell.lb-cylinder-atlas .lb-cylinder-card .atlas-foundation h2{font-size:clamp(55px,5vw,75px)!important;margin-top:clamp(45px,11vh,102px)!important;}
+.studio.atlas-shell.lb-cylinder-atlas .lb-cylinder-card .atlas-foundation .spark-note{
+  margin:17px 0 33px!important;padding:0 0 0 15px!important;border:0!important;border-left:2px solid #9dbb38!important;
+  transform:none!important;background:none!important;box-shadow:none!important;
+}
+.studio.atlas-shell.lb-cylinder-atlas .lb-cylinder-card .atlas-foundation .spark-note small{color:#596055!important;font-size:9px!important;letter-spacing:.06em;}
+.studio.atlas-shell.lb-cylinder-atlas .lb-cylinder-card .atlas-foundation .spark-note p{font-size:14px!important;color:#343e34!important;line-height:1.7!important;display:-webkit-box;-webkit-line-clamp:5;-webkit-box-orient:vertical;overflow:hidden;}
+/* ORIGINAL Research: lilac and the original stack of research notes. */
+.studio.atlas-shell.lb-cylinder-atlas .lb-cylinder-card .atlas-research{background:#e8e3f1!important;color:#27252c!important;}
+.studio.atlas-shell.lb-cylinder-atlas .lb-cylinder-card .atlas-research .research-card-body{display:flex!important;flex:1 1 auto!important;flex-direction:column!important;align-items:stretch!important;justify-content:space-between;min-height:0;margin:0!important;}
+.studio.atlas-shell.lb-cylinder-atlas .lb-cylinder-card .atlas-research h2{font-size:clamp(47px,4.35vw,61px)!important;margin-top:64px!important;}
+.studio.atlas-shell.lb-cylinder-atlas .lb-cylinder-card .atlas-research .research-card-body small{font-size:12px!important;line-height:1.65!important;color:#554a61!important;}
+.studio.atlas-shell.lb-cylinder-atlas .lb-cylinder-card .atlas-research .research-stack{display:flex!important;flex-direction:column!important;gap:8px!important;margin:20px 0 35px!important;opacity:.88;}
+.studio.atlas-shell.lb-cylinder-atlas .lb-cylinder-card .atlas-research .research-stack span{padding:10px 12px!important;background:#f4f0f7!important;color:#51455c!important;font:400 10px/1.4 "DM Sans",sans-serif;box-shadow:3px 3px 0 #d4cadf!important;border:1px solid #c8bfd5!important;border-radius:0!important;}
+/* ORIGINAL Visual Language: original scene miniature rows and board counter. */
+.studio.atlas-shell.lb-cylinder-atlas .lb-cylinder-card .atlas-visual{background:#f2f1e9!important;color:#242a25!important;}
+.studio.atlas-shell.lb-cylinder-atlas .lb-cylinder-card .atlas-visual h2{margin-top:clamp(53px,9vh,87px)!important;}
+.studio.atlas-shell.lb-cylinder-atlas .lb-cylinder-card .atlas-visual .atlas-visual-scenes{
+  margin:20px 0!important;display:flex!important;flex-direction:column!important;gap:10px!important;min-height:0;max-height:185px;overflow:hidden;
+}
+.studio.atlas-shell.lb-cylinder-atlas .lb-cylinder-card .atlas-visual .atlas-visual-scenes>span{min-width:0!important;border:1px solid #c6c9be!important;background:#e7eae0!important;border-radius:0!important;padding:8px!important;}
+.studio.atlas-shell.lb-cylinder-atlas .lb-cylinder-card .atlas-visual .atlas-visual-scenes img{width:45px!important;height:45px!important;object-fit:cover!important;flex:0 0 auto;}
+.studio.atlas-shell.lb-cylinder-atlas .lb-cylinder-card .atlas-visual .atlas-visual-board-footer{
+  display:flex!important;align-items:center;gap:6px;max-height:70px;line-height:1.5!important;
+  font-size:11px!important;margin-top:auto!important;padding-top:13px!important;border-top:1px solid #9ca297!important;color:#5a6259!important;
+}
+/* ORIGINAL World Building: original embedded Characters / Locations / Objects buttons. */
+.studio.atlas-shell.lb-cylinder-atlas .lb-cylinder-card .atlas-world{background:#e7ebdc!important;color:#202b23!important;}
+.studio.atlas-shell.lb-cylinder-atlas .lb-cylinder-card .atlas-world>.node-overline{color:#52644e!important;}
+.studio.atlas-shell.lb-cylinder-atlas .lb-cylinder-card .atlas-world .world-card-heading{margin-top:clamp(58px,10vh,91px)!important;}
+.studio.atlas-shell.lb-cylinder-atlas .lb-cylinder-card .atlas-world .world-card-heading strong{
+  display:block;color:#263126!important;font-family:"Instrument Serif",Georgia,serif!important;font-weight:400!important;
+  font-size:clamp(48px,4.4vw,64px)!important;line-height:1.05!important;letter-spacing:-.04em!important;
+}
+.studio.atlas-shell.lb-cylinder-atlas .lb-cylinder-card .atlas-world .world-card-heading small{display:block;margin-top:15px!important;color:#536050!important;font-size:12px!important;line-height:1.6;}
+.studio.atlas-shell.lb-cylinder-atlas .lb-cylinder-card .atlas-world .world-index{display:flex!important;flex-direction:column!important;gap:7px!important;margin-top:auto!important;margin-bottom:2px!important;}
+.studio.atlas-shell.lb-cylinder-atlas .lb-cylinder-card .atlas-world .world-index>button{
+  display:flex!important;align-items:center;min-width:0!important;min-height:48px!important;
+  padding:9px 5px!important;background:transparent!important;color:#2b382c!important;
+  border:0!important;border-top:1px solid #899a87!important;border-radius:0!important;box-shadow:none!important;
+  font:500 12px/1.5 "DM Sans",sans-serif!important;cursor:pointer!important;
+}
+.studio.atlas-shell.lb-cylinder-atlas .lb-cylinder-card .atlas-world .world-index>button:last-child{border-bottom:1px solid #899a87!important;}
+.studio.atlas-shell.lb-cylinder-atlas .lb-cylinder-card .atlas-world .world-index>button:hover,
+.studio.atlas-shell.lb-cylinder-atlas .lb-cylinder-card .atlas-world .world-index>button:focus-visible{background:#d9e9bc!important;outline:none!important;}
+.studio.atlas-shell.lb-cylinder-atlas .lb-cylinder-card .atlas-world .world-index strong{font-size:12px!important;white-space:nowrap;}
+/* Only one carousel navigation area. The source cards still navigate by their original React actions. */
+.lb-cylinder-controls{
+  position:relative;z-index:5;margin:0 auto;display:flex;align-items:center;justify-content:center;
+  width:max-content;max-width:calc(100% - 24px);height:56px;
+  border:1px solid #627060;border-radius:1px;background:#222923;color:#eaece0;box-shadow:0 8px 16px -12px #0009;
+}
+.lb-cylinder-controls>button{
+  width:66px;height:54px;display:flex;justify-content:center;align-items:center;
+  background:none;border:0;color:#e7eadd;cursor:pointer;font:400 23px/1 Georgia,serif;
+}
+.lb-cylinder-controls>button:hover,.lb-cylinder-controls>button:focus-visible{background:#3d4c35;color:#d2f270;outline:none;}
+.lb-cylinder-controls>button:active{background:#495f3e;}
+.lb-cylinder-control-label{display:flex;align-items:center;justify-content:center;gap:11px;height:54px;min-width:196px;padding:0 8px;border-left:1px solid #627060;border-right:1px solid #627060;font:600 10px "DM Mono",monospace;letter-spacing:.115em;white-space:nowrap;}
+.lb-cylinder-counter{color:#c1d19c;opacity:.82;font:400 9px "DM Mono",monospace;letter-spacing:.03em;}
+.lb-cylinder-back{position:fixed;z-index:990;left:50%;bottom:20px;transform:translateX(-50%);background:#d4eab1;color:#253022;border:1px solid #819267;padding:12px 18px;white-space:nowrap;border-radius:1px;font:600 10px "DM Mono",monospace;letter-spacing:.07em;cursor:pointer;box-shadow:0 14px 38px #0002;}
+.lb-cylinder-back:hover{background:#e3f4bd;}.lb-cylinder-back[hidden]{display:none!important;}
+.lb-cylinder-opening-card{margin:0!important;backface-visibility:visible!important;-webkit-backface-visibility:visible!important;overflow:hidden!important;}
+.lb-cylinder-opening-card .lb-cylinder-source{width:100%!important;height:100%!important;}
+@media(max-width:700px){
+  .studio.atlas-shell.lb-cylinder-atlas .story-atlas{padding:18px 0 23px;border-left:0;border-right:0;}
+  .studio.atlas-shell.lb-cylinder-atlas .atlas-heading{padding:0 19px;margin-bottom:5px;}
+  .studio.atlas-shell.lb-cylinder-atlas .atlas-world-name>input{font-size:34px!important;}
+  .studio.atlas-shell.lb-cylinder-atlas .atlas-heading p{font-size:11px!important;}
+  .studio.atlas-shell.lb-cylinder-atlas .pitch-launch{display:none!important;}
+  .lb-cylinder-environment{height:clamp(510px,72svh,640px);}
+  .lb-cylinder-view{perspective:1170px;perspective-origin:50% 44%;}
+  .lb-cylinder-card{top:47%;}
+  .studio.atlas-shell.lb-cylinder-atlas .lb-cylinder-card .lb-cylinder-source{padding:19px!important;}
+  .studio.atlas-shell.lb-cylinder-atlas .lb-cylinder-source .node-overline{font-size:8px!important;letter-spacing:.01em!important;padding-bottom:12px!important;gap:5px;}
+  .studio.atlas-shell.lb-cylinder-atlas .lb-cylinder-source .node-overline>svg:first-child{width:13px;}
+  .studio.atlas-shell.lb-cylinder-atlas .lb-cylinder-source h2{font-size:42px!important;}
+  .studio.atlas-shell.lb-cylinder-atlas .lb-cylinder-card .atlas-foundation h2{font-size:53px!important;margin-top:62px!important;}
+  .studio.atlas-shell.lb-cylinder-atlas .lb-cylinder-card .atlas-research h2{font-size:45px!important;margin-top:45px!important;}
+  .studio.atlas-shell.lb-cylinder-atlas .lb-cylinder-card .atlas-visual h2{margin-top:52px!important;}
+  .studio.atlas-shell.lb-cylinder-atlas .lb-cylinder-card .atlas-world .world-card-heading{margin-top:43px!important;}
+  .studio.atlas-shell.lb-cylinder-atlas .lb-cylinder-card .atlas-world .world-card-heading strong{font-size:43px!important;}
+  .studio.atlas-shell.lb-cylinder-atlas .lb-cylinder-card .atlas-world .world-index>button{min-height:43px!important;}
+  .studio.atlas-shell.lb-cylinder-atlas .lb-cylinder-card .atlas-script .script-page-preview{max-width:200px!important;min-height:150px!important;height:205px!important;margin-top:20px!important;padding:14px!important;}
+  .studio.atlas-shell.lb-cylinder-atlas .lb-cylinder-card .atlas-script h2{font-size:40px!important;margin-top:17px!important;}
+  .studio.atlas-shell.lb-cylinder-atlas .lb-cylinder-card .atlas-script>p{margin-bottom:15px!important;}
+  .lb-cylinder-controls{height:53px;}
+  .lb-cylinder-controls>button{width:54px;height:51px;}
+  .lb-cylinder-control-label{height:51px;min-width:182px;font-size:9px;}
+  .lb-cylinder-back{bottom:calc(15px + env(safe-area-inset-bottom));}
+}
+@media(max-width:380px){
+  .studio.atlas-shell.lb-cylinder-atlas .lb-cylinder-card .lb-cylinder-source{padding:16px!important;}
+  .studio.atlas-shell.lb-cylinder-atlas .lb-cylinder-source h2{font-size:37px!important;}
+  .studio.atlas-shell.lb-cylinder-atlas .lb-cylinder-card .atlas-foundation h2{font-size:48px!important;}
+  .studio.atlas-shell.lb-cylinder-atlas .lb-cylinder-card .atlas-research h2{font-size:39px!important;}
+  .studio.atlas-shell.lb-cylinder-atlas .lb-cylinder-card .atlas-script h2{font-size:36px!important;}
+  .studio.atlas-shell.lb-cylinder-atlas .lb-cylinder-card .atlas-script .script-page-preview{height:165px!important;}
+  .studio.atlas-shell.lb-cylinder-atlas .lb-cylinder-card .atlas-world .world-card-heading strong{font-size:37px!important;}
+  .lb-cylinder-control-label{min-width:172px;}
+  .lb-cylinder-controls>button{width:48px;}
+}
+@media(prefers-reduced-motion:reduce){.lb-cylinder-card,.lb-cylinder-controls>button{transition:none!important}.lb-cylinder-ground{filter:none}}

@@ -1,288 +1,324 @@
-/* Lightbox Studio — Story Cylinder v2.
- * Presentation only. Every destination is opened through the real React control.
- * No writes to IndexedDB, project state, or the editor tree. */
+/* Lightbox Studio / Story Cylinder III — five ORIGINAL Atlas cards, cinematic portrait carousel.
+ * The native React Atlas remains mounted and owns every workspace, project, and save.
+ * Clone only its visual cards; relay activations to the corresponding original controls. */
 (() => {
   'use strict';
   const root = document.getElementById('root');
   if (!root) return;
-  const STEPS = [
-    {id:'script', label:'01 / THE SCREENPLAY', title:'Make it a scene.', detail:'The writing room', action:'.atlas-script'},
-    {id:'foundation', label:'02 / STORY DEVELOPMENT', title:'The spark.', detail:'Premise, theme, and the first idea', action:'.atlas-foundation'},
-    {id:'research', label:'03 / RESEARCH', title:'Follow the threads.', detail:'Research and exploration', action:'.atlas-research'},
-    {id:'visual', label:'04 / VISUAL LANGUAGE', title:'Think in frames.', detail:'Scene boards and visual references', action:'.atlas-visual'},
-    {id:'sequence', label:'05 / SEQUENCE', title:'Shape the rhythm.', detail:'Scenes, beats, and structure', action:'.atlas-reel .stage-section-heading button'},
-    {id:'world', label:'06 / WORLD BUILDING', title:'Build the world.', detail:'Characters, places, and objects', action:'.atlas-world .world-index button'}
+
+  // These are the five cards in the original Story Atlas. No synthetic sixth section.
+  const PANELS = [
+    { id:'script',     source:'.atlas-script',     label:'Screenplay' },
+    { id:'foundation', source:'.atlas-foundation', label:'Story Foundation' },
+    { id:'research',   source:'.atlas-research',   label:'Research & Exploration' },
+    { id:'visual',     source:'.atlas-visual',     label:'Visual Language' },
+    { id:'world',      source:'.atlas-world',      label:'World Building' }
   ];
-  const N = STEPS.length;
-  const STEP = 360 / N;
-  const reduceMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)');
-  const clamp = (x,a,b) => Math.max(a,Math.min(b,x));
-  const mod = (n,m) => (n%m+m)%m;
-  const esc = str => String(str ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-  let selectedAngle = 0;
-  let cylinder = null;
+  const TOTAL = PANELS.length;
+  const UNIT = 360 / TOTAL;
+  const clamp = (n,min,max) => Math.min(max,Math.max(min,n));
+  const wrap = (n,m) => (n % m + m) % m;
+  const reduced = window.matchMedia?.('(prefers-reduced-motion: reduce)');
+  let savedAngle = 0;
+  let current = null;
   let entered = false;
   let opening = false;
-  let activeTransition = null;
-  let scheduled = false;
-  let back = null;
+  let cloneOverlay = null;
+  let observerScheduled = false;
+  let returnButton = null;
 
-  function sourceNode(selector) {
-    return root.querySelector('.story-atlas ' + selector);
+  function original(panel) {
+    return root.querySelector('.story-atlas .atlas-map ' + panel.source);
   }
-  function nativeOpen(id, option) {
-    let target;
-    if (id === 'world') {
-      const index = option === 'locations' ? 1 : option === 'props' ? 2 : 0;
-      target = root.querySelectorAll('.story-atlas .atlas-world .world-index button')[index];
-    } else target = sourceNode(STEPS.find(s => s.id === id)?.action || '.__missing__');
-    if (!target || !target.isConnected) return false;
-    target.click(); // React owns the action and subsequent workspace lifecycle.
+
+  function nativeOpen(id,option) {
+    const panel = PANELS.find(p=>p.id===id);
+    if(!panel)return false;
+    const source = original(panel);
+    if(!source || !source.isConnected)return false;
+    const target = id === 'world'
+      ? source.querySelectorAll('.world-index button')[option==='locations'?1:option==='props'?2:0]
+      : source;
+    if(!target)return false;
+    target.click(); // The ORIGINAL React action changes mode; we do not imitate editors.
     return true;
   }
-  function summary(id) {
-    const clean = selector => sourceNode(selector)?.textContent?.trim() || '';
-    if (id === 'script') return clean('.atlas-script > p') || 'Your screenplay, draft by draft.';
-    if (id === 'foundation') return clean('.atlas-foundation .spark-note p') || 'A story begins with an idea.';
-    if (id === 'research') return clean('.atlas-research .research-card-body small') || 'Keep every question worth asking.';
-    if (id === 'visual') return clean('.atlas-visual .atlas-visual-board-footer') || 'Make a visual language for your film.';
-    if (id === 'sequence') return clean('.atlas-reel .stage-section-heading > span') || 'Every scene has a pulse.';
-    return clean('.atlas-world .world-card-heading small') || 'People, places, and the objects between.';
+
+  function copyOriginal(panel) {
+    const source = original(panel);
+    if(!source)return null;
+    const replica = source.cloneNode(true);
+    replica.classList.add('lb-cylinder-source');
+    replica.removeAttribute('onclick');
+    // React handlers do not travel in cloneNode; all real actions are delegated.
+    // Keep world sub-buttons accessible, but avoid two tabs for the outer four buttons.
+    if(replica.matches('button')){replica.tabIndex=-1;replica.setAttribute('aria-hidden','true');}
+    for(const el of replica.querySelectorAll('[id]'))el.removeAttribute('id');
+    for(const el of replica.querySelectorAll('a'))el.removeAttribute('href');
+    if(panel.id==='world') {
+      replica.querySelectorAll('.world-index button').forEach((btn,i)=>{
+        btn.dataset.cylinderWorld = ['characters','locations','props'][i] || 'characters';
+        btn.setAttribute('aria-label', ['Open characters','Open locations','Open objects'][i] || 'Open characters');
+      });
+    }
+    return replica;
   }
-  function worldOptions() {
-    const controls = root.querySelectorAll('.story-atlas .atlas-world .world-index button');
-    const ids = ['characters','locations','props'];
-    return `<div class="lb-cylinder-world-links">${ids.map((id,i) => {
-      const count = controls[i]?.querySelector('.world-index-count')?.textContent?.trim() || '0';
-      const name = id === 'props' ? 'Objects' : id[0].toUpperCase()+id.slice(1);
-      return `<button type="button" data-world-option="${id}" tabindex="0"><span>${esc(name)}</span><small>${esc(count)}</small><b aria-hidden="true">↗</b></button>`;
-    }).join('')}</div>`;
+
+  function refreshReplicas(state){
+    if(!state.host.isConnected || opening)return;
+    for(let i=0;i<TOTAL;i++){
+      const panel=PANELS[i],source=original(panel),card=state.cards[i];
+      if(!source||!card)continue;
+      // Only update when the ORIGINAL React content actually changed.
+      const markup=source.innerHTML;
+      if(state.snapshots[i]===markup)continue;
+      state.snapshots[i]=markup;
+      const replacement=copyOriginal(panel);
+      if(!replacement)continue;
+      card.querySelector('.lb-cylinder-source')?.replaceWith(replacement);
+    }
   }
-  function content(step, i) {
-    const isWorld = step.id === 'world';
-    const extra = step.id === 'script' ? `<div class="lb-cylinder-script-rule"><span>INT. YOUR STORY — DAY</span><i></i><i></i><i></i></div>` :
-      step.id === 'foundation' ? '<div class="lb-cylinder-spark">✳</div>' :
-      step.id === 'visual' ? '<div class="lb-cylinder-frame"><span>FRAME / 001</span><i></i><i></i></div>' :
-      step.id === 'sequence' ? '<div class="lb-cylinder-beats" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></div>' :
-      step.id === 'research' ? '<div class="lb-cylinder-quote" aria-hidden="true">“</div>' : '';
-    return `<div class="lb-cylinder-card-inner"><div class="lb-cylinder-top"><span>${esc(step.label)}</span><span class="lb-cylinder-cross" aria-hidden="true">✣</span></div><div class="lb-cylinder-body"><span class="lb-cylinder-number">${String(i+1).padStart(2,'0')}</span>${extra}<h2>${esc(step.title)}</h2><p>${esc(summary(step.id))}</p>${isWorld ? worldOptions() : ''}</div><div class="lb-cylinder-foot"><span>${esc(step.detail)}</span><span aria-hidden="true">↗</span></div></div>`;
-  }
-  function getSelectedIndex() { return mod(Math.round(selectedAngle / STEP), N); }
-  function decorateButtons(state) {
-    const active = mod(Math.round(state.angle/STEP),N);
+
+  function activeIndex(state){return wrap(Math.round(state.target / UNIT),TOTAL);}
+  function decorate(state){
+    const currentIndex=activeIndex(state);
     state.cards.forEach((card,i)=>{
-      const delta = ((i - state.angle/STEP + N*50 + N/2) % N) - N/2;
-      const facing = Math.cos(delta * Math.PI*2/N);
-      const muted = facing < -0.15;
-      card.classList.toggle('is-current',i===active);
-      card.classList.toggle('is-rear',muted);
-      card.style.setProperty('--light',String(clamp(0.7 + facing*.3,.50,1)));
-      card.style.zIndex = String(Math.round((facing+1)*100));
-      card.setAttribute('aria-current',i===active?'true':'false');
-      card.tabIndex = muted ? -1 : 0;
+      const position=(i-state.angle/UNIT+TOTAL*40+TOTAL/2)%TOTAL-TOTAL/2;
+      const facing=Math.cos(position*2*Math.PI/TOTAL);
+      const isBack=facing<-.25;
+      card.classList.toggle('is-active',i===currentIndex);
+      card.classList.toggle('is-behind',isBack);
+      card.tabIndex=isBack?-1:0;
+      card.setAttribute('aria-current',i===currentIndex?'true':'false');
+      card.setAttribute('aria-hidden',isBack?'true':'false');
+      card.style.zIndex=String(Math.round(100+facing*70));
+      card.style.setProperty('--face',String(clamp((facing+1)/2,0,1)));
+      if(i===currentIndex) state.liveLabel.textContent=PANELS[i].label;
     });
-    state.counter.textContent = String(active+1).padStart(2,'0') + ' / ' + String(N).padStart(2,'0');
+    state.counter.textContent=String(currentIndex+1).padStart(2,'0')+' / 05';
   }
-  function paint(state) {
-    if (!state.host.isConnected) return;
-    state.rotor.style.transform = `translateZ(${-state.radius}px) rotateY(${-state.angle}deg)`;
-    decorateButtons(state);
+  function paint(state){
+    if(!state.host.isConnected)return;
+    state.rotor.style.transform=`translateZ(${-state.radius}px) rotateY(${-state.angle}deg)`;
+    decorate(state);
   }
-  function animate(state) {
-    if (state.raf) return;
-    const frame = () => {
-      state.raf = 0;
-      if (!state.host.isConnected) return;
-      if (reduceMotion?.matches) {state.angle=state.target;state.velocity=0;paint(state);return;}
-      const error = state.target - state.angle;
-      state.velocity = state.velocity * .73 + error * .085;
-      state.angle += state.velocity;
-      if (Math.abs(error)<.025 && Math.abs(state.velocity)<.018) {state.angle=state.target;state.velocity=0;paint(state);return;}
+  function tick(state){
+    if(state.raf)return;
+    const frame=()=>{
+      state.raf=0;
+      if(!state.host.isConnected)return;
+      if(reduced?.matches){state.angle=state.target;state.velocity=0;paint(state);return;}
+      const err=state.target-state.angle;
+      state.velocity=state.velocity*.75+err*.09;
+      state.angle+=state.velocity;
+      if(Math.abs(err)<.026&&Math.abs(state.velocity)<.017){state.angle=state.target;state.velocity=0;paint(state);return;}
       paint(state);
-      state.raf = requestAnimationFrame(frame);
+      state.raf=requestAnimationFrame(frame);
     };
-    state.raf = requestAnimationFrame(frame);
+    state.raf=requestAnimationFrame(frame);
   }
-  function settle(state, anticipated=0) {
-    state.target = Math.round((state.target + anticipated)/STEP)*STEP;
-    selectedAngle = state.target;
-    animate(state);
+  function select(state,index){
+    const from=Math.round(state.target/UNIT);
+    let delta=wrap(index-wrap(from,TOTAL),TOTAL);
+    if(delta>TOTAL/2)delta-=TOTAL;
+    state.target=(from+delta)*UNIT;
+    savedAngle=state.target;
+    tick(state);
   }
-  function go(state, index) {
-    const current = state.target / STEP;
-    const difference = ((index - Math.round(current) + N*100 + N/2) % N) - N/2;
-    state.target = (Math.round(current)+difference)*STEP;
-    selectedAngle=state.target;
-    animate(state);
+  function advance(state,side){
+    if(opening)return;
+    clearTimeout(state.wheelTimer);
+    state.target=Math.round(state.target/UNIT)*UNIT+side*UNIT;
+    savedAngle=state.target;
+    tick(state);
   }
-  function next(state, direction) {
-    if (opening) return;
-    if (state.wheelTimer) clearTimeout(state.wheelTimer);
-    state.target = Math.round(state.target/STEP)*STEP + direction*STEP;
-    selectedAngle=state.target;
-    animate(state);
+  function snap(state,inertia=0){
+    state.target=Math.round((state.target+inertia)/UNIT)*UNIT;
+    savedAngle=state.target;
+    tick(state);
   }
-  function size(state) {
-    if (!state.host.isConnected) return;
-    const w=state.view.clientWidth || innerWidth;
-    const h=state.view.clientHeight || 560;
-    const width=clamp(w-56, 220, w<640?326:358);
-    const height=clamp(h-95, 300, w<640?422:476);
-    state.radius = Math.ceil(width/(2*Math.sin(Math.PI/N)) + (w<640?52:72));
+  function resize(state){
+    if(!state.host.isConnected)return;
+    const w=state.view.clientWidth||innerWidth;
+    const h=state.view.clientHeight||640;
+    // Portrait cards: each panel is roughly twice as tall as it is wide.
+    // Radius is determined by the five equal-angle sides, not arbitrary offsets.
+    const mobile=w<=700;
+    const width=mobile?clamp(w*.63,194,258):clamp(w*.248,284,320);
+    const height=mobile?clamp(h*.845,410,532):clamp(h*.86,560,692);
+    state.radius=Math.round(width/(2*Math.sin(Math.PI/TOTAL))+(mobile?16:24));
     state.host.style.setProperty('--lb-card-width',width+'px');
     state.host.style.setProperty('--lb-card-height',height+'px');
     state.host.style.setProperty('--lb-radius',state.radius+'px');
-    state.cards.forEach((card,i)=>{card.style.transform=`rotateY(${i*STEP}deg) translateZ(${state.radius}px)`;});
+    state.cards.forEach((card,i)=>{
+      card.style.transform=`rotateY(${i*UNIT}deg) translateZ(${state.radius}px)`;
+    });
     paint(state);
   }
-  function transitionOpen(state,index,option) {
-    if (opening || !state.host.isConnected) return;
+  function openCard(state,index,section){
+    if(opening||!state.host.isConnected)return;
     opening=true;
-    const step=STEPS[index];
-    go(state,index);
-    const execute=()=>{
-      if (!state.host.isConnected) {opening=false;return;}
+    select(state,index);
+    const panel=PANELS[index];
+    const start=performance.now();
+    const ready=()=>{
+      if(!state.host.isConnected){opening=false;return;}
+      if(!reduced?.matches&&Math.abs(state.angle-state.target)>.32&&performance.now()-start<820){
+        requestAnimationFrame(ready);return;
+      }
+      state.angle=state.target;
+      state.velocity=0;
+      paint(state);
       const card=state.cards[index];
-      const rect=card.getBoundingClientRect();
-      const reduced=!!reduceMotion?.matches;
-      const overlay=card.cloneNode(true);
-      overlay.className='lb-cylinder-opening-card lb-cylinder-card lb-cylinder-'+step.id;
-      overlay.removeAttribute('tabindex');
-      overlay.setAttribute('aria-hidden','true');
-      overlay.querySelectorAll('button').forEach(btn=>btn.tabIndex=-1);
-      overlay.style.cssText=`position:fixed;z-index:99999;left:${rect.left}px;top:${rect.top}px;width:${rect.width}px;height:${rect.height}px;transform:none;pointer-events:none;`;
-      document.body.append(overlay);
-      activeTransition=overlay;
+      const box=card.getBoundingClientRect();
+      const miniature=card.cloneNode(true);
+      miniature.className='lb-cylinder-opening-card lb-cylinder-card';
+      miniature.removeAttribute('role');
+      miniature.setAttribute('aria-hidden','true');
+      miniature.querySelectorAll('button').forEach(b=>b.tabIndex=-1);
+      miniature.style.cssText=`position:fixed;left:${box.left}px;top:${box.top}px;width:${box.width}px;height:${box.height}px;z-index:99999;transform:none;pointer-events:none;`;
+      document.body.append(miniature);
+      cloneOverlay=miniature;
+      let completed=false;
       const finish=()=>{
-        if (!state.host.isConnected) {overlay.remove();opening=false;return;}
-        const ok=nativeOpen(step.id,option);
-        if (!ok) console.error('Lightbox cylinder: native destination not found for',step.id);
-        setTimeout(()=>{overlay.remove();if(activeTransition===overlay) activeTransition=null;opening=false;sync();},180);
+        if(completed)return;
+        completed=true;
+        // Navigate using native React control only when the presentation completes.
+        const ok=nativeOpen(panel.id,section);
+        if(!ok)console.error('Lightbox Story Cylinder: native card missing',panel.id,section);
+        setTimeout(()=>{miniature.remove();if(cloneOverlay===miniature)cloneOverlay=null;opening=false;sync();},100);
       };
-      if (reduced) {overlay.remove();activeTransition=null;finish();return;}
-      const anim=overlay.animate([
-        {left:rect.left+'px',top:rect.top+'px',width:rect.width+'px',height:rect.height+'px',transform:'perspective(1200px) rotateY(0deg)',opacity:1,borderRadius:'3px'},
-        {offset:.43,left:Math.max(18,(innerWidth-rect.width)/2)+'px',top:Math.max(20,(innerHeight-rect.height)/2)+'px',width:rect.width+'px',height:rect.height+'px',transform:'perspective(1200px) rotateY(-13deg) scale(1.025)',opacity:1,borderRadius:'3px'},
-        {left:'0px',top:'0px',width:innerWidth+'px',height:innerHeight+'px',transform:'perspective(1200px) rotateY(0deg)',opacity:1,borderRadius:'0px'}
-      ],{duration:490,easing:'cubic-bezier(.22,.72,.19,1)',fill:'forwards'});
+      if(reduced?.matches){finish();return;}
+      const anim=miniature.animate([
+        {left:box.left+'px',top:box.top+'px',width:box.width+'px',height:box.height+'px',opacity:1,transform:'perspective(1450px) rotateY(0deg)'},
+        {offset:.45,left:box.left+'px',top:Math.max(14,box.top-10)+'px',width:box.width+'px',height:box.height+'px',opacity:1,transform:'perspective(1450px) rotateY(-8deg) scale(1.045)'},
+        {left:'0px',top:'0px',width:innerWidth+'px',height:innerHeight+'px',opacity:1,transform:'perspective(1450px) rotateY(0deg)'}
+      ],{duration:470,easing:'cubic-bezier(.22,.8,.2,1)',fill:'forwards'});
       anim.onfinish=finish;
       anim.oncancel=finish;
     };
-    if (reduceMotion?.matches || Math.abs(state.target-state.angle)<2) execute();
-    else setTimeout(execute,370);
+    requestAnimationFrame(ready);
   }
-  function mount(atlas) {
+  function mount(atlas){
     const viewport=atlas.querySelector('.atlas-viewport');
-    if (!viewport || !atlas.querySelector('.atlas-script') || viewport.querySelector('.lb-cylinder')) return;
+    if(!viewport||viewport.querySelector('.lb-cylinder')||PANELS.some(p=>!original(p)))return;
     const host=document.createElement('section');
     host.className='lb-cylinder';
-    host.setAttribute('aria-label','Story Cylinder — choose a workspace');
-    host.innerHTML=`<div class="lb-cylinder-environment"><div class="lb-cylinder-ground" aria-hidden="true"></div><div class="lb-cylinder-contact" aria-hidden="true"></div><div class="lb-cylinder-view" tabindex="0" role="region" aria-roledescription="3D carousel" aria-label="Swipe horizontally or use arrow keys to rotate the story cards"><div class="lb-cylinder-rotor"></div></div></div><nav class="lb-cylinder-controls" aria-label="Story Cylinder controls"><button type="button" class="lb-cylinder-prev" aria-label="Previous story card">←</button><span class="lb-cylinder-control-label">STORY CYLINDER <small class="lb-cylinder-counter" aria-live="off">01 / 06</small></span><button type="button" class="lb-cylinder-next" aria-label="Next story card">→</button></nav>`;
+    host.setAttribute('aria-label','Story Cylinder');
+    host.innerHTML=`<div class="lb-cylinder-environment"><div class="lb-cylinder-horizon" aria-hidden="true"></div><div class="lb-cylinder-ground" aria-hidden="true"></div><div class="lb-cylinder-contact" aria-hidden="true"></div><div class="lb-cylinder-view" tabindex="0" role="region" aria-roledescription="3D carousel" aria-label="Story Cylinder. Drag or swipe horizontally, or use arrow keys, to rotate the original story cards."><div class="lb-cylinder-rotor"></div></div></div><nav class="lb-cylinder-controls" aria-label="Story Cylinder navigation"><button class="lb-cylinder-prev" type="button" aria-label="Previous card">←</button><span class="lb-cylinder-control-label">STORY CYLINDER <small class="lb-cylinder-counter" aria-live="off">01 / 05</small></span><button class="lb-cylinder-next" type="button" aria-label="Next card">→</button></nav><span class="lb-cylinder-live sr-only" aria-live="polite"></span>`;
     viewport.append(host);
-    const state={host,view:host.querySelector('.lb-cylinder-view'),rotor:host.querySelector('.lb-cylinder-rotor'),counter:host.querySelector('.lb-cylinder-counter'),cards:[],angle:selectedAngle,target:selectedAngle,velocity:0,radius:0,raf:0,wheelTimer:0,down:null,ignoreClick:0};
-    STEPS.forEach((step,i)=>{
+    const state={host,view:host.querySelector('.lb-cylinder-view'),rotor:host.querySelector('.lb-cylinder-rotor'),cards:[],counter:host.querySelector('.lb-cylinder-counter'),liveLabel:host.querySelector('.lb-cylinder-live'),snapshots:[],angle:savedAngle,target:savedAngle,velocity:0,radius:0,raf:0,wheelTimer:0,down:null,ignoreClick:0};
+    PANELS.forEach((panel,i)=>{
       const card=document.createElement('div');
-      card.className='lb-cylinder-card lb-cylinder-'+step.id;
-      card.setAttribute('role',step.id==='world'?'group':'button');
-      card.setAttribute('aria-label',step.title+' — '+step.detail);
-      card.tabIndex=0;
+      card.className='lb-cylinder-card lb-cylinder-'+panel.id;
       card.dataset.index=String(i);
-      card.innerHTML=content(step,i);
+      card.setAttribute('role',panel.id==='world'?'group':'button');
+      card.setAttribute('aria-label',panel.label);
+      card.tabIndex=0;
+      state.snapshots[i]=original(panel).innerHTML;
+      card.append(copyOriginal(panel));
       state.rotor.append(card);
       state.cards.push(card);
       card.addEventListener('click',e=>{
-        const option=e.target.closest('[data-world-option]')?.dataset.worldOption;
-        e.preventDefault();
-        e.stopPropagation();
-        if (Date.now()<state.ignoreClick || state.down?.moved) return;
-        transitionOpen(state,i,option);
+        e.preventDefault();e.stopPropagation();
+        if(Date.now()<state.ignoreClick||state.down?.moved)return;
+        const option=e.target.closest('[data-cylinder-world]')?.dataset.cylinderWorld;
+        openCard(state,i,option);
       });
       card.addEventListener('keydown',e=>{
-        if (['Enter',' '].includes(e.key) && e.target===card){e.preventDefault();transitionOpen(state,i);}
+        if(!['Enter',' '].includes(e.key))return;
+        if(e.target!==card&&!e.target.closest('[data-cylinder-world]'))return;
+        e.preventDefault();
+        const option=e.target.closest('[data-cylinder-world]')?.dataset.cylinderWorld;
+        openCard(state,i,option);
       });
     });
-    host.querySelector('.lb-cylinder-prev').addEventListener('click',()=>next(state,-1));
-    host.querySelector('.lb-cylinder-next').addEventListener('click',()=>next(state,1));
+    host.querySelector('.lb-cylinder-prev').addEventListener('click',()=>advance(state,-1));
+    host.querySelector('.lb-cylinder-next').addEventListener('click',()=>advance(state,1));
     state.view.addEventListener('keydown',e=>{
-      if (e.target !== state.view && !e.target.classList.contains('lb-cylinder-card')) return;
-      if (e.key==='ArrowRight'||e.key==='ArrowLeft') {e.preventDefault();next(state,e.key==='ArrowRight'?1:-1);}
+      if(!['ArrowLeft','ArrowRight'].includes(e.key))return;
+      if(e.target.closest('input,textarea,[contenteditable]'))return;
+      e.preventDefault();
+      advance(state,e.key==='ArrowRight'?1:-1);
     });
     state.view.addEventListener('wheel',e=>{
-      if (opening || Math.abs(e.deltaX)<2 || Math.abs(e.deltaX)<Math.abs(e.deltaY)*.65) return;
+      if(opening||Math.abs(e.deltaX)<2||Math.abs(e.deltaX)<Math.abs(e.deltaY)*.64)return;
       e.preventDefault();
-      const factor=e.deltaMode===1?2.1:e.deltaMode===2?9:.17;
-      state.target+=clamp(e.deltaX*factor,-45,45);
-      animate(state);
+      const factor=e.deltaMode===1?2.4:e.deltaMode===2?8:.16;
+      state.target+=clamp(e.deltaX*factor,-42,42);
+      tick(state);
       clearTimeout(state.wheelTimer);
-      state.wheelTimer=setTimeout(()=>settle(state),155);
+      state.wheelTimer=setTimeout(()=>snap(state),155);
     },{passive:false});
     state.view.addEventListener('pointerdown',e=>{
-      if (opening || (e.pointerType==='mouse'&&e.button!==0)) return;
-      if (e.target.closest('button') && !e.target.closest('.lb-cylinder-card')) return;
+      if(opening||(e.pointerType==='mouse'&&e.button!==0))return;
+      const option=e.target.closest('[data-cylinder-world]')?.dataset.cylinderWorld;
       const card=e.target.closest('.lb-cylinder-card');
-      const option=e.target.closest('[data-world-option]')?.dataset.worldOption;
-      state.down={pointerId:e.pointerId,x:e.clientX,y:e.clientY,lastX:e.clientX,lastTime:performance.now(),velocity:0,origin:state.target,card,option,moved:false};
+      state.down={id:e.pointerId,x:e.clientX,y:e.clientY,lastX:e.clientX,lastTime:performance.now(),origin:state.target,velocity:0,moved:false,card,option};
       state.view.setPointerCapture?.(e.pointerId);
     });
     state.view.addEventListener('pointermove',e=>{
-      const down=state.down;if(!down||down.pointerId!==e.pointerId) return;
-      const dx=e.clientX-down.x,dy=e.clientY-down.y;
-      if (!down.moved && Math.abs(dx)<7) return;
-      if (!down.moved && Math.abs(dy)>Math.abs(dx)*1.35) return;
-      down.moved=true;
+      const p=state.down;if(!p||p.id!==e.pointerId)return;
+      const dx=e.clientX-p.x,dy=e.clientY-p.y;
+      if(!p.moved&&Math.abs(dx)<8)return;
+      if(!p.moved&&Math.abs(dy)>Math.abs(dx)*1.35)return;
+      p.moved=true;
       e.preventDefault();
-      const now=performance.now(),dt=Math.max(8,now-down.lastTime);
-      down.velocity=clamp((e.clientX-down.lastX)/dt,-3,3);
-      down.lastTime=now;down.lastX=e.clientX;
-      state.target=down.origin-dx*.24;
-      animate(state);
+      const now=performance.now(),delta=Math.max(8,now-p.lastTime);
+      p.velocity=clamp((e.clientX-p.lastX)/delta,-3,3);
+      p.lastTime=now;p.lastX=e.clientX;
+      state.target=p.origin-dx*.24;
+      tick(state);
     });
-    const release=e=>{
-      const down=state.down;if(!down||down.pointerId!==e.pointerId) return;
+    const end=e=>{
+      const p=state.down;if(!p||p.id!==e.pointerId)return;
       state.down=null;
-      if (state.view.hasPointerCapture?.(e.pointerId))state.view.releasePointerCapture(e.pointerId);
-      if (down.moved) {
-        state.ignoreClick=Date.now()+400;
-        settle(state,clamp(-down.velocity*30,-35,35));
-      } else if (down.card && Math.abs(e.clientY-down.y)<14) {
-        state.ignoreClick=Date.now()+360;
-        transitionOpen(state,Number(down.card.dataset.index),down.option);
-      }
+      if(state.view.hasPointerCapture?.(e.pointerId))state.view.releasePointerCapture(e.pointerId);
+      if(p.moved){state.ignoreClick=Date.now()+380;snap(state,clamp(-p.velocity*29,-30,30));}
+      else if(p.card&&Math.abs(e.clientY-p.y)<14){state.ignoreClick=Date.now()+360;openCard(state,Number(p.card.dataset.index),p.option);}
     };
-    state.view.addEventListener('pointerup',release);
-    state.view.addEventListener('pointercancel',e=>{if(state.down?.pointerId===e.pointerId){state.down=null;settle(state);}});
-    window.addEventListener('resize',()=>{if(state.host.isConnected)size(state);},{passive:true});
+    state.view.addEventListener('pointerup',end);
+    state.view.addEventListener('pointercancel',e=>{if(state.down?.id===e.pointerId){state.down=null;snap(state);}});
+    // ResizeObserver watches the local stage (including browser rotations and split view).
+    state.resizeObserver=new ResizeObserver(()=>resize(state));
+    state.resizeObserver.observe(state.view);
+    const studio=atlas.closest('.studio');
+    studio?.classList.add('lb-cylinder-atlas');
     atlas.classList.add('lb-cylinder-mounted');
-    const studio=atlas.closest('.studio');studio?.classList.add('lb-cylinder-atlas');
-    cylinder=state;entered=true;
-    size(state);
-    animate(state);
+    current=state;entered=true;
+    resize(state);tick(state);
   }
-  function sync() {
+  function sync(){
     const studio=root.querySelector('.studio.atlas-shell');
     const atlas=studio?.querySelector('.story-atlas');
-    if (cylinder && !cylinder.host.isConnected) {cylinder=null;opening=false;if(activeTransition){activeTransition.remove();activeTransition=null;}}
-    if (atlas) {
-      studio.classList.add('lb-cylinder-atlas');
-      mount(atlas);
-    } else studio?.classList.remove('lb-cylinder-atlas');
-    if (!back) {
-      back=document.createElement('button');back.type='button';back.className='lb-cylinder-back';back.textContent='←  STORY CYLINDER';
-      back.setAttribute('aria-label','Return to Story Cylinder');
-      back.addEventListener('click',()=>{
-        const button=root.querySelector('.studio.atlas-shell .app-wordmark');
-        if(button)button.click();
-      });
-      document.body.append(back);
+    if(current&&!current.host.isConnected){
+      current.resizeObserver?.disconnect();
+      clearTimeout(current.wheelTimer);
+      if(current.raf)cancelAnimationFrame(current.raf);
+      current=null;opening=false;
+      cloneOverlay?.remove();cloneOverlay=null;
     }
-    const show=!!(entered && studio && !atlas && !studio.classList.contains('composition') && studio.querySelector('.main-editor .editor-body'));
-    back.hidden=!show;
+    if(atlas){
+      studio.classList.add('lb-cylinder-atlas');
+      if(!current)mount(atlas);
+      else refreshReplicas(current);
+    }else studio?.classList.remove('lb-cylinder-atlas');
+    if(!returnButton){
+      returnButton=document.createElement('button');
+      returnButton.type='button';
+      returnButton.className='lb-cylinder-back';
+      returnButton.textContent='←  STORY CYLINDER';
+      returnButton.setAttribute('aria-label','Return to Story Cylinder');
+      returnButton.addEventListener('click',()=>root.querySelector('.studio.atlas-shell .app-wordmark')?.click());
+      document.body.append(returnButton);
+    }
+    returnButton.hidden=!(entered&&studio&&!atlas&&!studio.classList.contains('composition')&&studio.querySelector('.main-editor .editor-body'));
   }
   const observer=new MutationObserver(()=>{
-    if(scheduled)return;
-    scheduled=true;
-    requestAnimationFrame(()=>{scheduled=false;sync();});
+    if(observerScheduled)return;
+    observerScheduled=true;
+    requestAnimationFrame(()=>{observerScheduled=false;sync();});
   });
-  observer.observe(root,{childList:true,subtree:true});
+  observer.observe(root,{childList:true,subtree:true,characterData:true});
   sync();
 })();

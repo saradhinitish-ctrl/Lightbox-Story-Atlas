@@ -166,15 +166,15 @@
     s.width=w;s.height=s.view.clientHeight||510;
     s.mobile=w<=700;
     s.cardWidth=s.mobile?clamp(w*.69,218,275):clamp(w*.193,245,288);
-    const desiredHeight=s.mobile?clamp(w*1.04,356,408):clamp(w*.277,354,399);
-    s.cardHeight=!s.mobile&&innerHeight<960
-      ?Math.min(desiredHeight,clamp(innerHeight*.44,316,388)):desiredHeight;
-    // A smaller radius gives genuinely radial placement. Five stations occupy
-    // the visible front arc; side panels naturally narrow in projection.
+    const desiredHeight=s.mobile?clamp(w*1.04,356,408):clamp(w*.259,336,374);
+    // Reserve actual vertical space for the lower ellipse and floor shadow:
+    // previously the stage cropped the whole lower silhouette into a line.
+    s.cardHeight=s.mobile?desiredHeight:Math.min(desiredHeight,
+      innerHeight<740?280:clamp(innerHeight*.405,302,363));
     s.radius=s.mobile?Math.max(s.cardWidth*1.26,w*.83)
-      :clamp(w*.352,412,547);
+      :clamp(w*.375,440,580);
     s.pitch=2*Math.asin(clamp((s.cardWidth+11)/(2*s.radius),0,.49))*180/Math.PI;
-    s.centerY=s.height*(s.mobile?.542:.535);
+    s.centerY=s.height*(s.mobile?.52:.50);
     s.host.style.setProperty('--lb-card-width',s.cardWidth+'px');
     s.host.style.setProperty('--lb-card-height',s.cardHeight+'px');
     // Each card is itself a gently curved five-segment plate. The segments

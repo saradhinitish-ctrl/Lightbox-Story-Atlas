@@ -146,7 +146,7 @@
       clamp(w*.393,470,605);
     // Distinct cards with generous seams. Angles are mathematically derived
     // from their chord separation rather than guessed viewport translations.
-    s.pitch=2*Math.asin(clamp((s.cardWidth+26)/(2*s.radius),0,.49))*180/Math.PI;
+    s.pitch=2*Math.asin(clamp((s.cardWidth+26)/(2*s.radius),0,.49))*180/Math.PI*.89;
     s.centerY=s.height*(s.mobile?.514:.472);
     s.host.style.setProperty('--lb-card-width',s.cardWidth+'px');
     s.host.style.setProperty('--lb-card-height',s.cardHeight+'px');
@@ -188,7 +188,7 @@
         + x.toFixed(2) + 'px,' + dy.toFixed(2) + 'px,' + z.toFixed(2)
         + 'px) rotateY(' + angle.toFixed(3) + 'deg)';
       // The outermost panels turn almost edge-on: quiet their stray clipped text.
-      const alpha = Math.abs(rel) <= 1.35 ? 1 : clamp(1-(Math.abs(rel)-1.35)*1.05,.19,1);
+      const alpha = Math.abs(rel) <= 1.35 ? 1 : clamp(1-(Math.abs(rel)-1.35)*.65,.34,1);
       if (card._alpha !== alpha) { card.style.opacity = String(alpha); card._alpha = alpha; }
       const disabled = Math.abs(rel) >= 2.48;
       if (card._disabled !== disabled) {

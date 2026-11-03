@@ -303,7 +303,7 @@
  .studio.atlas-shell.lb-cylinder-atlas .atlas-world-name>input{
    font-size:clamp(34px,4vw,55px)!important;line-height:1.05!important
  }
- .lb-cylinder-v7 .lb-cylinder-controls{min-height:56px;height:56px!important}
+ .lb-cylinder-v7 .lb-cylinder-controls{min-height:56px;height:56px!important;margin-top:-22px!important}
 }
 @media(max-width:700px){
  .studio.atlas-shell.lb-cylinder-atlas .story-atlas{padding:14px 0 24px!important}

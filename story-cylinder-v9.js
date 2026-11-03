@@ -147,6 +147,14 @@
     s.radius=s.mobile?Math.max(s.cardWidth*1.43,w*.91):clamp(w*.393,470,605);
     s.pitch=2*Math.asin(clamp((s.cardWidth+26)/(2*s.radius),0,.49))*180/Math.PI*.96;
     s.centerY=s.height*(s.mobile?.514:.472);
+    // Side cards are farther from the camera, so perspective shortens them.
+    // Compensate for that shortening at their shared FOOT line, not their
+    // centers: every panel appears to stand on the same physical floor.
+    // These values match .lb-cylinder-card top and .lb-cylinder-stage camera.
+    const panelCenterY=s.height*(s.mobile?.514:.50);
+    const cameraOriginY=s.height*(s.mobile?.47:.46);
+    const cameraDistance=s.mobile?1100:1850;
+    s.floorLevelFactor=(panelCenterY+s.cardHeight/2-cameraOriginY)/cameraDistance;
     s.host.style.setProperty('--lb-card-width',s.cardWidth+'px');
     s.host.style.setProperty('--lb-card-height',s.cardHeight+'px');
     drawShell(s);paint(s);
@@ -166,7 +174,9 @@
       const theta = angle * rad;
       const x = radius * Math.sin(theta);
       const z = radius * (Math.cos(theta) - 1);
-      const dy = z * (s.mobile ? .026 : .035);
+      // z is negative at the sides. Shift those cards DOWN just enough for
+      // their projected lower edges to match the centered card's baseline.
+      const dy = -z * s.floorLevelFactor;
       card.style.transform = 'translate3d(-50%,-50%,0) translate3d('
         + x.toFixed(2) + 'px,' + dy.toFixed(2) + 'px,' + z.toFixed(2)
         + 'px) rotateY(' + angle.toFixed(3) + 'deg)';

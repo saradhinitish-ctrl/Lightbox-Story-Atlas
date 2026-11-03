@@ -295,7 +295,14 @@
 .lb-cylinder-back[hidden]{display:none!important}
 .lb-cylinder-back:hover{background:#dcf3b3}
 @media(min-width:701px) and (max-height:810px){
- .studio.atlas-shell.lb-cylinder-atlas .atlas-heading{min-height:95px!important}
+ .studio.atlas-shell.lb-cylinder-atlas .atlas-heading{
+   min-height:85px!important;height:85px!important;margin-bottom:0!important
+ }
+ .studio.atlas-shell.lb-cylinder-atlas .atlas-heading .atlas-eyebrow,
+ .studio.atlas-shell.lb-cylinder-atlas .atlas-heading p{display:none!important}
+ .studio.atlas-shell.lb-cylinder-atlas .atlas-world-name>input{
+   font-size:clamp(34px,4vw,55px)!important;line-height:1.05!important
+ }
  .lb-cylinder-v7 .lb-cylinder-controls{min-height:56px;height:56px!important}
 }
 @media(max-width:700px){

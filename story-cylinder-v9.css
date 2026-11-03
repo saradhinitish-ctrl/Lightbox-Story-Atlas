@@ -387,4 +387,5 @@
 /* The cards form the object. No enclosing wall, purple tank or front mask. */
 .lb-cylinder-v9 .lb-cylinder-segment{background-clip:padding-box}
 .lb-cylinder-v9 .lb-cylinder-content{isolation:isolate}
-.lb-cylinder-v9 .lb-cylinder-card.is-active{filter:drop-shadow(0 9px 10px rgba(46,34,51,.14))}
+/* Keep the card's 3D transform chain unflattened: only its ground shadow is blurred. */
+.lb-cylinder-v9 .lb-cylinder-card.is-active::before{opacity:1;transform:translateZ(-14px) scale(1.04)}

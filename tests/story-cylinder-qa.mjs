@@ -39,11 +39,11 @@ console.log('Browser executable:',systemBrowser||'Playwright bundled Chromium');
 const browser=await chromium.launch({headless:true,...(systemBrowser?{executablePath:systemBrowser}:{})});
 const results=[];
 const errors=[];
-const sizes=[320,390,768,1200,1440,1920];
+const sizes=[[320,900],[390,900],[768,900],[1200,900],[1440,900],[1920,900],[1440,700],[1200,768]];
 const sleep=(ms)=>new Promise(done=>setTimeout(done,ms));
 try{
- for(const width of sizes){
-  const page=await browser.newPage({viewport:{width,height:900},deviceScaleFactor:1});
+ for(const [width,height] of sizes){
+  const page=await browser.newPage({viewport:{width,height},deviceScaleFactor:1});
   const browserErrors=[];
   page.on('pageerror', e=>browserErrors.push(e.message));
   page.on('console', e=>{if(e.type()==='error') browserErrors.push(e.text());});
@@ -68,12 +68,15 @@ try{
    const stage=document.querySelector('.lb-cylinder-stage');
    const shell=document.querySelector('.lb-cylinder-body');
    return {
-    width:innerWidth,screenWidth:document.documentElement.scrollWidth,
+    width:innerWidth,height:innerHeight,screenWidth:document.documentElement.scrollWidth,
     cardCount:all.length,sourceCount:document.querySelectorAll('.lb-cylinder-v7 .lb-cylinder-source').length,
     shellCanvas:[shell.width,shell.height],
     stage:[stage.clientWidth,stage.clientHeight],
     active:all.filter(c=>c.classList.contains('is-active')).map(c=>c.dataset.index),
-    rimRadius:Number(getComputedStyle(document.querySelector('.lb-cylinder-v7')).getPropertyValue('--lb-card-width').replace('px',''))
+    rimRadius:Number(getComputedStyle(document.querySelector('.lb-cylinder-v7')).getPropertyValue('--lb-card-width').replace('px','')),
+    controlsBottom:document.querySelector('.lb-cylinder-controls').getBoundingClientRect().bottom,
+    dockTop:(()=>{const dock=document.querySelector('.creative-dock');
+      return dock && getComputedStyle(dock).display!=='none' ? dock.getBoundingClientRect().top : innerHeight;})()
    };
   });
   assert.equal(measure.cardCount,5,'Exactly five cards at '+width);
@@ -82,8 +85,10 @@ try{
   assert.equal(measure.active[0],'2','Screenplay first at '+width);
   assert.ok(measure.screenWidth<=width+2,'No page overflow at '+width);
   assert.ok(measure.shellCanvas[0]>0&&measure.shellCanvas[1]>0,'Canvas visible at '+width);
-  await page.screenshot({path:resolve(dir,'cylinder-'+width+'.png'),fullPage:true});
-  if(width===1200){
+  assert.ok(measure.controlsBottom <= Math.min(height,measure.dockTop)+4,
+    'Rotation controls must appear above the fixed dock at '+width+'x'+height+': '+JSON.stringify(measure));
+  await page.screenshot({path:resolve(dir,'cylinder-'+width+'x'+height+'.png'),fullPage:true});
+  if(width===1200 && height===900){
    await page.locator('.lb-cylinder-next').click();
    await page.waitForTimeout(550);
    let current=await page.locator('.lb-cylinder-card.is-active').getAttribute('data-index');
@@ -144,7 +149,7 @@ try{
    assert.equal(await page.locator('.lb-cylinder-card.is-active').getAttribute('data-index'),'0',
      'Return remembers selected World card');
   }
-  results.push({width,status:'passed',measure,errors:browserErrors});
+  results.push({width,height,status:'passed',measure,errors:browserErrors});
   if(browserErrors.length) errors.push({width,browserErrors});
   await page.close();
  }

@@ -152,9 +152,11 @@
     // The old radius (up to 605px) left cards like a flat product row.
     // Radius and angular pitch now share the SAME chord geometry, with
     // modest gaps between tangent cards and nearly edge-on far stations.
-    s.radius=s.mobile?Math.max(s.cardWidth*1.34,w*.91):
-      Math.max(s.cardWidth*1.34,350);
-    s.pitch=2*Math.asin(clamp(s.cardWidth*.93/(2*s.radius),0,.49))*180/Math.PI;
+    // Keep far side stations visible: too sharp a pitch hides the
+    // outer two cards completely behind the nearer panels.
+    s.radius=s.mobile?Math.max(s.cardWidth*1.38,w*.94):
+      Math.max(s.cardWidth*1.38,360);
+    s.pitch=2*Math.asin(clamp(s.cardWidth*.93/(2*s.radius),0,.49))*180/Math.PI*.88;
     s.centerY=s.height*.50;
 
     s.host.style.setProperty('--lb-card-width',s.cardWidth+'px');

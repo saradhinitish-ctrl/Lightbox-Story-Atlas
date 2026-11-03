@@ -1,0 +1,33 @@
+name: Story Cylinder v8 curved studio browser QA
+on:
+  push:
+    branches:
+      - feat/story-cylinder-v8-studio-geometry
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  visual-browser-qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - name: Checkout current branch
+        uses: actions/checkout@v4
+      - name: Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install isolated Playwright driver
+        run: |
+          npm install --prefix /tmp/lightbox-cyl-qa --no-save playwright@1.56.1
+          which google-chrome || which chromium || true
+          google-chrome --version || chromium --version || true
+      - name: Test real static site at eight viewports
+        run: PLAYWRIGHT_MODULE=/tmp/lightbox-cyl-qa/node_modules/playwright/index.mjs node tests/story-cylinder-qa.mjs
+      - name: Archive screenshots and QA report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: story-cylinder-v8-browser-qa
+          path: qa-artifacts/
+          if-no-files-found: ignore

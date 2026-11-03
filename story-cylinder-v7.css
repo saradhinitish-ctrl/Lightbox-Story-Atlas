@@ -60,7 +60,7 @@
 }
 .lb-cylinder-v7{--lb-card-width:278px;--lb-card-height:408px;position:relative;width:100%;max-width:100%;color:#302c29}
 .lb-cylinder-v7 *{box-sizing:border-box}
-.lb-cylinder-studio{position:relative;width:100%;height:clamp(548px,43vw,614px);isolation:isolate}
+.lb-cylinder-studio{position:relative;width:100%;height:clamp(410px,calc(100dvh - 394px),560px);isolation:isolate}
 .lb-cylinder-aura{
   position:absolute;inset:8% 0 0;pointer-events:none;
   background:radial-gradient(ellipse at 50% 66%,rgba(201,173,223,.21),transparent 67%);
@@ -294,6 +294,10 @@
 }
 .lb-cylinder-back[hidden]{display:none!important}
 .lb-cylinder-back:hover{background:#dcf3b3}
+@media(min-width:701px) and (max-height:810px){
+ .studio.atlas-shell.lb-cylinder-atlas .atlas-heading{min-height:95px!important}
+ .lb-cylinder-v7 .lb-cylinder-controls{min-height:56px;height:56px!important}
+}
 @media(max-width:700px){
  .studio.atlas-shell.lb-cylinder-atlas .story-atlas{padding:14px 0 24px!important}
  .studio.atlas-shell.lb-cylinder-atlas .atlas-heading{min-height:126px;padding:0 13px!important}

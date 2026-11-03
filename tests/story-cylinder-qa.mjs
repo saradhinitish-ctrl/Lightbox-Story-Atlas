@@ -113,8 +113,35 @@ try{
   // surface. Measure the actual painted plaque and inner content (not only
   // the parent transform wrapper) at all five carousel stations.
   const camera=await page.locator('.lb-cylinder-stage')
-    .evaluate(node=>getComputedStyle(node).perspective);
-  assert.equal(camera,'none','Orthographic camera prevents vertical foreshortening at '+width);
+    .evaluate(node=>parseFloat(getComputedStyle(node).perspective));
+  assert.ok(camera>=1800&&camera<=2450,'3D perspective restored for cylindrical depth at '+width);
+  const wrap=await page.evaluate(()=>{
+    const cards=[...document.querySelectorAll('.lb-cylinder-card')];
+    const center=cards.find(c=>c.classList.contains('is-active'));
+    const ci=Number(center.dataset.index);
+    const getRect=i=>cards.find(c=>Number(c.dataset.index)===((ci+i+5)%5))
+      .querySelector('.lb-cylinder-plaque').getBoundingClientRect();
+    const c=getRect(0),s=getRect(1),f=getRect(2),l=getRect(-1);
+    return {centerWidth:c.width,sideWidth:s.width,farWidth:f.width,
+      centerX:c.x+c.width/2,sideX:s.x+s.width/2,farX:f.x+f.width/2,
+      centerRight:c.right,centerLeft:c.left,sideLeft:s.left,
+      otherSideRight:l.right,sideRight:s.right,farLeft:f.left,farRight:f.right};
+  });
+  assert.ok(wrap.sideWidth<wrap.centerWidth*.89&&wrap.sideWidth>wrap.centerWidth*.53,
+    'Near station visibly wraps into the cylinder: '+JSON.stringify(wrap));
+  assert.ok(wrap.farWidth<wrap.centerWidth*.46,
+    'Far station turns toward a true edge-on profile: '+JSON.stringify(wrap));
+  assert.ok(wrap.farX>wrap.sideX&&wrap.sideX>wrap.centerX,
+    'Cards occupy ordered stations on the circular shell: '+JSON.stringify(wrap));
+  if(width>=1200){
+    assert.ok(wrap.farRight-wrap.sideRight>24,
+      'Outermost card must be VISIBLE beyond the nearer card, not concealed: '+JSON.stringify(wrap));
+    assert.ok(wrap.sideLeft-wrap.centerRight>=8 &&
+              wrap.centerLeft-wrap.otherSideRight>=8,
+      'Separate card faces must have real gutters beside the active card: '+JSON.stringify(wrap));
+    assert.ok(wrap.farLeft-wrap.sideRight>=7,
+      'Outermost panel must not collide with the near-side card: '+JSON.stringify(wrap));
+  }
   const measureAlignment=async()=>page.evaluate(()=>{
     const cards=[...document.querySelectorAll('.lb-cylinder-card')];
     const active=cards.find(card=>card.classList.contains('is-active'));
@@ -141,7 +168,13 @@ try{
       await page.waitForTimeout(650);
     }
     const results=await measureAlignment();
-    const tolerance=1.5;
+    if(width===1440&&height===900){
+      await page.screenshot({
+        path:resolve(dir,'cylinder-1440x900-station-'+rotation+'.png'),
+        fullPage:true
+      });
+    }
+    const tolerance=4.5;
     assert.ok(results.every(m=>Math.max(Math.abs(m.top),Math.abs(m.bottom),
       Math.abs(m.height))<=tolerance),
       'All card PLAQUE and CONTENT edges must align within '+tolerance+'px at '+

@@ -47,6 +47,7 @@ try{
   const browserErrors=[];
   page.on('pageerror', e=>browserErrors.push(e.message));
   page.on('console', e=>{if(e.type()==='error') browserErrors.push(e.text());});
+  page.on('response', e=>{if(e.status()===404)browserErrors.push('HTTP 404: '+e.url());});
   await page.goto('http://127.0.0.1:4173/index.html',{waitUntil:'domcontentloaded'});
   const skip=page.locator('.lb-opener__skip');
   if(await skip.isVisible().catch(()=>false))await skip.click().catch(()=>{});
@@ -163,6 +164,56 @@ try{
    await page.locator('.lb-cylinder-v7').waitFor({state:'visible',timeout:5000});
    assert.equal(await page.locator('.lb-cylinder-card.is-active').getAttribute('data-index'),'0',
      'Return remembers selected World card');
+   // Native React content changes are mirrored into the displayed Atlas.
+   await page.evaluate(() => {
+     const p=document.querySelector('.atlas-map .atlas-foundation .spark-note p');
+     if(!p)throw new Error('Original React Foundation not found');
+     p.textContent='CYLINDER QA - updated native premise';
+   });
+   await page.waitForFunction(()=>
+     document.querySelector('.lb-cylinder-foundation .spark-note p')?.textContent?.includes('CYLINDER QA - updated native premise'),
+     {timeout:3500}
+   );
+   // Remaining original workspace actions must remain functional, not simulated.
+   for(const [index,selector] of [
+     ['1','.lb-cylinder-research'],
+     ['3','.lb-cylinder-visual'],
+     ['4','.lb-cylinder-foundation']
+   ]){
+     for(let step=0;step<5;step++){
+       const current=await page.locator('.lb-cylinder-card.is-active').getAttribute('data-index');
+       if(current===index)break;
+       await page.locator('.lb-cylinder-next').click();
+       await page.waitForTimeout(95);
+     }
+     await page.waitForTimeout(420);
+     assert.equal(await page.locator('.lb-cylinder-card.is-active').getAttribute('data-index'),index,
+       'Select '+selector);
+     await page.locator(selector).click();
+     await page.waitForTimeout(340);
+     assert.equal(await page.locator('.story-atlas').isVisible().catch(()=>false),false,
+       selector+' navigates through native React');
+     await page.locator('.lb-cylinder-back').click();
+     await page.locator('.lb-cylinder-v7').waitFor({state:'visible',timeout:5000});
+   }
+   // Animation must not update every element in the document; five live cards only.
+   const stats=await page.evaluate(async()=>{
+     const next=document.querySelector('.lb-cylinder-next');
+     const cards=[...document.querySelectorAll('.lb-cylinder-card')];
+     const start=performance.now();let samples=0;let slow=0;let last=start;
+     next.click();
+     await new Promise(resolve=>{
+       const frame=t=>{
+         if(t-last>23)slow++;
+         last=t;samples++;
+         if(t-start<650)requestAnimationFrame(frame);else resolve();
+       };
+       requestAnimationFrame(frame);
+     });
+     return {samples,slow,replicas:document.querySelectorAll('.lb-cylinder-source').length,cards:cards.length};
+   });
+   assert.equal(stats.replicas,5,'Only five live card DOM replicas remain');
+   assert.ok(stats.samples>12,'Browser rendered multiple frames');
   }
   results.push({width,height,status:'passed',measure,errors:browserErrors});
   if(browserErrors.length) errors.push({width,browserErrors});

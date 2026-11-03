@@ -1,0 +1,29 @@
+name: Focus Cinematic Website Icon QA
+on:
+  push:
+    branches:
+      - feat/focus-cinematic-site-icon
+    paths:
+      - 'favicon.svg'
+      - 'favicon.ico'
+      - 'apple-touch-icon.png'
+      - 'app-icons/focus-cinematic-*.png'
+      - 'manifest.webmanifest'
+      - '*.html'
+      - 'tests/focus-cinematic-qa.mjs'
+      - '.github/workflows/focus-cinematic-icons-qa.yml'
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify-focus-icons:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify website favicons and installation icons
+        run: node tests/focus-cinematic-qa.mjs

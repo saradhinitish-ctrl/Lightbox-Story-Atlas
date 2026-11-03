@@ -10,6 +10,12 @@ import assert from 'node:assert/strict';
 
 const {chromium} = await import(process.env.PLAYWRIGHT_MODULE || 'playwright');
 const root = process.cwd();
+// Visual regression: the canvas no longer draws the grey orbit outlines.
+const cylinderSource = await readFile(resolve(root,'story-cylinder-v9.js'),'utf8');
+const shellStart = cylinderSource.indexOf('function drawShell(s) {');
+const shellEnd = cylinderSource.indexOf('function resize(s) {',shellStart);
+assert.ok(shellStart>=0 && shellEnd>shellStart,'Story Cylinder drawing code exists');
+assert.doesNotMatch(cylinderSource.slice(shellStart,shellEnd),/\.stroke\s*\(/,'No hard-edged orbit lines drawn');
 const dir = resolve(root, 'qa-artifacts');
 await mkdir(dir, {recursive:true});
 const mime = {

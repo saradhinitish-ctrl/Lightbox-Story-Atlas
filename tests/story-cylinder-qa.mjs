@@ -122,15 +122,17 @@ try{
     }));
   });
   if((width===390||width===1200||width===1440)&&height===900){
-    const tolerance=width<=700?33:24;
+    // Visual foot alignment must be symmetric: neither above nor below.
+    // Old one-sided check passed even when outer panels hung 10–15px lower.
+    const tolerance=2.5;
     for(let rotation=0;rotation<3;rotation++){
       if(rotation){
         await page.locator('.lb-cylinder-next').click();
         await page.waitForTimeout(600);
       }
       const offsets=await measureFootAlignment();
-      assert.ok(offsets.every(item=>item.offset>=-tolerance),
-        'Outer cards must not rise above the shared floor at '+width+'px, rotation '+rotation+': '+JSON.stringify(offsets));
+      assert.ok(offsets.every(item=>Math.abs(item.offset)<=tolerance),
+        'All five card feet must align within '+tolerance+'px at '+width+'px, rotation '+rotation+': '+JSON.stringify(offsets));
     }
     // Restore initial selection so existing navigation tests and screenshots
     // continue using the established Story Cylinder default state.

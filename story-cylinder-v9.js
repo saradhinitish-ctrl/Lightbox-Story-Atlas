@@ -146,7 +146,7 @@
       clamp(w*.393,470,605);
     // Distinct cards with generous seams. Angles are mathematically derived
     // from their chord separation rather than guessed viewport translations.
-    s.pitch=2*Math.asin(clamp((s.cardWidth+26)/(2*s.radius),0,.49))*180/Math.PI*.89;
+    s.pitch=2*Math.asin(clamp((s.cardWidth+26)/(2*s.radius),0,.49))*180/Math.PI*.96;
     s.centerY=s.height*(s.mobile?.514:.472);
     s.host.style.setProperty('--lb-card-width',s.cardWidth+'px');
     s.host.style.setProperty('--lb-card-height',s.cardHeight+'px');

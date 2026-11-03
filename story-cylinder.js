@@ -1,27 +1,288 @@
-/* Lightbox Story Cylinder / packaged assets — generated from story-cylinder.css and story-cylinder.js.
-   Full editable sources are included in the Lightbox Cylinder Source ZIP.
-   If decompression is unavailable, the original Story Atlas remains functional. */
+/* Lightbox Studio — Story Cylinder v2.
+ * Presentation only. Every destination is opened through the real React control.
+ * No writes to IndexedDB, project state, or the editor tree. */
 (() => {
   'use strict';
-  const cssData = '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';
-  const jsData = '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';
-  async function unpack(encoded) {
-    const bytes = Uint8Array.from(atob(encoded), c => c.charCodeAt(0));
-    const decompressed = new Blob([bytes]).stream().pipeThrough(new DecompressionStream('gzip'));
-    return await new Response(decompressed).text();
+  const root = document.getElementById('root');
+  if (!root) return;
+  const STEPS = [
+    {id:'script', label:'01 / THE SCREENPLAY', title:'Make it a scene.', detail:'The writing room', action:'.atlas-script'},
+    {id:'foundation', label:'02 / STORY DEVELOPMENT', title:'The spark.', detail:'Premise, theme, and the first idea', action:'.atlas-foundation'},
+    {id:'research', label:'03 / RESEARCH', title:'Follow the threads.', detail:'Research and exploration', action:'.atlas-research'},
+    {id:'visual', label:'04 / VISUAL LANGUAGE', title:'Think in frames.', detail:'Scene boards and visual references', action:'.atlas-visual'},
+    {id:'sequence', label:'05 / SEQUENCE', title:'Shape the rhythm.', detail:'Scenes, beats, and structure', action:'.atlas-reel .stage-section-heading button'},
+    {id:'world', label:'06 / WORLD BUILDING', title:'Build the world.', detail:'Characters, places, and objects', action:'.atlas-world .world-index button'}
+  ];
+  const N = STEPS.length;
+  const STEP = 360 / N;
+  const reduceMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)');
+  const clamp = (x,a,b) => Math.max(a,Math.min(b,x));
+  const mod = (n,m) => (n%m+m)%m;
+  const esc = str => String(str ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  let selectedAngle = 0;
+  let cylinder = null;
+  let entered = false;
+  let opening = false;
+  let activeTransition = null;
+  let scheduled = false;
+  let back = null;
+
+  function sourceNode(selector) {
+    return root.querySelector('.story-atlas ' + selector);
   }
-  if (typeof DecompressionStream !== 'function') {
-    console.warn('Lightbox cylinder requires a modern browser; classic Atlas remains available.');
-    return;
+  function nativeOpen(id, option) {
+    let target;
+    if (id === 'world') {
+      const index = option === 'locations' ? 1 : option === 'props' ? 2 : 0;
+      target = root.querySelectorAll('.story-atlas .atlas-world .world-index button')[index];
+    } else target = sourceNode(STEPS.find(s => s.id === id)?.action || '.__missing__');
+    if (!target || !target.isConnected) return false;
+    target.click(); // React owns the action and subsequent workspace lifecycle.
+    return true;
   }
-  Promise.all([unpack(cssData), unpack(jsData)]).then(([css,js]) => {
-    const style = document.createElement('style');
-    style.dataset.lightboxCylinder = 'true';
-    style.textContent = css;
-    document.head.appendChild(style);
-    const script = document.createElement('script');
-    script.textContent = js.replace("if (id === 'world' && origin?.closest('.world-index button')) return origin.closest('.world-index button');\\n      return map?.querySelector(source[id]);".replace('\\n','\n'), "if (id === 'world') return origin?.closest('.world-index button') || map?.querySelector('.atlas-world .world-index button');\\n      return map?.querySelector(source[id]);".replace('\\n','\n'));
-    document.body.appendChild(script);
-    script.remove();
-  }).catch(error => console.error('Lightbox cylinder could not load; original Atlas is unaffected.', error));
+  function summary(id) {
+    const clean = selector => sourceNode(selector)?.textContent?.trim() || '';
+    if (id === 'script') return clean('.atlas-script > p') || 'Your screenplay, draft by draft.';
+    if (id === 'foundation') return clean('.atlas-foundation .spark-note p') || 'A story begins with an idea.';
+    if (id === 'research') return clean('.atlas-research .research-card-body small') || 'Keep every question worth asking.';
+    if (id === 'visual') return clean('.atlas-visual .atlas-visual-board-footer') || 'Make a visual language for your film.';
+    if (id === 'sequence') return clean('.atlas-reel .stage-section-heading > span') || 'Every scene has a pulse.';
+    return clean('.atlas-world .world-card-heading small') || 'People, places, and the objects between.';
+  }
+  function worldOptions() {
+    const controls = root.querySelectorAll('.story-atlas .atlas-world .world-index button');
+    const ids = ['characters','locations','props'];
+    return `<div class="lb-cylinder-world-links">${ids.map((id,i) => {
+      const count = controls[i]?.querySelector('.world-index-count')?.textContent?.trim() || '0';
+      const name = id === 'props' ? 'Objects' : id[0].toUpperCase()+id.slice(1);
+      return `<button type="button" data-world-option="${id}" tabindex="0"><span>${esc(name)}</span><small>${esc(count)}</small><b aria-hidden="true">↗</b></button>`;
+    }).join('')}</div>`;
+  }
+  function content(step, i) {
+    const isWorld = step.id === 'world';
+    const extra = step.id === 'script' ? `<div class="lb-cylinder-script-rule"><span>INT. YOUR STORY — DAY</span><i></i><i></i><i></i></div>` :
+      step.id === 'foundation' ? '<div class="lb-cylinder-spark">✳</div>' :
+      step.id === 'visual' ? '<div class="lb-cylinder-frame"><span>FRAME / 001</span><i></i><i></i></div>' :
+      step.id === 'sequence' ? '<div class="lb-cylinder-beats" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></div>' :
+      step.id === 'research' ? '<div class="lb-cylinder-quote" aria-hidden="true">“</div>' : '';
+    return `<div class="lb-cylinder-card-inner"><div class="lb-cylinder-top"><span>${esc(step.label)}</span><span class="lb-cylinder-cross" aria-hidden="true">✣</span></div><div class="lb-cylinder-body"><span class="lb-cylinder-number">${String(i+1).padStart(2,'0')}</span>${extra}<h2>${esc(step.title)}</h2><p>${esc(summary(step.id))}</p>${isWorld ? worldOptions() : ''}</div><div class="lb-cylinder-foot"><span>${esc(step.detail)}</span><span aria-hidden="true">↗</span></div></div>`;
+  }
+  function getSelectedIndex() { return mod(Math.round(selectedAngle / STEP), N); }
+  function decorateButtons(state) {
+    const active = mod(Math.round(state.angle/STEP),N);
+    state.cards.forEach((card,i)=>{
+      const delta = ((i - state.angle/STEP + N*50 + N/2) % N) - N/2;
+      const facing = Math.cos(delta * Math.PI*2/N);
+      const muted = facing < -0.15;
+      card.classList.toggle('is-current',i===active);
+      card.classList.toggle('is-rear',muted);
+      card.style.setProperty('--light',String(clamp(0.7 + facing*.3,.50,1)));
+      card.style.zIndex = String(Math.round((facing+1)*100));
+      card.setAttribute('aria-current',i===active?'true':'false');
+      card.tabIndex = muted ? -1 : 0;
+    });
+    state.counter.textContent = String(active+1).padStart(2,'0') + ' / ' + String(N).padStart(2,'0');
+  }
+  function paint(state) {
+    if (!state.host.isConnected) return;
+    state.rotor.style.transform = `translateZ(${-state.radius}px) rotateY(${-state.angle}deg)`;
+    decorateButtons(state);
+  }
+  function animate(state) {
+    if (state.raf) return;
+    const frame = () => {
+      state.raf = 0;
+      if (!state.host.isConnected) return;
+      if (reduceMotion?.matches) {state.angle=state.target;state.velocity=0;paint(state);return;}
+      const error = state.target - state.angle;
+      state.velocity = state.velocity * .73 + error * .085;
+      state.angle += state.velocity;
+      if (Math.abs(error)<.025 && Math.abs(state.velocity)<.018) {state.angle=state.target;state.velocity=0;paint(state);return;}
+      paint(state);
+      state.raf = requestAnimationFrame(frame);
+    };
+    state.raf = requestAnimationFrame(frame);
+  }
+  function settle(state, anticipated=0) {
+    state.target = Math.round((state.target + anticipated)/STEP)*STEP;
+    selectedAngle = state.target;
+    animate(state);
+  }
+  function go(state, index) {
+    const current = state.target / STEP;
+    const difference = ((index - Math.round(current) + N*100 + N/2) % N) - N/2;
+    state.target = (Math.round(current)+difference)*STEP;
+    selectedAngle=state.target;
+    animate(state);
+  }
+  function next(state, direction) {
+    if (opening) return;
+    if (state.wheelTimer) clearTimeout(state.wheelTimer);
+    state.target = Math.round(state.target/STEP)*STEP + direction*STEP;
+    selectedAngle=state.target;
+    animate(state);
+  }
+  function size(state) {
+    if (!state.host.isConnected) return;
+    const w=state.view.clientWidth || innerWidth;
+    const h=state.view.clientHeight || 560;
+    const width=clamp(w-56, 220, w<640?326:358);
+    const height=clamp(h-95, 300, w<640?422:476);
+    state.radius = Math.ceil(width/(2*Math.sin(Math.PI/N)) + (w<640?52:72));
+    state.host.style.setProperty('--lb-card-width',width+'px');
+    state.host.style.setProperty('--lb-card-height',height+'px');
+    state.host.style.setProperty('--lb-radius',state.radius+'px');
+    state.cards.forEach((card,i)=>{card.style.transform=`rotateY(${i*STEP}deg) translateZ(${state.radius}px)`;});
+    paint(state);
+  }
+  function transitionOpen(state,index,option) {
+    if (opening || !state.host.isConnected) return;
+    opening=true;
+    const step=STEPS[index];
+    go(state,index);
+    const execute=()=>{
+      if (!state.host.isConnected) {opening=false;return;}
+      const card=state.cards[index];
+      const rect=card.getBoundingClientRect();
+      const reduced=!!reduceMotion?.matches;
+      const overlay=card.cloneNode(true);
+      overlay.className='lb-cylinder-opening-card lb-cylinder-card lb-cylinder-'+step.id;
+      overlay.removeAttribute('tabindex');
+      overlay.setAttribute('aria-hidden','true');
+      overlay.querySelectorAll('button').forEach(btn=>btn.tabIndex=-1);
+      overlay.style.cssText=`position:fixed;z-index:99999;left:${rect.left}px;top:${rect.top}px;width:${rect.width}px;height:${rect.height}px;transform:none;pointer-events:none;`;
+      document.body.append(overlay);
+      activeTransition=overlay;
+      const finish=()=>{
+        if (!state.host.isConnected) {overlay.remove();opening=false;return;}
+        const ok=nativeOpen(step.id,option);
+        if (!ok) console.error('Lightbox cylinder: native destination not found for',step.id);
+        setTimeout(()=>{overlay.remove();if(activeTransition===overlay) activeTransition=null;opening=false;sync();},180);
+      };
+      if (reduced) {overlay.remove();activeTransition=null;finish();return;}
+      const anim=overlay.animate([
+        {left:rect.left+'px',top:rect.top+'px',width:rect.width+'px',height:rect.height+'px',transform:'perspective(1200px) rotateY(0deg)',opacity:1,borderRadius:'3px'},
+        {offset:.43,left:Math.max(18,(innerWidth-rect.width)/2)+'px',top:Math.max(20,(innerHeight-rect.height)/2)+'px',width:rect.width+'px',height:rect.height+'px',transform:'perspective(1200px) rotateY(-13deg) scale(1.025)',opacity:1,borderRadius:'3px'},
+        {left:'0px',top:'0px',width:innerWidth+'px',height:innerHeight+'px',transform:'perspective(1200px) rotateY(0deg)',opacity:1,borderRadius:'0px'}
+      ],{duration:490,easing:'cubic-bezier(.22,.72,.19,1)',fill:'forwards'});
+      anim.onfinish=finish;
+      anim.oncancel=finish;
+    };
+    if (reduceMotion?.matches || Math.abs(state.target-state.angle)<2) execute();
+    else setTimeout(execute,370);
+  }
+  function mount(atlas) {
+    const viewport=atlas.querySelector('.atlas-viewport');
+    if (!viewport || !atlas.querySelector('.atlas-script') || viewport.querySelector('.lb-cylinder')) return;
+    const host=document.createElement('section');
+    host.className='lb-cylinder';
+    host.setAttribute('aria-label','Story Cylinder — choose a workspace');
+    host.innerHTML=`<div class="lb-cylinder-environment"><div class="lb-cylinder-ground" aria-hidden="true"></div><div class="lb-cylinder-contact" aria-hidden="true"></div><div class="lb-cylinder-view" tabindex="0" role="region" aria-roledescription="3D carousel" aria-label="Swipe horizontally or use arrow keys to rotate the story cards"><div class="lb-cylinder-rotor"></div></div></div><nav class="lb-cylinder-controls" aria-label="Story Cylinder controls"><button type="button" class="lb-cylinder-prev" aria-label="Previous story card">←</button><span class="lb-cylinder-control-label">STORY CYLINDER <small class="lb-cylinder-counter" aria-live="off">01 / 06</small></span><button type="button" class="lb-cylinder-next" aria-label="Next story card">→</button></nav>`;
+    viewport.append(host);
+    const state={host,view:host.querySelector('.lb-cylinder-view'),rotor:host.querySelector('.lb-cylinder-rotor'),counter:host.querySelector('.lb-cylinder-counter'),cards:[],angle:selectedAngle,target:selectedAngle,velocity:0,radius:0,raf:0,wheelTimer:0,down:null,ignoreClick:0};
+    STEPS.forEach((step,i)=>{
+      const card=document.createElement('div');
+      card.className='lb-cylinder-card lb-cylinder-'+step.id;
+      card.setAttribute('role',step.id==='world'?'group':'button');
+      card.setAttribute('aria-label',step.title+' — '+step.detail);
+      card.tabIndex=0;
+      card.dataset.index=String(i);
+      card.innerHTML=content(step,i);
+      state.rotor.append(card);
+      state.cards.push(card);
+      card.addEventListener('click',e=>{
+        const option=e.target.closest('[data-world-option]')?.dataset.worldOption;
+        e.preventDefault();
+        e.stopPropagation();
+        if (Date.now()<state.ignoreClick || state.down?.moved) return;
+        transitionOpen(state,i,option);
+      });
+      card.addEventListener('keydown',e=>{
+        if (['Enter',' '].includes(e.key) && e.target===card){e.preventDefault();transitionOpen(state,i);}
+      });
+    });
+    host.querySelector('.lb-cylinder-prev').addEventListener('click',()=>next(state,-1));
+    host.querySelector('.lb-cylinder-next').addEventListener('click',()=>next(state,1));
+    state.view.addEventListener('keydown',e=>{
+      if (e.target !== state.view && !e.target.classList.contains('lb-cylinder-card')) return;
+      if (e.key==='ArrowRight'||e.key==='ArrowLeft') {e.preventDefault();next(state,e.key==='ArrowRight'?1:-1);}
+    });
+    state.view.addEventListener('wheel',e=>{
+      if (opening || Math.abs(e.deltaX)<2 || Math.abs(e.deltaX)<Math.abs(e.deltaY)*.65) return;
+      e.preventDefault();
+      const factor=e.deltaMode===1?2.1:e.deltaMode===2?9:.17;
+      state.target+=clamp(e.deltaX*factor,-45,45);
+      animate(state);
+      clearTimeout(state.wheelTimer);
+      state.wheelTimer=setTimeout(()=>settle(state),155);
+    },{passive:false});
+    state.view.addEventListener('pointerdown',e=>{
+      if (opening || (e.pointerType==='mouse'&&e.button!==0)) return;
+      if (e.target.closest('button') && !e.target.closest('.lb-cylinder-card')) return;
+      const card=e.target.closest('.lb-cylinder-card');
+      const option=e.target.closest('[data-world-option]')?.dataset.worldOption;
+      state.down={pointerId:e.pointerId,x:e.clientX,y:e.clientY,lastX:e.clientX,lastTime:performance.now(),velocity:0,origin:state.target,card,option,moved:false};
+      state.view.setPointerCapture?.(e.pointerId);
+    });
+    state.view.addEventListener('pointermove',e=>{
+      const down=state.down;if(!down||down.pointerId!==e.pointerId) return;
+      const dx=e.clientX-down.x,dy=e.clientY-down.y;
+      if (!down.moved && Math.abs(dx)<7) return;
+      if (!down.moved && Math.abs(dy)>Math.abs(dx)*1.35) return;
+      down.moved=true;
+      e.preventDefault();
+      const now=performance.now(),dt=Math.max(8,now-down.lastTime);
+      down.velocity=clamp((e.clientX-down.lastX)/dt,-3,3);
+      down.lastTime=now;down.lastX=e.clientX;
+      state.target=down.origin-dx*.24;
+      animate(state);
+    });
+    const release=e=>{
+      const down=state.down;if(!down||down.pointerId!==e.pointerId) return;
+      state.down=null;
+      if (state.view.hasPointerCapture?.(e.pointerId))state.view.releasePointerCapture(e.pointerId);
+      if (down.moved) {
+        state.ignoreClick=Date.now()+400;
+        settle(state,clamp(-down.velocity*30,-35,35));
+      } else if (down.card && Math.abs(e.clientY-down.y)<14) {
+        state.ignoreClick=Date.now()+360;
+        transitionOpen(state,Number(down.card.dataset.index),down.option);
+      }
+    };
+    state.view.addEventListener('pointerup',release);
+    state.view.addEventListener('pointercancel',e=>{if(state.down?.pointerId===e.pointerId){state.down=null;settle(state);}});
+    window.addEventListener('resize',()=>{if(state.host.isConnected)size(state);},{passive:true});
+    atlas.classList.add('lb-cylinder-mounted');
+    const studio=atlas.closest('.studio');studio?.classList.add('lb-cylinder-atlas');
+    cylinder=state;entered=true;
+    size(state);
+    animate(state);
+  }
+  function sync() {
+    const studio=root.querySelector('.studio.atlas-shell');
+    const atlas=studio?.querySelector('.story-atlas');
+    if (cylinder && !cylinder.host.isConnected) {cylinder=null;opening=false;if(activeTransition){activeTransition.remove();activeTransition=null;}}
+    if (atlas) {
+      studio.classList.add('lb-cylinder-atlas');
+      mount(atlas);
+    } else studio?.classList.remove('lb-cylinder-atlas');
+    if (!back) {
+      back=document.createElement('button');back.type='button';back.className='lb-cylinder-back';back.textContent='←  STORY CYLINDER';
+      back.setAttribute('aria-label','Return to Story Cylinder');
+      back.addEventListener('click',()=>{
+        const button=root.querySelector('.studio.atlas-shell .app-wordmark');
+        if(button)button.click();
+      });
+      document.body.append(back);
+    }
+    const show=!!(entered && studio && !atlas && !studio.classList.contains('composition') && studio.querySelector('.main-editor .editor-body'));
+    back.hidden=!show;
+  }
+  const observer=new MutationObserver(()=>{
+    if(scheduled)return;
+    scheduled=true;
+    requestAnimationFrame(()=>{scheduled=false;sync();});
+  });
+  observer.observe(root,{childList:true,subtree:true});
+  sync();
 })();

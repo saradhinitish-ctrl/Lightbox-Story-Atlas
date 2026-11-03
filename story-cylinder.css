@@ -1,0 +1,94 @@
+/* STORY CYLINDER / ACID PAPER — structural 3D stage, not attached card strips. */
+.studio.atlas-shell.lb-cylinder-atlas .story-atlas{box-sizing:border-box;max-width:1460px;width:100%;padding:clamp(12px,2vw,26px) clamp(14px,3vw,40px) 16px;margin:0 auto;}
+.studio.atlas-shell.lb-cylinder-atlas .atlas-heading{margin-bottom:9px;align-items:center;}
+.studio.atlas-shell.lb-cylinder-atlas .atlas-world-name{min-width:0;max-width:100%;display:flex;}
+.studio.atlas-shell.lb-cylinder-atlas .atlas-world-name>input{min-width:0;width:100%;max-width:100%;font-size:clamp(28px,3vw,42px);line-height:1.07;}
+.studio.atlas-shell.lb-cylinder-atlas .atlas-heading p{max-width:650px;font-size:12px;margin-top:4px;}
+.studio.atlas-shell.lb-cylinder-atlas .atlas-caption{display:none;}
+.studio.atlas-shell.lb-cylinder-atlas .atlas-reel,
+.studio.atlas-shell.lb-cylinder-atlas .atlas-recent,
+.studio.atlas-shell.lb-cylinder-atlas .install-app,
+.studio.atlas-shell.lb-cylinder-atlas .creative-dock,
+.studio.atlas-shell.lb-cylinder-atlas .mobile-workspace-nav {display:none!important;}
+.studio.atlas-shell.lb-cylinder-atlas .atlas-viewport{position:relative;height:auto;min-height:0;overflow:visible;background:transparent;border:0;padding:0;}
+.studio.atlas-shell.lb-cylinder-atlas .atlas-viewport > .atlas-map{position:absolute!important;visibility:hidden!important;pointer-events:none!important;width:1px!important;height:1px!important;overflow:hidden!important;z-index:-1!important;}
+.studio.atlas-shell.lb-cylinder-atlas .lb-cylinder{--lb-card-width:358px;--lb-card-height:476px;--lb-radius:430px;position:relative;width:100%;max-width:100%;isolation:isolate;color:#242620;}
+.lb-cylinder *{box-sizing:border-box;}
+.lb-cylinder-environment{height:clamp(475px,63vh,660px);position:relative;overflow:hidden;perspective:1400px;perspective-origin:50% 46%;background:transparent;}
+.lb-cylinder-environment:before{content:"";position:absolute;left:50%;top:7%;height:1px;width:min(86%,1000px);transform:translateX(-50%);background:linear-gradient(90deg,transparent,#aaa99f 22%,#aaa99f 78%,transparent);opacity:.37;}
+.lb-cylinder-view{position:absolute;inset:0;outline:none;overflow:hidden;touch-action:pan-y;cursor:grab;user-select:none;-webkit-user-select:none;perspective:1400px;perspective-origin:50% 47%;}
+.lb-cylinder-view:active{cursor:grabbing;}
+.lb-cylinder-view:focus-visible{outline:2px solid #9cb52b;outline-offset:-5px;}
+.lb-cylinder-rotor{position:absolute;inset:0;transform-style:preserve-3d;will-change:transform;pointer-events:none;}
+.lb-cylinder-ground{position:absolute;z-index:-1;left:50%;bottom:3.3%;width:min(82%,850px);height:110px;transform:translateX(-50%);border-radius:50%;background:radial-gradient(ellipse at center,rgba(29,32,25,.20) 0%,rgba(31,33,27,.13) 31%,rgba(33,32,29,.055) 56%,transparent 78%);filter:blur(10px);pointer-events:none;}
+.lb-cylinder-contact{position:absolute;z-index:-1;bottom:6.5%;left:50%;width:min(41%,380px);height:44px;transform:translateX(-50%);border-radius:50%;background:radial-gradient(ellipse,rgba(30,32,26,.22),transparent 73%);filter:blur(11px);pointer-events:none;}
+.lb-cylinder-card{position:absolute;top:48%;left:50%;width:var(--lb-card-width);height:var(--lb-card-height);margin-left:calc(var(--lb-card-width) / -2);margin-top:calc(var(--lb-card-height) / -2);transform-style:preserve-3d;backface-visibility:hidden;-webkit-backface-visibility:hidden;overflow:hidden;pointer-events:auto;cursor:pointer;border:1px solid #8b8d82;border-radius:3px;background:#f4f2e9;color:#252720;box-shadow:0 5px 7px rgba(20,22,16,.07),0 23px 34px -14px rgba(24,26,20,.22),0 47px 53px -39px rgba(25,27,20,.28);transition:box-shadow .22s ease,border-color .22s ease;outline:none;}
+.lb-cylinder-card:not(.is-rear):hover{border-color:#505746;box-shadow:0 8px 12px rgba(20,22,16,.10),0 27px 42px -14px rgba(24,26,20,.29),0 50px 60px -39px rgba(25,27,20,.33);}
+.lb-cylinder-card:focus-visible{outline:3px solid #aec539;outline-offset:-4px;}
+.lb-cylinder-card:after{content:"";position:absolute;left:0;right:0;bottom:0;height:12%;background:linear-gradient(to top,rgba(0,0,0,.055),transparent);pointer-events:none;}
+.lb-cylinder-card-inner{position:relative;height:100%;width:100%;display:flex;flex-direction:column;padding:25px 27px 22px;overflow:hidden;}
+.lb-cylinder-top{display:flex;align-items:center;justify-content:space-between;gap:16px;font:600 10px/1.4 "DM Mono",monospace;letter-spacing:.095em;text-transform:uppercase;border-bottom:1px solid currentColor;padding-bottom:14px;opacity:.9;}
+.lb-cylinder-cross{font-size:17px;font-weight:400;line-height:1;}
+.lb-cylinder-body{display:flex;flex:1;flex-direction:column;align-items:flex-start;min-height:0;padding-top:24px;position:relative;}
+.lb-cylinder-number{font:400 11px/1 "DM Mono",monospace;letter-spacing:.07em;opacity:.63;}
+.lb-cylinder-body h2{font-family:"Instrument Serif",Georgia,serif!important;font-weight:400!important;font-size:clamp(40px,3.75vw,55px)!important;line-height:1.035!important;letter-spacing:-.03em!important;margin:auto 0 14px!important;max-width:8.6ch;color:inherit!important;}
+.lb-cylinder-body p{font:400 12.5px/1.65 "DM Sans",Arial,sans-serif!important;letter-spacing:.005em;opacity:.77;max-width:31ch;min-height:40px;max-height:80px;overflow:hidden;margin:0 0 21px!important;color:inherit!important;}
+.lb-cylinder-foot{border-top:1px solid currentColor;padding-top:13px;display:flex;align-items:center;justify-content:space-between;gap:12px;font:500 10px/1.5 "DM Mono",monospace;letter-spacing:.03em;opacity:.86;}
+.lb-cylinder-foot>span:last-child{font-size:21px;line-height:1;}
+.lb-cylinder-script{background:#222520;color:#f2efe5;border-color:#0f140f;}
+.lb-cylinder-script .lb-cylinder-top{color:#c7eb41;}
+.lb-cylinder-script .lb-cylinder-foot{color:#d3dfae;}
+.lb-cylinder-script-rule{width:69%;height:112px;margin-top:24px;padding:15px;background:#e7e5da;color:#272920;box-shadow:8px 9px 0 rgba(225,231,209,.15);transform:rotate(-3deg);font:400 9px "Courier Prime",monospace;}
+.lb-cylinder-script-rule span{display:block;margin-bottom:17px;}.lb-cylinder-script-rule i{display:block;height:4px;margin:8px 0;background:#7c7e75;opacity:.3;width:95%;}.lb-cylinder-script-rule i:last-child{width:61%;}
+.lb-cylinder-foundation{background:#e8e9d7;color:#252822;}
+.lb-cylinder-spark{font:300 145px/1 Georgia,serif;color:#a4b92b;align-self:flex-end;transform:translate(-5px,-8px);}
+.lb-cylinder-research{background:#e6e5dd;color:#282a26;}
+.lb-cylinder-quote{font:300 175px/.8 Georgia,serif;color:#c3c9a3;margin-top:22px;}
+.lb-cylinder-visual{background:#eeede4;}
+.lb-cylinder-frame{margin-top:24px;position:relative;width:78%;height:128px;border:1px solid #85897c;padding:10px;display:flex;flex-direction:column;justify-content:space-between;}
+.lb-cylinder-frame span{font:500 9px "DM Mono",monospace;letter-spacing:.1em;}
+.lb-cylinder-frame i{position:absolute;inset:30px 20px 20px;border:1px solid #a3aa94;transform:translate(6px,3px);}.lb-cylinder-frame i:last-child{inset:42px 30px 32px;transform:translate(-1px,-1px);}
+.lb-cylinder-sequence{background:#dfe7c9;}
+.lb-cylinder-beats{display:flex;align-items:flex-end;gap:8px;height:120px;width:100%;margin-top:24px;border-bottom:1px solid #8c9c6c;}
+.lb-cylinder-beats i{flex:1;height:39%;border-top:2px solid #536245;background:rgba(109,134,74,.12);}.lb-cylinder-beats i:nth-child(2){height:57%;}.lb-cylinder-beats i:nth-child(3){height:44%;}.lb-cylinder-beats i:nth-child(4){height:78%;}.lb-cylinder-beats i:nth-child(5){height:67%;}.lb-cylinder-beats i:nth-child(6){height:95%;background:#aeca45;}
+.lb-cylinder-world{background:#f0eee4;}
+.lb-cylinder-world .lb-cylinder-body h2{margin-top:24px!important;margin-bottom:10px!important;}
+.lb-cylinder-world .lb-cylinder-body p{min-height:0;margin-bottom:12px!important;}
+.lb-cylinder-world-links{width:100%;display:grid;gap:4px;margin-top:auto;margin-bottom:10px;}
+.lb-cylinder-world-links button{width:100%;display:flex;align-items:center;gap:9px;padding:9px 0;border:0;border-top:1px solid #9a9e90;background:transparent;color:inherit;text-align:left;cursor:pointer;font:500 11px/1.4 "DM Sans",sans-serif;}
+.lb-cylinder-world-links button:last-child{border-bottom:1px solid #9a9e90;}
+.lb-cylinder-world-links button:hover,.lb-cylinder-world-links button:focus-visible{color:#4f6815;background:rgba(171,192,80,.12);outline:none;}
+.lb-cylinder-world-links small{margin-left:auto;font:11px "DM Mono",monospace;}.lb-cylinder-world-links b{font-size:16px;font-weight:400;margin-left:7px;}
+.lb-cylinder-controls{position:relative;z-index:2;display:flex;align-items:center;justify-content:center;gap:4px;min-height:59px;width:max-content;max-width:calc(100% - 20px);margin:0 auto;background:#eae9df;border:1px solid #b4b7aa;border-radius:2px;box-shadow:0 7px 19px -12px rgba(20,22,20,.18);}
+.lb-cylinder-controls>button{display:flex;justify-content:center;align-items:center;width:60px;height:57px;color:#222722;border:0;background:transparent;cursor:pointer;font:400 25px/1 Georgia,serif;transition:background .18s ease;}
+.lb-cylinder-controls>button:hover,.lb-cylinder-controls>button:focus-visible{background:#c9d6a4;outline:none;}
+.lb-cylinder-controls>button:active{background:#a9c54c;}
+.lb-cylinder-control-label{min-width:186px;display:flex;align-items:center;justify-content:center;gap:10px;height:57px;border-left:1px solid #b4b7aa;border-right:1px solid #b4b7aa;font:600 11px/1 "DM Mono",monospace;letter-spacing:.08em;white-space:nowrap;}
+.lb-cylinder-counter{font:400 9px "DM Mono",monospace;opacity:.58;letter-spacing:0;}
+.lb-cylinder-back{position:fixed;z-index:990;bottom:20px;left:calc(50% + 0px);transform:translateX(-50%);padding:13px 22px;border:1px solid #4d5940;border-radius:2px;background:#e5edc8;color:#252a20;font:600 11px/1.3 "DM Mono",monospace;letter-spacing:.065em;box-shadow:0 6px 19px -12px rgba(20,20,16,.32);cursor:pointer;}
+.lb-cylinder-back:hover{background:#c9e072;}.lb-cylinder-back[hidden]{display:none!important;}
+.lb-cylinder-opening-card{margin:0!important;backface-visibility:visible!important;-webkit-backface-visibility:visible!important;overflow:hidden!important;}
+@media(max-width:700px){
+.studio.atlas-shell.lb-cylinder-atlas .story-atlas{padding:14px 0 13px;}
+.studio.atlas-shell.lb-cylinder-atlas .atlas-heading{padding:0 18px 0;margin-bottom:8px;}
+.studio.atlas-shell.lb-cylinder-atlas .pitch-launch{display:none!important;}
+.studio.atlas-shell.lb-cylinder-atlas .atlas-world-name{min-width:0;max-width:100%;display:flex;}
+.studio.atlas-shell.lb-cylinder-atlas .atlas-world-name>input{min-width:0;width:100%;max-width:100%;font-size:30px;}
+.studio.atlas-shell.lb-cylinder-atlas .atlas-heading p{font-size:11px;}
+.lb-cylinder-environment{height:min(66vh,510px);min-height:415px;perspective:1050px;}
+.lb-cylinder-view{perspective:1050px;}
+.lb-cylinder-card-inner{padding:19px 21px 17px;}
+.lb-cylinder-top{font-size:9px;padding-bottom:12px;}
+.lb-cylinder-body{padding-top:17px;}
+.lb-cylinder-body h2{font-size:43px!important;}
+.lb-cylinder-spark{font-size:122px;}
+.lb-cylinder-script-rule{height:100px;}
+.lb-cylinder-frame{height:112px;}
+.lb-cylinder-beats{height:103px;}
+.lb-cylinder-controls{min-height:52px;}
+.lb-cylinder-controls>button{height:51px;width:52px;}
+.lb-cylinder-control-label{height:51px;min-width:174px;font-size:10px;}
+.lb-cylinder-back{bottom:calc(12px + env(safe-area-inset-bottom));}
+}
+@media(max-width:390px){.lb-cylinder-card-inner{padding:16px 18px 14px;}.lb-cylinder-body h2{font-size:39px!important;}.lb-cylinder-body p{font-size:11px!important;}.lb-cylinder-controls>button{width:45px;}.lb-cylinder-control-label{min-width:166px;}.lb-cylinder-environment{min-height:405px;}}
+@media(prefers-reduced-motion:reduce){.lb-cylinder-card,.lb-cylinder-controls button{transition:none!important;}.lb-cylinder-ground{filter:none;}}

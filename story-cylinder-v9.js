@@ -112,13 +112,13 @@
     ctx.save();
     ctx.translate(cx,base+elevation*.52+11);
     ctx.scale(1,.115);
-    const shadow=ctx.createRadialGradient(0,0,r*.11,0,0,r*1.17);
-    shadow.addColorStop(0,'rgba(38,29,44,.21)');
-    shadow.addColorStop(.28,'rgba(51,38,57,.17)');
-    shadow.addColorStop(.65,'rgba(68,54,75,.065)');
+    const shadow=ctx.createRadialGradient(0,0,r*.11,0,0,r*1.08);
+    shadow.addColorStop(0,'rgba(38,29,44,.17)');
+    shadow.addColorStop(.28,'rgba(51,38,57,.13)');
+    shadow.addColorStop(.65,'rgba(68,54,75,.048)');
     shadow.addColorStop(1,'rgba(67,53,75,0)');
     ctx.fillStyle=shadow;
-    ctx.beginPath();ctx.arc(0,0,r*1.17,0,Math.PI*2);ctx.fill();
+    ctx.beginPath();ctx.arc(0,0,r*1.08,0,Math.PI*2);ctx.fill();
     ctx.restore();
 
     // A short central reflection keeps the front card anchored to a stage.
@@ -152,7 +152,7 @@
     s.host.style.setProperty('--lb-card-height',s.cardHeight+'px');
     const segments=5;
     const segmentW=s.cardWidth/segments;
-    const localRadius=s.cardWidth*1.64;
+    const localRadius=s.cardWidth*1.08;
     s.cards.forEach(card=>{
       card.querySelectorAll('.lb-cylinder-segment').forEach((panel,j)=>{
         const theta=((j+.5)/segments-.5)*s.cardWidth/localRadius;
@@ -187,7 +187,8 @@
       card.style.transform = 'translate3d(-50%,-50%,0) translate3d('
         + x.toFixed(2) + 'px,' + dy.toFixed(2) + 'px,' + z.toFixed(2)
         + 'px) rotateY(' + angle.toFixed(3) + 'deg)';
-      const alpha = clamp((2.51 - Math.abs(rel)) / .18, 0, 1);
+      // The outermost panels turn almost edge-on: quiet their stray clipped text.
+      const alpha = Math.abs(rel) <= 1.35 ? 1 : clamp(1-(Math.abs(rel)-1.35)*1.05,.19,1);
       if (card._alpha !== alpha) { card.style.opacity = String(alpha); card._alpha = alpha; }
       const disabled = Math.abs(rel) >= 2.48;
       if (card._disabled !== disabled) {

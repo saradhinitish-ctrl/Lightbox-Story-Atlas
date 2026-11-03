@@ -86,25 +86,33 @@
     const cx=w/2,r=s.radius;
     const base=s.centerY+s.cardHeight/2+7;
 
-    // Quiet ambient glow behind the orbit, faded fully into the cream page.
-    const glow=ctx.createRadialGradient(
-      cx,s.centerY+12,Math.max(12,r*.08),
-      cx,s.centerY+12,r*1.04
-    );
-    glow.addColorStop(0,'rgba(183,166,192,.073)');
-    glow.addColorStop(.56,'rgba(193,181,202,.031)');
-    glow.addColorStop(1,'rgba(193,181,202,0)');
-    ctx.fillStyle=glow;
-    ctx.beginPath();
-    ctx.ellipse(cx,s.centerY+18,r*1.06,s.cardHeight*.71,0,0,2*Math.PI);
-    ctx.fill();
+    // Fade the glow to zero *before* the stage edge, so there is never a
+    // clipped horizontal band. On small phones the CSS aura is sufficient.
+    if(!s.mobile){
+      const auraY=s.centerY+13;
+      const auraRadius=Math.min(s.cardHeight*.68,Math.max(38,h-auraY-17));
+      const extent=r*1.035;
+      ctx.save();
+      ctx.translate(cx,auraY);
+      ctx.scale(1,auraRadius/extent);
+      const glow=ctx.createRadialGradient(0,0,r*.08,0,0,extent);
+      glow.addColorStop(0,'rgba(183,166,192,.069)');
+      glow.addColorStop(.56,'rgba(193,181,202,.03)');
+      glow.addColorStop(1,'rgba(193,181,202,0)');
+      ctx.fillStyle=glow;
+      ctx.beginPath();ctx.arc(0,0,extent,0,Math.PI*2);ctx.fill();
+      ctx.restore();
+    }
 
     // Diffuse ambient occlusion; radial gradients reach zero alpha at the
     // edge so there is no visible elliptical outline or rectangular cutoff.
     ctx.save();
-    ctx.translate(cx,base+(s.mobile?18:22));
-    ctx.scale(1,s.mobile?.115:.13);
-    const shadow=ctx.createRadialGradient(0,0,r*.05,0,0,r*.94);
+    const shadowScale=s.mobile?.075:.082;
+    const shadowRadius=r*.94;
+    const shadowY=Math.min(base+10,h-shadowRadius*shadowScale-9);
+    ctx.translate(cx,shadowY);
+    ctx.scale(1,shadowScale);
+    const shadow=ctx.createRadialGradient(0,0,r*.05,0,0,shadowRadius);
     shadow.addColorStop(0,'rgba(42,33,47,.19)');
     shadow.addColorStop(.27,'rgba(53,41,57,.135)');
     shadow.addColorStop(.58,'rgba(74,59,77,.056)');

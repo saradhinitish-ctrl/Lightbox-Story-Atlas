@@ -1,4 +1,4 @@
-// Story Cylinder VII browser smoke tests (isolated temp browser profile).
+// Story Cylinder VIII browser smoke tests (isolated temp browser profile).
 // Run locally with: npm install playwright && npx playwright install chromium
 // then PLAYWRIGHT_MODULE=<resolved path to playwright/index.mjs> node tests/story-cylinder-qa.mjs
 import {createServer} from 'node:http';
@@ -58,36 +58,39 @@ try{
     await begin.click();
     await page.getByRole('button',{name:'Create world',exact:true}).click();
   }
-  try { await page.locator('.lb-cylinder-v7').waitFor({state:'visible',timeout:20000}); }
+  try { await page.locator('.lb-cylinder-v8').waitFor({state:'visible',timeout:20000}); }
   catch(e) {
    const body=(await page.locator('body').innerText().catch(()=>''))?.slice(0,1200);
    await page.screenshot({path:resolve(dir, 'startup-'+width+'.png'),fullPage:true});
    throw new Error('Cylinder failed to mount at '+width+'px: '+body);
   }
   const measure=await page.evaluate(()=>{
-   const all=[...document.querySelectorAll('.lb-cylinder-v7 .lb-cylinder-card')];
+   const all=[...document.querySelectorAll('.lb-cylinder-v8 .lb-cylinder-card')];
    const stage=document.querySelector('.lb-cylinder-stage');
    const shell=document.querySelector('.lb-cylinder-body');
    return {
     width:innerWidth,height:innerHeight,screenWidth:document.documentElement.scrollWidth,
-    cardCount:all.length,sourceCount:document.querySelectorAll('.lb-cylinder-v7 .lb-cylinder-source').length,
+    cardCount:all.length,sourceCount:document.querySelectorAll('.lb-cylinder-v8 .lb-cylinder-source').length,
     shellCanvas:[shell.width,shell.height],
     stage:[stage.clientWidth,stage.clientHeight],
     active:all.filter(c=>c.classList.contains('is-active')).map(c=>c.dataset.index),
-    rimRadius:Number(getComputedStyle(document.querySelector('.lb-cylinder-v7')).getPropertyValue('--lb-card-width').replace('px','')),
+    rimRadius:Number(getComputedStyle(document.querySelector('.lb-cylinder-v8')).getPropertyValue('--lb-card-width').replace('px','')),
     controlsBottom:document.querySelector('.lb-cylinder-controls').getBoundingClientRect().bottom,
     dockTop:(()=>{const dock=document.querySelector('.creative-dock');
       return dock && getComputedStyle(dock).display!=='none' ? dock.getBoundingClientRect().top : innerHeight;})()
    };
   });
   assert.equal(measure.cardCount,5,'Exactly five cards at '+width);
-  assert.equal(measure.sourceCount,5,'One DOM representation per card at '+width);
+  assert.equal(await page.locator('.lb-cylinder-segment').count(),25,'Each original card gets five curved segments');
+  assert.equal(measure.sourceCount,25,'Five fixed curved surface segments per card at '+width);
   assert.equal(measure.active.length,1,'Single selected card at '+width);
   assert.equal(measure.active[0],'2','Screenplay first at '+width);
   assert.ok(measure.screenWidth<=width+2,'No page overflow at '+width);
   assert.ok(measure.shellCanvas[0]>0&&measure.shellCanvas[1]>0,'Canvas visible at '+width);
   assert.ok(measure.controlsBottom <= Math.min(height,measure.dockTop)+4,
     'Rotation controls must appear above the fixed dock at '+width+'x'+height+': '+JSON.stringify(measure));
+  const curvature=await page.locator('.lb-cylinder-card.is-active .lb-cylinder-segment').evaluateAll(nodes=>nodes.map(n=>getComputedStyle(n).transform));
+  assert.equal(new Set(curvature).size,5,'Each surface segment has distinct real 3D geometry');
   await page.screenshot({path:resolve(dir,'cylinder-'+width+'x'+height+'.png'),fullPage:true});
   if(width===1200 && height===900){
    await page.locator('.lb-cylinder-next').click();
@@ -147,7 +150,7 @@ try{
    const goBack=page.locator('.lb-cylinder-back');
    assert.ok(await goBack.isVisible(),'Atlas return control visible');
    await goBack.click();
-   await page.locator('.lb-cylinder-v7').waitFor({state:'visible',timeout:5000});
+   await page.locator('.lb-cylinder-v8').waitFor({state:'visible',timeout:5000});
    // World Building nested action must navigate to the original Locations view.
    for(let attempt=0;attempt<5;attempt++){
     const i=await page.locator('.lb-cylinder-card.is-active').getAttribute('data-index');
@@ -161,7 +164,7 @@ try{
    assert.equal(await page.locator('.story-atlas').isVisible().catch(()=>false),false,
      'World Locations launches native workspace');
    await page.locator('.lb-cylinder-back').click();
-   await page.locator('.lb-cylinder-v7').waitFor({state:'visible',timeout:5000});
+   await page.locator('.lb-cylinder-v8').waitFor({state:'visible',timeout:5000});
    assert.equal(await page.locator('.lb-cylinder-card.is-active').getAttribute('data-index'),'0',
      'Return remembers selected World card');
    // Native React content changes are mirrored into the displayed Atlas.
@@ -194,7 +197,7 @@ try{
      assert.equal(await page.locator('.story-atlas').isVisible().catch(()=>false),false,
        selector+' navigates through native React');
      await page.locator('.lb-cylinder-back').click();
-     await page.locator('.lb-cylinder-v7').waitFor({state:'visible',timeout:5000});
+     await page.locator('.lb-cylinder-v8').waitFor({state:'visible',timeout:5000});
    }
    // Animation must not update every element in the document; five live cards only.
    const stats=await page.evaluate(async()=>{
@@ -212,7 +215,7 @@ try{
      });
      return {samples,slow,replicas:document.querySelectorAll('.lb-cylinder-source').length,cards:cards.length};
    });
-   assert.equal(stats.replicas,5,'Only five live card DOM replicas remain');
+   assert.equal(stats.replicas,25,'Twenty-five static surface segments and only five animated cards');
    assert.ok(stats.samples>12,'Browser rendered multiple frames');
   }
   results.push({width,height,status:'passed',measure,errors:browserErrors});

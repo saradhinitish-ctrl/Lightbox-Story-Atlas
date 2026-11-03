@@ -123,7 +123,8 @@ try{
       .querySelector('.lb-cylinder-plaque').getBoundingClientRect();
     const c=getRect(0),s=getRect(1),f=getRect(2);
     return {centerWidth:c.width,sideWidth:s.width,farWidth:f.width,
-      centerX:c.x+c.width/2,sideX:s.x+s.width/2,farX:f.x+f.width/2};
+      centerX:c.x+c.width/2,sideX:s.x+s.width/2,farX:f.x+f.width/2,
+      sideRight:s.right,farRight:f.right};
   });
   assert.ok(wrap.sideWidth<wrap.centerWidth*.89&&wrap.sideWidth>wrap.centerWidth*.53,
     'Near station visibly wraps into the cylinder: '+JSON.stringify(wrap));
@@ -131,6 +132,9 @@ try{
     'Far station turns toward a true edge-on profile: '+JSON.stringify(wrap));
   assert.ok(wrap.farX>wrap.sideX&&wrap.sideX>wrap.centerX,
     'Cards occupy ordered stations on the circular shell: '+JSON.stringify(wrap));
+  if(width>=1200)
+    assert.ok(wrap.farRight-wrap.sideRight>28,
+      'Outermost card must be VISIBLE beyond the nearer card, not concealed: '+JSON.stringify(wrap));
   const measureAlignment=async()=>page.evaluate(()=>{
     const cards=[...document.querySelectorAll('.lb-cylinder-card')];
     const active=cards.find(card=>card.classList.contains('is-active'));
@@ -157,6 +161,12 @@ try{
       await page.waitForTimeout(650);
     }
     const results=await measureAlignment();
+    if(width===1440&&height===900){
+      await page.screenshot({
+        path:resolve(dir,'cylinder-1440x900-station-'+rotation+'.png'),
+        fullPage:true
+      });
+    }
     const tolerance=4.5;
     assert.ok(results.every(m=>Math.max(Math.abs(m.top),Math.abs(m.bottom),
       Math.abs(m.height))<=tolerance),

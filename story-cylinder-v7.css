@@ -60,7 +60,7 @@
 }
 .lb-cylinder-v7{--lb-card-width:278px;--lb-card-height:408px;position:relative;width:100%;max-width:100%;color:#302c29}
 .lb-cylinder-v7 *{box-sizing:border-box}
-.lb-cylinder-studio{position:relative;width:100%;height:clamp(500px,41.3vw,576px);isolation:isolate}
+.lb-cylinder-studio{position:relative;width:100%;height:clamp(548px,43vw,614px);isolation:isolate}
 .lb-cylinder-aura{
   position:absolute;inset:8% 0 0;pointer-events:none;
   background:radial-gradient(ellipse at 50% 66%,rgba(201,173,223,.21),transparent 67%);

@@ -1,4 +1,4 @@
-/* LIGHTBOX / STORY CYLINDER III
+/* LIGHTBOX / STORY CYLINDER IV
    Five genuine Atlas cards. Portrait cinema, tactile cards, invisible 5-sided axis.
    This layer does not restyle any editor or affect saved projects. */
 .studio.atlas-shell.lb-cylinder-atlas .story-atlas{
@@ -223,3 +223,322 @@
   .lb-cylinder-controls>button{width:48px;}
 }
 @media(prefers-reduced-motion:reduce){.lb-cylinder-card,.lb-cylinder-controls>button{transition:none!important}.lb-cylinder-ground{filter:none}}
+
+
+/* ==============================================================
+   FOURTH EDITION / WHITE CYCLORAMA — approved horizontal direction
+   All source card markup remains the ORIGINAL React Atlas output.
+   ============================================================== */
+.studio.atlas-shell.lb-cylinder-atlas{
+  background:#fffefa!important;
+}
+.studio.atlas-shell.lb-cylinder-atlas .story-atlas{
+  position:relative;isolation:isolate;max-width:1600px;width:100%;
+  padding:clamp(18px,3vw,38px) clamp(6px,1.7vw,27px) 28px;
+  background:#fffefa!important;color:#181a17!important;
+  background-image:radial-gradient(ellipse at 50% 76%,rgba(226,213,231,.36),transparent 58%)!important;
+  border:0!important;overflow:visible;
+}
+.studio.atlas-shell.lb-cylinder-atlas .atlas-heading{
+  position:relative;display:flex;align-items:center;justify-content:center;
+  min-height:160px;max-width:1430px;margin:0 auto 0;text-align:center;
+}
+.studio.atlas-shell.lb-cylinder-atlas .atlas-heading>div{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;min-width:0;flex:1;
+}
+.studio.atlas-shell.lb-cylinder-atlas .atlas-heading .atlas-eyebrow{
+  display:flex;justify-content:center;align-items:center;color:#63891a!important;
+  font-size:0!important;line-height:1!important;letter-spacing:0!important;height:27px;
+  text-transform:uppercase;
+}
+.studio.atlas-shell.lb-cylinder-atlas .atlas-heading .atlas-eyebrow::before{
+  content:"◈   STORY ATLAS";font:600 13px/1.5 "DM Mono",monospace;
+  letter-spacing:.24em;color:#628b19;
+}
+.studio.atlas-shell.lb-cylinder-atlas .atlas-heading .live-dot{display:none!important;}
+.studio.atlas-shell.lb-cylinder-atlas .atlas-world-name{
+  justify-content:center;display:flex;margin:3px 0 0;max-width:100%;width:min(720px,90%);
+}
+.studio.atlas-shell.lb-cylinder-atlas .atlas-world-name>input{
+  display:block;width:100%;max-width:100%;text-align:center;
+  font-family:"Instrument Serif",Georgia,serif!important;
+  font-size:clamp(52px,5.4vw,85px)!important;
+  letter-spacing:-.045em!important;line-height:1.06!important;
+  background:transparent!important;color:#171918!important;
+}
+.studio.atlas-shell.lb-cylinder-atlas .atlas-world-name>svg{display:none;}
+.studio.atlas-shell.lb-cylinder-atlas .atlas-heading p{
+  text-align:center;max-width:750px;color:#656660!important;
+  font:400 clamp(13px,1.35vw,18px)/1.5 "DM Sans",sans-serif!important;
+  margin:6px auto 0;
+}
+.studio.atlas-shell.lb-cylinder-atlas .pitch-launch{
+  position:absolute;right:0;top:8px;align-self:flex-start;
+  background:rgba(255,255,255,.72);color:#3c4037;border:1px solid #c9c9c0;
+  border-radius:24px;box-shadow:0 3px 9px #1616160b;
+  font:500 10px "DM Mono",monospace;padding:10px 13px;min-height:36px;
+}
+.studio.atlas-shell.lb-cylinder-atlas .pitch-launch:hover{background:#f2f4e9;color:#242820;border-color:#8f9b77;}
+.studio.atlas-shell.lb-cylinder-atlas .atlas-reel,
+.studio.atlas-shell.lb-cylinder-atlas .atlas-recent,
+.studio.atlas-shell.lb-cylinder-atlas .atlas-caption,
+.studio.atlas-shell.lb-cylinder-atlas .install-app{display:none!important;}
+/* Keep the site's existing native navigation dock rather than adding navigation cards. */
+.studio.atlas-shell.lb-cylinder-atlas .creative-dock{display:flex!important;}
+.studio.atlas-shell.lb-cylinder-atlas .atlas-viewport{overflow:visible;}
+.lb-cylinder{color:#2c2d2a;--lb-card-width:300px;--lb-card-height:458px;}
+.lb-cylinder-environment{
+  height:clamp(465px,44vw,557px);max-height:none;overflow:hidden;
+  background:transparent;isolation:isolate;
+}
+.lb-cylinder-environment:before{
+  content:"";position:absolute;inset:7% 3% 2%;z-index:-2;
+  background:radial-gradient(ellipse at 50% 65%,rgba(235,220,240,.35),transparent 67%);
+}
+.lb-cylinder-environment:after{display:none;}
+/* A luminous elliptical top lip reads as a full-width horizontal cylinder. */
+.lb-cylinder-rim{
+  position:absolute;left:50%;top:3.5%;z-index:0;transform:translateX(-50%);
+  width:min(96%,1390px);height:27%;border-radius:50%;pointer-events:none;
+  border:clamp(10px,1.55vw,19px) solid #f8f4ee;
+  background:radial-gradient(ellipse at 53% 57%,#e6dbea 0%,#c9b5d3 76%,#b5a2c4 100%);
+  box-shadow:0 4px 11px #a792a03e,inset 0 14px 26px #826d9e40,
+    0 -4px 18px #ffffffee,0 14px 24px #78618b13;
+}
+.lb-cylinder-rim:after{
+  content:"";position:absolute;inset:5% 1% 19%;border-radius:50%;
+  border-top:1px solid #ffffffc9;pointer-events:none;
+}
+.lb-cylinder-horizon{display:none;}
+.lb-cylinder-ground{
+  z-index:0;bottom:3.1%;width:min(90%,1210px);height:99px;
+  background:radial-gradient(ellipse at center,rgba(55,31,67,.31) 0%,rgba(87,65,89,.19) 37%,rgba(116,104,120,.09) 59%,transparent 80%);
+  filter:blur(17px);
+}
+.lb-cylinder-contact{
+  z-index:0;bottom:6.6%;width:min(72%,980px);height:37px;
+  background:radial-gradient(ellipse,rgba(48,38,52,.28),transparent 73%);
+  filter:blur(10px);
+}
+.lb-cylinder-view{
+  z-index:2;perspective:1700px;perspective-origin:50% 45%;
+  cursor:grab;touch-action:pan-y;
+}
+.lb-cylinder-view:focus-visible{outline:2px solid #8fab2f;outline-offset:-3px;}
+.lb-cylinder-rotor{position:absolute;inset:0;transform:none!important;transform-style:preserve-3d;}
+.lb-cylinder-card{
+  position:absolute;left:50%;top:48%;width:var(--lb-card-width);height:var(--lb-card-height);
+  margin:0!important;border-radius:17px!important;border:5px solid #f4f0e9!important;
+  overflow:hidden;backface-visibility:visible;-webkit-backface-visibility:visible;
+  box-shadow:0 8px 10px -6px #3d28414a,0 21px 37px -19px #49374f66,0 40px 64px -37px #3f354866,
+    inset 0 0 0 1px #fdfdfb;
+  background:#f7f5f0;transform-origin:center center;
+  transition:box-shadow .2s,border-color .18s,opacity .2s;
+  will-change:transform;
+}
+.lb-cylinder-card:before{
+  content:"";z-index:5;position:absolute;inset:0;pointer-events:none;
+  border-radius:11px;border:1px solid #ffffffa1;
+  box-shadow:inset 5px 4px 15px #ffffff8a,inset -5px 0 12px #3d334414;
+}
+.lb-cylinder-card:after{
+  content:"";z-index:5;position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(90deg,rgba(44,31,44,.055),transparent 22%,transparent 78%,rgba(44,31,44,.065));
+}
+.lb-cylinder-card.is-active{
+  border:7px solid #fffdf9!important;border-radius:19px!important;
+  box-shadow:0 8px 13px -8px #3d284155,0 21px 30px -16px #34233c74,
+     0 41px 57px -32px #342e3d64,0 0 0 1px #d7d0ca;
+}
+.lb-cylinder-card:hover{border-color:#fffdf6!important;}
+.lb-cylinder-card:focus-visible{outline:3px solid #b2d443;outline-offset:1px;}
+.studio.atlas-shell.lb-cylinder-atlas .lb-cylinder-card .lb-cylinder-source{
+  border-radius:11px!important;padding:clamp(15px,1.45vw,23px)!important;
+  background:#fbf8f3!important;color:#282522!important;
+}
+.studio.atlas-shell.lb-cylinder-atlas .lb-cylinder-source .node-overline{
+  padding-bottom:11px!important;font:600 9px/1.45 "DM Mono",monospace!important;
+  letter-spacing:.02em!important;border-color:#a6a4a0!important;
+}
+.studio.atlas-shell.lb-cylinder-atlas .lb-cylinder-source .node-overline>svg:last-child{width:12px;}
+.studio.atlas-shell.lb-cylinder-atlas .lb-cylinder-source h2{
+  font-size:clamp(34px,3.2vw,48px)!important;line-height:1.02!important;
+  margin:24px 0 11px!important;letter-spacing:-.045em!important;
+}
+.studio.atlas-shell.lb-cylinder-atlas .lb-cylinder-source>.node-footer{
+  min-height:39px!important;margin-top:auto!important;padding:10px 0 0!important;
+  font:600 11px/1.4 "DM Sans",sans-serif!important;border-color:#c3c1bc!important;
+}
+/* Screenplay — an illuminated, tactile midnight-black hero card. */
+.studio.atlas-shell.lb-cylinder-atlas .lb-cylinder-card .atlas-script{
+  background:linear-gradient(165deg,#242323,#111413)!important;
+  color:#fffefa!important;
+}
+.studio.atlas-shell.lb-cylinder-atlas .lb-cylinder-card .atlas-script .node-overline{
+  color:#d8ff00!important;border-color:#61675a!important;
+}
+.studio.atlas-shell.lb-cylinder-atlas .lb-cylinder-card .atlas-script h2{
+  font-size:clamp(39px,3.6vw,55px)!important;margin:12px 0 6px!important;
+  color:#faf8f0!important;
+}
+.studio.atlas-shell.lb-cylinder-atlas .lb-cylinder-card .atlas-script>p{
+  margin:0 0 8px!important;font-size:11px!important;color:#b8bdb5!important;
+}
+.studio.atlas-shell.lb-cylinder-atlas .lb-cylinder-card .atlas-script .script-page-preview{
+  width:78%!important;max-width:218px!important;min-height:130px!important;
+  height:clamp(125px,39%,176px)!important;max-height:175px!important;
+  padding:12px 13px!important;margin:10px auto 12px!important;flex:1 1 auto!important;
+  transform:rotate(-5deg)!important;box-shadow:6px 8px 0 #bca3e5,9px 10px 19px #0008!important;
+  background:#fffcf6!important;
+}
+.studio.atlas-shell.lb-cylinder-atlas .lb-cylinder-card .atlas-script .script-page-preview>span,
+.studio.atlas-shell.lb-cylinder-atlas .lb-cylinder-card .atlas-script .script-page-preview>strong,
+.studio.atlas-shell.lb-cylinder-atlas .lb-cylinder-card .atlas-script .script-page-preview p{
+  font-size:9px!important;line-height:1.3!important;
+}
+.studio.atlas-shell.lb-cylinder-atlas .lb-cylinder-card .atlas-script .script-page-excerpt{
+  max-height:61px;overflow:hidden;
+}
+.studio.atlas-shell.lb-cylinder-atlas .lb-cylinder-card .atlas-script>.node-footer{
+  background:#d7ff00!important;color:#191b10!important;border:0!important;
+  padding:12px 14px!important;min-height:46px!important;margin:0!important;
+  border-radius:6px!important;box-shadow:0 2px 5px #0003;
+}
+.studio.atlas-shell.lb-cylinder-atlas .lb-cylinder-card .atlas-script>.node-footer:hover{background:#e4ff4a!important;}
+/* World Building — warm ivory, real React character/place/prop entries. */
+.studio.atlas-shell.lb-cylinder-atlas .lb-cylinder-card .atlas-world{
+  background:linear-gradient(160deg,#fffaf5,#f3ebe3)!important;color:#292622!important;
+}
+.studio.atlas-shell.lb-cylinder-atlas .lb-cylinder-card .atlas-world .world-card-heading{
+  margin:24px 0 0!important;
+}
+.studio.atlas-shell.lb-cylinder-atlas .lb-cylinder-card .atlas-world .world-card-heading strong{
+  color:#26231f!important;font-size:clamp(36px,3.3vw,48px)!important;line-height:1.05!important;
+}
+.studio.atlas-shell.lb-cylinder-atlas .lb-cylinder-card .atlas-world .world-card-heading small{
+  margin-top:11px!important;font-size:11px!important;color:#615b55!important;
+}
+.studio.atlas-shell.lb-cylinder-atlas .lb-cylinder-card .atlas-world .world-index{
+  margin-top:auto!important;gap:0!important;margin-bottom:4px!important;
+}
+.studio.atlas-shell.lb-cylinder-atlas .lb-cylinder-card .atlas-world .world-index>button{
+  min-height:37px!important;padding:6px 0!important;font-size:11px!important;
+  border-top:1px solid #cec7c0!important;
+}
+.studio.atlas-shell.lb-cylinder-atlas .lb-cylinder-card .atlas-world .world-index>button:last-child{border-bottom:1px solid #cec7c0!important;}
+/* Research — pale lavender display surface, not a generic grey tile. */
+.studio.atlas-shell.lb-cylinder-atlas .lb-cylinder-card .atlas-research{
+  background:linear-gradient(155deg,#f7eefb,#eadcf2)!important;color:#28202f!important;
+}
+.studio.atlas-shell.lb-cylinder-atlas .lb-cylinder-card .atlas-research h2{
+  margin-top:44px!important;font-size:clamp(35px,3.15vw,46px)!important;
+}
+.studio.atlas-shell.lb-cylinder-atlas .lb-cylinder-card .atlas-research .research-stack{display:none!important;}
+.studio.atlas-shell.lb-cylinder-atlas .lb-cylinder-card .atlas-research .research-card-body small{font-size:11px!important;}
+/* Visual — the real scene rows remain in place. */
+.studio.atlas-shell.lb-cylinder-atlas .lb-cylinder-card .atlas-visual{
+  background:linear-gradient(150deg,#fffdf8,#f6f0e7)!important;color:#292723!important;
+}
+.studio.atlas-shell.lb-cylinder-atlas .lb-cylinder-card .atlas-visual h2{
+  margin-top:46px!important;font-size:clamp(37px,3.2vw,49px)!important;
+}
+.studio.atlas-shell.lb-cylinder-atlas .lb-cylinder-card .atlas-visual .atlas-visual-scenes{
+  margin:11px 0!important;gap:6px!important;max-height:140px;
+}
+.studio.atlas-shell.lb-cylinder-atlas .lb-cylinder-card .atlas-visual .atlas-visual-scenes>span{
+  background:#fffcf7!important;border:0!important;border-top:1px solid #d4cec4!important;
+  border-radius:0!important;padding:7px 0!important;
+}
+/* Foundation — warm ivory, light-lime premise rule. */
+.studio.atlas-shell.lb-cylinder-atlas .lb-cylinder-card .atlas-foundation{
+  background:linear-gradient(150deg,#fffdfa,#f4f0e9)!important;color:#282723!important;
+}
+.studio.atlas-shell.lb-cylinder-atlas .lb-cylinder-card .atlas-foundation h2{
+  margin-top:38px!important;font-size:clamp(42px,3.7vw,53px)!important;
+}
+.studio.atlas-shell.lb-cylinder-atlas .lb-cylinder-card .atlas-foundation .spark-note{
+  margin:22px 0 15px!important;border-left:2px solid #a4cd2d!important;
+}
+.studio.atlas-shell.lb-cylinder-atlas .lb-cylinder-card .atlas-foundation .spark-note p{
+  font-size:12px!important;line-height:1.55!important;
+}
+/* One quiet navigation row; accessible counter is retained for AT. */
+.lb-cylinder-controls{
+  display:flex;align-items:center;justify-content:center;gap:24px;
+  width:max-content;max-width:100%;height:69px;margin:-8px auto 0;
+  background:transparent!important;color:#504c4b!important;
+  border:0!important;box-shadow:none!important;
+}
+.lb-cylinder-controls>button{
+  display:flex;justify-content:center;align-items:center;width:37px;height:37px;
+  border:1px solid #c8c5c3!important;border-radius:50%;
+  background:linear-gradient(160deg,#fff,#f6f1f0)!important;color:#332c2f!important;
+  box-shadow:0 2px 6px #705a6622;
+  font:400 27px/1 Georgia,serif;
+}
+.lb-cylinder-controls>button:hover,.lb-cylinder-controls>button:focus-visible{
+  background:#e9f4c3!important;border-color:#9bb34d!important;color:#24251f!important;
+}
+.lb-cylinder-control-label{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  min-width:210px;height:64px;padding:0;gap:9px;
+  border:0!important;white-space:nowrap;color:#696464!important;
+  font:500 10px/1.3 "DM Mono",monospace!important;letter-spacing:.12em!important;
+}
+.lb-cylinder-dots{display:flex;gap:10px;align-items:center;justify-content:center;}
+.lb-cylinder-dots i{
+  width:8px;height:8px;display:block;border-radius:50%;background:#c9c8c4;
+  box-shadow:inset 0 1px 2px #0001;transition:background .2s,box-shadow .2s;
+}
+.lb-cylinder-dots i.is-current{background:#d7ff00;box-shadow:0 0 0 1px #343726,0 0 0 3px #f9faf1;}
+.lb-cylinder-back{background:#eff9d3;border-color:#a8c45e;border-radius:22px;color:#303525;}
+/* Mobile: hero card + neighbouring glimpses, with a touch-friendly carousel. */
+@media(max-width:700px){
+ .studio.atlas-shell.lb-cylinder-atlas .story-atlas{padding:15px 0 26px!important;}
+ .studio.atlas-shell.lb-cylinder-atlas .atlas-heading{min-height:126px;padding:0 12px!important;}
+ .studio.atlas-shell.lb-cylinder-atlas .atlas-heading .atlas-eyebrow:before{font-size:10px;}
+ .studio.atlas-shell.lb-cylinder-atlas .atlas-world-name{width:100%;margin:0;}
+ .studio.atlas-shell.lb-cylinder-atlas .atlas-world-name>input{
+   font-size:clamp(37px,10vw,49px)!important;line-height:1.13!important;
+ }
+ .studio.atlas-shell.lb-cylinder-atlas .atlas-heading p{font-size:12px!important;margin-top:2px;}
+ .lb-cylinder-environment{height:clamp(408px,110vw,490px)!important;}
+ .lb-cylinder-rim{width:142%;height:22%;top:6%;border-width:10px;}
+ .lb-cylinder-view{perspective:1200px;}
+ .lb-cylinder-card{top:46%;border-width:4px!important;border-radius:13px!important;}
+ .lb-cylinder-card.is-active{border-width:5px!important;border-radius:15px!important;}
+ .studio.atlas-shell.lb-cylinder-atlas .lb-cylinder-card .lb-cylinder-source{padding:18px!important;}
+ .studio.atlas-shell.lb-cylinder-atlas .lb-cylinder-source h2{font-size:38px!important;}
+ .studio.atlas-shell.lb-cylinder-atlas .lb-cylinder-card .atlas-script h2{font-size:39px!important;margin-top:14px!important;}
+ .studio.atlas-shell.lb-cylinder-atlas .lb-cylinder-card .atlas-script .script-page-preview{
+   height:135px!important;min-height:130px!important;max-height:145px!important;margin-top:10px!important;
+ }
+ .studio.atlas-shell.lb-cylinder-atlas .lb-cylinder-card .atlas-research h2{font-size:38px!important;margin-top:38px!important;}
+ .studio.atlas-shell.lb-cylinder-atlas .lb-cylinder-card .atlas-foundation h2{font-size:46px!important;margin-top:36px!important;}
+ .studio.atlas-shell.lb-cylinder-atlas .lb-cylinder-card .atlas-world .world-card-heading{margin-top:30px!important;}
+ .studio.atlas-shell.lb-cylinder-atlas .lb-cylinder-card .atlas-world .world-card-heading strong{font-size:39px!important;}
+ .studio.atlas-shell.lb-cylinder-atlas .lb-cylinder-card .atlas-visual h2{margin-top:38px!important;}
+ .lb-cylinder-controls{gap:15px;height:62px;margin:-3px auto 0;}
+ .lb-cylinder-control-label{min-width:164px;font-size:8px!important;letter-spacing:.07em!important;}
+ .lb-cylinder-controls>button{width:34px;height:34px;font-size:25px;}
+}
+@media(max-width:380px){
+ .lb-cylinder-card{top:47%;}
+ .studio.atlas-shell.lb-cylinder-atlas .lb-cylinder-card .lb-cylinder-source{padding:16px!important;}
+ .studio.atlas-shell.lb-cylinder-atlas .lb-cylinder-card .atlas-script h2{font-size:35px!important;}
+ .studio.atlas-shell.lb-cylinder-atlas .lb-cylinder-card .atlas-foundation h2{font-size:41px!important;}
+}
+@media(prefers-reduced-motion:reduce){
+ .lb-cylinder-dots i{transition:none;}
+}
+/* Final editorial pass: screenplay heading must precede the actual script-paper preview. */
+.studio.atlas-shell.lb-cylinder-atlas .lb-cylinder-card .atlas-script .node-overline{order:0!important;}
+.studio.atlas-shell.lb-cylinder-atlas .lb-cylinder-card .atlas-script h2{order:1!important;}
+.studio.atlas-shell.lb-cylinder-atlas .lb-cylinder-card .atlas-script>p{order:2!important;}
+.studio.atlas-shell.lb-cylinder-atlas .lb-cylinder-card .atlas-script .script-page-preview{order:3!important;}
+.studio.atlas-shell.lb-cylinder-atlas .lb-cylinder-card .atlas-script>.node-footer{order:4!important;margin-top:auto!important;}
+@media(max-width:700px){
+ .lb-cylinder-environment{height:clamp(486px,132vw,552px)!important;}
+ .lb-cylinder-card{top:52%!important;}
+ .lb-cylinder-rim{top:5.5%;}
+}

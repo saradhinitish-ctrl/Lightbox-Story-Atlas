@@ -1,20 +1,18 @@
-# Lightbox Story Cylinder III — November 3, 2026
+# Lightbox Story Cylinder IV — November 3, 2026
 
-## Cinematic five-card redesign
-The app's five ORIGINAL Story Atlas panels are the only cards on the carousel: Screenplay, Story Foundation, Research & Exploration, Visual Language, and World Building. The cylinder copies the markup/content of the existing React cards (and refreshes it as the source React UI changes) instead of inventing additional panels. Cards are separately mounted and spaced at 72° around an invisible vertical cylindrical axis.
+## Horizontal cinema on white
+User-approved horizontal cylinder direction: five native React Atlas cards are copied into an independent, studio-lit carousel, with a pure white backdrop, delicate lavender elliptical inner rim, softly blended grounded shadows, elegant serif type and the screenplay in the featured dark/acid-lime center position. The five surfaces are Story World Building, Research & Exploration, Screenplay, Visual Language, and Story Foundation. There is no sixth cylinder card.
 
-Each panel is portrait-oriented (approximately twice as tall as wide). The dark editorial stage, subtle horizon, realistic ground contact shadows and restrained lighting provide a more vertical, cinematic presence. Existing card content (premise, screenplay preview, research notes, visual scenes and Characters/Locations/Objects buttons) remains visible.
+## Real content and workspaces
+The native React Atlas remains mounted and is the source for card content, scene counts, notes, manuscript preview, and World Building's Characters / Locations / Objects controls. Each card delegates activations to existing original controls, retaining the real workspace and projects. Navigation supports arrows, Mac horizontal trackpad/wheel, dragging and keyboard. Return from workspace preserves cylinder focus. No databases, editors or app source bundles were altered.
 
-## Real workspace interactions
-The clones delegate opening through the ORIGINAL React controls, not replacement editors: Screenplay, Foundation, Research, Visual and World Building's Characters/Locations/Objects. Beat Timeline is still available through the original scene reel and the main app, but no separate sixth cylinder card has been created. One bottom Story Cylinder arrow control navigates between the five panels. Side card clicks, pointer dragging, touch input, horizontal wheel/trackpad scrolling, keyboard arrows, momentum/snapping and a return-to-cylinder action are supported. Selected angle is restored when the native React Atlas remounts.
+## QA
+Local Chromium test harness passed responsive widths 320, 375, 390, 768, 1200, 1440 and 1920 with zero horizontal overflow and exactly five cards. Interaction tests passed original workspace actions (including World Locations), actual side-card pointer click, horizontal wheel, drag without accidental open, keyboard navigation, return with selected index restored. Local test harness is representative, not a substitute for live production IndexedDB testing.
 
-## Scope
-Only `story-cylinder.js`, `story-cylinder.css`, `index.html` cache-busting references, and this document changed. The bundled React application, screenplay editor, IndexedDB persistence, project data, imports/exports, Android APKs and widgets were not modified. No migrations.
-
-## Verification
-Local Chromium smoke tests passed at widths 320, 375, 390, 768, 1440 and 1920 px with five original cards and no reported overflow or JS errors. Local interaction tests passed mouse clicking on side card, World→Locations on mobile, dragging without accidental opening, horizontal wheel, keyboard arrow, native navigation, return and restored position. This is a browser **harness** using representative React controls, not a comprehensive end-to-end production IndexedDB test. Check deployment and verify production separately.
+## Files changed
+Only story-cylinder.js, story-cylinder.css, index.html references (?v=4), and this note. All other application files and persistent state remain unchanged.
 
 ## Rollback
-Pre-v3 main commit: `102eb6466e9d527ae823bb4b4e674d35b0683f45`.
-Immutable backup branch: `backup/pre-cinematic-five-card-v3-2026-11-03`.
-To restore it, revert this v3 commit. Do NOT clear local site storage.
+Pre-v4 commit: `9449d1dcb3d835e36d027001eede965964f578f0`.
+Backup: `backup/pre-white-cinematic-cylinder-v4-2026-11-03`.
+To restore, revert the v4 commit. Do not clear stored projects or local storage.

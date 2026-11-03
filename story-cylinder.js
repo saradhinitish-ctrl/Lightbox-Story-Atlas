@@ -1,4 +1,4 @@
-/* Lightbox Studio / Story Cylinder III — five ORIGINAL Atlas cards, cinematic portrait carousel.
+/* Lightbox Studio / Story Cylinder IV — horizontal studio-lit five-card carousel.
  * The native React Atlas remains mounted and owns every workspace, project, and save.
  * Clone only its visual cards; relay activations to the corresponding original controls. */
 (() => {
@@ -8,18 +8,18 @@
 
   // These are the five cards in the original Story Atlas. No synthetic sixth section.
   const PANELS = [
-    { id:'script',     source:'.atlas-script',     label:'Screenplay' },
-    { id:'foundation', source:'.atlas-foundation', label:'Story Foundation' },
+    { id:'world',      source:'.atlas-world',      label:'World Building' },
     { id:'research',   source:'.atlas-research',   label:'Research & Exploration' },
+    { id:'script',     source:'.atlas-script',     label:'Screenplay' },
     { id:'visual',     source:'.atlas-visual',     label:'Visual Language' },
-    { id:'world',      source:'.atlas-world',      label:'World Building' }
+    { id:'foundation', source:'.atlas-foundation', label:'Story Foundation' }
   ];
   const TOTAL = PANELS.length;
   const UNIT = 360 / TOTAL;
   const clamp = (n,min,max) => Math.min(max,Math.max(min,n));
   const wrap = (n,m) => (n % m + m) % m;
   const reduced = window.matchMedia?.('(prefers-reduced-motion: reduce)');
-  let savedAngle = 0;
+  let savedAngle = UNIT * 2; // Screenplay is the opening hero card.
   let current = null;
   let entered = false;
   let opening = false;
@@ -83,23 +83,42 @@
   function decorate(state){
     const currentIndex=activeIndex(state);
     state.cards.forEach((card,i)=>{
-      const position=(i-state.angle/UNIT+TOTAL*40+TOTAL/2)%TOTAL-TOTAL/2;
-      const facing=Math.cos(position*2*Math.PI/TOTAL);
-      const isBack=facing<-.25;
-      card.classList.toggle('is-active',i===currentIndex);
-      card.classList.toggle('is-behind',isBack);
-      card.tabIndex=isBack?-1:0;
-      card.setAttribute('aria-current',i===currentIndex?'true':'false');
-      card.setAttribute('aria-hidden',isBack?'true':'false');
-      card.style.zIndex=String(Math.round(100+facing*70));
-      card.style.setProperty('--face',String(clamp((facing+1)/2,0,1)));
-      if(i===currentIndex) state.liveLabel.textContent=PANELS[i].label;
+      const position=wrap(i-state.angle/UNIT+TOTAL*20+TOTAL/2,TOTAL)-TOTAL/2;
+      const distance=Math.abs(position);
+      const isCurrent=i===currentIndex;
+      card.classList.toggle('is-active',isCurrent);
+      card.classList.toggle('is-behind',false);
+      card.classList.toggle('is-outer',distance>1.5);
+      card.tabIndex=0;
+      card.setAttribute('aria-current',isCurrent?'true':'false');
+      card.setAttribute('aria-hidden','false');
+      card.style.zIndex=String(100+Math.round((3-distance)*30));
+      card.style.setProperty('--distance',String(distance));
+      if(isCurrent)state.liveLabel.textContent=PANELS[i].label;
     });
     state.counter.textContent=String(currentIndex+1).padStart(2,'0')+' / 05';
+    state.dots.forEach((dot,i)=>dot.classList.toggle('is-current',i===currentIndex));
   }
   function paint(state){
     if(!state.host.isConnected)return;
-    state.rotor.style.transform=`translateZ(${-state.radius}px) rotateY(${-state.angle}deg)`;
+    const base=state.cardWidth;
+    const mobile=state.view.clientWidth<=700;
+    for(let i=0;i<TOTAL;i++){
+      const position=wrap(i-state.angle/UNIT+TOTAL*20+TOTAL/2,TOTAL)-TOTAL/2;
+      const abs=Math.abs(position);
+      const side=Math.sign(position);
+      // The five cards move as one continuous, horizontal curved carousel.
+      // Neighbouring panels retain their own visible physical edges.
+      const x=side*(Math.min(abs,1)*base*.965+Math.max(0,abs-1)*base*.845);
+      const scale=1-abs*(mobile?.115:.094)-(abs>1?(abs-1)*.012:0);
+      const y=(1-scale)*state.cardHeight*.54 + abs*3 - 3;
+      const z=-abs*27;
+      const yaw=-position*(mobile?12:13.5);
+      const card=state.cards[i];
+      card.style.transform=`translate3d(calc(-50% + ${x.toFixed(2)}px), calc(-50% + ${y.toFixed(2)}px), ${z.toFixed(2)}px) rotateY(${yaw.toFixed(2)}deg) scale(${scale.toFixed(4)})`;
+      card.style.opacity=(mobile&&abs>1.65)?'0':'1';
+      card.style.pointerEvents=(mobile&&abs>1.65)?'none':'auto';
+    }
     decorate(state);
   }
   function tick(state){
@@ -140,19 +159,13 @@
   function resize(state){
     if(!state.host.isConnected)return;
     const w=state.view.clientWidth||innerWidth;
-    const h=state.view.clientHeight||640;
-    // Portrait cards: each panel is roughly twice as tall as it is wide.
-    // Radius is determined by the five equal-angle sides, not arbitrary offsets.
     const mobile=w<=700;
-    const width=mobile?clamp(w*.63,194,258):clamp(w*.248,284,320);
-    const height=mobile?clamp(h*.845,410,532):clamp(h*.86,560,692);
-    state.radius=Math.round(width/(2*Math.sin(Math.PI/TOTAL))+(mobile?16:24));
+    const width=mobile?clamp(w*.72,238,290):clamp(w*.232,245,309);
+    const height=mobile?clamp(w*1.18,350,430):clamp(w*.34,375,468);
+    state.cardWidth=width;
+    state.cardHeight=height;
     state.host.style.setProperty('--lb-card-width',width+'px');
     state.host.style.setProperty('--lb-card-height',height+'px');
-    state.host.style.setProperty('--lb-radius',state.radius+'px');
-    state.cards.forEach((card,i)=>{
-      card.style.transform=`rotateY(${i*UNIT}deg) translateZ(${state.radius}px)`;
-    });
     paint(state);
   }
   function openCard(state,index,section){
@@ -205,9 +218,9 @@
     const host=document.createElement('section');
     host.className='lb-cylinder';
     host.setAttribute('aria-label','Story Cylinder');
-    host.innerHTML=`<div class="lb-cylinder-environment"><div class="lb-cylinder-horizon" aria-hidden="true"></div><div class="lb-cylinder-ground" aria-hidden="true"></div><div class="lb-cylinder-contact" aria-hidden="true"></div><div class="lb-cylinder-view" tabindex="0" role="region" aria-roledescription="3D carousel" aria-label="Story Cylinder. Drag or swipe horizontally, or use arrow keys, to rotate the original story cards."><div class="lb-cylinder-rotor"></div></div></div><nav class="lb-cylinder-controls" aria-label="Story Cylinder navigation"><button class="lb-cylinder-prev" type="button" aria-label="Previous card">←</button><span class="lb-cylinder-control-label">STORY CYLINDER <small class="lb-cylinder-counter" aria-live="off">01 / 05</small></span><button class="lb-cylinder-next" type="button" aria-label="Next card">→</button></nav><span class="lb-cylinder-live sr-only" aria-live="polite"></span>`;
+    host.innerHTML=`<div class="lb-cylinder-environment"><div class="lb-cylinder-rim" aria-hidden="true"></div><div class="lb-cylinder-horizon" aria-hidden="true"></div><div class="lb-cylinder-ground" aria-hidden="true"></div><div class="lb-cylinder-contact" aria-hidden="true"></div><div class="lb-cylinder-view" tabindex="0" role="region" aria-roledescription="3D carousel" aria-label="Story Cylinder. Drag or swipe horizontally, or use arrow keys, to rotate the original story cards."><div class="lb-cylinder-rotor"></div></div></div><nav class="lb-cylinder-controls" aria-label="Story Cylinder navigation"><button class="lb-cylinder-prev" type="button" aria-label="Previous card">‹</button><span class="lb-cylinder-control-label">ROTATE THE STORY CYLINDER <span class="lb-cylinder-dots" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span><small class="lb-cylinder-counter sr-only" aria-live="off">03 / 05</small></span><button class="lb-cylinder-next" type="button" aria-label="Next card">›</button></nav><span class="lb-cylinder-live sr-only" aria-live="polite"></span>`;
     viewport.append(host);
-    const state={host,view:host.querySelector('.lb-cylinder-view'),rotor:host.querySelector('.lb-cylinder-rotor'),cards:[],counter:host.querySelector('.lb-cylinder-counter'),liveLabel:host.querySelector('.lb-cylinder-live'),snapshots:[],angle:savedAngle,target:savedAngle,velocity:0,radius:0,raf:0,wheelTimer:0,down:null,ignoreClick:0};
+    const state={host,view:host.querySelector('.lb-cylinder-view'),rotor:host.querySelector('.lb-cylinder-rotor'),cards:[],counter:host.querySelector('.lb-cylinder-counter'),dots:[...host.querySelectorAll('.lb-cylinder-dots i')],liveLabel:host.querySelector('.lb-cylinder-live'),snapshots:[],angle:savedAngle,target:savedAngle,velocity:0,radius:0,raf:0,wheelTimer:0,down:null,ignoreClick:0};
     PANELS.forEach((panel,i)=>{
       const card=document.createElement('div');
       card.className='lb-cylinder-card lb-cylinder-'+panel.id;
@@ -244,8 +257,8 @@
     state.view.addEventListener('wheel',e=>{
       if(opening||Math.abs(e.deltaX)<2||Math.abs(e.deltaX)<Math.abs(e.deltaY)*.64)return;
       e.preventDefault();
-      const factor=e.deltaMode===1?2.4:e.deltaMode===2?8:.16;
-      state.target+=clamp(e.deltaX*factor,-42,42);
+      const factor=e.deltaMode===1?3:e.deltaMode===2?10:.38;
+      state.target+=clamp(e.deltaX*factor,-50,50);
       tick(state);
       clearTimeout(state.wheelTimer);
       state.wheelTimer=setTimeout(()=>snap(state),155);

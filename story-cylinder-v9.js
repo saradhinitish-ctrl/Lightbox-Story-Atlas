@@ -150,13 +150,10 @@
     s.host.style.setProperty('--lb-card-width',s.cardWidth+'px');
     s.host.style.setProperty('--lb-card-height',s.cardHeight+'px');
 
-    // Read the actual CSS camera and card anchor rather than approximate
-    // them using viewport percentages. Both values vary on mobile.
-    const camera=getComputedStyle(s.view);
-    const distance=parseFloat(camera.perspective);
-    const originY=parseFloat(camera.perspectiveOrigin.split(/\s+/)[1]);
-    s.projectionDistance=Number.isFinite(distance)&&distance>0?distance:1850;
-    s.projectionCenterDelta=s.cards[0].offsetTop-originY;
+    // The card orbit uses an ORTHOGRAPHIC camera. Unlike a perspective
+    // camera, it keeps the top and bottom of every turning plate exactly
+    // level. Rotation and radial depth still determine the visible widths
+    // and which card appears in front.
     drawShell(s);paint(s);
   }
 
@@ -174,18 +171,12 @@
       const theta = angle * rad;
       const x = radius * Math.sin(theta);
       const z = radius * (Math.cos(theta) - 1);
-      // A translated 3D card shrinks vertically with its nearest projected
-      // corner. Fixing translation alone never aligns BOTH edges.
-      // Normalize the projected height and then re-center it around the
-      // CSS camera origin. Rotation around Y still gives the side-card width
-      // and cylindrical depth; only the accidental vertical shrink vanishes.
-      const nearDepth=z+s.cardWidth*.5*Math.abs(Math.sin(theta));
-      const scaleY=(s.projectionDistance-nearDepth)/s.projectionDistance;
-      const dy=-nearDepth*s.projectionCenterDelta/s.projectionDistance;
+      // Orthographic 3D orbit: no z-driven Y correction and no scaleY.
+      // The vertical edges of every rotating card stay on the same lines
+      // as the center panel. Depth, rotation and occlusion are preserved.
       card.style.transform = 'translate3d(-50%,-50%,0) translate3d('
-        + x.toFixed(2) + 'px,' + dy.toFixed(3) + 'px,' + z.toFixed(2)
-        + 'px) rotateY(' + angle.toFixed(3) + 'deg) scaleY('
-        + scaleY.toFixed(5) + ')';
+        + x.toFixed(2) + 'px,0px,' + z.toFixed(2)
+        + 'px) rotateY(' + angle.toFixed(3) + 'deg)';
       // The outermost panels turn almost edge-on: quiet their stray clipped text.
       const alpha = Math.abs(rel) <= 1.35 ? 1 : clamp(1-(Math.abs(rel)-1.35)*.65,.34,1);
       if (card._alpha !== alpha) { card.style.opacity = String(alpha); card._alpha = alpha; }

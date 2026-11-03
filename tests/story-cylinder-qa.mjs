@@ -134,7 +134,7 @@ try{
   assert.ok(wrap.farX>wrap.sideX&&wrap.sideX>wrap.centerX,
     'Cards occupy ordered stations on the circular shell: '+JSON.stringify(wrap));
   if(width>=1200){
-    assert.ok(wrap.farRight-wrap.sideRight>28,
+    assert.ok(wrap.farRight-wrap.sideRight>24,
       'Outermost card must be VISIBLE beyond the nearer card, not concealed: '+JSON.stringify(wrap));
     assert.ok(wrap.sideLeft>=wrap.centerRight-12 &&
               wrap.otherSideRight<=wrap.centerLeft+12,

@@ -17,10 +17,11 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - name: Install isolated Playwright browser
+      - name: Install isolated Playwright driver
         run: |
           npm install --prefix /tmp/lightbox-cyl-qa --no-save playwright@1.56.1
-          /tmp/lightbox-cyl-qa/node_modules/.bin/playwright install --with-deps chromium
+          which google-chrome || which chromium || true
+          google-chrome --version || chromium --version || true
       - name: Test real static site at six viewports
         run: PLAYWRIGHT_MODULE=/tmp/lightbox-cyl-qa/node_modules/playwright/index.mjs node tests/story-cylinder-qa.mjs
       - name: Archive screenshots and QA report

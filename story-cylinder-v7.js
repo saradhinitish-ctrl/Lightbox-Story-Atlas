@@ -186,7 +186,10 @@
     s.height = s.view.clientHeight || 520;
     s.mobile = w <= 700;
     s.cardWidth = s.mobile ? clamp(w * .69, 218, 275) : clamp(w * .207, 220, 322);
-    s.cardHeight = s.mobile ? clamp(w * 1.03, 357, 407) : clamp(w * .305, 380, 418);
+    const desiredHeight = s.mobile ? clamp(w * 1.03, 357, 407) : clamp(w * .305, 380, 418);
+    s.cardHeight = !s.mobile && innerHeight < 960
+      ? Math.min(desiredHeight, clamp(innerHeight * .43, 325, 397))
+      : desiredHeight;
     // On desktop the *entire* upper ellipse fits the stage. Mobile deliberately
     // crops the shell while keeping a readable central plate and nearby glimpses.
     s.radius = s.mobile ? Math.max(s.cardWidth * 1.4, w * .9) : w * .477;

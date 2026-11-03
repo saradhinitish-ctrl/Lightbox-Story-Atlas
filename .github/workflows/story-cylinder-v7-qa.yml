@@ -1,0 +1,32 @@
+name: Story Cylinder v7 browser QA
+on:
+  push:
+    branches:
+      - feat/story-cylinder-v7-studio-geometry
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  visual-browser-qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - name: Checkout current branch
+        uses: actions/checkout@v4
+      - name: Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install isolated Playwright browser
+        run: |
+          npm install --prefix /tmp/lightbox-cyl-qa --no-save playwright@1.56.1
+          /tmp/lightbox-cyl-qa/node_modules/.bin/playwright install --with-deps chromium
+      - name: Test real static site at six viewports
+        run: PLAYWRIGHT_MODULE=/tmp/lightbox-cyl-qa/node_modules/playwright/index.mjs node tests/story-cylinder-qa.mjs
+      - name: Archive screenshots and QA report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: story-cylinder-v7-browser-qa
+          path: qa-artifacts/
+          if-no-files-found: ignore

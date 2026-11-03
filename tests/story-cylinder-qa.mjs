@@ -116,6 +116,21 @@ try{
     const moved=await page.locator('.lb-cylinder-card.is-active').getAttribute('data-index');
     assert.notEqual(moved,'2','Horizontal wheel moves cylinder');
    }
+   // Drag should rotate exactly once and must not open any workspace.
+   await page.locator('.lb-cylinder-stage').focus();
+   const dragBox=await page.locator('.lb-cylinder-stage').boundingBox();
+   assert.ok(dragBox,'Drag stage exists');
+   const midX=dragBox.x+dragBox.width*.5;
+   const midY=dragBox.y+dragBox.height*.53;
+   const beforeDrag=await page.locator('.lb-cylinder-card.is-active').getAttribute('data-index');
+   await page.mouse.move(midX,midY);
+   await page.mouse.down();
+   await page.mouse.move(midX-260,midY,{steps:12});
+   await page.mouse.up();
+   await page.waitForTimeout(650);
+   const afterDrag=await page.locator('.lb-cylinder-card.is-active').getAttribute('data-index');
+   assert.notEqual(afterDrag,beforeDrag,'Dragging moves carousel selection');
+   assert.equal(await page.locator('.story-atlas').isVisible(),true,'Drag must not open a workspace');
    // Test a REAL pointer click after centering the native Screenplay panel.
    for(let attempt=0;attempt<5;attempt++){
     const i=await page.locator('.lb-cylinder-card.is-active').getAttribute('data-index');

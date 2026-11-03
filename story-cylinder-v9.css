@@ -76,7 +76,7 @@
 }
 .lb-cylinder-stage{
   position:absolute;inset:0;overflow:hidden;outline:none;
-  perspective:none; /* orthographic: identical visible top and bottom across all depths */
+  perspective:2350px;perspective-origin:50% 50%;
   touch-action:pan-y;cursor:grab;user-select:none;-webkit-user-select:none
 }
 .lb-cylinder-stage:focus-visible{outline:2px solid #a0bc54;outline-offset:-3px}
@@ -354,8 +354,8 @@
  .studio.atlas-shell.lb-cylinder-atlas .atlas-heading p{font-size:11px!important;margin-top:2px}
  .studio.atlas-shell.lb-cylinder-atlas .pitch-launch{display:none!important}
  .lb-cylinder-studio{height:clamp(478px,130vw,545px)!important}
- .lb-cylinder-stage{perspective:none}
- .lb-cylinder-card{top:51.4%}
+ .lb-cylinder-stage{perspective:1950px;perspective-origin:50% 50%}
+ .lb-cylinder-card{top:50%}
  .lb-cylinder-v9 .lb-cylinder-card .lb-cylinder-source{padding:17px!important}
  .lb-cylinder-v9 .lb-cylinder-source h2{font-size:38px!important}
  .lb-cylinder-v9 .atlas-world .world-card-heading{margin-top:26px!important}

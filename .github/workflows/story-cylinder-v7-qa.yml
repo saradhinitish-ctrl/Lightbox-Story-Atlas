@@ -4,6 +4,9 @@ on:
     branches:
       - feat/story-cylinder-v7-studio-geometry
       - feat/story-cylinder-v8-curved-studio
+  pull_request:
+    branches:
+      - main
   workflow_dispatch:
 permissions:
   contents: read

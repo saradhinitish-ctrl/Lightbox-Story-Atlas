@@ -91,16 +91,15 @@ try{
     });
     assert.ok(solidPixels<.005,'No opaque giant cylinder shell behind the cards: '+solidPixels);
   }
-  assert.equal(await page.locator('.lb-cylinder-segment').count(),25,'Each original card gets five curved segments');
-  assert.equal(measure.sourceCount,25,'Five fixed curved surface segments per card at '+width);
+  assert.equal(await page.locator('.lb-cylinder-segment').count(),0,'No segmented sliced cards');
+  assert.equal(measure.sourceCount,5,'Only one intact native card replica per section at '+width);
   assert.equal(measure.active.length,1,'Single selected card at '+width);
   assert.equal(measure.active[0],'2','Screenplay first at '+width);
   assert.ok(measure.screenWidth<=width+2,'No page overflow at '+width);
   assert.ok(measure.shellCanvas[0]>0&&measure.shellCanvas[1]>0,'Canvas visible at '+width);
   assert.ok(measure.controlsBottom <= Math.min(height,measure.dockTop)+4,
     'Rotation controls must appear above the fixed dock at '+width+'x'+height+': '+JSON.stringify(measure));
-  const curvature=await page.locator('.lb-cylinder-card.is-active .lb-cylinder-segment').evaluateAll(nodes=>nodes.map(n=>getComputedStyle(n).transform));
-  assert.equal(new Set(curvature).size,5,'Each surface segment has distinct real 3D geometry');
+  assert.equal(await page.locator('.lb-cylinder-card .lb-cylinder-content').count(),5,'Five seamless editorial surfaces');
   await page.screenshot({path:resolve(dir,'cylinder-'+width+'x'+height+'.png'),fullPage:true});
   if(width===1200 && height===900){
    await page.locator('.lb-cylinder-next').click();
@@ -225,7 +224,7 @@ try{
      });
      return {samples,slow,replicas:document.querySelectorAll('.lb-cylinder-source').length,cards:cards.length};
    });
-   assert.equal(stats.replicas,25,'Twenty-five static surface segments and only five animated cards');
+   assert.equal(stats.replicas,5,'Five complete native replicas and only five animated cards');
    assert.ok(stats.samples>12,'Browser rendered multiple frames');
   }
   results.push({width,height,status:'passed',measure,errors:browserErrors});

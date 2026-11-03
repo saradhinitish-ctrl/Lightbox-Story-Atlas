@@ -147,16 +147,16 @@
     s.radius=s.mobile?Math.max(s.cardWidth*1.43,w*.91):clamp(w*.393,470,605);
     s.pitch=2*Math.asin(clamp((s.cardWidth+26)/(2*s.radius),0,.49))*180/Math.PI*.96;
     s.centerY=s.height*(s.mobile?.514:.472);
-    // Side cards are farther from the camera, so perspective shortens them.
-    // Compensate for that shortening at their shared FOOT line, not their
-    // centers: every panel appears to stand on the same physical floor.
-    // These values match .lb-cylinder-card top and .lb-cylinder-stage camera.
-    const panelCenterY=s.height*(s.mobile?.514:.50);
-    const cameraOriginY=s.height*(s.mobile?.47:.46);
-    const cameraDistance=s.mobile?1100:1850;
-    s.floorLevelFactor=(panelCenterY+s.cardHeight/2-cameraOriginY)/cameraDistance;
     s.host.style.setProperty('--lb-card-width',s.cardWidth+'px');
     s.host.style.setProperty('--lb-card-height',s.cardHeight+'px');
+
+    // Read the actual CSS camera and card anchor rather than approximate
+    // them using viewport percentages. Both values vary on mobile.
+    const camera=getComputedStyle(s.view);
+    const distance=parseFloat(camera.perspective);
+    const originY=parseFloat(camera.perspectiveOrigin.split(/\s+/)[1]);
+    s.projectionDistance=Number.isFinite(distance)&&distance>0?distance:1850;
+    s.projectionCenterDelta=s.cards[0].offsetTop-originY;
     drawShell(s);paint(s);
   }
 
@@ -174,17 +174,18 @@
       const theta = angle * rad;
       const x = radius * Math.sin(theta);
       const z = radius * (Math.cos(theta) - 1);
-      // The projected bottom is determined by the NEAREST rotated corner,
-      // not the depth of the card's center. Compensating using only z made
-      // the two outer panels visibly sink below the front card (10–15px).
-      // The precise floor correction uses perspective and the nearest corner:
-      // zNearest = orbital depth + half-width * abs(sin(angle)).
-      // This keeps every panel's lower edge on the same screen-space line.
-      const zNearest = z + s.cardWidth * .5 * Math.abs(Math.sin(theta));
-      const dy = -zNearest * s.floorLevelFactor;
+      // A translated 3D card shrinks vertically with its nearest projected
+      // corner. Fixing translation alone never aligns BOTH edges.
+      // Normalize the projected height and then re-center it around the
+      // CSS camera origin. Rotation around Y still gives the side-card width
+      // and cylindrical depth; only the accidental vertical shrink vanishes.
+      const nearDepth=z+s.cardWidth*.5*Math.abs(Math.sin(theta));
+      const scaleY=(s.projectionDistance-nearDepth)/s.projectionDistance;
+      const dy=-nearDepth*s.projectionCenterDelta/s.projectionDistance;
       card.style.transform = 'translate3d(-50%,-50%,0) translate3d('
-        + x.toFixed(2) + 'px,' + dy.toFixed(2) + 'px,' + z.toFixed(2)
-        + 'px) rotateY(' + angle.toFixed(3) + 'deg)';
+        + x.toFixed(2) + 'px,' + dy.toFixed(3) + 'px,' + z.toFixed(2)
+        + 'px) rotateY(' + angle.toFixed(3) + 'deg) scaleY('
+        + scaleY.toFixed(5) + ')';
       // The outermost panels turn almost edge-on: quiet their stray clipped text.
       const alpha = Math.abs(rel) <= 1.35 ? 1 : clamp(1-(Math.abs(rel)-1.35)*.65,.34,1);
       if (card._alpha !== alpha) { card.style.opacity = String(alpha); card._alpha = alpha; }

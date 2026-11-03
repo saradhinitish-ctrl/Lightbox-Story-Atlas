@@ -103,20 +103,8 @@
     rgba(39,31,44,.24) 0%,rgba(51,40,56,.11) 46%,transparent 76%);
   filter:blur(9px);transform:translateZ(-10px)
 }
-.lb-cylinder-plaque{
-  position:absolute;inset:9px 17px 8px;border-radius:13px;
-  border:1px solid rgba(255,255,255,.64);
-  background:#eee7ea;
-  box-shadow:0 3px 4px rgba(45,38,47,.15),
-    0 13px 19px -7px rgba(49,40,53,.23),
-    0 31px 26px -22px rgba(47,40,49,.14);
-  transform:translateZ(-22px)
-}
-.lb-cylinder-card.is-active .lb-cylinder-plaque{
-  box-shadow:0 4px 5px rgba(45,38,47,.17),
-    0 15px 24px -8px rgba(49,40,53,.24),
-    0 39px 31px -24px rgba(47,40,49,.18)
-}
+/* No flat backing behind a curved surface: it created white strips at both edges. */
+.lb-cylinder-plaque{display:none!important}
 .lb-cylinder-curvature{
   position:absolute;inset:3px 3px 4px;z-index:2;
   transform-style:preserve-3d;pointer-events:none
@@ -399,4 +387,4 @@
 /* The cards form the object. No enclosing wall, purple tank or front mask. */
 .lb-cylinder-v9 .lb-cylinder-segment{background-clip:padding-box}
 .lb-cylinder-v9 .lb-cylinder-content{isolation:isolate}
-.lb-cylinder-v9 .lb-cylinder-card.is-active{filter:drop-shadow(0 1px 0 rgba(255,255,255,.30))}
+.lb-cylinder-v9 .lb-cylinder-card.is-active{filter:drop-shadow(0 9px 10px rgba(46,34,51,.14))}

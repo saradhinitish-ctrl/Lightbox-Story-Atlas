@@ -1,4 +1,4 @@
-/* Lightbox Studio / Story Cylinder V — physically curved cylindrical card surfaces.
+/* Lightbox Studio / Story Cylinder VI — optimized cinematic curved-surface navigation.
  * The native React Atlas remains mounted and owns every workspace, project, and save.
  * Clone only its visual cards; relay activations to the corresponding original controls. */
 (() => {
@@ -16,9 +16,9 @@
   ];
   const TOTAL = PANELS.length;
   const UNIT = 360 / TOTAL; // indexing; geometry uses a separate, true front-facing circular arc
-  const PITCH = 24;  // degrees between panel centres along the cylindrical wall
-  const PANEL_ARC = 22.8; // each panel occupies a curved segment, with a deliberate hairline gap
-  const SLICES = 11; // eleven tangent slices form genuinely curved, not flat, card faces
+  const PITCH = 21.8; // A wider readable front arc while remaining a true circular surface.
+  const PANEL_ARC = 21.5; // Common radius for curved faces and centre positions.
+  const SLICES = 7; // Seven 3.07° tangent facets: curved appearance at 36% fewer DOM copies.
   const clamp = (n,min,max) => Math.min(max,Math.max(min,n));
   const wrap = (n,m) => (n % m + m) % m;
   const reduced = window.matchMedia?.('(prefers-reduced-motion: reduce)');
@@ -58,7 +58,7 @@
     if(replica.matches('button')){replica.tabIndex=-1;replica.setAttribute('aria-hidden','true');}
     for(const el of replica.querySelectorAll('[id]'))el.removeAttribute('id');
     for(const el of replica.querySelectorAll('a'))el.removeAttribute('href');
-    // A curved card has 11 visual cuts of one source; never create 11 tab stops.
+    // Seven curved visual strips with only one card tab stop.
     replica.querySelectorAll('button,a,input,textarea,select').forEach(n=>n.tabIndex=-1);
     if(panel.id==='world') {
       replica.querySelectorAll('.world-index button').forEach((btn,i)=>{
@@ -80,70 +80,67 @@
       state.snapshots[i]=markup;
       const replacement=copyOriginal(panel);
       if(!replacement)continue;
-      // Every slice displays its own clipped portion of the current ORIGINAL React card.
+      // The lightweight facets display clipped portions of the original React card.
       const fragments=card.querySelectorAll('.lb-cylinder-slice > .lb-cylinder-source');
       fragments.forEach((old,j)=>{
         const newReplica=j===0?replacement:copyOriginal(panel);
-        if(newReplica){newReplica.style.left=old.style.left;old.replaceWith(newReplica);}
+        if(newReplica)old.replaceWith(newReplica);
       });
     }
   }
 
   function activeIndex(state){return wrap(Math.round(state.target / UNIT),TOTAL);}
+  // Accessibility, page labels, and dot updates change only when the selected
+  // panel changes; writing them on EVERY animation frame caused an observer loop.
   function decorate(state){
     const currentIndex=activeIndex(state);
+    if(state.lastDecorated===currentIndex)return;
+    state.lastDecorated=currentIndex;
     state.cards.forEach((card,i)=>{
-      const position=wrap(i-state.angle/UNIT+TOTAL*20+TOTAL/2,TOTAL)-TOTAL/2;
-      const distance=Math.abs(position);
       const isCurrent=i===currentIndex;
       card.classList.toggle('is-active',isCurrent);
-      card.classList.toggle('is-behind',false);
-      card.classList.toggle('is-outer',distance>1.5);
-      const hidden=distance>2.38;
-      card.tabIndex=hidden?-1:0;
+      card.tabIndex=0;
       card.setAttribute('aria-current',isCurrent?'true':'false');
-      card.setAttribute('aria-hidden',hidden?'true':'false');
-      card.style.zIndex=String(100+Math.round((3-distance)*30));
-      card.style.setProperty('--distance',String(distance));
-      if(isCurrent)state.liveLabel.textContent=PANELS[i].label;
     });
+    state.liveLabel.textContent=PANELS[currentIndex].label;
     state.counter.textContent=String(currentIndex+1).padStart(2,'0')+' / 05';
     state.dots.forEach((dot,i)=>dot.classList.toggle('is-current',i===currentIndex));
   }
   function paint(state){
     if(!state.host.isConnected)return;
-    const w=state.cardWidth, R=state.radius;
+    const R=state.radius;
+    const travel=state.angle/UNIT;
     for(let i=0;i<TOTAL;i++){
-      // The nearest front five panels are distributed around the *actual* ellipse
-      // of a vertical cylindrical wall. Their yaw, depth and position all derive
-      // from the SAME theta, rather than unrelated offsets and flat card scaling.
-      const position=wrap(i-state.angle/UNIT+TOTAL*20+TOTAL/2,TOTAL)-TOTAL/2;
+      const position=wrap(i-travel+TOTAL*20+TOTAL/2,TOTAL)-TOTAL/2;
       const theta=position*PITCH*Math.PI/180;
       const x=R*Math.sin(theta);
       const z=R*(Math.cos(theta)-1);
       const yaw=theta*180/Math.PI;
-      const rise=Math.abs(position)*12.5;
+      const rise=Math.abs(position)*8.5;
       const card=state.cards[i];
-      card.style.transform=`translate3d(calc(-50% + ${x.toFixed(3)}px), calc(-50% - ${rise.toFixed(2)}px), ${z.toFixed(3)}px) rotateY(${yaw.toFixed(3)}deg)`;
-      // Rear travel fades through the unseen side of the shell rather than
-      // teleporting visibly between left and right boundaries.
+      card.style.transform=`translate3d(calc(-50% + ${x.toFixed(2)}px),calc(-50% - ${rise.toFixed(2)}px),${z.toFixed(2)}px) rotateY(${yaw.toFixed(2)}deg)`;
       const distance=Math.abs(position);
-      const opacity=clamp((2.51-distance)/.24,0,1);
-      card.style.opacity=String(opacity);
-      card.style.pointerEvents=opacity>.45?'auto':'none';
+      const hidden=distance>2.49;
+      const opacity=clamp((2.51-distance)/.17,0,1);
+      const zindex=100+Math.round((3-distance)*30);
+      if(card._lastZ!==zindex){card.style.zIndex=String(zindex);card._lastZ=zindex;}
+      if(card._lastAlpha!==opacity){card.style.opacity=String(opacity);card._lastAlpha=opacity;}
+      if(card._hidden!==hidden){card.style.pointerEvents=hidden?'none':'auto';card.setAttribute('aria-hidden',hidden?'true':'false');card._hidden=hidden;}
     }
-    decorate(state);
   }
+  // Time-based easing feels responsive on 60/90/120-Hz displays and avoids
+  // the spring overshoot that made multiple wheel swipes feel stuck or laggy.
   function tick(state){
     if(state.raf)return;
-    const frame=()=>{
+    let last=performance.now();
+    const frame=now=>{
       state.raf=0;
       if(!state.host.isConnected)return;
-      if(reduced?.matches){state.angle=state.target;state.velocity=0;paint(state);return;}
+      const elapsed=clamp(now-last,1,48);last=now;
       const err=state.target-state.angle;
-      state.velocity=state.velocity*.75+err*.09;
-      state.angle+=state.velocity;
-      if(Math.abs(err)<.026&&Math.abs(state.velocity)<.017){state.angle=state.target;state.velocity=0;paint(state);return;}
+      if(reduced?.matches||Math.abs(err)<.035){state.angle=state.target;paint(state);return;}
+      const ease=1-Math.exp(-elapsed/92);
+      state.angle+=err*ease;
       paint(state);
       state.raf=requestAnimationFrame(frame);
     };
@@ -155,6 +152,7 @@
     if(delta>TOTAL/2)delta-=TOTAL;
     state.target=(from+delta)*UNIT;
     savedAngle=state.target;
+    decorate(state);
     tick(state);
   }
   function advance(state,side){
@@ -162,11 +160,13 @@
     clearTimeout(state.wheelTimer);
     state.target=Math.round(state.target/UNIT)*UNIT+side*UNIT;
     savedAngle=state.target;
+    decorate(state);
     tick(state);
   }
   function snap(state,inertia=0){
     state.target=Math.round((state.target+inertia)/UNIT)*UNIT;
     savedAngle=state.target;
+    decorate(state);
     tick(state);
   }
   function resize(state){
@@ -184,6 +184,7 @@
     state.host.style.setProperty('--lb-card-width',width+'px');
     state.host.style.setProperty('--lb-card-height',height+'px');
     state.host.style.setProperty('--lb-radius',radius+'px');
+    state.host.style.setProperty('--lb-slice-count',String(SLICES));
     // A card itself bends through 32.2 degrees; each sub-panel is a tangent to
     // the same cylinder. Source markup is clipped, never redrawn as a texture.
     state.cards.forEach(card=>{
@@ -195,47 +196,38 @@
         const panel=strip.querySelector('.lb-cylinder-source');
         strip.style.width=(width/SLICES+1.1)+'px';
         strip.style.transform=`translate3d(calc(-50% + ${xx.toFixed(3)}px), 0px, ${zz.toFixed(3)}px) rotateY(${(alpha*180/Math.PI).toFixed(3)}deg)`;
-        if(panel){panel.style.width=width+'px';panel.style.left=(-j*width/SLICES)+'px';}
+        if(panel){panel.style.width=width+'px';}
       });
     });
     paint(state);
+    decorate(state);
   }
   function openCard(state,index,section){
     if(opening||!state.host.isConnected)return;
     opening=true;
     select(state,index);
     const panel=PANELS[index];
-    const start=performance.now();
-    const ready=()=>{
+    const finish=()=>{
       if(!state.host.isConnected){opening=false;return;}
-      if(!reduced?.matches&&Math.abs(state.angle-state.target)>.32&&performance.now()-start<820){
-        requestAnimationFrame(ready);return;
-      }
-      state.angle=state.target;
-      state.velocity=0;
-      paint(state);
-      const card=state.cards[index];
-      let completed=false;
-      const finish=()=>{
-        if(completed)return;
-        completed=true;
-        state.host.classList.remove('lb-cylinder-entering');
-        const ok=nativeOpen(panel.id,section);
-        if(!ok)console.error('Lightbox Story Cylinder: original React control unavailable',panel.id,section);
-        setTimeout(()=>{opening=false;sync();},80);
-      };
-      if(reduced?.matches){finish();return;}
-      state.host.classList.add('lb-cylinder-entering');
-      // Animate the real curved surface, not a detached flat reproduction.
-      const anim=card.animate([
-        {filter:'brightness(1)',opacity:1},
-        {filter:'brightness(1.07)',opacity:1,offset:.50},
-        {filter:'brightness(1.1)',opacity:.48}
-      ],{duration:280,easing:'cubic-bezier(.22,.84,.25,1)'});
-      anim.onfinish=finish;
-      anim.oncancel=finish;
+      state.host.classList.remove('lb-cylinder-entering');
+      const ok=nativeOpen(panel.id,section);
+      if(!ok)console.error('Lightbox Story Cylinder: original React control unavailable',panel.id,section);
+      opening=false;
+      sync();
     };
-    requestAnimationFrame(ready);
+    if(reduced?.matches){finish();return;}
+    state.host.classList.add('lb-cylinder-entering');
+    // Let the selected curved card advance while the navigation begins.
+    // No 820ms blocking wait followed by another 280ms animation.
+    const card=state.cards[index];
+    const anim=card.animate([
+      {opacity:1},
+      {opacity:1,offset:.65},
+      {opacity:.62}
+    ],{duration:245,easing:'cubic-bezier(.2,.7,.28,1)'});
+    let completed=false;
+    const done=()=>{if(completed)return;completed=true;finish();};
+    anim.onfinish=done;anim.oncancel=done;
   }
   function mount(atlas){
     const viewport=atlas.querySelector('.atlas-viewport');
@@ -265,7 +257,7 @@
         const replica=copyOriginal(panel);
         strip.append(replica);
         // World actions are pointer-accessible through the slices; the single
-        // card container is the keyboard destination, avoiding 33 duplicate tabs.
+        // card container is the keyboard destination, avoiding repeated tabs.
         replica.querySelectorAll('button,a,input,textarea,select').forEach(n=>n.tabIndex=-1);
         bent.append(strip);
       }
@@ -299,6 +291,7 @@
       e.preventDefault();
       const factor=e.deltaMode===1?3:e.deltaMode===2?10:.38;
       state.target+=clamp(e.deltaX*factor,-50,50);
+      decorate(state);
       tick(state);
       clearTimeout(state.wheelTimer);
       state.wheelTimer=setTimeout(()=>snap(state),155);
@@ -321,6 +314,7 @@
       p.velocity=clamp((e.clientX-p.lastX)/delta,-3,3);
       p.lastTime=now;p.lastX=e.clientX;
       state.target=p.origin-dx*.24;
+      decorate(state);
       tick(state);
     });
     const end=e=>{
@@ -370,8 +364,21 @@
     }
     returnButton.hidden=!(entered&&studio&&!atlas&&!studio.classList.contains('composition')&&studio.querySelector('.main-editor .editor-body'));
   }
-  const observer=new MutationObserver(()=>{
+  const observer=new MutationObserver(records=>{
     if(observerScheduled)return;
+    const relevant=records.some(record=>{
+      const target=record.target;
+      if(target.nodeType===1&&target.closest?.('.lb-cylinder'))return false;
+      if(target.parentElement?.closest?.('.lb-cylinder'))return false;
+      // Only source cards and React navigation transitions require synchronization.
+      if(target.nodeType===1&&target.closest?.('.atlas-map'))return true;
+      if(target.parentElement?.closest?.('.atlas-map'))return true;
+      if(record.type!=='childList')return false;
+      const members=[...record.addedNodes,...record.removedNodes];
+      if(members.some(n=>n.nodeType===1&&(n.matches?.('.story-atlas,.studio,.atlas-map,.main-editor')||n.querySelector?.('.story-atlas,.atlas-map,.main-editor'))))return true;
+      return target.nodeType===1&&target.matches?.('#root,.studio,.workspace-layout,.story-atlas,.main-editor');
+    });
+    if(!relevant)return;
     observerScheduled=true;
     requestAnimationFrame(()=>{observerScheduled=false;sync();});
   });

@@ -640,7 +640,7 @@
 }
 .studio.atlas-shell.lb-cylinder-atlas .lb-cylinder-card .lb-cylinder-slice>.lb-cylinder-source{
  position:absolute!important;inset:auto!important;top:-5px!important;
- left:calc(-1 * var(--slice-index) * var(--lb-card-width) / 11)!important;
+ left:calc(-1 * var(--slice-index) * var(--lb-card-width) / var(--lb-slice-count))!important;
  height:calc(100% + 10px)!important;
 }
 /* Subtle physical wall between separate independent card surfaces. */
@@ -679,4 +679,43 @@
  .studio.atlas-shell.lb-cylinder-atlas .lb-cylinder-card .atlas-script .node-footer{
    min-height:38px!important;padding:9px 11px!important;
  }
+}
+
+/* ================================================================
+   V6 / CYLINDER FINISH + COMPOSITING
+   The rim, apron, and floor contact belong to one physical silhouette.
+   Expensive whole-card filters have been removed from the motion path;
+   illumination is built from stationary layered gradients and shadows.
+   ================================================================ */
+.lb-cylinder{--lb-slice-count:7;}
+.lb-cylinder-view{transform:translateZ(0);contain:layout style;}
+.lb-cylinder-card{will-change:transform;contain:layout style;}
+.lb-cylinder-slice{will-change:auto;}
+.lb-cylinder-card .lb-cylinder-bent{transform-style:preserve-3d;}
+.lb-cylinder-shell{
+  top:13.5%;height:77%;width:min(86.5%,1238px);
+  border-radius:48% 48% 44% 44% / 14% 14% 13% 13%;
+  background:linear-gradient(90deg,#d9d0d0 0%,#faf8f3 4%,#fffdf8 16%,#fffdfa 52%,#fffaf6 86%,#ddd2d0 100%);
+  box-shadow:0 12px 14px #5846601b,0 31px 38px -18px #4c35564d,
+    inset 0 19px 13px -13px #bda8bb43,inset 18px 0 24px -17px #7e637b44,inset -18px 0 24px -17px #7e637b44;
+}
+.lb-cylinder-shell::before{
+  content:"";position:absolute;left:1.5%;right:1.5%;top:3%;height:22%;border-radius:50%;
+  background:linear-gradient(180deg,#a88bb962,transparent 80%);opacity:.75;
+}
+.lb-cylinder-shell::after{
+  content:"";position:absolute;left:2%;right:2%;bottom:-5px;height:16px;
+  border-radius:0 0 50% 50% / 0 0 100% 100%;
+  border-bottom:4px solid #eee5e6;
+  background:linear-gradient(180deg,#fbf9f2,#d6c7d1 94%);
+  box-shadow:0 15px 20px -11px #6048684c;
+}
+.lb-cylinder-rim{border-color:#fffaf7!important;box-shadow:0 4px 13px #9d88aa2c,inset 0 15px 22px #7d609b2f,0 -2px 9px #fff!important;}
+.lb-cylinder-slice{border-top-width:4px;border-bottom-width:4px;}
+.lb-cylinder-card.is-active .lb-cylinder-slice{box-shadow:none!important;}
+.lb-cylinder-slice:first-child{border-left-width:4px;}
+.lb-cylinder-slice:last-child{border-right-width:4px;}
+@media(max-width:700px){
+ .lb-cylinder-shell{width:199%;top:15.5%;height:71%;}
+ .lb-cylinder-shell::after{height:11px;bottom:-4px;}
 }

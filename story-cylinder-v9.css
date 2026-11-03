@@ -104,7 +104,7 @@
   filter:blur(9px);transform:translateZ(-10px)
 }
 .lb-cylinder-plaque{
-  position:absolute;inset:8px 7px 6px;border-radius:13px;
+  position:absolute;inset:9px 17px 8px;border-radius:13px;
   border:1px solid rgba(255,255,255,.64);
   background:#eee7ea;
   box-shadow:0 3px 4px rgba(45,38,47,.15),
@@ -128,11 +128,17 @@
   box-shadow:none;
   -webkit-backface-visibility:hidden;backface-visibility:hidden
 }
-.lb-cylinder-segment.is-first{border-radius:9px 0 0 9px}
-.lb-cylinder-segment.is-last{border-radius:0 9px 9px 0}
+.lb-cylinder-segment.is-first{border-radius:10px 0 0 10px}
+.lb-cylinder-segment.is-last{border-radius:0 10px 10px 0}
 .lb-cylinder-segment:after{
   content:"";position:absolute;inset:0;z-index:4;pointer-events:none;
   background:none
+}
+.lb-cylinder-segment.is-first::after{
+ background:linear-gradient(90deg,rgba(47,31,51,.16),rgba(255,255,255,.09) 26%,transparent 88%)
+}
+.lb-cylinder-segment.is-last::after{
+ background:linear-gradient(90deg,transparent 14%,rgba(255,255,255,.065) 59%,rgba(47,31,51,.14))
 }
 .lb-cylinder-sheen{display:none!important}
 .lb-cylinder-v9 .lb-cylinder-card .lb-cylinder-source{

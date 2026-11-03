@@ -125,7 +125,7 @@ try{
     return {centerWidth:c.width,sideWidth:s.width,farWidth:f.width,
       centerX:c.x+c.width/2,sideX:s.x+s.width/2,farX:f.x+f.width/2,
       centerRight:c.right,centerLeft:c.left,sideLeft:s.left,
-      otherSideRight:l.right,sideRight:s.right,farRight:f.right};
+      otherSideRight:l.right,sideRight:s.right,farLeft:f.left,farRight:f.right};
   });
   assert.ok(wrap.sideWidth<wrap.centerWidth*.89&&wrap.sideWidth>wrap.centerWidth*.53,
     'Near station visibly wraps into the cylinder: '+JSON.stringify(wrap));
@@ -136,9 +136,11 @@ try{
   if(width>=1200){
     assert.ok(wrap.farRight-wrap.sideRight>24,
       'Outermost card must be VISIBLE beyond the nearer card, not concealed: '+JSON.stringify(wrap));
-    assert.ok(wrap.sideLeft>=wrap.centerRight-12 &&
-              wrap.otherSideRight<=wrap.centerLeft+12,
-      'Nearer cards must not cover the active panel content: '+JSON.stringify(wrap));
+    assert.ok(wrap.sideLeft-wrap.centerRight>=8 &&
+              wrap.centerLeft-wrap.otherSideRight>=8,
+      'Separate card faces must have real gutters beside the active card: '+JSON.stringify(wrap));
+    assert.ok(wrap.farLeft-wrap.sideRight>=7,
+      'Outermost panel must not collide with the near-side card: '+JSON.stringify(wrap));
   }
   const measureAlignment=async()=>page.evaluate(()=>{
     const cards=[...document.querySelectorAll('.lb-cylinder-card')];

@@ -121,10 +121,11 @@ try{
     const ci=Number(center.dataset.index);
     const getRect=i=>cards.find(c=>Number(c.dataset.index)===((ci+i+5)%5))
       .querySelector('.lb-cylinder-plaque').getBoundingClientRect();
-    const c=getRect(0),s=getRect(1),f=getRect(2);
+    const c=getRect(0),s=getRect(1),f=getRect(2),l=getRect(-1);
     return {centerWidth:c.width,sideWidth:s.width,farWidth:f.width,
       centerX:c.x+c.width/2,sideX:s.x+s.width/2,farX:f.x+f.width/2,
-      sideRight:s.right,farRight:f.right};
+      centerRight:c.right,centerLeft:c.left,sideLeft:s.left,
+      otherSideRight:l.right,sideRight:s.right,farRight:f.right};
   });
   assert.ok(wrap.sideWidth<wrap.centerWidth*.89&&wrap.sideWidth>wrap.centerWidth*.53,
     'Near station visibly wraps into the cylinder: '+JSON.stringify(wrap));
@@ -132,9 +133,13 @@ try{
     'Far station turns toward a true edge-on profile: '+JSON.stringify(wrap));
   assert.ok(wrap.farX>wrap.sideX&&wrap.sideX>wrap.centerX,
     'Cards occupy ordered stations on the circular shell: '+JSON.stringify(wrap));
-  if(width>=1200)
+  if(width>=1200){
     assert.ok(wrap.farRight-wrap.sideRight>28,
       'Outermost card must be VISIBLE beyond the nearer card, not concealed: '+JSON.stringify(wrap));
+    assert.ok(wrap.sideLeft>=wrap.centerRight-12 &&
+              wrap.otherSideRight<=wrap.centerLeft+12,
+      'Nearer cards must not cover the active panel content: '+JSON.stringify(wrap));
+  }
   const measureAlignment=async()=>page.evaluate(()=>{
     const cards=[...document.querySelectorAll('.lb-cylinder-card')];
     const active=cards.find(card=>card.classList.contains('is-active'));

@@ -109,37 +109,39 @@ try{
     'Rotation controls must appear above the fixed dock at '+width+'x'+height+': '+JSON.stringify(measure));
   assert.equal(await page.locator('.lb-cylinder-card .lb-cylinder-content').count(),5,'Five seamless editorial surfaces');
 
-  // The side cards must settle on the same projected floor as the front one.
-  // Check each station after moving the cylinder; the old negative Y offset
-  // raised the outer cards and caused a visibly uneven baseline.
-  const measureFootAlignment = async() => page.evaluate(() => {
+  // Test both boundaries of every physical card through a full set of
+  // carousel stations. A baseline-only check masked vertical shrink.
+  const measureAlignment=async()=>page.evaluate(()=>{
     const cards=[...document.querySelectorAll('.lb-cylinder-card')];
-    const centered=cards.find(card=>card.classList.contains('is-active'));
-    const baseline=centered.getBoundingClientRect().bottom;
-    return cards.map(card=>({
-      index:card.dataset.index,
-      offset:Number((card.getBoundingClientRect().bottom-baseline).toFixed(1))
-    }));
+    const center=cards.find(card=>card.classList.contains('is-active'));
+    const reference=center.getBoundingClientRect();
+    return cards.map(card=>{
+      const rect=card.getBoundingClientRect();
+      return {
+        index:card.dataset.index,
+        top:Number((rect.top-reference.top).toFixed(2)),
+        bottom:Number((rect.bottom-reference.bottom).toFixed(2)),
+        height:Number((rect.height-reference.height).toFixed(2))
+      };
+    });
   });
-  if((width===390||width===1200||width===1440)&&height===900){
-    // Visual foot alignment must be symmetric: neither above nor below.
-    // Old one-sided check passed even when outer panels hung 10–15px lower.
-    const tolerance=2.5;
-    for(let rotation=0;rotation<3;rotation++){
-      if(rotation){
-        await page.locator('.lb-cylinder-next').click();
-        await page.waitForTimeout(600);
-      }
-      const offsets=await measureFootAlignment();
-      assert.ok(offsets.every(item=>Math.abs(item.offset)<=tolerance),
-        'All five card feet must align within '+tolerance+'px at '+width+'px, rotation '+rotation+': '+JSON.stringify(offsets));
+  const edgeTolerance=2;
+  for(let rotation=0;rotation<5;rotation++){
+    if(rotation){
+      await page.locator('.lb-cylinder-next').click();
+      await page.waitForTimeout(620);
     }
-    // Restore initial selection so existing navigation tests and screenshots
-    // continue using the established Story Cylinder default state.
-    await page.locator('.lb-cylinder-prev').click();
-    await page.locator('.lb-cylinder-prev').click();
-    await page.waitForTimeout(600);
+    const measured=await measureAlignment();
+    assert.ok(measured.every(item=>
+      Math.abs(item.top)<=edgeTolerance &&
+      Math.abs(item.bottom)<=edgeTolerance &&
+      Math.abs(item.height)<=edgeTolerance),
+      'Top AND bottom of all five cards must stay aligned at '+width+'x'+height+
+      ', rotation '+rotation+': '+JSON.stringify(measured));
   }
+  // Return to the initial screenplay station for downstream interaction tests.
+  for(let n=0;n<4;n++)await page.locator('.lb-cylinder-prev').click();
+  await page.waitForTimeout(620);
   await page.screenshot({path:resolve(dir,'cylinder-'+width+'x'+height+'.png'),fullPage:true});
   if(width===1200 && height===900){
    await page.locator('.lb-cylinder-next').click();

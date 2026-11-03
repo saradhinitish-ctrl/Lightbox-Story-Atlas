@@ -10,6 +10,12 @@ import assert from 'node:assert/strict';
 
 const {chromium} = await import(process.env.PLAYWRIGHT_MODULE || 'playwright');
 const root = process.cwd();
+// Visual regression: the canvas no longer draws the grey orbit outlines.
+const cylinderSource = await readFile(resolve(root,'story-cylinder-v9.js'),'utf8');
+const shellStart = cylinderSource.indexOf('function drawShell(s) {');
+const shellEnd = cylinderSource.indexOf('function resize(s) {',shellStart);
+assert.ok(shellStart>=0 && shellEnd>shellStart,'Story Cylinder drawing code exists');
+assert.doesNotMatch(cylinderSource.slice(shellStart,shellEnd),/\.stroke\s*\(/,'No hard-edged orbit lines drawn');
 const dir = resolve(root, 'qa-artifacts');
 await mkdir(dir, {recursive:true});
 const mime = {
@@ -72,6 +78,7 @@ try{
     width:innerWidth,height:innerHeight,screenWidth:document.documentElement.scrollWidth,
     cardCount:all.length,sourceCount:document.querySelectorAll('.lb-cylinder-v9 .lb-cylinder-source').length,
     shellCanvas:[shell.width,shell.height],
+    shellBottomAlpha:shell.getContext('2d').getImageData(Math.floor(shell.width/2),shell.height-1,1,1).data[3],
     stage:[stage.clientWidth,stage.clientHeight],
     active:all.filter(c=>c.classList.contains('is-active')).map(c=>c.dataset.index),
     rimRadius:Number(getComputedStyle(document.querySelector('.lb-cylinder-v9')).getPropertyValue('--lb-card-width').replace('px','')),
@@ -97,6 +104,7 @@ try{
   assert.equal(measure.active[0],'2','Screenplay first at '+width);
   assert.ok(measure.screenWidth<=width+2,'No page overflow at '+width);
   assert.ok(measure.shellCanvas[0]>0&&measure.shellCanvas[1]>0,'Canvas visible at '+width);
+  assert.ok(measure.shellBottomAlpha<=2,'Floor shadow must fade out before the bottom edge at '+width);
   assert.ok(measure.controlsBottom <= Math.min(height,measure.dockTop)+4,
     'Rotation controls must appear above the fixed dock at '+width+'x'+height+': '+JSON.stringify(measure));
   assert.equal(await page.locator('.lb-cylinder-card .lb-cylinder-content').count(),5,'Five seamless editorial surfaces');

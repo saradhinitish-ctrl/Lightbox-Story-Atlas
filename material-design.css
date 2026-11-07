@@ -243,3 +243,14 @@
 
 /* Swap the bundled legacy mark for the Lit Spine symbol across studio surfaces. */
 .studio .studio-mark {content:url('./app-icons/lit-spine-96.png');}
+
+/* Keep full-page scene tools on their own canvas instead of exposing the Atlas. */
+.studio.atlas-shell.stage-active :is(.workspace-layout,.main-editor,.editor-body) {
+  background:#fff;
+}
+.studio.atlas-shell .breakdown-stage {
+  position:relative;
+  z-index:1;
+  min-height:100%;
+  background:#fff;
+}

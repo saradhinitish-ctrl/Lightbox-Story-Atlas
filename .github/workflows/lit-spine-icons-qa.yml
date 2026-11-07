@@ -1,24 +1,24 @@
-name: Focus Cinematic Website Icon QA
+name: Lit Spine Website Icon QA
 on:
   push:
     branches:
-      - feat/focus-cinematic-site-icon
+      - main
     paths:
       - 'favicon.svg'
       - 'favicon.ico'
       - 'apple-touch-icon.png'
-      - 'app-icons/focus-cinematic-*.png'
+      - 'app-icons/lit-spine-*.png'
       - 'manifest.webmanifest'
       - '*.html'
-      - 'tests/focus-cinematic-qa.mjs'
-      - '.github/workflows/focus-cinematic-icons-qa.yml'
+      - 'tests/lit-spine-qa.mjs'
+      - '.github/workflows/lit-spine-icons-qa.yml'
   pull_request:
     branches: [main]
   workflow_dispatch:
 permissions:
   contents: read
 jobs:
-  verify-focus-icons:
+  verify-lit-spine-icons:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -26,4 +26,4 @@ jobs:
         with:
           node-version: '22'
       - name: Verify website favicons and installation icons
-        run: node tests/focus-cinematic-qa.mjs
+        run: node tests/lit-spine-qa.mjs

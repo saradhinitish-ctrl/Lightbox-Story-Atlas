@@ -1,12 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- New editorial open-frame mark for the lime/ink Lightbox design system.
-     Replaces the earlier three-bar launcher logo. -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
  android:width="108dp" android:height="108dp"
  android:viewportWidth="108" android:viewportHeight="108">
- <!-- Bold open upper-left / lower-right crop marks, with one acid-lime accent -->
- <path android:fillColor="#181916" android:pathData="M25,30 H73 V38 H33 V68 H25 Z"/>
- <path android:fillColor="#181916" android:pathData="M83,40 V78 H41 V70 H75 V40 Z"/>
- <path android:fillColor="#C6FF00" android:pathData="M39,45 H68 V56 H39 Z"/>
- <path android:fillColor="#181916" android:pathData="M39,59 H55 V63 H39 Z"/>
+ <path android:fillColor="#C6FF00" android:pathData="M74,20h4v68h-4z"/>
 </vector>

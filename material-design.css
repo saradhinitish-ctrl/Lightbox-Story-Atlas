@@ -240,3 +240,6 @@
 @media (forced-colors:active) {
   .studio.atlas-shell .dialog[open] {border-color:CanvasText;box-shadow:none;}
 }
+
+/* Swap the bundled legacy mark for the Lit Spine symbol across studio surfaces. */
+.studio .studio-mark {content:url('./app-icons/lit-spine-96.png');}

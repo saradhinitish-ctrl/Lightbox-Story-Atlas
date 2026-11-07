@@ -1,0 +1,242 @@
+/* Lightbox / Material edition. Static, shared textures; no animation loop.
+   Screenplay typography and geometry remain owned by the editor. */
+:root {
+  --lb-canvas:#fff;
+  --lb-card:#faf9f5;
+  --lb-paper:#fffefa;
+  --lb-ink:#23241f;
+  --lb-secondary:#55574e;
+  --lb-muted:#66685f;
+  --lb-rule:#ddded5;
+  --lb-lime:#d0f251;
+  --lb-lavender:#d5d8c3;
+  --lb-lilac:#edf0e2;
+  --lb-fibre:url('./assets/materials/paper-fibres.webp');
+  --lb-crease:url('./assets/materials/creased-paper.webp');
+  --lb-paper-surface:linear-gradient(#fffdf880,#fffdf880),var(--lb-fibre);
+  --lb-stock-surface:linear-gradient(#252720f5,#1d201af5),var(--lb-fibre);
+  --lb-sheet-shadow:0 2px 3px #25282008,0 12px 28px -12px #25282032;
+}
+.studio.atlas-shell { --bg:#fff; --surface:#f7f7f2; --editor:#e9eae3; --side:#faf9f5; }
+.studio.atlas-shell .compact-header,
+.studio.atlas-shell .compact-header .menubar {background:#fff; border-color:#e4e5dc; box-shadow:none;}
+.studio.atlas-shell .compact-header {border-bottom:1px solid #e4e5dc;}
+.studio.atlas-shell :is(.button.primary,.compile-button,.vl-button.is-primary),
+.studio.atlas-shell .compact-header .compile-button {
+  background:var(--lb-lime); border:1px solid #9ab82e; border-radius:6px;
+  box-shadow:inset 0 1px 0 #ffffff85,0 2px 3px #25282012; color:#23241f;
+  transition:transform 150ms ease;
+}
+.studio.atlas-shell :is(.button.primary,.compile-button,.vl-button.is-primary):not(:disabled):hover,
+.studio.atlas-shell .compact-header .compile-button:not(:disabled):hover {
+  background:#daf66e; border-color:#829d22; box-shadow:inset 0 1px 0 #ffffff85,0 3px 7px #25282018; transform:translateY(-1px);
+}
+.studio.atlas-shell :is(.button.secondary,.vl-button,.command-trigger) {border-color:#b8bbae;border-radius:5px; background:#fffefa;}
+.studio.atlas-shell .creative-dock {background:#fff; border-top-color:#e4e5dc;}
+.studio.atlas-shell .creative-dock>button[aria-current=page] {background:#edf3d8; box-shadow:inset 0 -2px 0 #91ad34;}
+.studio.atlas-shell .director-nav {background:#fff; border-color:#e4e5dc;}
+.studio.atlas-shell .director-nav .workspace-tabs button.active {background:#edf3d8; border-color:#91ad34;}
+.studio.atlas-shell :is(.dock-bubble,.workspace-launcher) {border:1px solid #a3bd44;border-radius:9px;box-shadow:0 4px 14px #25282020;}
+
+/* A white studio around physical surfaces. Long-form reading remains quiet. */
+.studio.atlas-shell :is(.visual-language,.planning-sheet,.collection-workspace.corkboard,.beat-view,.breakdown-stage) {background:#fff;}
+.studio.atlas-shell :is(.vl-header,.director-tool-heading,.stage-heading,.collection-heading,.planning-sheet>header) {
+  border-bottom:1px solid #ddded5; padding-bottom:25px;
+}
+.studio.atlas-shell :is(.vl-header h1,.director-tool-heading h1,.stage-heading h1) {
+  font:400 clamp(40px,4.4vw,62px)/1.08 var(--font-display);letter-spacing:-.035em;
+}
+.studio.atlas-shell :is(.vl-board-heading h2,.vl-scene-board-copy h3,.beat-card .beat-title) {
+  font-family:var(--font-display);font-weight:400;letter-spacing:-.025em;
+}
+.studio.atlas-shell .visual-language .vl-board-heading h2 {font-size:36px;}
+.studio.atlas-shell :is(.planning-field,.planning-free-notes,.collection-card.index-card,.beat-card) {
+  background-color:#faf9f5; background-image:var(--lb-paper-surface);background-size:auto,384px;
+  border:1px solid #d7d8cd;border-radius:5px;box-shadow:var(--lb-sheet-shadow);
+}
+.studio.atlas-shell .planning-field:first-child {
+  background-image:linear-gradient(#fffdf866,#fffdf866),var(--lb-crease);background-size:cover;
+}
+.studio.atlas-shell .planning-field>span {font:500 11px/1.6 var(--font-data);letter-spacing:.07em;text-transform:uppercase;color:#55574e;}
+.studio.atlas-shell :is(.planning-field,.collection-card):focus-within {
+  border-color:#7a853f;box-shadow:inset 3px 0 0 #8ba33b,var(--lb-sheet-shadow);
+}
+.studio.atlas-shell .collection-card.index-card:hover {background-color:#fffefa;box-shadow:0 2px 4px #25282012,0 18px 36px -18px #25282050;border-color:#a2a78e;}
+.studio.atlas-shell .collection-card-icon {background:#edf0e2;border-color:#c0c8a5;border-radius:4px;}
+.studio.atlas-shell .beat-card {border-top:3px solid #c6d69a;}
+.studio.atlas-shell .beat-number>span {background:#edf0e2;border:0;border-radius:3px;}
+.studio.atlas-shell .beat-card .beat-title {font-size:30px;}
+.studio.atlas-shell .beat-card>textarea {background:#fffdf9;border-color:#c5c8b8;}
+.studio.atlas-shell .beat-insights {background-image:var(--lb-paper-surface);background-size:auto,384px;background-color:#f6f6ef;border:1px solid #d7d8cd;box-shadow:var(--lb-sheet-shadow);}
+.studio.atlas-shell .script-page-scroll {background:#e9eae3;background-image:linear-gradient(#e9eae3e8,#e9eae3e8),var(--lb-fibre);background-size:auto,384px;}
+.studio.atlas-shell .screenplay-prosemirror {background:#fffefa;box-shadow:0 0 0 1px #d7d8ce,0 8px 28px #25282016;}
+.studio.atlas-shell :is(.compact-document-heading,.formatbar,.writing-tools,.document-save-bar,.editor-footer) {background:#fafbf7;border-color:#e1e3d9;}
+
+/* Visuals: a photographic print, a folded scene cover, a dark direction folio. */
+.studio.atlas-shell .visual-language .vl-workspace {border:0;gap:24px;}
+.studio.atlas-shell .visual-language .vl-sidebar {border-right:1px solid #e6e7de;padding-right:18px;}
+.studio.atlas-shell .visual-language :is(.vl-film-button,.vl-directory-button,.vl-scene-list button).is-active {background:#edf3d8;border-color:#c4d498;box-shadow:inset 3px 0 0 #8ba33b;}
+.studio.atlas-shell .visual-language .vl-main {padding-left:12px;}
+.studio.atlas-shell .visual-language :is(.vl-scene-board,.vl-reference) {
+  background:#fffefa;background-image:var(--lb-paper-surface);background-size:auto,384px;
+  border:1px solid #d6d8cc;border-radius:5px;box-shadow:var(--lb-sheet-shadow);
+  transition:transform 160ms ease;
+}
+.studio.atlas-shell .visual-language .vl-scene-board:hover {transform:translateY(-3px);border-color:#a6ae90;box-shadow:0 2px 4px #25282012,0 20px 35px -18px #25282050;}
+.studio.atlas-shell .visual-language .vl-scene-cover {
+  background:#eeeee4;background-image:var(--lb-crease);background-size:cover;background-position:center;
+  width:calc(100% - 20px);border:0;border-bottom:1px solid #d7d8ca;margin:10px 10px 0;border-radius:2px;min-height:160px;
+}
+.studio.atlas-shell .visual-language .vl-scene-cover>span {font:400 78px/1 var(--font-display);color:#424638;letter-spacing:-.06em;}
+.studio.atlas-shell .visual-language .vl-scene-cover>small {background:#fdfdf7e8;border:1px solid #d3d6c6;color:#555a45;}
+.studio.atlas-shell .visual-language .vl-scene-board-copy {padding:22px;}
+.studio.atlas-shell .visual-language .vl-scene-board-copy h3 {font-size:29px;}
+.studio.atlas-shell .visual-language .vl-scene-board-copy>p {color:#626657;}
+.studio.atlas-shell .visual-language .vl-film-banner {
+  position:relative;background-color:#252720;background-image:var(--lb-stock-surface);background-size:auto,384px;
+  color:#f8f8ee;border:1px solid #30352a;border-radius:6px;box-shadow:var(--lb-sheet-shadow);padding:26px;
+}
+.studio.atlas-shell .visual-language .vl-film-banner strong {color:#f8f8ee;font:400 29px/1.15 var(--font-display);}
+.studio.atlas-shell .visual-language .vl-film-banner small {color:#d0d4c3;}
+.studio.atlas-shell .visual-language .vl-film-banner>svg {color:#d0f251;}
+.studio.atlas-shell .visual-language .vl-direction {
+  background-color:#faf9f3;background-image:var(--lb-paper-surface);background-size:auto,384px;
+  border:1px solid #d7d8cd;border-left:3px solid #a4b66b;box-shadow:var(--lb-sheet-shadow);padding:26px;
+}
+.studio.atlas-shell .visual-language .vl-empty-board {background-color:#faf9f3;background-image:linear-gradient(#fffdf855,#fffdf855),var(--lb-crease);background-size:cover;border:1px solid #d7d8cd;box-shadow:var(--lb-sheet-shadow);min-height:230px;}
+.studio.atlas-shell .visual-language .vl-media-preview {margin:9px 9px 0;background:#eaebe3;border:1px solid #e0e2d6;border-radius:2px;}
+.studio.atlas-shell .visual-language .vl-reference-copy {padding:18px 20px 22px;}
+.studio.atlas-shell .visual-language .vl-reference-category {background:#edf0e2;border-color:#d9decb;color:#4b553a;}
+.studio.atlas-shell .visual-language .vl-script-excerpt {background:#f3f4ed;border-color:#d7dacb;}
+.studio.atlas-shell .visual-language .vl-group-filters>button:is(.is-active,[aria-pressed=true]) {background:#edf3d8;border-color:#c4d498;}
+.studio.atlas-shell .visual-language[data-reference-canvas=dark] .vl-board-grid {background-color:#252720;background-image:var(--lb-stock-surface);background-size:auto,384px;border:1px solid #30352a;}
+
+/* Export is a print desk; the actual exported screenplay stays clean. */
+.studio.atlas-shell .dialog,.vl-reference-dialog {
+  background-color:#faf9f5;background-image:var(--lb-paper-surface);background-size:auto,384px;
+  border:1px solid #d3d6c8;border-radius:9px;box-shadow:0 24px 100px #15191145,0 3px 12px #15191118;
+}
+.studio.atlas-shell .dialog-heading {background:transparent;border-color:#dddfd3;}
+.studio.atlas-shell .dialog-heading h2 {font:400 clamp(30px,3vw,44px)/1.13 var(--font-display);letter-spacing:-.025em;}
+.studio.atlas-shell .dialog:has(.compile-layout) .dialog-heading {
+  background-color:#252720;background-image:var(--lb-stock-surface);background-size:auto,384px;
+  padding:28px;border:0;
+}
+.studio.atlas-shell .dialog:has(.compile-layout) .dialog-heading h2 {color:#fafbf1;}
+.studio.atlas-shell .dialog:has(.compile-layout) .dialog-heading p {color:#d1d6c4;}
+.studio.atlas-shell .dialog:has(.compile-layout) .dialog-heading .icon-button {color:#f2f6e5;}
+.studio.atlas-shell .dialog:has(.compile-layout) .dialog-body {background:transparent;}
+.studio.atlas-shell .dialog .form-label {color:#565b4c;}
+.studio.atlas-shell .dialog :is(input:not([type=checkbox]),textarea,select) {background:#fffefa;border-color:#a9af9c;border-radius:4px;}
+.studio.atlas-shell .compile-layout {gap:28px;}
+.studio.atlas-shell .compile-manifest {
+  align-self:start;background-color:#eeefe6;background-image:var(--lb-paper-surface);background-size:auto,384px;
+  border:1px solid #d7dacb;border-radius:5px;padding:20px;min-width:0;
+}
+.studio.atlas-shell .compile-item {border-color:#daddce;color:#474d3b;}
+.studio.atlas-shell .compile-total {color:#565d48;border-color:#daddce;}
+.studio.atlas-shell .dialog-actions {background:transparent;border-color:#dddfd3;}
+.lb-title-proof {
+  box-sizing:border-box;position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  width:100%;min-height:235px;margin:0 0 25px;padding:32px 22px 40px;
+  background:#fffefa;background-image:linear-gradient(#fffefabf,#fffefabf),var(--lb-fibre);background-size:auto,384px;
+  color:#33382c;border:1px solid #daddcf;box-shadow:2px 3px 0 #f7f8f0,3px 4px 0 #d1d5c4,0 12px 22px -8px #25282030;
+  text-align:center;font:12px/1.6 "Courier Prime",monospace;overflow-wrap:anywhere;
+}
+.lb-title-proof strong {font:700 16px/1.4 "Courier Prime",monospace;text-transform:uppercase;margin-bottom:20px;max-width:100%;}
+.lb-title-proof span {white-space:pre-line;}
+.lb-title-proof small {position:absolute;bottom:16px;font:9px/1.4 var(--font-data);letter-spacing:.12em;color:#646b56;}
+.lb-title-proof[hidden] {display:none;}
+
+/* Paper band at the foot of the atlas and the standalone download desk. */
+.studio.atlas-shell .lb-android-footer {
+  padding:18px 22px;background-color:var(--lb-card);background-image:var(--lb-paper-surface);background-size:auto,384px;
+  border:1px solid var(--lb-rule);border-radius:5px;box-shadow:var(--lb-sheet-shadow);
+}
+.studio.atlas-shell .lb-android-footer a {
+  display:inline-flex;align-items:center;min-height:44px;padding:0 15px;background:var(--lb-lime);
+  color:var(--lb-ink);border:1px solid #a1b95a;border-radius:4px;text-decoration:none;
+}
+.lb-widget-page {--ink:var(--lb-ink);--muted:var(--lb-secondary);--lime:var(--lb-lime);--card:var(--lb-card);--paper:var(--lb-paper);background:white;}
+.lb-widget-page :is(.preview,.panel) {
+  background-color:var(--card);background-image:var(--lb-paper-surface);background-size:auto,384px;
+  border:1px solid #cbcec0;border-radius:5px;box-shadow:var(--lb-sheet-shadow);
+}
+.lb-widget-page .preview:nth-child(2) {
+  background-image:linear-gradient(#fffdf860,#fffdf860),var(--lb-crease);background-size:cover;
+}
+.lb-widget-page :is(.native-widget-card,.install-card) {
+  background-color:#252720;background-image:var(--lb-stock-surface);background-size:auto,384px;
+  border:1px solid #363c30;border-radius:6px;box-shadow:var(--lb-sheet-shadow);
+}
+.lb-widget-page :is(.install-download,.native-widget-card a) {background-color:var(--lime);border-color:var(--lime);}
+.lb-widget-page .install-download:is(:hover,:focus-visible) {background-color:#e2fa90;}
+.lb-widget-page .install-system {color:var(--lime);}
+.lb-widget-page :is(.top,footer,.section-title) {border-width:1px;border-color:#bec2b4;}
+.lb-widget-page .install-tags {flex-wrap:wrap;}
+
+/* The download invitation uses the same physical paper as the workspace. */
+.studio.atlas-shell .welcome {background:#fff;}
+.studio.atlas-shell .lb-native-choice {
+  background-color:#f5f3eb!important;background-image:linear-gradient(#fffdf855,#fffdf855),var(--lb-crease)!important;
+  background-size:cover!important;border:1px solid #d8dbcc!important;border-radius:6px!important;
+  box-shadow:var(--lb-sheet-shadow)!important;padding:28px!important;
+}
+.studio.atlas-shell .lb-native-choice h3 {font:400 32px/1.1 var(--font-display)!important;letter-spacing:-.025em;}
+.studio.atlas-shell .lb-native-choice a {background:#252720!important;color:#e5f5b5!important;border-color:#353d27!important;border-radius:5px;box-shadow:0 2px 4px #25282020!important;}
+.studio.atlas-shell .lb-native-choice a:hover {background:#363e2a!important;}
+.studio.atlas-shell :is(.workspace-sheet,.application-menu-popover,.dropdown,.binder.section-library,.inspector) {
+  background-color:#faf9f5;background-image:var(--lb-paper-surface);background-size:auto,384px;
+  border-color:#d7dace;box-shadow:0 8px 28px #25282020;
+}
+.studio.atlas-shell .toast-message {inset:auto auto calc(76px + env(safe-area-inset-bottom)) 50%;}
+/* Respect the established cylinder geometry and animation; only its paper inserts change. */
+.studio.atlas-shell.lb-cylinder-atlas,.studio.atlas-shell.lb-cylinder-atlas .story-atlas {background-color:#fff!important;}
+.lb-cylinder-v9 .spark-note,.lb-cylinder-v9 .script-page-preview {background-image:var(--lb-paper-surface)!important;background-size:auto,320px!important;}
+
+@media (max-width:767px) {
+  .studio.atlas-shell :is(.vl-header h1,.director-tool-heading h1,.stage-heading h1) {font-size:39px;}
+  .studio.atlas-shell .visual-language .vl-main {padding-left:0;}
+  .studio.atlas-shell .visual-language .vl-sidebar {padding-right:0;border-right:0;}
+  .studio.atlas-shell .visual-language .vl-scene-cover {min-height:132px;}
+  .studio.atlas-shell .visual-language .vl-scene-board-copy {padding:18px;}
+  .studio.atlas-shell .visual-language .vl-scene-board-copy h3 {font-size:26px;}
+  .studio.atlas-shell .visual-language .vl-film-banner {padding:20px;}
+  .studio.atlas-shell .visual-language .vl-film-banner strong {font-size:25px;}
+  .studio.atlas-shell .dialog:has(.compile-layout) .dialog-heading {padding:21px 18px;}
+  .studio.atlas-shell .compile-layout {grid-template-columns:minmax(0,1fr);gap:22px;}
+  .studio.atlas-shell .compile-manifest {padding:16px;}
+  .lb-title-proof {min-height:200px;}
+  .studio.atlas-shell .dialog-actions {gap:12px;flex-wrap:wrap;}
+  .studio.atlas-shell .dialog-actions .button {min-height:44px;}
+  .studio.atlas-shell .lb-native-choice {padding:22px!important;}
+  .studio.atlas-shell .lb-native-choice h3 {font-size:27px!important;}
+}
+@media (prefers-reduced-motion:reduce) {
+  .studio.atlas-shell .visual-language .vl-scene-board,
+  .studio.atlas-shell :is(.button.primary,.compile-button,.vl-button.is-primary) {transition:none;}
+  .studio.atlas-shell .visual-language .vl-scene-board:hover {transform:none;}
+}
+@media (forced-colors:active) {
+  .studio.atlas-shell *, .vl-reference-dialog, .lb-title-proof {background-image:none!important;box-shadow:none!important;}
+  .studio.atlas-shell :is(button,input,textarea,select,.dialog,.vl-reference,.vl-scene-board) {border-color:ButtonText;}
+}
+@media print {
+  .studio.atlas-shell *, .vl-reference-dialog, .lb-title-proof {background-image:none!important;box-shadow:none!important;}
+  .lb-title-proof {display:none!important;}
+}
+
+/* Match the specificity of the retained application stylesheet. */
+.studio.atlas-shell .visual-language .vl-header {border-bottom:1px solid #ddded5;}
+.studio.atlas-shell .visual-language .vl-header h1 {font:400 clamp(40px,4.4vw,62px)/1.08 var(--font-display);letter-spacing:-.035em;}
+.studio.atlas-shell .visual-language .vl-scene-board-copy h3 {font-family:var(--font-display);font-weight:400;}
+.studio.atlas-shell .dialog[open] {border:1px solid #d3d6c8;border-radius:9px;box-shadow:0 24px 100px #15191145,0 3px 12px #15191118;}
+.studio.atlas-shell .compile-layout {align-items:start;}
+.studio.atlas-shell .compile-manifest {position:sticky;top:0;max-height:none;overflow:visible;}
+@media (max-width:767px) {
+  .studio.atlas-shell .visual-language .vl-header h1 {font-size:39px;}
+  .studio.atlas-shell .compile-manifest {position:static;}
+}
+@media (forced-colors:active) {
+  .studio.atlas-shell .dialog[open] {border-color:CanvasText;box-shadow:none;}
+}

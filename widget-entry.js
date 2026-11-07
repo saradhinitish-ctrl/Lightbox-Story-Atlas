@@ -99,6 +99,9 @@
     // In the installed app, the native bottom dock owns the widgets action.
     // In Chrome, a quiet utility link near the BOTTOM of the Story Atlas
     // downloads the standalone APK rather than attempting a PWA install.
+    root.querySelectorAll('.lb-android-footer').forEach(footer => {
+      if (!footer.parentElement?.matches('.story-atlas')) footer.remove();
+    });
     root.querySelectorAll('.studio.atlas-shell .story-atlas').forEach(atlas => {
       let footer=atlas.querySelector(':scope > .lb-android-footer');
       if(nativeApp) {

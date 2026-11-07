@@ -380,7 +380,7 @@
   function sync() {
     const studio = root.querySelector('.studio.atlas-shell');
     const atlas = studio?.querySelector('.story-atlas');
-    if (active && !active.host.isConnected) {
+    if (active && (!atlas || !active.host.isConnected || !atlas.contains(active.host))) {
       active.resizeObserver?.disconnect();
       clearTimeout(active.wheelTimeout);
       if (active.frame) cancelAnimationFrame(active.frame);
@@ -412,6 +412,7 @@
       const node=record.target;
       const element=node.nodeType===1 ? node : node.parentElement;
       if (element?.closest?.('.lb-cylinder-v9')) return false;
+      if (record.type === 'attributes') return element?.matches?.('.studio.atlas-shell,.story-atlas,.breakdown-stage,.pitch-stage');
       if (element?.closest?.('.atlas-map')) return true;
       if (record.type !== 'childList') return false;
       const changed=[...record.addedNodes,...record.removedNodes];
@@ -423,6 +424,6 @@
     watching=true;
     requestAnimationFrame(() => { watching=false; sync(); });
   });
-  observer.observe(root,{childList:true,subtree:true,characterData:true});
+  observer.observe(root,{childList:true,subtree:true,characterData:true,attributes:true,attributeFilter:['class']});
   sync();
 })();

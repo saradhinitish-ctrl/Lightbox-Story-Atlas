@@ -25,6 +25,7 @@
       if (description && description.textContent !== copy) description.textContent = copy;
     }
     enhanceExport();
+    enhanceBreakdown();
     const board = root.querySelector('.visual-language');
     const toolbar = board?.querySelector('.vl-toolbar');
     if (!board || !toolbar) return;
@@ -43,6 +44,25 @@
       toolbar.append(button);
     }
     updateCanvas(board, button);
+  }
+
+  function enhanceBreakdown() {
+    const stage = root.querySelector('.breakdown-stage');
+    if (!stage) return;
+    const updateText = (selector, text) => {
+      const element = stage.querySelector(selector);
+      if (element && element.textContent !== text) element.textContent = text;
+    };
+    updateText('.stage-heading h1', 'Scene breakdown');
+    updateText('.stage-heading p', 'Read the scene alongside its visual references and production assets.');
+    updateText('.breakdown-script .stage-section-heading>span', 'THE SCREENPLAY');
+    const frameHeadings = stage.querySelectorAll('.breakdown-frames .stage-section-heading>span');
+    ['VISUAL REFERENCES', 'CAST, LOCATIONS & PROPS'].forEach((text, index) => {
+      if (frameHeadings[index] && frameHeadings[index].textContent !== text) frameHeadings[index].textContent = text;
+    });
+    const title = stage.querySelector('.breakdown-script>h2');
+    const slugline = stage.querySelector('.breakdown-script .breakdown-block.type-scene');
+    if (title) title.hidden = !!slugline && title.textContent.trim() === slugline.textContent.trim();
   }
 
   // An illustrative title sheet reads the existing form; the export engine owns output.

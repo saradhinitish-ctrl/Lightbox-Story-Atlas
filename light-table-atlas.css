@@ -1,134 +1,512 @@
 /* ==========================================================================
    Lightbox / The Atlas cards
 
-   One palette: white, ink and grease-pencil red. The Atlas sits on the same
-   lit table as every other screen. All five cylinder cards share one design:
-   a white rounded card, a red frame number (01A to 05A), a thin red rule
-   under the label, the title in Instrument Serif, and red actions.
+   One card system for all five cylinder cards. story-cylinder-v9.js re-lays
+   each native React card into the same skeleton (.lbx):
 
-   Visual only. The cylinder's geometry, motion, canvas and script
-   (story-cylinder-v9.*) are untouched; tests/story-cylinder-qa.mjs still runs.
+     ┌──────────────────────────────┐ ← 3px edge in the card's shade
+     │ 03A  THE SCREENPLAY        ↗ │   head    22px row, hairline under, red tick
+     │                              │   18px
+     │ Make it a scene.             │   title   Instrument Serif, one size for all
+     │ 0 words · 1 scene            │   meta    8px under, one quiet line
+     │                              │   16px
+     │ ┌ preview ─────────────────┐ │   preview fills what is left, clips cleanly
+     │ └──────────────────────────┘ │   12px
+     ├──────────────────────────────┤
+     │ Enter writing room        →  │   foot    48px, same baseline on every card
+     └──────────────────────────────┘
+
+   Spacing runs on a 4px grid (4 · 8 · 12 · 16 · 20). Type scale: 9px mono
+   labels, 11.5px meta, 12.5px action, one display size. Edge treatment:
+   12px radius, a 1px ink hairline at 10%, card-stock paper, three shadow
+   layers (contact, near, ambient). Palette: white, ink, grease-pencil red.
    ========================================================================== */
 
-/* --- The stage --------------------------------------------------------------- */
-/* A soft, neutral pool under the drum instead of the old lavender glow */
-.lb-cylinder-v9 .lb-cylinder-aura{
-  background:radial-gradient(ellipse 40% 50% at 50% 56%,rgba(255,255,255,.7) 0%,rgba(255,255,255,.25) 45%,transparent 75%)!important;
+.lb-cylinder-v9{
+  --lbx-ink:#1C1B19;
+  --lbx-ink-2:#4B4842;
+  --lbx-ink-3:#6B675F;          /* 5.4:1 on the card */
+  --lbx-faint:#A39E93;          /* decoration only, never body text */
+  --lbx-rule:#E7E3DA;
+  --lbx-rule-2:#D7D2C7;
+  --lbx-red:#D4301F;
+  --lbx-red-ink:#B3261A;        /* 5.9:1 on the card */
+  --lbx-red-wash:rgba(212,48,31,.07);
+  --lbx-card:#FFFDFA;
+  --lbx-table:#F1EFE9;
+  --lbx-pad:20px;
+  --lbx-radius:12px;
+  --lbx-ease:cubic-bezier(.2,.7,.2,1);
+  --lbx-title:clamp(36px,2.75vw,42px);
+  --lbx-paper:url("./assets/textures/card.webp");
 }
-.lb-cylinder-v9 .lb-cylinder-card::before{
-  background:radial-gradient(ellipse,rgba(28,27,25,.22) 0%,rgba(28,27,25,.1) 45%,transparent 75%)!important;
-}
+.lb-cylinder-v9.is-phone{--lbx-pad:18px;--lbx-title:38px}
+.lb-cylinder-v9.is-compact{--lbx-pad:16px;--lbx-title:32px}
 
-/* --- The card ------------------------------------------------------------------ */
+/* --- The stage --------------------------------------------------------------- */
+.lb-cylinder-v9 .lb-cylinder-aura{
+  background:radial-gradient(ellipse 38% 46% at 50% 54%,rgba(255,255,255,.75) 0%,rgba(255,255,255,.28) 48%,transparent 76%)!important;
+}
+/* Floor contact under each card: tighter and cooler than before */
+.lb-cylinder-v9 .lb-cylinder-card::before{
+  left:10%!important;right:10%!important;bottom:-18px!important;height:30px!important;
+  background:radial-gradient(ellipse,rgba(28,27,25,.20) 0%,rgba(28,27,25,.08) 46%,transparent 74%)!important;
+  filter:blur(8px)!important;
+}
+.lb-cylinder-v9 .lb-cylinder-card{transition:none!important}
+
+/* --- The sheet ------------------------------------------------------------------ */
 .studio.atlas-shell .lb-cylinder-v9 .lb-cylinder-plaque{
-  padding:0!important;border:1px solid rgba(28,27,25,.12)!important;border-radius:14px!important;
-  background:#FFFFFF!important;
-  box-shadow:0 1px 2px rgba(28,27,25,.07),0 18px 30px -18px rgba(28,27,25,.38)!important;
+  padding:0!important;border:1px solid rgba(28,27,25,.10)!important;border-radius:var(--lbx-radius)!important;
+  background:var(--lbx-card)!important;
+  box-shadow:
+    0 1px 1px rgba(28,27,25,.06),
+    0 4px 8px -4px rgba(28,27,25,.10),
+    0 18px 30px -20px rgba(28,27,25,.34)!important;
+  transform:translate3d(0,0,0);
+  transition:transform .45s var(--lbx-ease)!important;
 }
 .studio.atlas-shell .lb-cylinder-v9 .lb-cylinder-card.is-active .lb-cylinder-plaque{
-  box-shadow:0 2px 3px rgba(28,27,25,.08),0 26px 40px -20px rgba(28,27,25,.45)!important;
+  box-shadow:0 1px 1px rgba(28,27,25,.07),0 4px 8px -4px rgba(28,27,25,.12)!important;
+}
+/* The lift: the active card's long ambient shadow. Opacity is driven by the
+   card's distance from centre; hover adds a second, deeper layer. */
+.lb-cylinder-v9 .lb-cylinder-lift,
+.lb-cylinder-v9 .lb-cylinder-lift::after{
+  position:absolute;inset:0;border-radius:var(--lbx-radius);pointer-events:none;
+}
+.lb-cylinder-v9 .lb-cylinder-lift{
+  opacity:0;transform:translate3d(0,0,0);transition:transform .45s var(--lbx-ease);
+  box-shadow:0 30px 46px -24px rgba(28,27,25,.46),0 12px 20px -12px rgba(28,27,25,.20);
+}
+.lb-cylinder-v9 .lb-cylinder-lift::after{
+  content:"";opacity:0;transition:opacity .45s var(--lbx-ease);
+  box-shadow:0 40px 56px -28px rgba(28,27,25,.40);
 }
 .studio.atlas-shell .lb-cylinder-v9 .lb-cylinder-content{
-  inset:0!important;border-radius:13px!important;box-shadow:none!important;
+  inset:0!important;border-radius:calc(var(--lbx-radius) - 1px)!important;box-shadow:none!important;
 }
-/* The cylinder's curvature shading, in neutral grey */
+/* Curvature: a whisper of shade at both edges, a line of light along the top */
 .studio.atlas-shell .lb-cylinder-v9 .lb-cylinder-sheen{
-  inset:0!important;border-radius:13px!important;
-  background:linear-gradient(90deg,rgba(28,27,25,.10) 0%,transparent 12%,transparent 88%,rgba(28,27,25,.10) 100%)!important;
+  inset:0!important;border-radius:calc(var(--lbx-radius) - 1px)!important;opacity:1!important;
+  background:
+    linear-gradient(180deg,rgba(255,255,255,.65) 0,rgba(255,255,255,0) 1.5px),
+    linear-gradient(90deg,rgba(28,27,25,.07) 0%,transparent 9%,transparent 91%,rgba(28,27,25,.07) 100%)!important;
 }
-.studio.atlas-shell .lb-cylinder-v9 .lb-cylinder-card:focus-visible .lb-cylinder-plaque{outline:2px solid #D4301F!important;outline-offset:4px}
-.lb-cylinder-v9 .lb-cylinder-stage:focus-visible{outline-color:#D4301F!important}
-
-/* Every card: the same white sheet, ink text */
-.studio.atlas-shell .lb-cylinder-v9 .lb-cylinder-source,
-.studio.atlas-shell .lb-cylinder-v9 .lb-cylinder-script .atlas-script,
-.studio.atlas-shell .lb-cylinder-v9 .lb-cylinder-world .atlas-world,
-.studio.atlas-shell .lb-cylinder-v9 .atlas-research,
-.studio.atlas-shell .lb-cylinder-v9 .atlas-visual,
-.studio.atlas-shell .lb-cylinder-v9 .atlas-foundation{
-  background:#FFFFFF!important;background-image:none!important;color:#1C1B19!important;border:0!important;
-}
-.studio.atlas-shell .lb-cylinder-v9 .lb-cylinder-source{padding:clamp(16px,1.45vw,22px)!important}
-
-/* Label row: red frame number, label, arrow, over a thin red rule */
-.studio.atlas-shell .lb-cylinder-v9 .lb-cylinder-source .node-overline{
-  color:#67635B!important;border-bottom:1px solid rgba(212,48,31,.45)!important;
-  font:500 9px/1.5 "DM Mono",monospace!important;letter-spacing:.16em!important;padding:0 0 10px!important;
-}
-.studio.atlas-shell .lb-cylinder-v9 .lb-cylinder-source .node-overline>svg:first-child{display:none!important}
-.studio.atlas-shell .lb-cylinder-v9 .lb-cylinder-source .node-overline>svg:last-child{color:#B3261A!important;stroke:currentColor!important}
-.studio.atlas-shell .lb-cylinder-v9 .lb-cylinder-source .node-overline::before{
-  font:600 13px/1 "Big Shoulders Display","DM Mono",sans-serif;letter-spacing:.06em;color:#D4301F;margin-right:4px;
-}
-.studio.atlas-shell .lb-cylinder-v9 .lb-cylinder-world .node-overline::before{content:"01A"}
-.studio.atlas-shell .lb-cylinder-v9 .lb-cylinder-research .node-overline::before{content:"02A"}
-.studio.atlas-shell .lb-cylinder-v9 .lb-cylinder-script .node-overline::before{content:"03A"}
-.studio.atlas-shell .lb-cylinder-v9 .lb-cylinder-visual .node-overline::before{content:"04A"}
-.studio.atlas-shell .lb-cylinder-v9 .lb-cylinder-foundation .node-overline::before{content:"05A"}
-
-/* Titles and supporting text */
-.studio.atlas-shell .lb-cylinder-v9 .lb-cylinder-source :is(h2,.world-card-heading strong){color:#1C1B19!important}
-.studio.atlas-shell .lb-cylinder-v9 .lb-cylinder-source :is(small,.world-card-heading small,.research-card-body small),
-.studio.atlas-shell .lb-cylinder-v9 .atlas-script>p{color:#67635B!important}
-
-/* The action at the foot of every card: red, with a rule above */
-.studio.atlas-shell .lb-cylinder-v9 .lb-cylinder-source>:is(.node-footer,.atlas-visual-board-footer){
-  color:#B3261A!important;background:transparent!important;border:0!important;border-top:1px solid #E3DFD6!important;
-  border-radius:0!important;box-shadow:none!important;padding:11px 0 0!important;min-height:38px!important;
-  font:600 12px/1.3 "DM Sans",sans-serif!important;letter-spacing:0!important;text-transform:none!important;
-}
-.studio.atlas-shell .lb-cylinder-v9 .lb-cylinder-source>:is(.node-footer,.atlas-visual-board-footer) svg{color:#B3261A!important}
-
-/* Rows (World index, scene list, research notes): one shared style */
-.studio.atlas-shell .lb-cylinder-v9 .atlas-world .world-index>button,
-.studio.atlas-shell .lb-cylinder-v9 .atlas-visual .atlas-visual-scenes>span{
-  color:#1C1B19!important;background:transparent!important;border:0!important;border-top:1px solid #E3DFD6!important;
-  border-radius:0!important;outline:0!important;transition:background-color .16s ease,box-shadow .16s ease,padding .16s ease!important;
-}
-.studio.atlas-shell .lb-cylinder-v9 .atlas-world .world-index>button:last-child{border-bottom:1px solid #E3DFD6!important}
-.studio.atlas-shell .lb-cylinder-v9 .atlas-world .world-index-number,
-.studio.atlas-shell .lb-cylinder-v9 .atlas-visual .atlas-visual-scenes>span i{
-  color:#D4301F!important;background:transparent!important;border:0!important;font-style:normal!important;
-  font-family:"Big Shoulders Display","DM Mono",sans-serif!important;font-weight:600!important;letter-spacing:.04em!important;
-}
-.studio.atlas-shell .lb-cylinder-v9 .atlas-world .world-index>button svg{color:#67635B!important}
-.studio.atlas-shell .lb-cylinder-v9 .atlas-world .world-index>button strong{color:#1C1B19!important;font-weight:500!important}
-.studio.atlas-shell .lb-cylinder-v9 .atlas-world .world-index-count{color:#67635B!important}
-/* Hover: a red wash and a red edge, the same as every selected row in the app */
-.studio.atlas-shell .lb-cylinder-v9 .atlas-world .world-index>button:hover,
-.studio.atlas-shell .lb-cylinder-v9 .atlas-world .world-index>button:focus-visible{
-  background:rgba(212,48,31,.07)!important;box-shadow:inset 3px 0 0 #D4301F!important;outline:0!important;
-  padding-left:10px!important;
-}
-.studio.atlas-shell .lb-cylinder-v9 .atlas-world .world-index>button:hover svg:last-child{color:#B3261A!important}
-.studio.atlas-shell .lb-cylinder-v9 .atlas-visual .atlas-visual-scenes>span :is(small){color:#67635B!important}
-.studio.atlas-shell .lb-cylinder-v9 .atlas-research .research-stack>span{
-  background:#FFFFFF!important;color:#4B4842!important;border:1px solid #E3DFD6!important;border-radius:6px!important;
-  box-shadow:none!important;transform:none!important;font:500 10px/1.4 "DM Mono",monospace!important;
-  position:relative!important;inset:auto!important;width:100%!important;height:auto!important;padding:9px 11px!important;
-}
-.studio.atlas-shell .lb-cylinder-v9 .atlas-research .research-stack{
-  width:100%!important;height:auto!important;display:flex!important;flex-direction:column!important;gap:6px!important;
+/* Distance: the table's own tone laid over cards as they turn away */
+.lb-cylinder-v9 .lb-cylinder-veil{
+  position:absolute;inset:0;border-radius:calc(var(--lbx-radius) - 1px);pointer-events:none;
+  background:var(--lbx-table);opacity:0;
 }
 
-/* Screenplay: the page itself, flat and quiet */
-.studio.atlas-shell .lb-cylinder-v9 .atlas-script .script-page-preview{
-  background:#FFFFFF!important;border:1px solid #E3DFD6!important;border-radius:4px!important;
-  transform:rotate(-2deg)!important;box-shadow:0 12px 20px -14px rgba(28,27,25,.45)!important;
+/* Hover and focus on the card in front: it rises a little, the arrow leans in */
+@media (hover:hover){
+  .lb-cylinder-v9 .lb-cylinder-card.is-active:hover .lb-cylinder-plaque,
+  .lb-cylinder-v9 .lb-cylinder-card.is-active:hover .lb-cylinder-lift{transform:translate3d(0,-4px,0)}
+  .lb-cylinder-v9 .lb-cylinder-card.is-active:hover .lb-cylinder-lift::after{opacity:1}
+  .lb-cylinder-v9 .lb-cylinder-card.is-active:hover .lbx-foot-arrow{transform:translate3d(4px,0,0)}
+  .lb-cylinder-v9 .lb-cylinder-card.is-active:hover .lbx-head-arrow{transform:translate3d(2px,-2px,0);color:var(--lbx-red)}
+  .lb-cylinder-v9.is-dragging .lb-cylinder-card .lb-cylinder-plaque,
+  .lb-cylinder-v9.is-dragging .lb-cylinder-card .lb-cylinder-lift{transform:translate3d(0,0,0)}
 }
-.studio.atlas-shell .lb-cylinder-v9 .atlas-script .script-page-preview :is(span,strong,p,em){color:#1C1B19!important}
-.studio.atlas-shell .lb-cylinder-v9 .atlas-script .script-page-preview em{color:#B3261A!important}
-
-/* Foundation: the premise sits on a red wash */
-.studio.atlas-shell .lb-cylinder-v9 .atlas-foundation .spark-note{
-  background:rgba(212,48,31,.06)!important;border:0!important;border-left:3px solid #D4301F!important;
-  border-radius:0 6px 6px 0!important;box-shadow:none!important;
+.studio.atlas-shell .lb-cylinder-v9 .lb-cylinder-card:focus-visible .lb-cylinder-plaque{
+  outline:2px solid var(--lbx-red)!important;outline-offset:4px!important;
 }
-.studio.atlas-shell .lb-cylinder-v9 .atlas-foundation .spark-note small{color:#B3261A!important;font-family:"DM Mono",monospace!important;letter-spacing:.14em!important}
-.studio.atlas-shell .lb-cylinder-v9 .atlas-foundation .spark-note p{color:#1C1B19!important}
+.lb-cylinder-v9 .lb-cylinder-card:focus-visible .lbx-foot-arrow{transform:translate3d(4px,0,0)}
+.lb-cylinder-v9 .lb-cylinder-stage:focus-visible{outline:2px solid var(--lbx-red)!important;outline-offset:-3px}
 
-/* --- Controls under the drum ------------------------------------------------------ */
-.lb-cylinder-v9 .lb-cylinder-counter{color:#B3261A!important}
+/* --- The card anatomy ------------------------------------------------------------ */
+.studio.atlas-shell .lb-cylinder-v9 .lbx{
+  --za-shade:var(--lbx-red);
+  display:flex!important;flex-direction:column!important;align-items:stretch!important;
+  isolation:isolate;
+  padding:var(--lbx-pad) var(--lbx-pad) 0!important;
+  color:var(--lbx-ink)!important;border:0!important;
+  background-color:var(--lbx-card)!important;
+  background-image:var(--lbx-paper)!important;background-size:512px 512px!important;background-repeat:repeat!important;
+  background-blend-mode:multiply!important;
+  box-shadow:inset 0 3px 0 var(--za-shade)!important;
+  font-family:"DM Sans","Segoe UI",sans-serif!important;
+  text-align:left!important;
+}
+.studio.atlas-shell .lb-cylinder-v9 .lbx--world{--za-shade:#7E1A14}
+.studio.atlas-shell .lb-cylinder-v9 .lbx--research{--za-shade:#A3241A}
+.studio.atlas-shell .lb-cylinder-v9 .lbx--script{--za-shade:#D4301F}
+.studio.atlas-shell .lb-cylinder-v9 .lbx--visual{--za-shade:#E5483A}
+.studio.atlas-shell .lb-cylinder-v9 .lbx--foundation{--za-shade:#EE9A91}
+.studio.atlas-shell .lb-cylinder-v9 .lbx::before,
+.studio.atlas-shell .lb-cylinder-v9 .lbx::after{content:none!important}
+.studio.atlas-shell .lb-cylinder-v9 .lbx>*{order:0!important;flex-shrink:0}
+
+/* Head: frame number · label · arrow, over a hairline with a red tick */
+.studio.atlas-shell .lb-cylinder-v9 .lbx .lbx-head{
+  position:relative;display:flex!important;align-items:center!important;gap:8px!important;
+  height:33px!important;min-height:0!important;margin:0!important;padding:0 0 11px!important;
+  border:0!important;border-bottom:1px solid var(--lbx-rule)!important;
+  color:var(--lbx-ink-3)!important;background:none!important;
+}
+.studio.atlas-shell .lb-cylinder-v9 .lbx .lbx-head::before{content:none!important}
+.studio.atlas-shell .lb-cylinder-v9 .lbx .lbx-head::after{
+  content:"";position:absolute;left:0;bottom:-1px;width:22px;height:1px;background:var(--lbx-red);
+}
+.studio.atlas-shell .lb-cylinder-v9 .lbx .lbx-frame{
+  font:600 13px/1 "Big Shoulders Display","DM Mono",sans-serif!important;letter-spacing:.05em!important;
+  color:var(--lbx-red)!important;font-variant-numeric:tabular-nums;
+}
+.studio.atlas-shell .lb-cylinder-v9 .lbx .lbx-label{
+  flex:1 1 auto;min-width:0;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;
+  font:500 9px/1 "DM Mono",monospace!important;letter-spacing:.16em!important;text-transform:uppercase;
+  color:var(--lbx-ink-3)!important;
+}
+.studio.atlas-shell .lb-cylinder-v9 .lbx .lbx-icon{display:inline-flex;flex:0 0 auto;line-height:0}
+.studio.atlas-shell .lb-cylinder-v9 .lbx .lbx-icon svg{width:auto;height:auto;color:inherit!important;stroke:currentColor}
+.studio.atlas-shell .lb-cylinder-v9 .lbx .lbx-head-arrow{
+  color:var(--lbx-ink-3);margin:0 -1px 0 0;transition:transform .35s var(--lbx-ease),color .2s;
+}
+
+/* Title */
+.studio.atlas-shell .lb-cylinder-v9 .lbx .lbx-title{
+  display:block!important;margin:18px 0 0!important;padding:0!important;max-width:100%!important;
+  font:400 var(--lbx-title)/.98 "Instrument Serif",Georgia,serif!important;letter-spacing:-.035em!important;
+  color:var(--lbx-ink)!important;text-wrap:balance;overflow-wrap:break-word!important;
+}
+/* Meta: one line of context */
+.studio.atlas-shell .lb-cylinder-v9 .lbx .lbx-meta{
+  margin:8px 0 0!important;padding:0!important;max-width:100%;
+  font:400 11.5px/1.45 "DM Sans","Segoe UI",sans-serif!important;letter-spacing:0!important;
+  color:var(--lbx-ink-3)!important;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  display:block!important;height:auto!important;min-height:0!important;flex:0 0 auto!important;
+}
+/* Preview: the card's own picture, filling what is left */
+.studio.atlas-shell .lb-cylinder-v9 .lbx .lbx-preview{
+  position:relative;flex:1 1 auto!important;min-height:0!important;
+  margin:16px 0 12px!important;display:flex;flex-direction:column;
+}
+/* Foot: the action, on a rule, on the same baseline on every card */
+.studio.atlas-shell .lb-cylinder-v9 .lbx .lbx-foot{
+  display:flex!important;align-items:center!important;justify-content:space-between!important;gap:8px!important;
+  flex:0 0 48px!important;height:48px!important;min-height:0!important;width:auto!important;
+  margin:0 calc(var(--lbx-pad) * -1)!important;padding:0 var(--lbx-pad)!important;
+  border:0!important;border-top:1px solid var(--lbx-rule)!important;border-radius:0!important;
+  background:none!important;box-shadow:none!important;
+  font:600 12.5px/1 "DM Sans","Segoe UI",sans-serif!important;letter-spacing:0!important;text-transform:none!important;
+  color:var(--lbx-red-ink)!important;
+  align-self:stretch!important;order:0!important;
+}
+.studio.atlas-shell .lb-cylinder-v9 .lbx .lbx-foot-arrow{
+  color:var(--lbx-red-ink);transition:transform .35s var(--lbx-ease);
+}
+
+/* --- 01A World: a survey sheet over the index ------------------------------------- */
+.studio.atlas-shell .lb-cylinder-v9 .lbx--world .lbx-map{
+  position:relative;flex:1 1 auto;min-height:0;margin:0 0 10px;overflow:hidden;
+}
+.studio.atlas-shell .lb-cylinder-v9 .lbx--world .lbx-map-grid{
+  position:absolute;inset:0 -4px 0 30%;
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 220 140' preserveAspectRatio='xMaxYMid meet' fill='none' stroke='%237E1A14' stroke-width='1'%3E%3Cpath d='M138 14c38 6 66 30 58 62s-54 50-92 42-60-36-46-66 44-44 80-38z' opacity='.22'/%3E%3Cpath d='M136 34c24 4 42 22 36 42s-36 32-60 26-38-24-30-44 30-28 54-24z' opacity='.26'/%3E%3Cpath d='M132 54c12 2 20 10 17 20s-17 15-29 12-18-12-14-21 15-13 26-11z' opacity='.32'/%3E%3Cpath d='M2 126c30-14 60-6 88-14s52-26 84-20 40 8 54 4' opacity='.16'/%3E%3Cpath d='M40 96c14-8 28-6 40 0s24 6 36-2' stroke-dasharray='2.5 3.5' stroke-linecap='round' opacity='.55'/%3E%3Cpath d='M20 22h10m-5-5v10' opacity='.45'/%3E%3C/svg%3E") right center/contain no-repeat;
+}
+.studio.atlas-shell .lb-cylinder-v9 .lbx--world .lbx-map-pin{
+  position:absolute;right:calc(19% + 2px);top:calc(50% - 22px);width:13px;height:18px;
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 28'%3E%3Cpath d='M10 1C5 1 1.5 4.7 1.5 9.6 1.5 16 10 27 10 27s8.5-11 8.5-17.4C18.5 4.7 15 1 10 1z' fill='%23D4301F'/%3E%3Ccircle cx='10' cy='9.6' r='3.4' fill='%23FFFDFA'/%3E%3C/svg%3E") center/contain no-repeat;
+  filter:drop-shadow(0 2px 1.5px rgba(126,26,20,.3));
+}
+.studio.atlas-shell .lb-cylinder-v9 .lbx--world .lbx-map-ref{
+  position:absolute;left:0;bottom:2px;
+  font:500 8px/1 "DM Mono",monospace;letter-spacing:.16em;color:var(--lbx-faint);
+}
+.studio.atlas-shell .lb-cylinder-v9 .lbx--world .world-index{
+  display:flex!important;flex-direction:column!important;gap:0!important;margin:0!important;flex:0 0 auto;
+}
+.studio.atlas-shell .lb-cylinder-v9 .lbx--world .world-index>button{
+  position:relative;display:grid!important;grid-template-columns:18px 16px 1fr auto 13px;align-items:center;gap:8px!important;
+  height:34px!important;min-height:0!important;padding:0 2px!important;margin:0!important;
+  border:0!important;border-top:1px solid var(--lbx-rule)!important;border-radius:0!important;
+  background:transparent!important;box-shadow:none!important;outline:0!important;
+  color:var(--lbx-ink)!important;font:500 12px/1 "DM Sans",sans-serif!important;text-align:left!important;
+  transition:none!important;cursor:pointer;
+}
+.studio.atlas-shell .lb-cylinder-v9 .lbx--world .world-index>button:last-child{border-bottom:0!important}
+/* Hover wash as its own layer, so it fades with opacity alone */
+.studio.atlas-shell .lb-cylinder-v9 .lbx--world .world-index>button::before{
+  content:"";position:absolute;inset:0 calc(var(--lbx-pad) * -1);z-index:-1;pointer-events:none;
+  background:var(--lbx-red-wash);box-shadow:inset 2px 0 0 var(--lbx-red);opacity:0;transition:opacity .2s var(--lbx-ease);
+}
+.studio.atlas-shell .lb-cylinder-v9 .lbx--world .world-index>button:is(:hover,:focus-visible)::before{opacity:1}
+.studio.atlas-shell .lb-cylinder-v9 .lbx--world .world-index-number{
+  font:600 12px/1 "Big Shoulders Display","DM Mono",sans-serif!important;letter-spacing:.04em!important;
+  color:var(--lbx-red)!important;background:none!important;border:0!important;padding:0!important;
+}
+.studio.atlas-shell .lb-cylinder-v9 .lbx--world .world-index>button>svg{width:15px!important;height:15px!important;color:var(--lbx-ink-3)!important}
+.studio.atlas-shell .lb-cylinder-v9 .lbx--world .world-index>button>svg:last-child{
+  width:13px!important;height:13px!important;transition:transform .3s var(--lbx-ease);
+}
+.studio.atlas-shell .lb-cylinder-v9 .lbx--world .world-index>button:is(:hover,:focus-visible)>svg:last-child{
+  color:var(--lbx-red)!important;transform:translate3d(2px,-2px,0);
+}
+.studio.atlas-shell .lb-cylinder-v9 .lbx--world .world-index>button strong{font-weight:500!important;color:var(--lbx-ink)!important;font-size:12px!important}
+.studio.atlas-shell .lb-cylinder-v9 .lbx--world .world-index-count{
+  font:500 10px/1 "DM Mono",monospace!important;color:var(--lbx-ink-3)!important;font-variant-numeric:tabular-nums;
+}
+
+/* --- 02A Field notes: two index cards on a red thread ---------------------------------- */
+.studio.atlas-shell .lb-cylinder-v9 .lbx--research .lbx-notes{position:relative;flex:1 1 auto;min-height:0}
+.studio.atlas-shell .lb-cylinder-v9 .lbx--research .lbx-note{
+  position:absolute;display:flex;flex-direction:column;overflow:hidden;
+  height:calc(50% - 5px);padding:0 11px;
+  background:#FFFEFB;border:1px solid rgba(28,27,25,.11);border-radius:3px;
+  box-shadow:0 1px 1px rgba(28,27,25,.05),0 8px 14px -10px rgba(28,27,25,.38);
+}
+.studio.atlas-shell .lb-cylinder-v9 .lbx--research .lbx-note:nth-of-type(1){top:0;left:0;width:90%;transform:rotate(-1.1deg)}
+.studio.atlas-shell .lb-cylinder-v9 .lbx--research .lbx-note:nth-of-type(2){bottom:0;right:0;width:86%;transform:rotate(.9deg)}
+/* The index card's red head rule, then pale ruling */
+.studio.atlas-shell .lb-cylinder-v9 .lbx--research .lbx-note-tag{
+  flex:0 0 auto;margin:0 -11px;padding:8px 11px 5px;border-bottom:1px solid rgba(212,48,31,.42);
+  font:500 8px/1 "DM Mono",monospace;letter-spacing:.18em;color:var(--lbx-red-ink);
+}
+.studio.atlas-shell .lb-cylinder-v9 .lbx--research .lbx-note-text{
+  flex:0 0 auto;margin:7px 0 0;line-height:16px;
+  font:400 11.5px/16px "Courier Prime","Courier New",monospace;color:var(--lbx-ink);
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
+}
+.studio.atlas-shell .lb-cylinder-v9 .lbx--research .lbx-note-lines{
+  flex:1 1 auto;min-height:0;margin:0 -11px;
+  background:repeating-linear-gradient(180deg,transparent 0 15px,rgba(28,27,25,.07) 15px 16px);
+}
+.studio.atlas-shell .lb-cylinder-v9 .lbx--research .lbx-note.is-prompt .lbx-note-text{color:#8C877D}
+.studio.atlas-shell .lb-cylinder-v9 .lbx--research .lbx-note.is-untitled .lbx-note-text{color:#8C877D;font-style:italic}
+.studio.atlas-shell .lb-cylinder-v9 .lbx--research .lbx-note-draft{
+  position:absolute;right:10px;top:22px;
+  font:italic 400 13px/1 "Instrument Serif",Georgia,serif;color:var(--lbx-red-ink);transform:rotate(-4deg);
+}
+.studio.atlas-shell .lb-cylinder-v9 .lbx--research .lbx-note-pin{display:none}
+/* Pins and the thread sit in the board's own coordinates */
+.studio.atlas-shell .lb-cylinder-v9 .lbx--research .lbx-thread{
+  position:absolute;inset:0;width:100%;height:100%;overflow:visible;pointer-events:none;
+}
+.studio.atlas-shell .lb-cylinder-v9 .lbx--research .lbx-thread path{
+  fill:none;stroke:var(--lbx-red);stroke-width:1.1;stroke-linecap:round;opacity:.7;vector-effect:non-scaling-stroke;
+}
+.studio.atlas-shell .lb-cylinder-v9 .lbx--research .lbx-notes::before,
+.studio.atlas-shell .lb-cylinder-v9 .lbx--research .lbx-notes::after{
+  content:"";position:absolute;z-index:2;width:8px;height:8px;margin:-4px 0 0 -4px;border-radius:50%;
+  background:radial-gradient(circle at 35% 35%,#E8574A 0 1.5px,#C42A1B 2.5px,#9E1F14 4px);
+  box-shadow:0 1.5px 1.5px rgba(80,14,8,.35);
+}
+.studio.atlas-shell .lb-cylinder-v9 .lbx--research .lbx-notes::before{left:84%;top:9%}
+.studio.atlas-shell .lb-cylinder-v9 .lbx--research .lbx-notes::after{left:90%;top:60%}
+
+/* --- 03A Screenplay: the first page, on a short stack ------------------------------- */
+.studio.atlas-shell .lb-cylinder-v9 .lbx--script .lbx-preview{align-items:center}
+.studio.atlas-shell .lb-cylinder-v9 .lbx--script .script-page-preview{
+  position:relative!important;display:flex!important;flex-direction:column!important;align-items:stretch!important;
+  order:0!important;flex:1 1 auto!important;width:84%!important;max-width:236px!important;
+  height:auto!important;min-height:0!important;max-height:none!important;margin:0 0 0 -8px!important;
+  padding:11px 14px 10px 24px!important;overflow:hidden!important;
+  background:#FFFFFF!important;border:1px solid rgba(28,27,25,.12)!important;border-radius:2px!important;
+  transform:rotate(-1.2deg)!important;
+  box-shadow:
+    4px 4px 0 -1px #FBF1EE,4px 4px 0 0 rgba(28,27,25,.10),
+    8px 8px 0 -1px #F7E6E2,8px 8px 0 0 rgba(28,27,25,.09),
+    0 16px 22px -16px rgba(126,26,20,.42)!important;
+}
+/* Two brass-free brads down the binding edge */
+.studio.atlas-shell .lb-cylinder-v9 .lbx--script .script-page-preview::before{
+  content:""!important;position:absolute!important;left:9px;top:16%;bottom:16%;width:6px;pointer-events:none;
+  background:
+    radial-gradient(circle at 50% 3px,#B3261A 1.8px,#7E1A14 2.7px,transparent 3.1px) 0 0/6px 6px no-repeat,
+    radial-gradient(circle at 50% 3px,#B3261A 1.8px,#7E1A14 2.7px,transparent 3.1px) 0 100%/6px 6px no-repeat!important;
+}
+.studio.atlas-shell .lb-cylinder-v9 .lbx--script .script-page-preview :is(span,strong,p,em,b){
+  font-family:"Courier Prime","Courier New",monospace!important;font-size:9.5px!important;line-height:1.38!important;
+  letter-spacing:0!important;color:var(--lbx-ink)!important;margin:0!important;padding:0!important;
+  background:none!important;border:0!important;text-align:left!important;
+}
+.studio.atlas-shell .lb-cylinder-v9 .lbx--script .script-page-preview .lbx-page-no{
+  position:absolute;top:10px;right:13px;font-weight:400!important;color:var(--lbx-ink-3)!important;
+}
+.studio.atlas-shell .lb-cylinder-v9 .lbx--script .script-page-preview>span{color:var(--lbx-ink-2)!important}
+.studio.atlas-shell .lb-cylinder-v9 .lbx--script .script-page-preview>strong{
+  display:block;margin-top:10px!important;font-weight:700!important;text-transform:uppercase;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.studio.atlas-shell .lb-cylinder-v9 .lbx--script .script-page-excerpt{
+  flex:1 1 auto;min-height:0;max-height:none!important;margin-top:8px!important;overflow:hidden!important;
+  -webkit-mask-image:linear-gradient(180deg,#000 70%,transparent);mask-image:linear-gradient(180deg,#000 70%,transparent);
+}
+.studio.atlas-shell .lb-cylinder-v9 .lbx--script .script-page-excerpt p{color:var(--lbx-ink-2)!important}
+.studio.atlas-shell .lb-cylinder-v9 .lbx--script .script-page-preview>em{
+  position:relative;align-self:flex-start;flex:0 0 auto;margin:6px 0 6px 0!important;
+  font-style:normal!important;font-size:8.5px!important;letter-spacing:.06em!important;color:var(--lbx-red-ink)!important;
+}
+.studio.atlas-shell .lb-cylinder-v9 .lbx--script .script-page-preview>em::after{
+  content:"";position:absolute;left:-3px;right:-5px;bottom:-5px;height:5px;pointer-events:none;
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 6' preserveAspectRatio='none'%3E%3Cpath d='M1.5 4C30 2.2 64 4.6 92 2.8c10-.6 19-.7 26.5-1.3' fill='none' stroke='%23D4301F' stroke-width='1.8' stroke-linecap='round' vector-effect='non-scaling-stroke' opacity='.85'/%3E%3C/svg%3E") center/100% 100% no-repeat;
+}
+
+/* --- 04A Visual language: scene frames over a colour script --------------------------- */
+.studio.atlas-shell .lb-cylinder-v9 .lbx--visual .atlas-visual-scenes{
+  display:flex!important;flex-direction:column!important;gap:0!important;flex:0 1 auto;
+  max-height:none!important;min-height:0;margin:0!important;overflow:hidden!important;
+}
+.studio.atlas-shell .lb-cylinder-v9 .lbx--visual .atlas-visual-scenes>span{
+  display:grid!important;grid-template-columns:48px 1fr auto;align-items:center;gap:10px!important;
+  height:42px;padding:0!important;margin:0!important;
+  border:0!important;border-top:1px solid var(--lbx-rule)!important;border-radius:0!important;background:transparent!important;
+}
+.studio.atlas-shell .lb-cylinder-v9 .lbx--visual .atlas-visual-scenes>span:last-child{border-bottom:1px solid var(--lbx-rule)!important}
+/* An empty board is an unexposed frame: letterboxed, with its number */
+.studio.atlas-shell .lb-cylinder-v9 .lbx--visual .atlas-visual-scenes>span>:is(i,img){
+  width:48px!important;height:28px!important;border-radius:2px!important;object-fit:cover!important;
+}
+.studio.atlas-shell .lb-cylinder-v9 .lbx--visual .atlas-visual-scenes>span>i{
+  display:flex!important;align-items:center;justify-content:center;
+  font:600 11px/1 "Big Shoulders Display","DM Mono",sans-serif!important;font-style:normal!important;letter-spacing:.06em!important;
+  color:var(--lbx-red)!important;
+  background:
+    linear-gradient(#FFFDFA,#FFFDFA) padding-box,
+    repeating-linear-gradient(135deg,rgba(212,48,31,.16) 0 1px,transparent 1px 4px)!important;
+  border:0!important;box-shadow:inset 0 0 0 1px rgba(212,48,31,.28),inset 0 4px 0 #F3EFE8,inset 0 -4px 0 #F3EFE8!important;
+}
+.studio.atlas-shell .lb-cylinder-v9 .lbx--visual .atlas-visual-scenes>span strong{
+  min-width:0;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;
+  font:500 12px/1.2 "DM Sans",sans-serif!important;color:var(--lbx-ink)!important;
+}
+.studio.atlas-shell .lb-cylinder-v9 .lbx--visual .atlas-visual-scenes>span small{
+  font:500 9px/1 "DM Mono",monospace!important;letter-spacing:.08em!important;color:var(--lbx-ink-3)!important;
+}
+.studio.atlas-shell .lb-cylinder-v9 .lbx--visual .atlas-visual-scenes>p{
+  margin:0!important;padding:10px 0!important;border-top:1px solid var(--lbx-rule);
+  font:400 12px/1.45 "DM Sans",sans-serif!important;color:var(--lbx-ink-3)!important;
+}
+/* A colour script: six painted keys, each with its own light above a horizon */
+.studio.atlas-shell .lb-cylinder-v9 .lbx--visual .lbx-chips{
+  display:grid;grid-template-columns:repeat(6,1fr);grid-template-rows:minmax(22px,1fr) auto;gap:3px;
+  flex:1 1 auto;min-height:0;max-height:84px;margin-top:auto;padding-top:14px;
+}
+.studio.atlas-shell .lb-cylinder-v9 .lbx--visual .lbx-chips i{
+  display:block;min-height:0;border-radius:2px;
+  background:linear-gradient(180deg,var(--sky) 0 38%,var(--ground) 38% 100%);
+  box-shadow:inset 0 0 0 1px rgba(28,27,25,.07),inset 0 -12px 14px -12px rgba(28,27,25,.3);
+}
+.studio.atlas-shell .lb-cylinder-v9 .lbx--visual .lbx-chips i:nth-child(1){--sky:#6A1810;--ground:#3E0C08}
+.studio.atlas-shell .lb-cylinder-v9 .lbx--visual .lbx-chips i:nth-child(2){--sky:#9A2419;--ground:#6E160F}
+.studio.atlas-shell .lb-cylinder-v9 .lbx--visual .lbx-chips i:nth-child(3){--sky:#C9372A;--ground:#A3241A}
+.studio.atlas-shell .lb-cylinder-v9 .lbx--visual .lbx-chips i:nth-child(4){--sky:#E25A49;--ground:#C92D1D}
+.studio.atlas-shell .lb-cylinder-v9 .lbx--visual .lbx-chips i:nth-child(5){--sky:#F08A7D;--ground:#E04636}
+.studio.atlas-shell .lb-cylinder-v9 .lbx--visual .lbx-chips i:nth-child(6){--sky:#F8D3CD;--ground:#EFA59B}
+.studio.atlas-shell .lb-cylinder-v9 .lbx--visual .lbx-chips-label{
+  grid-column:1 / -1;margin-top:6px;
+  font:500 8px/1 "DM Mono",monospace;letter-spacing:.18em;color:var(--lbx-ink-3);
+}
+
+/* --- 05A The spark: a logline in four blanks ----------------------------------------- */
+.studio.atlas-shell .lb-cylinder-v9 .lbx--foundation .spark-note{
+  position:relative;display:flex!important;flex-direction:column;flex:1 1 auto;min-height:0;
+  margin:0!important;padding:0!important;overflow:hidden;
+  background:none!important;border:0!important;border-radius:0!important;box-shadow:none!important;
+}
+.studio.atlas-shell .lb-cylinder-v9 .lbx--foundation .spark-note>small{
+  display:block;flex:0 0 auto;margin:0 0 10px!important;
+  font:500 9px/1 "DM Mono",monospace!important;letter-spacing:.16em!important;color:var(--lbx-red-ink)!important;
+}
+.studio.atlas-shell .lb-cylinder-v9 .lbx--foundation .lbx-spark{
+  position:absolute;top:-1px;right:0;width:15px;height:15px;color:var(--lbx-red);
+}
+.studio.atlas-shell .lb-cylinder-v9 .lbx--foundation .lbx-spark svg{width:15px!important;height:15px!important}
+.studio.atlas-shell .lb-cylinder-v9 .lbx--foundation .spark-note>p{
+  margin:0!important;padding:0!important;
+  font:400 19px/1.22 "Instrument Serif",Georgia,serif!important;letter-spacing:-.01em!important;color:var(--lbx-ink)!important;
+  display:-webkit-box!important;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden;
+}
+.studio.atlas-shell .lb-cylinder-v9 .lbx--foundation .spark-note.is-empty>p{
+  position:absolute!important;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap;
+}
+.studio.atlas-shell .lb-cylinder-v9 .lbx--foundation .lbx-logline{display:flex;flex-direction:column;gap:5px;min-height:0}
+.studio.atlas-shell .lb-cylinder-v9 .lbx--foundation .lbx-blank-line{display:flex;align-items:flex-end;gap:7px;height:26px;flex:0 0 auto}
+.studio.atlas-shell .lb-cylinder-v9 .lbx--foundation .lbx-lead{
+  font:italic 400 18px/1 "Instrument Serif",Georgia,serif;color:var(--lbx-ink-2);white-space:nowrap;
+}
+.studio.atlas-shell .lb-cylinder-v9 .lbx--foundation .lbx-blank{
+  flex:1 1 auto;position:relative;height:100%;
+  border-bottom:1px dashed var(--lbx-rule-2);
+  display:flex;align-items:flex-end;justify-content:flex-end;padding:0 0 3px;
+  font:500 7.5px/1 "DM Mono",monospace;letter-spacing:.14em;text-transform:uppercase;color:var(--lbx-faint);
+}
+.studio.atlas-shell .lb-cylinder-v9 .lbx--foundation .lbx-count{
+  margin-top:auto;padding-top:8px;
+  font:500 8.5px/1 "DM Mono",monospace;letter-spacing:.16em;color:var(--lbx-ink-3);
+}
+
+/* --- Short screens: the same skeleton, tightened ----------------------------------- */
+.lb-cylinder-v9.is-compact .lbx .lbx-head{height:29px!important;padding-bottom:9px!important}
+.lb-cylinder-v9.is-compact .lbx .lbx-title{margin-top:12px!important}
+.lb-cylinder-v9.is-compact .lbx .lbx-meta{display:none}
+.lb-cylinder-v9.is-compact .lbx .lbx-preview{margin:12px 0 10px!important}
+.lb-cylinder-v9.is-compact .lbx .lbx-foot{flex-basis:42px!important;height:42px!important}
+.lb-cylinder-v9.is-compact .lbx--world .world-index>button{height:30px!important}
+.lb-cylinder-v9.is-compact .lbx--world .lbx-map-ref{display:none}
+.lb-cylinder-v9.is-compact .lbx--foundation .lbx-blank-line{height:22px}
+.lb-cylinder-v9.is-compact .lbx--foundation .lbx-lead{font-size:16px}
+
+
+/* --- Controls under the drum ----------------------------------------------------------- */
+.lb-cylinder-v9 .lb-cylinder-controls{gap:28px!important}
+.lb-cylinder-v9 .lb-cylinder-controls>button{
+  width:40px!important;height:40px!important;padding:0!important;border-radius:50%!important;
+  display:grid!important;place-items:center!important;
+  background:var(--lbx-card)!important;color:var(--lbx-ink)!important;
+  border:1px solid rgba(28,27,25,.14)!important;
+  box-shadow:0 1px 1px rgba(28,27,25,.06),0 6px 12px -8px rgba(28,27,25,.35)!important;
+  transition:color .2s,border-color .2s!important;
+}
+.lb-cylinder-v9 .lb-cylinder-controls>button svg{display:block;transition:transform .3s var(--lbx-ease)}
+.lb-cylinder-v9 .lb-cylinder-controls>button:hover,
+.lb-cylinder-v9 .lb-cylinder-controls>button:focus-visible{
+  background:var(--lbx-card)!important;border-color:var(--lbx-red)!important;color:var(--lbx-red)!important;
+}
+.lb-cylinder-v9 .lb-cylinder-controls>button:focus-visible{outline:2px solid var(--lbx-red)!important;outline-offset:3px!important}
+.lb-cylinder-v9 .lb-cylinder-prev:hover svg{transform:translate3d(-2px,0,0)}
+.lb-cylinder-v9 .lb-cylinder-next:hover svg{transform:translate3d(2px,0,0)}
+.lb-cylinder-v9 .lb-cylinder-controls>button:active svg{transform:scale(.9)}
+.lb-cylinder-v9 .lb-cylinder-control-label{gap:7px!important;min-width:200px!important;height:auto!important}
+.lb-cylinder-v9 .lb-cylinder-counter{
+  order:0;font:600 13px/1 "Big Shoulders Display","DM Mono",sans-serif!important;letter-spacing:.14em!important;
+  color:var(--lbx-red-ink)!important;
+}
+.lb-cylinder-v9 .lb-cylinder-control-title{
+  order:1;font:500 9.5px/1 "DM Mono",monospace!important;letter-spacing:.2em!important;text-transform:uppercase;
+  color:var(--lbx-ink-2)!important;
+}
+/* Five frame ticks; the current one is inked in red */
+.lb-cylinder-v9 .lb-cylinder-dots{order:2;gap:5px!important;height:6px!important}
+.lb-cylinder-v9 .lb-cylinder-dots i{
+  position:relative;width:16px!important;height:2px!important;border-radius:1px!important;
+  background:var(--lbx-rule-2)!important;box-shadow:none!important;transition:none!important;
+}
+.lb-cylinder-v9 .lb-cylinder-dots i::after{
+  content:"";position:absolute;inset:-1px 0;border-radius:1px;background:var(--lbx-red);
+  opacity:0;transform:scaleX(.4);transition:opacity .3s var(--lbx-ease),transform .3s var(--lbx-ease);
+}
+.lb-cylinder-v9 .lb-cylinder-dots i.is-current{background:var(--lbx-rule-2)!important;box-shadow:none!important}
+.lb-cylinder-v9 .lb-cylinder-dots i.is-current::after{opacity:1;transform:scaleX(1)}
+
+/* --- Pitch view: a quiet tab that matches the card heads ------------------------------------ */
+.studio.atlas-shell.lb-cylinder-atlas .pitch-launch{
+  display:inline-flex!important;align-items:center!important;gap:9px!important;
+  height:36px!important;min-height:36px!important;padding:0 14px 0 12px!important;
+  background:var(--lt-mount,#fff)!important;color:var(--lt-ink,#1C1B19)!important;
+  border:1px solid rgba(28,27,25,.14)!important;border-radius:4px!important;
+  box-shadow:0 1px 1px rgba(28,27,25,.06),0 6px 12px -8px rgba(28,27,25,.3)!important;
+  font:500 9.5px/1 "DM Mono",monospace!important;letter-spacing:.16em!important;text-transform:uppercase!important;
+  transition:border-color .2s!important;
+}
+.studio.atlas-shell.lb-cylinder-atlas .pitch-launch>svg:first-child{width:12px;height:12px;color:var(--lt-marker,#D4301F);fill:currentColor}
+.studio.atlas-shell.lb-cylinder-atlas .pitch-launch>svg:last-child{width:12px;height:12px;color:var(--lt-ink-3,#67635B);transition:transform .3s cubic-bezier(.2,.7,.2,1)}
+.studio.atlas-shell.lb-cylinder-atlas .pitch-launch:hover{border-color:var(--lt-ink,#1C1B19)!important}
+.studio.atlas-shell.lb-cylinder-atlas .pitch-launch:focus-visible{outline:2px solid var(--lt-marker,#D4301F)!important;outline-offset:3px!important}
+@media (max-width:700px){.studio.atlas-shell.lb-cylinder-atlas .pitch-launch{display:none!important}}
+.studio.atlas-shell.lb-cylinder-atlas .pitch-launch:hover>svg:last-child{transform:translate3d(2px,-2px,0)}
 
 /* The Android line at the foot of the Atlas: a single rule, no panel */
 .studio.atlas-shell .lb-android-footer{
@@ -138,99 +516,120 @@
 .studio.atlas-shell .lb-android-footer a{color:#1C1B19!important}
 
 /* ==========================================================================
-   Each card's own element
-   One design, five jobs. Every card keeps the same structure and the same
-   red-and-white palette, but carries one signature element drawn from what it
-   does, in its own shade of red, on real card stock. The shades run from dark
-   to light around the drum: oxblood, brick, signal red, scarlet, blush.
+   The desk
+   Things left on the grid paper for people who look closely. Ink at 18-35%,
+   in the margins, never over a card or a control. Everything is aria-hidden
+   and pointer-events:none except the slate and the tally, which sit in empty
+   corners above the page and do nothing but delight.
    ========================================================================== */
-.studio.atlas-shell .lb-cylinder-v9 .lb-cylinder-card{
-  --za-shade:#D4301F;
-  --za-paper:url("./assets/textures/card.webp");
-}
-.studio.atlas-shell .lb-cylinder-v9 .lb-cylinder-world{--za-shade:#7E1A14}
-.studio.atlas-shell .lb-cylinder-v9 .lb-cylinder-research{--za-shade:#A3241A}
-.studio.atlas-shell .lb-cylinder-v9 .lb-cylinder-script{--za-shade:#D4301F}
-.studio.atlas-shell .lb-cylinder-v9 .lb-cylinder-visual{--za-shade:#E5483A}
-.studio.atlas-shell .lb-cylinder-v9 .lb-cylinder-foundation{--za-shade:#EE9A91}
+.studio.atlas-shell.lb-cylinder-atlas .lbx-desk{position:absolute;inset:0;pointer-events:none;user-select:none;-webkit-user-select:none}
+.lbx-desk>*{position:absolute;z-index:-1}
 
-/* Real card stock, and the card's shade as a coloured top edge */
-.studio.atlas-shell .lb-cylinder-v9 .lb-cylinder-source{
-  isolation:isolate;
-  background-color:#FFFDFB!important;
-  background-image:var(--za-paper)!important;background-size:512px 512px!important;background-repeat:repeat!important;
-  background-blend-mode:multiply!important;
-  box-shadow:inset 0 4px 0 var(--za-shade)!important;
-}
-/* Decorative layers sit between the paper and the words */
-.studio.atlas-shell .lb-cylinder-v9 .lb-cylinder-source::before,
-.studio.atlas-shell .lb-cylinder-v9 .lb-cylinder-source::after{
-  content:"";position:absolute;pointer-events:none;z-index:-1;
-}
-
-/* 01A World: a red survey map of the places, with a pin */
-.studio.atlas-shell .lb-cylinder-v9 .lb-cylinder-world .atlas-world::before{
-  top:36%;right:-10px;width:66%;height:30%;
-  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 220 210' fill='none' stroke='%237E1A14' stroke-width='1.1'%3E%3Cpath d='M150 30c40 10 62 52 48 90s-64 46-98 30-52-56-30-90 50-38 80-30z' opacity='.30'/%3E%3Cpath d='M146 52c26 6 40 34 30 58s-42 30-64 20-34-36-20-58 34-26 54-20z' opacity='.26'/%3E%3Cpath d='M141 72c13 3 20 17 15 29s-21 15-32 10-17-18-10-29 17-13 27-10z' opacity='.24'/%3E%3Cpath d='M10 176c40-26 82-8 112-20s70-44 110-26' opacity='.16'/%3E%3Cpath d='M10 196c40-24 86-4 116-16s68-40 108-22' opacity='.13'/%3E%3Cpath d='M30 40h14m-7-7v14' opacity='.4'/%3E%3Cpath d='M58 120c16-6 30-2 44 6s28 6 40-4' stroke-dasharray='3 4' opacity='.45'/%3E%3C/svg%3E") center/contain no-repeat;
-}
-.studio.atlas-shell .lb-cylinder-v9 .lb-cylinder-world .atlas-world::after{
-  top:calc(36% + 30% * .26);right:calc(66% * .24 - 10px);width:15px;height:21px;
-  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 28'%3E%3Cpath d='M10 1C5 1 1.5 4.7 1.5 9.6 1.5 16 10 27 10 27s8.5-11 8.5-17.4C18.5 4.7 15 1 10 1z' fill='%23D4301F'/%3E%3Ccircle cx='10' cy='9.6' r='3.4' fill='%23FFFDFB'/%3E%3C/svg%3E") center/contain no-repeat;
-  filter:drop-shadow(0 2px 2px rgba(126,26,20,.35));
-}
-
-/* 02A Field notes: red-ruled ledger paper with a margin, and a paperclip */
-.studio.atlas-shell .lb-cylinder-v9 .lb-cylinder-research .atlas-research::before{
-  inset:62px 0 0 0;
+/* Registration marks at the corners of the sheet */
+.lbx-desk .lbx-reg{width:15px;height:15px;opacity:.5;
   background:
-    linear-gradient(90deg,transparent 14px,rgba(163,36,26,.45) 14px 15px,transparent 15px 18px,rgba(163,36,26,.45) 18px 19px,transparent 19px),
-    repeating-linear-gradient(180deg,transparent 0 21px,rgba(163,36,26,.12) 21px 22px);
+    linear-gradient(rgba(28,27,25,.5),rgba(28,27,25,.5)) center/1px 100% no-repeat,
+    linear-gradient(rgba(28,27,25,.5),rgba(28,27,25,.5)) center/100% 1px no-repeat,
+    radial-gradient(circle,transparent 3.5px,rgba(28,27,25,.5) 3.5px 4.5px,transparent 4.5px);
 }
-.studio.atlas-shell .lb-cylinder-v9 .atlas-research .research-stack>span:first-child::after{
-  content:"";position:absolute;top:-9px;right:16px;width:12px;height:32px;pointer-events:none;
-  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 32' fill='none' stroke='%23A3241A' stroke-width='1.6' stroke-linecap='round'%3E%3Cpath d='M3.5 9v15a2.5 2.5 0 0 0 5 0V5.5a4 4 0 0 0-8 0V25a5 5 0 0 0 10 0V10'/%3E%3C/svg%3E") center/contain no-repeat;
-}
-.studio.atlas-shell .lb-cylinder-v9 .atlas-research .research-stack>span{background:rgba(255,253,251,.94)!important}
+.lbx-desk .lbx-reg--tl{left:14px;top:14px}
+.lbx-desk .lbx-reg--tr{right:14px;top:14px}
+.lbx-desk .lbx-reg--bl{left:0;bottom:12px}
+.lbx-desk .lbx-reg--br{right:0;bottom:12px}
 
-/* 03A Screenplay: a bound script, a stack of pages held by two brads */
-.studio.atlas-shell .lb-cylinder-v9 .atlas-script .script-page-preview{
-  position:relative!important;
-  box-shadow:5px 5px 0 -1px #FBEFEC,5px 5px 0 0 #EBCFC9,10px 10px 0 -1px #F7E2DE,10px 10px 0 0 #E2B8B0,0 18px 26px -16px rgba(126,26,20,.45)!important;
+/* The slate: top-left, opposite Pitch view. Click for another take. */
+.lbx-desk .lbx-slate{
+  z-index:3;left:40px;top:12px;display:flex;flex-direction:column;gap:5px;padding:4px 6px 6px;
+  pointer-events:auto;cursor:pointer;opacity:.42;transition:opacity .3s var(--lbx-ease,ease);
+  color:#1C1B19;
 }
-.studio.atlas-shell .lb-cylinder-v9 .atlas-script .script-page-preview::before{
-  content:"";position:absolute;left:9px;top:22%;width:7px;height:56%;pointer-events:none;
-  background:
-    radial-gradient(circle at 50% 3.5px,#B3261A 2.4px,#7E1A14 3.2px,transparent 3.6px) 0 0/7px 7px no-repeat,
-    radial-gradient(circle at 50% 3.5px,#B3261A 2.4px,#7E1A14 3.2px,transparent 3.6px) 0 100%/7px 7px no-repeat;
+.lbx-desk .lbx-slate:hover{opacity:.8}
+.lbx-desk .lbx-slate-sticks{
+  display:block;width:72px;height:6px;border-radius:1px;transform-origin:2px 100%;
+  background:repeating-linear-gradient(-55deg,rgba(28,27,25,.75) 0 5px,transparent 5px 10px);
+  box-shadow:inset 0 0 0 1px rgba(28,27,25,.55);
 }
-.studio.atlas-shell .lb-cylinder-v9 .atlas-script .script-page-preview em{position:relative}
-.studio.atlas-shell .lb-cylinder-v9 .atlas-script .script-page-preview em::after{
-  content:"";position:absolute;inset:-7px -11px;pointer-events:none;
+.lbx-desk .lbx-slate.is-clap .lbx-slate-sticks{animation:lbx-clap .32s var(--lbx-ease,ease)}
+@keyframes lbx-clap{0%{transform:rotate(0)}35%{transform:rotate(-14deg)}70%{transform:rotate(0)}85%{transform:rotate(-2deg)}100%{transform:rotate(0)}}
+.lbx-desk .lbx-slate-slug{font:700 9px/1 "Courier Prime","Courier New",monospace;letter-spacing:.06em;white-space:nowrap}
+.lbx-desk .lbx-slate-slug b{font-weight:700}
+.lbx-desk .lbx-slate-row{display:flex;gap:12px;font:500 8px/1 "DM Mono",monospace;letter-spacing:.16em;white-space:nowrap}
+.lbx-desk .lbx-slate-row b{font-weight:500}
+.lbx-desk .lbx-slate-take{position:relative}
+.lbx-desk .lbx-slate-take::after{
+  content:"";position:absolute;inset:-5px -8px;opacity:0;transition:opacity .3s;
   background:var(--lt-circle) center/100% 100% no-repeat;
 }
-
-/* 04A Visual language: a strip of red chips and a halftone field */
-.studio.atlas-shell .lb-cylinder-v9 .lb-cylinder-visual .atlas-visual::before{
-  right:0;bottom:0;width:78%;height:58%;
-  background:radial-gradient(circle,rgba(229,72,58,.42) 1.15px,transparent 1.6px) 0 0/7px 7px;
-  -webkit-mask-image:radial-gradient(ellipse 100% 100% at 100% 100%,#000 0%,rgba(0,0,0,.6) 35%,transparent 72%);
-  mask-image:radial-gradient(ellipse 100% 100% at 100% 100%,#000 0%,rgba(0,0,0,.6) 35%,transparent 72%);
+.lbx-desk .lbx-slate-note{
+  position:absolute;left:calc(100% - 4px);bottom:2px;opacity:0;transform:translate3d(-4px,0,0) rotate(-5deg);
+  transition:opacity .35s,transform .35s var(--lbx-ease,ease);
+  font:italic 400 15px/1 "Instrument Serif",Georgia,serif;color:#B3261A;white-space:nowrap;
 }
-.studio.atlas-shell .lb-cylinder-v9 .lb-cylinder-visual .atlas-visual::after{
-  left:clamp(16px,1.45vw,22px);right:clamp(16px,1.45vw,22px);bottom:62px;height:20px;
-  background:linear-gradient(90deg,#5E120D 0 16.66%,#7E1A14 16.66% 33.33%,#B3261A 33.33% 50%,#D4301F 50% 66.66%,#E5483A 66.66% 83.33%,#F2B3AB 83.33%);
-  border-radius:3px;box-shadow:inset 0 0 0 1px rgba(0,0,0,.06),0 6px 12px -8px rgba(126,26,20,.6);
-}
+.lbx-desk .lbx-slate.is-print .lbx-slate-take::after{opacity:1}
+.lbx-desk .lbx-slate.is-print .lbx-slate-note{opacity:1;transform:translate3d(0,0,0) rotate(-5deg)}
 
-/* 05A Foundation: the spark, a soft red sunburst and a four-point star */
-.studio.atlas-shell .lb-cylinder-v9 .lb-cylinder-foundation .atlas-foundation::before{
-  top:0;right:0;width:100%;height:78%;
+/* A coffee ring and the script supervisor's note */
+.lbx-desk .lbx-ring{
+  left:4%;bottom:104px;width:96px;height:92px;border-radius:50%;opacity:.55;transform:rotate(-12deg);
   background:
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 330' preserveAspectRatio='xMaxYMin slice' fill='none' stroke='%23D4301F' stroke-width='1' stroke-linecap='round'%3E%3Cpath d='M300 0L288 330M300 0L264 247M300 0L218 320M300 0L212 234M300 0L151 295M300 0L164 210M300 0L91 256M300 0L122 176M300 0L41 205M300 0L88 133M300 0L3 145M300 0L65 85M300 0L-21 78M300 0L52 32M300 0L-30 7' opacity='.13'/%3E%3C/svg%3E") top right/100% 100% no-repeat,
-    radial-gradient(ellipse 70% 55% at 100% 0%,rgba(238,154,145,.55) 0%,rgba(247,216,212,.35) 40%,transparent 75%);
+    radial-gradient(closest-side,transparent 86%,rgba(120,84,50,.20) 89%,rgba(120,84,50,.07) 93%,transparent 97%),
+    radial-gradient(closest-side at 56% 47%,transparent 88%,rgba(120,84,50,.10) 92%,transparent 98%);
 }
-.studio.atlas-shell .lb-cylinder-v9 .lb-cylinder-foundation .atlas-foundation::after{
-  top:56px;right:26px;width:30px;height:30px;
-  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3E%3Cpath d='M15 0c1.2 9 4.8 12.6 15 15-10.2 2.4-13.8 6-15 15-1.2-9-4.8-12.6-15-15 10.2-2.4 13.8-6 15-15z' fill='%23D4301F'/%3E%3C/svg%3E") center/contain no-repeat;
-  filter:drop-shadow(0 0 6px rgba(212,48,31,.35));
+.lbx-desk .lbx-pencil{
+  font:italic 400 14px/1 "Instrument Serif",Georgia,serif;color:rgba(28,27,25,.34);white-space:nowrap;
+}
+.lbx-desk .lbx-pencil--cont{left:calc(4% + 22px);bottom:84px;transform:rotate(-5deg)}
+.lbx-desk .lbx-pencil--page{right:4.5%;bottom:118px;transform:rotate(3.5deg);padding-bottom:4px;
+  background:linear-gradient(rgba(28,27,25,.22),rgba(28,27,25,.22)) 2px 100%/86% 1px no-repeat}
+
+/* Days at this desk, in grease pencil. Hover to read it. */
+.lbx-desk .lbx-tally{
+  z-index:3;left:26px;bottom:22px;display:flex;align-items:center;gap:10px;padding:4px;
+  pointer-events:auto;color:rgba(212,48,31,.42);transition:color .3s;
+}
+.lbx-desk .lbx-tally:hover{color:rgba(212,48,31,.8)}
+.lbx-desk .lbx-tally-marks{display:block;line-height:0}
+.lbx-desk .lbx-tally-note{
+  opacity:0;transform:translate3d(-4px,0,0);transition:opacity .3s,transform .3s var(--lbx-ease,ease);
+  font:italic 400 15px/1 "Instrument Serif",Georgia,serif;color:#B3261A;white-space:nowrap;
+}
+.lbx-desk .lbx-tally:hover .lbx-tally-note{opacity:1;transform:translate3d(0,0,0)}
+
+/* Edge print, running down the right margin like the edge of a film strip */
+.lbx-desk .lbx-scale{
+  right:24px;bottom:15px;font:500 7.5px/1 "DM Mono",monospace;letter-spacing:.24em;color:rgba(28,27,25,.3);white-space:nowrap;
+}
+.lbx-desk .lbx-edge{
+  right:-2px;top:46%;transform:translateY(-50%);writing-mode:vertical-rl;
+  font:500 8px/1 "DM Mono",monospace;letter-spacing:.3em;color:rgba(28,27,25,.26);white-space:nowrap;
+}
+
+@media (max-width:1240px){
+  .lbx-desk :is(.lbx-ring,.lbx-pencil){display:none}
+}
+@media (max-width:1100px){
+  .lbx-desk .lbx-edge{display:none}
+}
+@media (max-width:900px){
+  .lbx-desk .lbx-slate{left:30px}
+  .lbx-desk .lbx-tally{left:30px}
+}
+@media (max-width:700px){
+  .lbx-desk :is(.lbx-tally,.lbx-edge){display:none}
+  .lbx-desk .lbx-slate{left:24px;top:2px;transform:scale(.88);transform-origin:0 0}
+  .lbx-desk .lbx-slate-row{display:none}
+  .lbx-desk .lbx-reg{opacity:.35}
+  .lbx-desk .lbx-reg--tl,.lbx-desk .lbx-scale{display:none}
+}
+@media (max-width:380px){
+  .lbx-desk .lbx-slate{display:none}
+}
+@media (hover:none){
+  .lbx-desk .lbx-tally-note{opacity:1;transform:none}
+}
+@media (prefers-reduced-motion:reduce){
+  .lb-cylinder-v9 :is(.lb-cylinder-plaque,.lb-cylinder-lift,.lb-cylinder-lift::after,.lbx-foot-arrow,.lbx-head-arrow,.lb-cylinder-dots i::after),
+  .lb-cylinder-v9 .lb-cylinder-controls>button svg,
+  .lbx-desk *{transition:none!important;animation:none!important}
+  .lb-cylinder-v9 .lb-cylinder-card.is-active:hover :is(.lb-cylinder-plaque,.lb-cylinder-lift){transform:none!important}
 }

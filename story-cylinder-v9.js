@@ -29,6 +29,171 @@
   const nearest = (value, index) => index + Math.round((value - index) / N) * N;
   const wrapped = (n) => ((n % N) + N) % N;
 
+  /* ---- Card anatomy ------------------------------------------------------
+   * Every replica is re-laid into one skeleton, whatever order React renders:
+   *   head    frame number · label · arrow, over a hairline
+   *   title   Instrument Serif headline
+   *   meta    one quiet line of context
+   *   preview the card's own picture of its work (fills the remaining height)
+   *   foot    the action, on a rule, always on the same baseline
+   * Text always comes from the native React card (textContent only, never
+   * innerHTML), so data bindings stay live; refresh() re-runs this on change.
+   */
+  const FRAME = { world:'01A', research:'02A', script:'03A', visual:'04A', foundation:'05A' };
+  const SVG_NS = 'http://www.w3.org/2000/svg';
+  const ICON = {
+    up: '<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7"/><path d="M8.5 7H17v8.5"/></svg>',
+    go: '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15"/><path d="m13.5 6.5 5.5 5.5-5.5 5.5"/></svg>',
+    prev: '<svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m14.5 6-6 6 6 6"/></svg>',
+    next: '<svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9.5 6 6 6-6 6"/></svg>',
+    star: '<svg viewBox="0 0 30 30" aria-hidden="true"><path d="M15 1.5c1 7.6 4.1 11 13.5 13.5-9.4 2.5-12.5 5.9-13.5 13.5-1-7.6-4.1-11-13.5-13.5C10.9 12.5 14 9.1 15 1.5z" fill="currentColor"/></svg>'
+  };
+  const make = (tag, cls, text) => {
+    const n = document.createElement(tag);
+    if (cls) n.className = cls;
+    if (text != null) n.textContent = text;
+    return n;
+  };
+  const icon = (name, cls) => {
+    const n = make('span', 'lbx-icon ' + (cls || ''));
+    n.innerHTML = ICON[name];
+    n.setAttribute('aria-hidden', 'true');
+    return n;
+  };
+  /* Text with <br> read as a space, whitespace collapsed */
+  const words = (node) => node ? [...node.childNodes]
+    .map((n) => n.nodeName === 'BR' ? ' ' : n.textContent).join('').replace(/\s+/g, ' ').trim() : '';
+
+  function head(id, label) {
+    const h = make('span', 'node-overline lbx-head');
+    h.append(make('b', 'lbx-frame', FRAME[id]), make('span', 'lbx-label', label), icon('up', 'lbx-head-arrow'));
+    return h;
+  }
+  function foot(label) {
+    const f = make('span', 'node-footer lbx-foot');
+    f.append(make('span', 'lbx-foot-label', label), icon('go', 'lbx-foot-arrow'));
+    return f;
+  }
+  function preview(id) { return make('div', 'lbx-preview lbx-preview--' + id); }
+
+  const RESEARCH_PROMPTS = ['A question to follow', 'A detail to remember'];
+  const PREMISE_PROMPT = 'Add your premise in Story Foundation.';
+
+  function shape(card, id) {
+    const parts = { head: null, title: null, meta: null, body: null, foot: null };
+    const footText = words(card.querySelector('.node-footer'));
+    parts.head = head(id, words(card.querySelector('.node-overline')));
+
+    if (id === 'world') {
+      parts.title = make('h2', 'lbx-title', words(card.querySelector('.world-card-heading strong')));
+      parts.meta = make('p', 'lbx-meta', words(card.querySelector('.world-card-heading small')));
+      parts.body = preview(id);
+      const map = make('div', 'lbx-map');
+      map.setAttribute('aria-hidden', 'true');
+      map.append(make('span', 'lbx-map-grid'), make('span', 'lbx-map-pin'), make('span', 'lbx-map-ref', 'LOC. 01 — UNSURVEYED'));
+      const index = card.querySelector('.world-index');
+      parts.body.append(map);
+      if (index) parts.body.append(index);
+      parts.foot = foot('Enter the world');
+    }
+
+    if (id === 'research') {
+      parts.title = make('h2', 'lbx-title', words(card.querySelector('h2')));
+      parts.meta = make('p', 'lbx-meta', words(card.querySelector('.research-card-body small')));
+      parts.body = preview(id);
+      const notes = [...card.querySelectorAll('.research-stack > span')].map(words);
+      const tags = ['Q.', 'NOTE'];
+      const board = make('div', 'lbx-notes');
+      board.setAttribute('aria-hidden', 'true');
+      notes.slice(0, 2).forEach((title, i) => {
+        const prompt = RESEARCH_PROMPTS.includes(title);
+        const untitled = !prompt && /^untitled\b/i.test(title);
+        const note = make('span', 'lbx-note' + (prompt ? ' is-prompt' : '') + (untitled ? ' is-untitled' : ''));
+        const tag = make('span', 'lbx-note-tag', prompt ? tags[i] : 'Nº ' + String(i + 1).padStart(2, '0'));
+        const text = make('span', 'lbx-note-text', untitled ? 'Untitled note' : title);
+        note.append(make('i', 'lbx-note-pin'), tag, text, make('span', 'lbx-note-lines'));
+        if (untitled) note.append(make('span', 'lbx-note-draft', 'needs a title'));
+        board.append(note);
+      });
+      // A red thread between the two pins: the threads worth keeping
+      const thread = document.createElementNS(SVG_NS, 'svg');
+      thread.setAttribute('class', 'lbx-thread');
+      thread.setAttribute('viewBox', '0 0 100 100');
+      thread.setAttribute('preserveAspectRatio', 'none');
+      thread.innerHTML = '<path d="M84 9 C 99 22, 100 44, 90 60" />';
+      board.append(thread);
+      parts.body.append(board);
+      parts.foot = foot(footText || 'Open research');
+    }
+
+    if (id === 'script') {
+      parts.title = make('h2', 'lbx-title', words(card.querySelector('h2')));
+      const meta = card.querySelector(':scope > p');
+      parts.meta = make('p', 'lbx-meta', words(meta));
+      parts.body = preview(id);
+      const page = card.querySelector('.script-page-preview');
+      if (page) {
+        page.prepend(make('b', 'lbx-page-no', '1.'));
+        parts.body.append(page);
+      }
+      parts.foot = foot(footText || 'Enter writing room');
+    }
+
+    if (id === 'visual') {
+      parts.title = make('h2', 'lbx-title', words(card.querySelector('h2')));
+      const boards = words(card.querySelector('.atlas-visual-board-footer'));
+      parts.meta = make('p', 'lbx-meta', boards.replace(/\s*\/\s*/, ' of '));
+      parts.body = preview(id);
+      const scenes = card.querySelector('.atlas-visual-scenes');
+      if (scenes) {
+        scenes.querySelectorAll(':scope > span').forEach((row) => {
+          const i = row.querySelector(':scope > i');
+          if (i) i.classList.add('lbx-frame-thumb');
+        });
+        parts.body.append(scenes);
+      }
+      const chips = make('div', 'lbx-chips');
+      chips.setAttribute('aria-hidden', 'true');
+      for (let c = 0; c < 6; c++) chips.append(make('i'));
+      chips.append(make('span', 'lbx-chips-label', 'COLOUR SCRIPT — 06 KEYS'));
+      parts.body.append(chips);
+      parts.foot = foot('Open the boards');
+    }
+
+    if (id === 'foundation') {
+      parts.title = make('h2', 'lbx-title', words(card.querySelector('h2')));
+      parts.meta = make('p', 'lbx-meta', 'The one idea the whole film grows from.');
+      parts.body = preview(id);
+      const note = card.querySelector('.spark-note');
+      if (note) {
+        const premise = words(note.querySelector('p'));
+        const empty = !premise || premise === PREMISE_PROMPT;
+        note.classList.toggle('is-empty', empty);
+        note.prepend(icon('star', 'lbx-spark'));
+        if (empty) {
+          // A logline in four blanks: the shape of a premise, waiting for one
+          const form = make('span', 'lbx-logline');
+          form.setAttribute('aria-hidden', 'true');
+          [['When', 'something happens'], ['a', 'someone'], ['must', 'do something'], ['or else', 'what it costs']]
+            .forEach(([lead, hint]) => {
+              const line = make('span', 'lbx-blank-line');
+              line.append(make('span', 'lbx-lead', lead), make('span', 'lbx-blank', hint));
+              form.append(line);
+            });
+          note.append(form);
+        } else {
+          const count = premise.split(/\s+/).filter(Boolean).length;
+          note.append(make('span', 'lbx-count', count + (count === 1 ? ' WORD' : ' WORDS') + (count <= 35 ? ' · ONE BREATH' : '')));
+        }
+        parts.body.append(note);
+      }
+      parts.foot = foot(footText || 'Write your premise');
+    }
+
+    card.replaceChildren(...Object.values(parts).filter(Boolean));
+    card.classList.add('lbx', 'lbx--' + id);
+  }
+
   function copySource(item, interactive = true) {
     const original = sourceFor(item);
     if (!original) return null;
@@ -51,6 +216,8 @@
     } else if (replica.matches('button')) {
       replica.tabIndex = -1;
     }
+    try { shape(replica, item.id); }
+    catch (error) { console.warn('Story Cylinder: card kept in native layout', item.id, error); }
     return replica;
   }
 
@@ -149,6 +316,8 @@
     s.centerY=s.height*(s.mobile?.514:.472);
     s.host.style.setProperty('--lb-card-width',s.cardWidth+'px');
     s.host.style.setProperty('--lb-card-height',s.cardHeight+'px');
+    s.host.classList.toggle('is-compact',s.cardHeight<346);
+    s.host.classList.toggle('is-phone',s.mobile);
     drawShell(s);paint(s);
   }
 
@@ -167,12 +336,25 @@
       const x = radius * Math.sin(theta);
       const z = radius * (Math.cos(theta) - 1);
       const dy = z * (s.mobile ? .026 : .035);
+      // Depth falloff. The active card lifts and holds full contrast; each
+      // step away it shrinks a little and recedes under a veil of table tone,
+      // so the far panels read as paper in the distance rather than as
+      // squeezed, half-legible text. Transform and opacity only.
+      const d = Math.abs(rel);
+      const near = Math.min(d, 1);
+      const lift = (1 - near) * (s.mobile ? 5 : 9);
+      const scale = 1 - Math.min(d, 2.2) * (s.mobile ? .045 : .038);
       card.style.transform = 'translate3d(-50%,-50%,0) translate3d('
-        + x.toFixed(2) + 'px,' + dy.toFixed(2) + 'px,' + z.toFixed(2)
-        + 'px) rotateY(' + angle.toFixed(3) + 'deg)';
-      // The outermost panels turn almost edge-on: quiet their stray clipped text.
-      const alpha = Math.abs(rel) <= 1.35 ? 1 : clamp(1-(Math.abs(rel)-1.35)*.65,.34,1);
+        + x.toFixed(2) + 'px,' + (dy - lift).toFixed(2) + 'px,' + z.toFixed(2)
+        + 'px) rotateY(' + angle.toFixed(3) + 'deg) scale(' + scale.toFixed(4) + ')';
+      const alpha = d <= 1.15 ? 1 : clamp(1 - (d - 1.15) * .62, .32, 1);
       if (card._alpha !== alpha) { card.style.opacity = String(alpha); card._alpha = alpha; }
+      const side = s.mobile ? .44 : .26;
+      const veil = d <= 1 ? d * side : clamp(side + (d - 1) * .5, 0, .82);
+      const veilKey = Math.round(veil * 1000);
+      if (card._veil !== veilKey) { card._veilEl.style.opacity = (veilKey / 1000).toFixed(3); card._veil = veilKey; }
+      const raise = Math.round((1 - near) * 1000);
+      if (card._raise !== raise) { card._liftEl.style.opacity = (raise / 1000).toFixed(3); card._raise = raise; }
       const disabled = Math.abs(rel) >= 2.48;
       if (card._disabled !== disabled) {
         card.style.pointerEvents = disabled ? 'none' : 'auto';
@@ -197,6 +379,7 @@
     s.counter.textContent = String(index + 1).padStart(2,'0') + ' / 05';
     s.live.textContent = ITEMS[index].title;
     s.dots.forEach((dot, i) => dot.classList.toggle('is-current',i===index));
+    if (s.deskScene) s.deskScene.textContent = String(index + 1).padStart(2,'0');
   }
   function animate(s) {
     if (s.frame) return;
@@ -212,7 +395,7 @@
         paint(s);
         return;
       }
-      s.value += error * (1 - Math.exp(-delta / 130));
+      s.value += error * (1 - Math.exp(-delta / 150));
       paint(s);
       s.frame = requestAnimationFrame(frame);
     };
@@ -262,6 +445,101 @@
     });
   }
 
+
+  /* ---- The desk ----------------------------------------------------------
+   * Small things left on the grid paper for people who look closely. All of
+   * it is aria-hidden and pointer-events:none, except two quiet toys that sit
+   * in empty corners: the slate (click for another take) and the tally of
+   * days at this desk (hover to read it). Nothing here touches project data;
+   * the tally keeps one counter in this browser's localStorage.
+   */
+  const DESK_KEY = 'lightbox.desk.days';
+  function timeOfDay(date = new Date()) {
+    const h = date.getHours();
+    return h >= 5 && h < 7 ? 'DAWN' : h >= 7 && h < 17 ? 'DAY' : h >= 17 && h < 20 ? 'DUSK' : 'NIGHT';
+  }
+  function daysAtDesk() {
+    const today = new Date().toISOString().slice(0, 10);
+    try {
+      const saved = JSON.parse(localStorage.getItem(DESK_KEY) || 'null');
+      const record = saved && typeof saved.n === 'number' ? saved : { n: 0, last: '' };
+      if (record.last !== today) { record.n += 1; record.last = today; }
+      localStorage.setItem(DESK_KEY, JSON.stringify(record));
+      return record.n;
+    } catch { return 1; }
+  }
+  function tallySvg(n) {
+    const shown = Math.min(n, 20);
+    let paths = '';
+    for (let i = 0; i < shown; i++) {
+      const group = Math.floor(i / 5), k = i % 5, gx = group * 30;
+      // Wax wobbles: no two strokes quite the same
+      const w = ((i * 37) % 7) / 10 - .3;
+      paths += k < 4
+        ? '<path d="M' + (gx + 4 + k * 5 + w).toFixed(1) + ' 3.5 L' + (gx + 3.4 + k * 5 - w).toFixed(1) + ' 21"/>'
+        : '<path d="M' + (gx + 0.5) + ' 17.5 L' + (gx + 22.5) + ' 6.5"/>';
+    }
+    const width = Math.max(30, Math.ceil(shown / 5) * 30);
+    return '<svg viewBox="0 0 ' + width + ' 24" width="' + width + '" height="24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true">' + paths + '</svg>';
+  }
+  function mountDesk(atlas, s) {
+    if (atlas.querySelector(':scope > .lbx-desk')) return;
+    // Two layers: the sheet (behind the heading) and the floor (behind the
+    // drum and its controls), so every mark stays in view above the dock.
+    const desk = make('div', 'lbx-desk lbx-desk--sheet');
+    const floor = make('div', 'lbx-desk lbx-desk--floor');
+    desk.setAttribute('aria-hidden', 'true');
+    floor.setAttribute('aria-hidden', 'true');
+    const days = daysAtDesk();
+    desk.innerHTML =
+      // Registration marks: the Atlas is a sheet laid on the light table
+      '<i class="lbx-reg lbx-reg--tl"></i><i class="lbx-reg lbx-reg--tr"></i>'
+      // The slate: a slug line that knows the hour, and a take counter
+      + '<div class="lbx-slate">'
+      + '<span class="lbx-slate-sticks"></span>'
+      + '<span class="lbx-slate-slug">INT. WRITING ROOM — <b class="lbx-slate-time"></b></span>'
+      + '<span class="lbx-slate-row"><span>ROLL A</span><span>SC. <b class="lbx-slate-scene">03</b></span>'
+      + '<span class="lbx-slate-take">TK. <b>01</b></span></span>'
+      + '<span class="lbx-slate-note">print it.</span></div>';
+    floor.innerHTML =
+      '<i class="lbx-reg lbx-reg--bl"></i><i class="lbx-reg lbx-reg--br"></i>'
+      // A coffee ring, and the script supervisor's note beside it
+      + '<span class="lbx-ring"></span>'
+      + '<span class="lbx-pencil lbx-pencil--cont">cont. — cup was full in the wide</span>'
+      // A rule of thumb pencilled in the margin
+      + '<span class="lbx-pencil lbx-pencil--page">1 page ≈ 1 minute</span>'
+      // Days at this desk, kept in grease pencil
+      + '<div class="lbx-tally"><span class="lbx-tally-marks">' + tallySvg(days) + '</span>'
+      + '<span class="lbx-tally-note">day ' + String(days).padStart(2, '0') + ' at the desk</span></div>'
+      // Edge print, as it runs down the side of a strip of film
+      + '<span class="lbx-edge">LBX 0001 ▸ 24 FPS ▸ 180° SHUTTER ▸ 1.85 : 1 ▸ SHEET 01</span>'
+      // The draughtsman's warning beside the last registration mark
+      + '<span class="lbx-scale">DO NOT SCALE</span>';
+    atlas.append(desk);
+    s.host.prepend(floor);
+    const time = desk.querySelector('.lbx-slate-time');
+    const setTime = () => { time.textContent = timeOfDay(); };
+    setTime();
+    s.deskClock = setInterval(setTime, 60000);
+    s.deskScene = desk.querySelector('.lbx-slate-scene');
+    const slate = desk.querySelector('.lbx-slate');
+    const takeNo = desk.querySelector('.lbx-slate-take b');
+    let take = 1;
+    slate.addEventListener('click', (event) => {
+      event.stopPropagation();
+      take = take >= 7 ? 1 : take + 1;
+      takeNo.textContent = String(take).padStart(2, '0');
+      slate.classList.toggle('is-print', take === 7);
+      if (!prefersReduced.matches) {
+        slate.classList.remove('is-clap');
+        void slate.offsetWidth;
+        slate.classList.add('is-clap');
+      }
+    });
+    s.desk = desk;
+    s.floor = floor;
+  }
+
   function mount(atlas) {
     const viewport = atlas.querySelector('.atlas-viewport');
     if (!viewport || viewport.querySelector('.lb-cylinder-v9') || ITEMS.some((item) => !sourceFor(item))) return;
@@ -274,10 +552,10 @@
       + '<canvas class="lb-cylinder-body" aria-hidden="true"></canvas>'
       + '<div class="lb-cylinder-rotor"></div></div></div>'
       + '<nav class="lb-cylinder-controls" aria-label="Story Cylinder navigation">'
-      + '<button class="lb-cylinder-prev" type="button" aria-label="Previous card">‹</button>'
+      + '<button class="lb-cylinder-prev" type="button" aria-label="Previous card">' + ICON.prev + '</button>'
       + '<span class="lb-cylinder-control-label"><span class="lb-cylinder-control-title">THE SCREENPLAY</span><span class="lb-cylinder-dots" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span>'
       + '<small class="lb-cylinder-counter">03 / 05</small></span>'
-      + '<button class="lb-cylinder-next" type="button" aria-label="Next card">›</button></nav>'
+      + '<button class="lb-cylinder-next" type="button" aria-label="Next card">' + ICON.next + '</button></nav>'
       + '<span class="lb-cylinder-live sr-only" aria-live="polite"></span>';
     viewport.append(host);
     const s = {
@@ -298,9 +576,13 @@
       card.tabIndex = 0;
       card.setAttribute('role', item.id === 'world' ? 'group' : 'button');
       card.setAttribute('aria-label', item.title);
-      card.innerHTML='<div class="lb-cylinder-plaque">'
+      card.innerHTML='<div class="lb-cylinder-lift" aria-hidden="true"></div>'
+        + '<div class="lb-cylinder-plaque">'
         + '<div class="lb-cylinder-content"></div>'
-        + '<div class="lb-cylinder-sheen" aria-hidden="true"></div></div>';
+        + '<div class="lb-cylinder-sheen" aria-hidden="true"></div>'
+        + '<div class="lb-cylinder-veil" aria-hidden="true"></div></div>';
+      card._liftEl = card.querySelector('.lb-cylinder-lift');
+      card._veilEl = card.querySelector('.lb-cylinder-veil');
       card.querySelector('.lb-cylinder-content').append(copySource(item));
       s.snapshots[index] = sourceFor(item).innerHTML;
       s.rotor.append(card);
@@ -317,6 +599,12 @@
         event.preventDefault();
         const action = event.target.closest('[data-world-entry]');
         openCard(s, index, action?.dataset.worldEntry);
+      });
+      // Keyboard focus brings its card to the front; pointer focus does not,
+      // so a press that starts a drag never yanks the drum.
+      card.addEventListener('focusin', () => {
+        if (opening || s.down || !card.matches(':focus-visible,:has(:focus-visible)')) return;
+        if (wrapped(Math.round(s.target)) !== index) aim(s, nearest(s.target, index));
       });
     });
     host.querySelector('.lb-cylinder-prev').addEventListener('click', () => navigate(s,-1));
@@ -373,6 +661,7 @@
     s.resizeObserver.observe(s.view);
     atlas.closest('.studio')?.classList.add('lb-cylinder-atlas');
     atlas.classList.add('lb-cylinder-mounted');
+    mountDesk(atlas, s);
     active=s;hasEnteredAtlas=true;
     resize(s);updateControls(s);paint(s);
   }
@@ -384,6 +673,9 @@
       active.resizeObserver?.disconnect();
       clearTimeout(active.wheelTimeout);
       if (active.frame) cancelAnimationFrame(active.frame);
+      clearInterval(active.deskClock);
+      active.desk?.remove();
+      active.floor?.remove();
       active.host.remove();
       active=null;opening=false;
     }

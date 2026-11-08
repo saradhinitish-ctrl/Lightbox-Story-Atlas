@@ -50,6 +50,8 @@ const sleep=(ms)=>new Promise(done=>setTimeout(done,ms));
 try{
  for(const [width,height] of sizes){
   const page=await browser.newPage({viewport:{width,height},deviceScaleFactor:1});
+  // These checks cover the Classic view (the cylinder); tests/atlas-light-table-qa.mjs covers the light table.
+  await page.addInitScript(()=>{try{localStorage.setItem('lightbox.atlas.layout','classic');}catch{}});
   const browserErrors=[];
   page.on('pageerror', e=>browserErrors.push(e.message));
   page.on('console', e=>{if(e.type()==='error') browserErrors.push(e.text());});

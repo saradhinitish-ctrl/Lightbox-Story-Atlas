@@ -1,3 +1,7 @@
+# Atlas light table
+
+The Atlas home screen is a light table: the centred card is lit, neighbours sit dimmer in rack focus, the Screenplay card shows where you stopped with **Continue Scene NN**, and every card has a live status line. Entering a room is a push-in (View Transitions). Field Notes gains a research board with red string; Visual Language frames gain sprocket holes and edge codes. The 3D cylinder remains as **Classic view**. See `docs/atlas-light-table.md`.
+
 # Acid Paper studio redesign
 
 The live static app uses the Acid Paper design system in `studio-design.css`, loaded after the portable styles. It unifies the Atlas, development and profile fields, library cards, screenplay chrome, visual boards, sequence tools, dialogs and phone layouts. Screenplay pagination, Courier metrics, project storage and export code are unchanged.

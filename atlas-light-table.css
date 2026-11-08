@@ -1,0 +1,254 @@
+/* ==========================================================================
+   Lightbox / The Atlas as a light table (rack focus)
+
+   story-cylinder-v9.js sets .is-rack on .lb-cylinder-v9 (default) or
+   .is-classic (the original cylinder, untouched by this file).
+
+   The room is dim; the card in focus is the light source. Its backlight is
+   one opacity-driven layer (.lb-cylinder-lift) and one static spill on the
+   table (.lb-cylinder-aura). Neighbours sit smaller under a warm-grey veil
+   (opacity) with a small static blur that switches by class and never
+   tweens. Per frame, only transform and opacity change.
+   Loaded last.
+   ========================================================================== */
+
+.lb-cylinder-v9.is-rack{
+  --lbx-glow:255,226,176;          /* the lamp: warm tungsten through opal */
+  --lbx-dim:44,38,31;              /* the room around it */
+}
+
+/* --- The room ----------------------------------------------------------------- */
+/* Dim the sheet towards its edges; the middle of the table stays bright.
+   A static gradient: it never animates. */
+.studio.atlas-shell.lb-cylinder-atlas .story-atlas.lbx-rack::before{
+  content:"";position:absolute;inset:0;z-index:-2;pointer-events:none;
+  background:
+    radial-gradient(ellipse 62% 58% at 50% 58%,rgba(var(--lbx-dim,44,38,31),0) 0%,rgba(44,38,31,0) 42%,rgba(44,38,31,.09) 72%,rgba(44,38,31,.19) 100%);
+}
+.lb-cylinder-v9.is-rack .lb-cylinder-body{display:none!important}
+.lb-cylinder-v9.is-rack .lb-cylinder-stage{perspective:none!important}
+.lb-cylinder-v9.is-rack .lb-cylinder-rotor{transform-style:flat!important}
+.lb-cylinder-v9.is-rack .lb-cylinder-card{transform-style:flat!important}
+
+/* The spill: light from the card in focus falling on the table around it */
+.lb-cylinder-v9.is-rack .lb-cylinder-aura{
+  inset:0!important;
+  background:
+    radial-gradient(ellipse calc(var(--lb-card-width) * 1.15) calc(var(--lb-card-height) * .78) at 50% 50%,
+      rgba(var(--lbx-glow),.42) 0%,rgba(var(--lbx-glow),.20) 45%,rgba(var(--lbx-glow),0) 100%),
+    radial-gradient(ellipse calc(var(--lb-card-width) * .9) 34px at 50% calc(50% + var(--lb-card-height) * .5 + 6px),
+      rgba(var(--lbx-glow),.55) 0%,rgba(var(--lbx-glow),0) 100%)!important;
+}
+
+/* Contact shadow without a blur filter: one gradient, no filter on any card */
+.lb-cylinder-v9.is-rack .lb-cylinder-card::before{
+  filter:none!important;transform:none!important;opacity:.7;
+  left:8%!important;right:8%!important;bottom:-16px!important;height:26px!important;
+  background:radial-gradient(ellipse 50% 50%,rgba(28,27,25,.16) 0%,rgba(28,27,25,.06) 55%,transparent 100%)!important;
+}
+.lb-cylinder-v9.is-rack .lb-cylinder-card.is-active::before{opacity:1}
+
+/* --- The card in focus: backlit ---------------------------------------------- */
+.lb-cylinder-v9.is-rack .lb-cylinder-lift{
+  inset:-1px!important;border-radius:var(--lbx-radius)!important;
+  box-shadow:
+    0 0 0 1px rgba(var(--lbx-glow),.55),
+    0 0 26px 4px rgba(var(--lbx-glow),.62),
+    0 0 70px 18px rgba(var(--lbx-glow),.34),
+    0 26px 40px -22px rgba(28,27,25,.30)!important;
+  transition:opacity .24s var(--lbx-ease)!important;
+}
+.lb-cylinder-v9.is-rack .lb-cylinder-lift::after{display:none!important}
+/* Light coming through the stock: a faint warm bloom in the middle of the sheet */
+.studio.atlas-shell .lb-cylinder-v9.is-rack .lb-cylinder-card.is-active .lb-cylinder-sheen{
+  background:
+    linear-gradient(180deg,rgba(255,255,255,.7) 0,rgba(255,255,255,0) 1.5px),
+    radial-gradient(ellipse 80% 60% at 50% 46%,rgba(255,240,214,.22) 0%,rgba(255,240,214,0) 100%)!important;
+}
+.studio.atlas-shell .lb-cylinder-v9.is-rack .lb-cylinder-card.is-active .lb-cylinder-plaque{
+  border-color:rgba(var(--lbx-glow),.9)!important;
+}
+
+/* --- Neighbours: smaller, dimmer, a little out of focus ---------------------- */
+.lb-cylinder-v9.is-rack .lb-cylinder-veil{
+  background:#3B352E!important;               /* the dim room: lowers light and mutes the reds */
+  transition:opacity .24s var(--lbx-ease);
+}
+.lb-cylinder-v9.is-rack.is-dragging .lb-cylinder-veil,
+.lb-cylinder-v9.is-rack.is-dragging .lb-cylinder-lift{transition:none!important}
+/* Static blur: two elements at most (the neighbours), never animated */
+.lb-cylinder-v9.is-rack .lb-cylinder-card.is-near .lb-cylinder-content{filter:blur(1.5px)}
+.lb-cylinder-v9.is-rack .lb-cylinder-card.is-far .lb-cylinder-content{filter:saturate(.7)}
+.lb-cylinder-v9.is-rack .lb-cylinder-card:not(.is-active){cursor:pointer}
+@media (hover:hover){
+  /* Hovering a neighbour brings its light up and pulls it into focus */
+  .lb-cylinder-v9.is-rack:not(.is-dragging) .lb-cylinder-card.is-near:hover .lb-cylinder-veil{opacity:.06!important}
+  .lb-cylinder-v9.is-rack:not(.is-dragging) .lb-cylinder-card.is-near:hover .lb-cylinder-lift{opacity:.5!important}
+  .lb-cylinder-v9.is-rack:not(.is-dragging) .lb-cylinder-card.is-near:hover .lb-cylinder-content{filter:none}
+  .lb-cylinder-v9.is-rack:not(.is-dragging) .lb-cylinder-card.is-far:hover .lb-cylinder-veil{opacity:.3!important}
+}
+/* Keyboard focus never relies on blur: a red outline, and the card is lit */
+.lb-cylinder-v9.is-rack .lb-cylinder-card:focus-visible .lb-cylinder-veil{opacity:0!important}
+.lb-cylinder-v9.is-rack .lb-cylinder-card:focus-visible .lb-cylinder-content{filter:none}
+.lb-cylinder-v9.is-rack .lb-cylinder-card:focus-visible .lb-cylinder-lift{opacity:.6!important}
+
+/* --- Classic view toggle ------------------------------------------------------ */
+.lb-cylinder-v9 .lbx-layout-toggle{
+  position:absolute;left:calc(50% + 218px);bottom:18px;z-index:5;
+  display:inline-flex;align-items:center;gap:8px;min-height:32px;padding:0 12px 0 10px;
+  border:1px solid rgba(28,27,25,.14);border-radius:999px;background:rgba(255,253,250,.86);
+  color:#4B4842;font:500 10px/1 "DM Mono",monospace;letter-spacing:.12em;text-transform:uppercase;
+  cursor:pointer;transition:border-color .2s,color .2s,background-color .2s
+}
+.lb-cylinder-v9 .lbx-layout-toggle:hover{border-color:rgba(212,48,31,.5);color:#B3261A}
+.lb-cylinder-v9 .lbx-layout-toggle:focus-visible{outline:2px solid #D4301F;outline-offset:3px}
+.lb-cylinder-v9 .lbx-layout-toggle[aria-pressed="true"]{border-color:#D4301F;color:#B3261A;background:#FFFDFA}
+/* A tiny drum: three staves, the middle one lit when the classic view is on */
+.lb-cylinder-v9 .lbx-layout-glyph{
+  width:16px;height:11px;border-radius:2px;flex:0 0 auto;
+  background:
+    linear-gradient(90deg,currentColor 0 3px,transparent 3px 6.5px,currentColor 6.5px 9.5px,transparent 9.5px 13px,currentColor 13px 16px);
+  opacity:.55;transform:perspective(30px) rotateY(-14deg)
+}
+.lb-cylinder-v9 .lbx-layout-toggle[aria-pressed="true"] .lbx-layout-glyph{opacity:1}
+@media (max-width:700px){
+  .lb-cylinder-v9 .lbx-layout-toggle{left:auto;right:12px;top:-2px;bottom:auto;min-height:28px;padding:0 10px 0 8px;font-size:9px}
+}
+
+/* --- Reduced motion: no slides, a simple fade -------------------------------- */
+@media (prefers-reduced-motion:reduce){
+  /* styles.css turns every animation off for reduced motion; this one fade is the
+     intended replacement for movement, so it is reinstated explicitly. */
+  .lb-cylinder-v9.is-rack .lb-cylinder-rotor.is-fading{animation:lbx-rack-fade .2s ease-out!important}
+  .lb-cylinder-v9.is-rack .lb-cylinder-veil,
+  .lb-cylinder-v9.is-rack .lb-cylinder-lift{transition:opacity .2s linear!important}
+}
+@keyframes lbx-rack-fade{from{opacity:.35}to{opacity:1}}
+
+/* --- Live status line (every card on the light table) ------------------------ */
+.studio.atlas-shell .lb-cylinder-v9 .lbx .lbx-status{
+  display:flex!important;align-items:center;gap:7px;flex:0 0 auto!important;
+  margin:0 0 10px!important;padding:0!important;min-width:0;
+  font:500 9px/1.3 "DM Mono",monospace!important;letter-spacing:.12em!important;text-transform:uppercase;
+  color:var(--lbx-ink-2)!important;
+}
+.studio.atlas-shell .lb-cylinder-v9 .lbx .lbx-status>span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.studio.atlas-shell .lb-cylinder-v9 .lbx .lbx-status-dot{
+  flex:0 0 auto;width:5px;height:5px;border-radius:50%;background:var(--lbx-red);
+  box-shadow:0 0 0 3px var(--lbx-red-wash)
+}
+.studio.atlas-shell .lb-cylinder-v9 .lbx--live .lbx-preview{margin-bottom:10px!important}
+
+/* --- The continue card --------------------------------------------------------- */
+.studio.atlas-shell .lb-cylinder-v9 .lbx--live.lbx--script .lbx-title{--lbx-title:clamp(28px,2.2vw,32px);margin-top:14px!important}
+.studio.atlas-shell .lb-cylinder-v9 .lbx .lbx-preview--continue{gap:8px;margin-top:12px!important;overflow:hidden}
+.studio.atlas-shell .lb-cylinder-v9 .lbx .lbx-where{
+  display:flex;align-items:baseline;gap:8px;margin:0!important;min-width:0;
+  font:500 9.5px/1.3 "DM Mono",monospace!important;letter-spacing:.1em;text-transform:uppercase;color:var(--lbx-ink)!important
+}
+.studio.atlas-shell .lb-cylinder-v9 .lbx .lbx-where b{flex:0 0 auto;font:700 12px/1 "Big Shoulders Display","DM Mono",sans-serif;letter-spacing:.04em;color:var(--lbx-red-ink)}
+.studio.atlas-shell .lb-cylinder-v9 .lbx .lbx-where span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* The page: Courier, laid out like the screenplay, faded in at the top as if it
+   continues above. The mask is static. */
+.studio.atlas-shell .lb-cylinder-v9 .lbx .lbx-lines{
+  flex:1 1 auto;min-height:56px;display:flex;flex-direction:column;justify-content:flex-end;overflow:hidden;
+  padding:10px 14px 11px;border:1px solid var(--lbx-rule);border-radius:3px;background:#fff;
+  box-shadow:0 1px 0 rgba(28,27,25,.04),2px 2px 0 -1px #fff,2px 2px 0 0 var(--lbx-rule);
+  font:400 11px/1.42 "Courier Prime","Courier New",monospace;color:var(--lbx-ink);
+  -webkit-mask-image:linear-gradient(180deg,transparent 0,#000 22px);mask-image:linear-gradient(180deg,transparent 0,#000 22px)
+}
+.studio.atlas-shell .lb-cylinder-v9 .lbx .lbx-line{margin:0;padding:0;overflow-wrap:anywhere;display:block;flex:0 0 auto}
+.studio.atlas-shell .lb-cylinder-v9 .lbx .lbx-line+.lbx-line{margin-top:5px}
+.studio.atlas-shell .lb-cylinder-v9 .lbx .lbx-line--character{padding-left:34%;text-transform:uppercase}
+.studio.atlas-shell .lb-cylinder-v9 .lbx .lbx-line--character+.lbx-line,
+.studio.atlas-shell .lb-cylinder-v9 .lbx .lbx-line--parenthetical+.lbx-line{margin-top:0}
+.studio.atlas-shell .lb-cylinder-v9 .lbx .lbx-line--dialogue{padding:0 10% 0 17%}
+.studio.atlas-shell .lb-cylinder-v9 .lbx .lbx-line--parenthetical{padding-left:26%}
+.studio.atlas-shell .lb-cylinder-v9 .lbx .lbx-line--transition{text-align:right;text-transform:uppercase}
+.studio.atlas-shell .lb-cylinder-v9 .lbx .lbx-line--empty{color:var(--lbx-ink-3);font-style:italic}
+/* Where you stopped: a static red caret (no blinking) */
+.studio.atlas-shell .lb-cylinder-v9 .lbx .lbx-caret{
+  display:inline-block;width:2px;height:1.1em;margin-left:2px;vertical-align:-.2em;background:var(--lbx-red)
+}
+/* The reel: one frame per scene, as long as its screen time */
+.studio.atlas-shell .lb-cylinder-v9 .lbx .lbx-reel{display:flex;gap:2px;height:7px;flex:0 0 auto}
+.studio.atlas-shell .lb-cylinder-v9 .lbx .lbx-reel-frame{
+  flex:1 1 0;min-width:4px;border-radius:1px;
+  background:repeating-linear-gradient(135deg,var(--lbx-rule-2) 0 1.5px,transparent 1.5px 4px);
+  box-shadow:inset 0 0 0 1px var(--lbx-rule-2)
+}
+.studio.atlas-shell .lb-cylinder-v9 .lbx .lbx-reel-frame.is-written{background:rgba(28,27,25,.62);box-shadow:none}
+.studio.atlas-shell .lb-cylinder-v9 .lbx .lbx-reel-frame.is-current{background:var(--lbx-red);box-shadow:none}
+.studio.atlas-shell .lb-cylinder-v9 .lbx .lbx-progress{
+  margin:0!important;flex:0 0 auto;
+  font:500 9px/1.3 "DM Mono",monospace!important;letter-spacing:.12em;text-transform:uppercase;color:var(--lbx-ink-3)!important
+}
+/* One clear way back in, and a quiet way to the room itself */
+.studio.atlas-shell .lb-cylinder-v9 .lbx .lbx-foot--continue{gap:12px!important}
+.studio.atlas-shell .lb-cylinder-v9 .lbx .lbx-continue{
+  display:inline-flex;align-items:center;gap:10px;height:34px;padding:0 14px 0 16px;margin:0;
+  border:0;border-radius:999px;background:var(--lbx-red);color:#fff;cursor:pointer;
+  font:600 12.5px/1 "DM Sans","Segoe UI",sans-serif;letter-spacing:0;white-space:nowrap;
+  box-shadow:0 1px 0 rgba(28,27,25,.12),0 6px 14px -8px rgba(212,48,31,.7);
+  transition:background-color .2s
+}
+.studio.atlas-shell .lb-cylinder-v9 .lbx .lbx-continue .lbx-foot-arrow{color:#fff}
+.studio.atlas-shell .lb-cylinder-v9 .lbx .lbx-continue:hover{background:var(--lbx-red-ink)}
+.studio.atlas-shell .lb-cylinder-v9 .lbx .lbx-continue:hover .lbx-foot-arrow{transform:translate3d(3px,0,0)}
+.studio.atlas-shell .lb-cylinder-v9 .lbx .lbx-continue:focus-visible{outline:2px solid var(--lbx-ink);outline-offset:3px}
+.studio.atlas-shell .lb-cylinder-v9 .lbx .lbx-room{
+  margin:0;padding:6px 0;border:0;background:none;cursor:pointer;white-space:nowrap;
+  font:500 11.5px/1 "DM Sans","Segoe UI",sans-serif;color:var(--lbx-ink-3);
+  text-decoration:underline;text-decoration-color:transparent;text-underline-offset:3px;transition:color .2s,text-decoration-color .2s
+}
+.studio.atlas-shell .lb-cylinder-v9 .lbx .lbx-room:hover{color:var(--lbx-red-ink);text-decoration-color:currentColor}
+.studio.atlas-shell .lb-cylinder-v9 .lbx .lbx-room:focus-visible{outline:2px solid var(--lbx-red);outline-offset:2px;color:var(--lbx-red-ink)}
+.lb-cylinder-v9.is-compact .lbx--live.lbx--script .lbx-title{display:none!important}
+.lb-cylinder-v9.is-compact .lbx--live .lbx-status{margin-bottom:8px!important}
+/* The native card's own rules centre its children; the continue card is left-set. */
+.studio.atlas-shell .lb-cylinder-v9 .lbx .lbx-preview--continue{align-items:stretch!important;text-align:left!important}
+.studio.atlas-shell .lb-cylinder-v9 .lbx .lbx-preview--continue>*{width:auto!important;max-width:none!important;align-self:stretch!important;text-align:left!important;padding-left:0;padding-right:0}
+.studio.atlas-shell .lb-cylinder-v9 .lbx .lbx-preview--continue>.lbx-lines{padding:10px 14px 11px!important}
+.studio.atlas-shell .lb-cylinder-v9 .lbx .lbx-lines>.lbx-line{text-align:left!important}
+.studio.atlas-shell .lb-cylinder-v9 .lbx .lbx-lines>.lbx-line--transition{text-align:right!important}
+
+/* --- Push-in: the lit card becomes the room ---------------------------------- */
+/* The room's <main> takes the name only after the old view is captured
+   (html.lbx-push-target is set inside the transition's update callback). */
+html.lbx-push-target .studio .main-editor{view-transition-name:lbx-push}
+::view-transition-group(lbx-push){
+  animation-duration:.56s;animation-timing-function:cubic-bezier(.25,.75,.15,1);
+  overflow:clip;border-radius:12px
+}
+/* Both pictures fill the moving frame; the card hands over to the room early
+   so it reads as one surface pushing in, not two layers swapping. */
+::view-transition-old(lbx-push),
+::view-transition-new(lbx-push){height:100%;width:100%;object-fit:cover;object-position:50% 0}
+::view-transition-old(lbx-push){animation:lbx-push-out .32s cubic-bezier(.4,0,.6,1) both}
+::view-transition-new(lbx-push){animation:lbx-push-in .32s cubic-bezier(.3,.6,.3,1) .04s both}
+@keyframes lbx-push-out{to{opacity:0}}
+@keyframes lbx-push-in{from{opacity:0}}
+/* The dark chrome stays put: it is the same in both views, so it is its own
+   layer during the push (one element, only while the push runs). */
+html:is(.lbx-push-active,.lbx-push-fade) .studio .app-header{view-transition-name:lbx-chrome}
+::view-transition-group(lbx-chrome){animation:none;z-index:2}
+::view-transition-old(lbx-chrome){animation:none;opacity:0}
+::view-transition-new(lbx-chrome){animation:none}
+/* The rest of the table gives way behind the push */
+html.lbx-push-active::view-transition-old(root){animation:lbx-push-out .34s ease both}
+html.lbx-push-active::view-transition-new(root){animation:lbx-push-in .34s ease both}
+/* Reduced motion: no growth, a short cross-fade of the whole view */
+html.lbx-push-fade::view-transition-old(root){animation:lbx-push-out .18s linear both}
+html.lbx-push-fade::view-transition-new(root){animation:lbx-push-in .18s linear both}
+
+/* --- Room for the status line ---------------------------------------------------- */
+/* Previews clip cleanly instead of running under the status line */
+.studio.atlas-shell .lb-cylinder-v9 .lbx--live .lbx-preview{overflow:hidden!important}
+/* The premise keeps whole lines: three on the table, two on short screens */
+.studio.atlas-shell .lb-cylinder-v9 .lbx--live.lbx--foundation .spark-note>p{flex:0 0 auto;-webkit-line-clamp:3}
+.lb-cylinder-v9.is-compact .lbx--live.lbx--foundation .spark-note>p{-webkit-line-clamp:2}
+.lb-cylinder-v9.is-compact .lbx--live.lbx--foundation .spark-note>small{margin-bottom:6px!important}
+.lb-cylinder-v9.is-compact .lbx--live .lbx-preview{margin:10px 0 8px!important}
+.lb-cylinder-v9.is-compact .lbx--live.lbx--world .world-index>button{height:27px!important;min-height:0!important}
+.lb-cylinder-v9.is-compact .lbx--live.lbx--world .lbx-map{display:none}
+.lb-cylinder-v9.is-compact .lbx--live.lbx--visual .lbx-chips-label{display:none}

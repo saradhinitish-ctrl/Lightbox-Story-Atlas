@@ -1,6 +1,8 @@
-/* Lightbox Studio Story Cylinder IX
- * One intact replica per React card, one stationary subtle orbital guide,
- * and five hardware accelerated transforms. No segmented card seams.
+/* Lightbox Studio Atlas — the light table (rack focus), with the
+ * Story Cylinder IX kept as the "Classic view".
+ * One intact replica per React card and five hardware-accelerated transforms.
+ * Rack focus (default): the centred card is the light source; neighbours sit
+ * smaller and dimmer on the table. Classic: the original 3D cylinder.
  * This module never writes project data or replaces a native workspace.
  */
 (() => {
@@ -24,6 +26,13 @@
   let opening = false;
   let returnButton = null;
   let hasEnteredAtlas = false;
+
+  /* Layout: 'rack' (light table, default) or 'classic' (the cylinder).
+   * A per-browser preference, never project data. */
+  const LAYOUT_KEY = 'lightbox.atlas.layout';
+  let layout = 'rack';
+  try { if (localStorage.getItem(LAYOUT_KEY) === 'classic') layout = 'classic'; } catch {}
+  const isRack = () => layout === 'rack';
 
   const sourceFor = (item) => root.querySelector('.story-atlas .atlas-map ' + item.className);
   const nearest = (value, index) => index + Math.round((value - index) / N) * N;
@@ -79,8 +88,146 @@
   const RESEARCH_PROMPTS = ['A question to follow', 'A detail to remember'];
   const PREMISE_PROMPT = 'Add your premise in Story Foundation.';
 
-  function shape(card, id) {
-    const parts = { head: null, title: null, meta: null, body: null, foot: null };
+
+  /* ---- Live status (light table) -------------------------------------------
+   * Read-only figures from the open project through window.LightboxStudio,
+   * the small bridge in script.js. Nothing here writes project data. Without
+   * the bridge (or in Classic view) the cards fall back to their native text.
+   */
+  const FOUNDATION_TAKES = ['seed','world','conflict','premise','theme','tone','logline','questions'];
+  const pad2 = (n) => String(n).padStart(2, '0');
+  const plural = (n, word, many) => n + ' ' + (n === 1 ? word : (many || word + 's'));
+  function sectionNodes(project, role) {
+    const byId = new Map(project.nodes.map((n) => [n.id, n]));
+    const trashed = (n) => { const seen = new Set(); let c = n; while (c && !seen.has(c.id)) { if (c.role === 'trash') return true; seen.add(c.id); c = byId.get(c.parent); } return false; };
+    const root = project.nodes.find((n) => n.role === role);
+    if (!root) return [];
+    const out = [], walk = (id) => project.nodes.filter((n) => n.parent === id).forEach((n) => { if (!trashed(n)) { out.push(n); if (n.kind === 'folder') walk(n.id); } });
+    walk(root.id);
+    return out;
+  }
+  function liveData() {
+    const api = window.LightboxStudio;
+    const project = api?.project?.();
+    if (!project) return null;
+    let scenes = [];
+    try { scenes = api.scenes(); } catch { scenes = []; }
+    const written = scenes.filter((sc) => sc.blocks.some((b) => b.type !== 'scene' && b.text.trim()));
+    // Where the writer stopped: the remembered caret, else the end of the last written scene.
+    let spot = null;
+    try { spot = api.spot(); } catch {}
+    let index = spot ? scenes.findIndex((sc) => sc.documentId === spot.documentId
+      && (spot.sceneKey ? sc.key === spot.sceneKey : sc.key === 'document' || sc.blockIndex === 0)) : -1;
+    if (index < 0 && scenes.length) {
+      const last = written.at(-1) || scenes[0];
+      index = scenes.indexOf(last);
+      const blocks = last.blocks;
+      spot = { documentId: last.documentId, sceneKey: last.key.startsWith('legacy-') || last.key === 'document' ? null : last.key,
+        block: Math.max(0, blocks.length - 1), offset: (blocks.at(-1)?.text || '').length };
+    }
+    const scene = scenes[index] || null;
+    let lines = [];
+    if (scene) {
+      const upTo = clamp(spot?.block ?? scene.blocks.length - 1, 0, scene.blocks.length - 1);
+      lines = scene.blocks.slice(0, upTo + 1)
+        .map((b, i) => ({ type: b.type, text: b.text, caret: i === upTo ? clamp(spot?.offset ?? b.text.length, 0, b.text.length) : -1 }))
+        .filter((b, i) => i > 0 && b.text.trim()).slice(-4);
+    }
+    let timing = null, sceneTime = null;
+    try {
+      const all = scenes.map((sc) => api.timing(sc));
+      timing = { seconds: all.reduce((a, t) => a + t.seconds, 0), written: all.filter((t) => t.source === 'pages').length };
+      sceneTime = scene ? all[index] : null;
+    } catch {}
+    const shaped = scenes.filter((sc) => sc.meta && (sc.meta.title || sc.meta.emotion || sc.meta.tension != null)).length;
+    const notes = sectionNodes(project, 'research').filter((n) => n.kind !== 'folder');
+    const open = notes.filter((n) => (n.fields['research.status'] || 'open') === 'open').length;
+    const takes = FOUNDATION_TAKES.filter((k) => (project.nodes.find((n) => n.fields['development.kind'] === 'foundation')?.fields['development.' + k] || '').trim()).length;
+    const kinds = { character: 0, location: 0, prop: 0 };
+    ['characters', 'locations', 'props'].forEach((role) => sectionNodes(project, role).forEach((n) => { if (n.kind in kinds) kinds[n.kind]++; }));
+    const boards = scenes.filter((sc) => (project.moodboard || []).some((c) => { try { return api.referenceInScene(c, sc.id); } catch { return false; } })).length;
+    return { api, project, scenes, written, spot, index, scene, lines, timing, sceneTime, shaped, notes, open, takes, kinds, boards };
+  }
+  function statusLine(id, d) {
+    if (!d) return '';
+    if (id === 'world') return [plural(d.kinds.character, 'character'), plural(d.kinds.location, 'location'), plural(d.kinds.prop, 'object')].join(' · ');
+    if (id === 'research') return d.notes.length ? plural(d.notes.length, 'note') + ' · ' + plural(d.open, 'open thread') : 'No notes yet';
+    if (id === 'visual') return d.boards + ' of ' + plural(d.scenes.length, 'scene board') + ' started';
+    if (id === 'foundation') return d.takes + ' of 8 takes answered';
+    if (id === 'script') {
+      if (!d.scenes.length) return 'Sequence · not started';
+      const run = d.timing ? ' · ' + d.api.formatDuration(d.timing.seconds) : '';
+      return 'Sequence · ' + d.written.length + ' of ' + plural(d.scenes.length, 'scene') + ' written' + run
+        + (d.shaped ? ' · ' + d.shaped + ' shaped' : '');
+    }
+    return '';
+  }
+  function statusNode(id, d) {
+    const text = statusLine(id, d);
+    if (!text) return null;
+    const line = make('p', 'lbx-status');
+    line.append(make('i', 'lbx-status-dot'), make('span', '', text));
+    return line;
+  }
+  /* The continue card: the last lines written, the scene and its place in the
+   * film, and one clear way back in. */
+  function continueParts(card, d) {
+    const parts = {};
+    const sceneNo = d.scene ? d.index + 1 : 1;
+    const label = (d.lines.length ? 'Continue' : 'Start') + ' Scene ' + pad2(sceneNo);
+    const body = make('div', 'lbx-preview lbx-preview--continue');
+    const where = make('p', 'lbx-where');
+    where.append(make('b', '', 'SC. ' + pad2(sceneNo)), make('span', '', d.scene ? d.scene.heading : 'INT. THE FIRST SCENE — DAY'));
+    const page = make('div', 'lbx-lines');
+    page.setAttribute('aria-label', d.lines.length ? 'The last lines you wrote' : 'No lines written yet');
+    if (d.lines.length) d.lines.forEach((b, i) => {
+      const line = make('p', 'lbx-line lbx-line--' + b.type);
+      // The red caret marks the exact place you stopped (else the end of the last line).
+      const at = b.caret >= 0 ? b.caret : i === d.lines.length - 1 ? b.text.length : -1;
+      const tidy = (t) => t.replace(/\s+/g, ' ');
+      if (at < 0) line.textContent = tidy(b.text).trim();
+      else {
+        line.append(document.createTextNode(tidy(b.text.slice(0, at)).trimStart()), make('i', 'lbx-caret'),
+          document.createTextNode(tidy(b.text.slice(at)).trimEnd()));
+      }
+      page.append(line);
+    });
+    else page.append(make('p', 'lbx-line lbx-line--empty', d.scene ? 'The scene is ready for its first action.' : 'Your first scene begins here.'));
+    // The reel: one frame per scene, as long as its screen time. Written frames
+    // are inked, the current scene is red, unwritten ones are hatched.
+    const reel = make('div', 'lbx-reel');
+    reel.setAttribute('aria-hidden', 'true');
+    const scenes = d.scenes.length ? d.scenes : [null];
+    scenes.forEach((sc, i) => {
+      const frame = make('i', 'lbx-reel-frame'
+        + (sc && d.written.includes(sc) ? ' is-written' : '') + (i === d.index || (!d.scene && i === 0) ? ' is-current' : ''));
+      let secs = 60;
+      try { if (sc) secs = d.api.timing(sc).seconds; } catch {}
+      frame.style.flexGrow = String(Math.max(.6, Math.min(secs / 30, 8)).toFixed(2));
+      reel.append(frame);
+    });
+    const progress = make('p', 'lbx-progress');
+    const bits = ['Scene ' + pad2(sceneNo) + ' of ' + pad2(Math.max(d.scenes.length, 1))];
+    if (d.sceneTime && d.sceneTime.source === 'pages') bits.push(d.api.formatEighths(d.sceneTime.eighths) + ' pg', d.api.formatDuration(d.sceneTime.seconds));
+    progress.textContent = bits.join(' · ');
+    body.append(where, page, reel, progress);
+    const foot = make('span', 'node-footer lbx-foot lbx-foot--continue');
+    const go = make('button', 'lbx-continue');
+    go.type = 'button';
+    go.dataset.lbxAction = 'continue';
+    go.append(make('span', '', label), icon('go', 'lbx-foot-arrow'));
+    const room = make('button', 'lbx-room', words(card.querySelector('.node-footer')) || 'Enter writing room');
+    room.type = 'button';
+    room.dataset.lbxAction = 'room';
+    foot.append(go, room);
+    parts.body = body;
+    parts.foot = foot;
+    parts.label = label;
+    return parts;
+  }
+
+  function shape(card, id, d = null) {
+    const parts = { head: null, title: null, meta: null, body: null, status: null, foot: null };
     const footText = words(card.querySelector('.node-footer'));
     parts.head = head(id, words(card.querySelector('.node-overline')));
 
@@ -126,7 +273,15 @@
       parts.foot = foot(footText || 'Open research');
     }
 
-    if (id === 'script') {
+    if (id === 'script' && d) {
+      parts.title = make('h2', 'lbx-title', words(card.querySelector('h2')));
+      parts.meta = make('p', 'lbx-meta', words(card.querySelector(':scope > p')));
+      const c = continueParts(card, d);
+      parts.body = c.body;
+      parts.status = statusNode(id, d);
+      parts.foot = c.foot;
+      card.dataset.continueLabel = c.label;
+    } else if (id === 'script') {
       parts.title = make('h2', 'lbx-title', words(card.querySelector('h2')));
       const meta = card.querySelector(':scope > p');
       parts.meta = make('p', 'lbx-meta', words(meta));
@@ -190,11 +345,19 @@
       parts.foot = foot(footText || 'Write your premise');
     }
 
+    if (d && id !== 'script') {
+      // The live status line sits on the foot's rule, above the action.
+      parts.status = statusNode(id, d);
+      const footPart = parts.foot;
+      delete parts.foot;
+      parts.foot = footPart;
+    }
     card.replaceChildren(...Object.values(parts).filter(Boolean));
     card.classList.add('lbx', 'lbx--' + id);
+    card.classList.toggle('lbx--live', !!d);
   }
 
-  function copySource(item, interactive = true) {
+  function copySource(item, interactive = true, d = null) {
     const original = sourceFor(item);
     if (!original) return null;
     const replica = original.cloneNode(true);
@@ -216,12 +379,19 @@
     } else if (replica.matches('button')) {
       replica.tabIndex = -1;
     }
-    try { shape(replica, item.id); }
+    try { shape(replica, item.id, isRack() ? d : null); }
     catch (error) { console.warn('Story Cylinder: card kept in native layout', item.id, error); }
+    replica.querySelectorAll('[data-lbx-action]').forEach((node) => { node.tabIndex = interactive ? 0 : -1; });
     return replica;
   }
 
   function launchNative(item, destination) {
+    // The continue card goes back to the exact spot through the bridge;
+    // everything else is the native React control.
+    if (item.id === 'script' && isRack() && destination !== 'room' && window.LightboxStudio) {
+      const d = liveData();
+      if (d && window.LightboxStudio.continueWriting(d.lines.length ? d.spot : (d.spot || null))) return true;
+    }
     const source = sourceFor(item);
     if (!source || !source.isConnected) return false;
     const nativeButton = item.id === 'world'
@@ -307,10 +477,12 @@
     const w=s.view.clientWidth||innerWidth;
     s.width=w;s.height=s.view.clientHeight||520;
     s.mobile=w<=700;
-    s.cardWidth=s.mobile?clamp(w*.705,224,282):clamp(w*.218,260,312);
+    const rack=isRack();
+    s.cardWidth=s.mobile?clamp(w*(rack?.78:.705),224,rack?318:282):clamp(w*(rack?.235:.218),260,rack?340:312);
     const desiredHeight=s.mobile?clamp(w*1.065,362,420):clamp(w*.279,352,399);
     s.cardHeight=s.mobile?desiredHeight:Math.min(desiredHeight,
       innerHeight<735?300:clamp(innerHeight*.435,332,392));
+    if(rack)s.cardHeight=Math.min(s.cardHeight+(s.mobile?0:14),s.height-34);
     s.radius=s.mobile?Math.max(s.cardWidth*1.43,w*.91):clamp(w*.393,470,605);
     s.pitch=2*Math.asin(clamp((s.cardWidth+26)/(2*s.radius),0,.49))*180/Math.PI*.96;
     s.centerY=s.height*(s.mobile?.514:.472);
@@ -318,7 +490,80 @@
     s.host.style.setProperty('--lb-card-height',s.cardHeight+'px');
     s.host.classList.toggle('is-compact',s.cardHeight<346);
     s.host.classList.toggle('is-phone',s.mobile);
-    drawShell(s);paint(s);
+    if(rack){
+      // The light table draws nothing on the canvas: the light is CSS.
+      if(s.canvas.width){s.canvas.width=0;s.canvas.height=0;}
+      rackGeometry(s);
+    } else drawShell(s);
+    paint(s);
+  }
+
+  /* ---- Rack focus ----------------------------------------------------------
+   * Three resting slots either side of centre: 0 (in focus, full size, lit),
+   * 1 (neighbour: smaller, dimmer, a little out of focus), 2 (far, faint).
+   * A card between slots interpolates x, scale, lift and light linearly, so
+   * dragging is continuous. Only transform and opacity change per frame; the
+   * out-of-focus blur is a static class that switches, never tweens.
+   */
+  function rackGeometry(s) {
+    const W=s.cardWidth, gap=s.mobile?12:30;
+    const s1=s.mobile?.86:.82, s2=s.mobile?.74:.66;
+    const x1=W/2+gap+W*s1/2;
+    const x2=x1+W*s1/2+gap*.55+W*s2/2;
+    s.rack=[
+      {x:0,scale:1,y:s.mobile?-4:-8,alpha:1,veil:0,light:1},
+      {x:x1,scale:s1,y:s.mobile?4:10,alpha:1,veil:s.mobile?.30:.22,light:0},
+      {x:x2,scale:s2,y:s.mobile?8:18,alpha:s.mobile?0:.7,veil:.4,light:0},
+      {x:x2+W*s2*.6,scale:s2*.9,y:s.mobile?8:20,alpha:0,veil:.45,light:0}
+    ];
+  }
+  function rackSlot(s, d) {
+    const r=s.rack, i=Math.min(Math.floor(d),r.length-2), t=clamp(d-i,0,1), a=r[i], b=r[i+1];
+    const mix=(k)=>a[k]+(b[k]-a[k])*t;
+    return {x:mix('x'),scale:mix('scale'),y:mix('y'),alpha:mix('alpha'),veil:mix('veil'),light:mix('light')};
+  }
+  function paintRack(s) {
+    const activeIndex = wrapped(Math.round(s.target));
+    for (let i = 0; i < N; i++) {
+      const card = s.cards[i];
+      const rel = relativeToCenter(i, s.value);
+      const d = Math.abs(rel);
+      const slot = rackSlot(s, Math.min(d, 2.5));
+      // Fade out as a card reaches the wrap point, so it never jumps sides in view.
+      const alpha = d > 2.2 ? slot.alpha * clamp((2.5 - d) / .3, 0, 1) : slot.alpha;
+      const x = Math.sign(rel) * slot.x;
+      card.style.transform = 'translate3d(-50%,-50%,0) translate3d(' + x.toFixed(2) + 'px,'
+        + slot.y.toFixed(2) + 'px,0) scale(' + slot.scale.toFixed(4) + ')';
+      const alphaKey = Math.round(alpha * 1000);
+      if (card._alpha !== alphaKey) { card.style.opacity = (alphaKey / 1000).toFixed(3); card._alpha = alphaKey; }
+      const veilKey = Math.round(slot.veil * 1000);
+      if (card._veil !== veilKey) { card._veilEl.style.opacity = (veilKey / 1000).toFixed(3); card._veil = veilKey; }
+      const raise = Math.round(slot.light * 1000);
+      if (card._raise !== raise) { card._liftEl.style.opacity = (raise / 1000).toFixed(3); card._raise = raise; }
+      // Focus state follows the resting slot the card is heading for.
+      const restingRel = relativeToCenter(i, s.down?.moved ? Math.round(s.value) : s.target);
+      const restD = Math.round(Math.abs(restingRel));
+      const focus = restD === 0 ? 'active' : restD === 1 ? 'near' : 'far';
+      if (card._focus !== focus) {
+        card.classList.toggle('is-near', focus === 'near');
+        card.classList.toggle('is-far', focus === 'far');
+        card._focus = focus;
+      }
+      const disabled = alpha < .05;
+      if (card._disabled !== disabled) {
+        card.style.pointerEvents = disabled ? 'none' : 'auto';
+        card.setAttribute('aria-hidden', String(disabled));
+        card._disabled = disabled;
+      }
+      const depth = 100 + Math.round((2.6 - d) * 12);
+      if (card._depth !== depth) { card.style.zIndex = String(depth); card._depth = depth; }
+      const selected = i === activeIndex;
+      if (card._selected !== selected) {
+        card.classList.toggle('is-active', selected);
+        card.setAttribute('aria-current', String(selected));
+        card._selected = selected;
+      }
+    }
   }
 
   function relativeToCenter(index, position) {
@@ -326,6 +571,7 @@
   }
   function paint(s) {
     if (!s.host.isConnected) return;
+    if (isRack()) { paintRack(s); return; }
     const radius = s.radius, rad = Math.PI / 180;
     const activeIndex = wrapped(Math.round(s.target));
     for (let i = 0; i < N; i++) {
@@ -387,6 +633,8 @@
     const frame = (now) => {
       s.frame = 0;
       if (!s.host.isConnected) return;
+      if (now - prev > 50) s.jank = (s.jank || 0) + 1;
+      else if (s.jank) s.jank = Math.max(0, s.jank - .05);
       const delta = clamp(now - prev, 1, 50);
       prev = now;
       const error = s.target - s.value;
@@ -402,9 +650,16 @@
     s.frame = requestAnimationFrame(frame);
   }
   function aim(s, value) {
+    const changed = Math.round(value) !== Math.round(s.target);
     s.target = value;
     selectedPosition = value;
     updateControls(s);
+    // Reduced motion: no slide; the table simply fades to the new card.
+    if (changed && prefersReduced.matches && isRack() && !s.down) {
+      s.rotor.classList.remove('is-fading');
+      void s.rotor.offsetWidth;
+      s.rotor.classList.add('is-fading');
+    }
     animate(s);
   }
   function navigate(s, direction) {
@@ -413,6 +668,47 @@
     aim(s, Math.round(s.target) + direction);
   }
   function snap(s, projected = 0) { aim(s, Math.round(s.target + projected)); }
+
+  /* ---- Push-in ---------------------------------------------------------------
+   * Entering a room from the light table is a dolly in: the lit card grows to
+   * fill the workspace and becomes the room (View Transitions, shared element).
+   * Only the clicked card carries the name, and only until the old view is
+   * captured; the room's <main> takes it for the new view, so the name is
+   * never on two elements at once. Reduced motion: a short cross-fade.
+   * A heavy page or a browser without the API: straight in, as before.
+   */
+  const PUSH = 'lbx-push';
+  let lastLongTask = 0, longTasks = 0;
+  try {
+    new PerformanceObserver((list) => { for (const e of list.getEntries()) { lastLongTask = e.startTime + e.duration; longTasks++; } })
+      .observe({ type: 'longtask', buffered: false });
+  } catch {}
+  function heavyPage(s) {
+    const nav = navigator;
+    if (nav.connection?.saveData) return true;
+    if ((nav.hardwareConcurrency || 8) <= 2 || (nav.deviceMemory || 8) <= 2) return true;
+    if (s.jank >= 3) return true;                                    // slow frames while the table moved
+    if (performance.now() - lastLongTask < 1500) return true;        // the main thread is busy right now
+    return document.getElementsByTagName('*').length > 6000;         // a very large document to snapshot
+  }
+  function pushIn(s, i, complete) {
+    const fade = prefersReduced.matches;
+    const plaque = s.cards[i].querySelector('.lb-cylinder-plaque');
+    if (!fade) plaque.style.viewTransitionName = PUSH;
+    const html = document.documentElement;
+    html.classList.add(fade ? 'lbx-push-fade' : 'lbx-push-active');
+    let transition;
+    try {
+      transition = document.startViewTransition(async () => {
+        plaque.style.viewTransitionName = '';
+        complete();
+        // React commits the room in a microtask after the native click; wait for it.
+        for (let t = 0; t < 20 && root.querySelector('.story-atlas'); t++) await new Promise((r) => setTimeout(r, 15));
+        if (!fade) html.classList.add('lbx-push-target');
+      });
+    } catch { plaque.style.viewTransitionName = ''; html.classList.remove('lbx-push-active', 'lbx-push-fade'); complete(); return; }
+    transition.finished.finally(() => html.classList.remove('lbx-push-active', 'lbx-push-fade', 'lbx-push-target'));
+  }
 
   function openCard(s, i, destination) {
     if (opening || !s.host.isConnected) return;
@@ -426,20 +722,29 @@
       opening = false;
       sync();
     };
+    const centred = Math.abs(s.value - s.target) < .05;
+    if (isRack() && centred && typeof document.startViewTransition === 'function' && !heavyPage(s)) { pushIn(s, i, complete); return; }
     if (prefersReduced.matches) { complete(); return; }
     const delay = Math.abs(s.value - s.target) > .2 ? 210 : 95;
     setTimeout(complete, delay);
   }
 
-  function refresh(s) {
-    if(opening||!s.host.isConnected)return;
+  // What a card shows from the bridge, as a string: a card is re-laid only when it changes.
+  function liveKey(id, d) {
+    if (!d) return '';
+    if (id !== 'script') return '|' + statusLine(id, d);
+    return '|' + statusLine(id, d) + '|' + d.index + '|' + JSON.stringify(d.lines.map((b) => b.text + '@' + b.caret)) + '|' + (d.sceneTime?.eighths || 0);
+  }
+  function refresh(s, force = false) {
+    if((opening&&!force)||!s.host.isConnected)return;
+    const d=isRack()?liveData():null;
     ITEMS.forEach((item,i)=>{
       const source=sourceFor(item);
       if(!source)return;
-      const html=source.innerHTML;
+      const html=source.innerHTML+liveKey(item.id,d);
       if(html===s.snapshots[i])return;
       s.snapshots[i]=html;
-      const replacement=copySource(item);
+      const replacement=copySource(item,true,d);
       const previous=s.cards[i].querySelector('.lb-cylinder-source');
       if(previous&&replacement)previous.replaceWith(replacement);
     });
@@ -540,6 +845,33 @@
     s.floor = floor;
   }
 
+  function applyLayout(s) {
+    const rack = isRack();
+    s.host.classList.toggle('is-rack', rack);
+    s.host.classList.toggle('is-classic', !rack);
+    s.host.closest('.story-atlas')?.classList.toggle('lbx-rack', rack);
+    s.toggle.setAttribute('aria-pressed', String(!rack));
+    s.view.setAttribute('aria-label', rack
+      ? 'Story Atlas light table. Use left and right arrows or drag horizontally to bring a card into focus.'
+      : 'Story Cylinder. Use left and right arrows or drag horizontally to rotate.');
+    s.host.setAttribute('aria-label', rack ? 'Story Atlas' : 'Story Cylinder');
+    s.cards.forEach((card) => {
+      card.classList.remove('is-near', 'is-far');
+      card._focus = card._alpha = card._veil = card._raise = card._disabled = card._depth = undefined;
+      // The continue card holds real buttons, so it is a group, like World.
+      card.setAttribute('role', card.dataset.id === 'world' || (rack && card.dataset.id === 'script') ? 'group' : 'button');
+    });
+  }
+  function setLayout(s, next) {
+    if (next === layout) return;
+    layout = next;
+    try { localStorage.setItem(LAYOUT_KEY, next); } catch {}
+    applyLayout(s);
+    s.snapshots = [];
+    refresh(s, true);
+    resize(s);
+  }
+
   function mount(atlas) {
     const viewport = atlas.querySelector('.atlas-viewport');
     if (!viewport || viewport.querySelector('.lb-cylinder-v9') || ITEMS.some((item) => !sourceFor(item))) return;
@@ -556,6 +888,8 @@
       + '<span class="lb-cylinder-control-label"><span class="lb-cylinder-control-title">THE SCREENPLAY</span><span class="lb-cylinder-dots" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span>'
       + '<small class="lb-cylinder-counter">03 / 05</small></span>'
       + '<button class="lb-cylinder-next" type="button" aria-label="Next card">' + ICON.next + '</button></nav>'
+      + '<button class="lbx-layout-toggle" type="button" aria-pressed="false" title="Switch between the light table and the classic cylinder">'
+      + '<span class="lbx-layout-glyph" aria-hidden="true"></span><span>Classic view</span></button>'
       + '<span class="lb-cylinder-live sr-only" aria-live="polite"></span>';
     viewport.append(host);
     const s = {
@@ -573,6 +907,7 @@
       const card = document.createElement('div');
       card.className = 'lb-cylinder-card lb-cylinder-' + item.id;
       card.dataset.index = String(index);
+      card.dataset.id = item.id;
       card.tabIndex = 0;
       card.setAttribute('role', item.id === 'world' ? 'group' : 'button');
       card.setAttribute('aria-label', item.title);
@@ -583,22 +918,25 @@
         + '<div class="lb-cylinder-veil" aria-hidden="true"></div></div>';
       card._liftEl = card.querySelector('.lb-cylinder-lift');
       card._veilEl = card.querySelector('.lb-cylinder-veil');
-      card.querySelector('.lb-cylinder-content').append(copySource(item));
-      s.snapshots[index] = sourceFor(item).innerHTML;
+      const d = isRack() ? liveData() : null;
+      card.querySelector('.lb-cylinder-content').append(copySource(item, true, d));
+      s.snapshots[index] = sourceFor(item).innerHTML + liveKey(item.id, d);
       s.rotor.append(card);
       s.cards.push(card);
       card.addEventListener('click', (event) => {
         event.preventDefault(); event.stopPropagation();
         if (performance.now() < s.suppressClick || s.down?.moved) return;
-        const action = event.target.closest('[data-world-entry]');
-        openCard(s, index, action?.dataset.worldEntry);
+        // Rack focus: a neighbour comes into focus first; the lit card opens.
+        if (isRack() && wrapped(Math.round(s.target)) !== index) { aim(s, nearest(s.target, index)); return; }
+        const action = event.target.closest('[data-world-entry],[data-lbx-action]');
+        openCard(s, index, action?.dataset.worldEntry || action?.dataset.lbxAction);
       });
       card.addEventListener('keydown', (event) => {
         if (event.key !== 'Enter' && event.key !== ' ') return;
-        if (event.target !== card && !event.target.closest('[data-world-entry]')) return;
+        if (event.target !== card && !event.target.closest('[data-world-entry],[data-lbx-action]')) return;
         event.preventDefault();
-        const action = event.target.closest('[data-world-entry]');
-        openCard(s, index, action?.dataset.worldEntry);
+        const action = event.target.closest('[data-world-entry],[data-lbx-action]');
+        openCard(s, index, action?.dataset.worldEntry || action?.dataset.lbxAction);
       });
       // Keyboard focus brings its card to the front; pointer focus does not,
       // so a press that starts a drag never yanks the drum.
@@ -607,6 +945,9 @@
         if (wrapped(Math.round(s.target)) !== index) aim(s, nearest(s.target, index));
       });
     });
+    s.toggle = host.querySelector('.lbx-layout-toggle');
+    s.toggle.addEventListener('click', () => setLayout(s, isRack() ? 'classic' : 'rack'));
+    applyLayout(s);
     host.querySelector('.lb-cylinder-prev').addEventListener('click', () => navigate(s,-1));
     host.querySelector('.lb-cylinder-next').addEventListener('click', () => navigate(s,1));
     s.view.addEventListener('keydown', (event) => {
@@ -693,6 +1034,11 @@
       returnButton.addEventListener('click', () => root.querySelector('.studio.atlas-shell .app-wordmark')?.click());
       document.body.append(returnButton);
     }
+    const backLabel = isRack() ? '← STORY ATLAS' : '← STORY CYLINDER';
+    if (returnButton.textContent !== backLabel) {
+      returnButton.textContent = backLabel;
+      returnButton.setAttribute('aria-label', isRack() ? 'Return to the Story Atlas' : 'Return to Story Cylinder');
+    }
     returnButton.hidden = !(hasEnteredAtlas && studio && !atlas
       && !studio.classList.contains('composition')
       && studio.querySelector('.main-editor .editor-body'));
@@ -717,5 +1063,12 @@
     requestAnimationFrame(() => { watching=false; sync(); });
   });
   observer.observe(root,{childList:true,subtree:true,characterData:true,attributes:true,attributeFilter:['class']});
+  // The bridge announces project changes; refresh the live lines while the Atlas is up.
+  let liveQueued = false;
+  document.addEventListener('lightbox:project', () => {
+    if (!active || liveQueued || !isRack()) return;
+    liveQueued = true;
+    requestAnimationFrame(() => { liveQueued = false; if (active) refresh(active); });
+  });
   sync();
 })();

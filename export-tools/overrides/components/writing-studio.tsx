@@ -6,7 +6,8 @@ import ScreenplayTitleForm from '@/components/screenplay-title-form';
 import { fountainTitlePage, type ScreenplayTitlePage } from '@/lib/screenplay-metadata';
 import ScreenplayEditor from '@/components/screenplay-editor';
 import Moodboard from '@/components/moodboard';
-import { remapVisualDocuments, type VisualDirection } from '@/lib/visual-language';
+import { remapVisualDocuments, referenceInScene, type VisualDirection } from '@/lib/visual-language';
+import { sceneTiming, formatDuration, formatEighths } from '@/lib/scene-runtime';
 import StudioMark from '@/components/studio-mark';
 import MobileWorkspaceNav from '@/components/mobile-workspace-nav';
 import StoryAtlas, { type StageMode } from '@/components/story-atlas';
@@ -67,6 +68,55 @@ function RichEditor({ n, project, patch, register, onSelection, zoom, font, page
   </div>
  </div>;
 }
+
+// Lightbox bridge (Atlas light table). Where the writer stopped, read from the
+// screenplay editor after each edit: the document, the scene heading's key,
+// the block within that scene and the caret offset. Kept per project in this
+// browser only (localStorage), never in project data.
+type LbxSpot = {documentId:string;sceneKey:string|null;block:number;offset:number;at:number};
+const LBX_SPOT_KEY = 'lightbox.atlas.spot:';
+function lbxSpotFrom(editor:Editor|undefined, documentId:string):LbxSpot|null {
+ if(!editor||editor.isDestroyed)return null;
+ const from=editor.state.selection.from;
+ let sceneKey:string|null=null,sceneDoc=documentId,block=0,docId=documentId,offset=0,found=false;
+ editor.state.doc.descendants((node,pos)=>{
+  if(found)return false;
+  if(!node.isTextblock)return true;
+  const source=node.attrs.source||documentId;
+  if(node.attrs.element==='scene'&&node.textContent.trim()){sceneKey=node.attrs.sceneKey||null;sceneDoc=source;block=0;}else block++;
+  if(from>pos&&from<pos+node.nodeSize){docId=source;offset=from-pos-1;found=true;}
+  return false;
+ });
+ if(!found)return null;
+ if(sceneDoc!==docId)sceneKey=null;
+ return {documentId:docId,sceneKey,block,offset,at:Date.now()};
+}
+function lbxPlaceSpot(editor:Editor|undefined, spot:LbxSpot|null){
+ if(!editor||editor.isDestroyed||!spot)return false;
+ type Hit={pos:number;node:{content:{size:number}}};
+ let target:Hit|null=null,inScene=!spot.sceneKey,block=inScene?0:-1,last:Hit|null=null;
+ editor.state.doc.descendants((node,pos)=>{
+  if(target)return false;
+  if(!node.isTextblock)return true;
+  const source=node.attrs.source;
+  if(source&&source!==spot.documentId)return false;
+  if(spot.sceneKey&&node.attrs.element==='scene'&&node.textContent.trim()){
+   if(inScene&&block>=0){target=last;return false;}
+   inScene=node.attrs.sceneKey===spot.sceneKey;block=inScene?0:-1;
+   if(inScene){last={pos,node};if(!spot.block)target=last;}
+   return false;
+  }
+  if(inScene){block++;last={pos,node};if(block>=spot.block)target=last;}
+  return false;
+ });
+ target||=last;
+ if(!target)return false;
+ const at=target.pos+1+Math.min(Math.max(0,spot.offset||0),target.node.content.size);
+ editor.chain().focus().setTextSelection(at).scrollIntoView().run();
+ return true;
+}
+type LightboxStudioApi = Record<string,unknown>;
+declare global { interface Window { LightboxStudio?: LightboxStudioApi } }
 
 export default function Studio({accountName='',accountUserId='',allowLegacyArchive=false}:{accountName?:string;accountUserId?:string;allowLegacyArchive?:boolean}={}) {
  const [stage,setStage]=useState<StageMode>('atlas');
@@ -140,6 +190,40 @@ export default function Studio({accountName='',accountUserId='',allowLegacyArchi
  useEffect(()=>{if(projectId)try{localStorage.setItem('desk-last-project',projectId);}catch{}},[projectId]);
  useEffect(()=>{if(projectId&&selectedId&&loaded)try{localStorage.setItem('desk-last-document:'+projectId,selectedId);}catch{}},[projectId,selectedId,loaded]);
  useEffect(()=>{if(allowLegacyArchive&&modal==='vault'&&!vault){fetch('/legacy/session-vault.json').then(r=>{if(!r.ok)throw Error('Could not load previous Vault');return r.json();}).then(data=>setVault(data as {entries:Record<string,unknown>[]})).catch(e=>setVaultError(e.message));}},[modal,vault]);
+ // Lightbox bridge: the Atlas light table and the research board read the
+ // open project here and act through the app's own functions, so writes go
+ // through changeProject (undo, saving, export unchanged).
+ const lbxBridge=useRef<{project:Project|null;openScene:typeof openScene;openNode:typeof openNode;changeProject:typeof changeProject;writeScreenplay:typeof writeScreenplay;activeEditor:typeof activeEditor}|null>(null);
+ const lbxSpotTimer=useRef<ReturnType<typeof setTimeout>|undefined>(undefined);
+ lbxBridge.current={project,openScene,openNode,changeProject,writeScreenplay,activeEditor};
+ function lbxRememberSpot(documentId:string){clearTimeout(lbxSpotTimer.current);lbxSpotTimer.current=setTimeout(()=>{const p=lbxBridge.current!.project,spot=lbxSpotFrom(lbxBridge.current!.activeEditor.current?.tiptap,documentId);if(p&&spot)try{localStorage.setItem(LBX_SPOT_KEY+p.id,JSON.stringify(spot));}catch{}},350);}
+ useEffect(()=>{
+  const current=()=>lbxBridge.current!;
+  const api:LightboxStudioApi={
+   version:1,
+   project:()=>current().project,
+   scenes:()=>current().project?scenesForDraft(current().project!):[],
+   timing:sceneTiming,formatDuration,formatEighths,referenceInScene,
+   spot:()=>{const p=current().project;if(!p)return null;try{const spot=JSON.parse(localStorage.getItem(LBX_SPOT_KEY+p.id)||'null') as LbxSpot|null;return spot&&p.nodes.some(n=>n.id===spot.documentId&&!inTrash(p,n))?spot:null;}catch{return null;}},
+   continueWriting:(spot:LbxSpot|null)=>{
+    const b=current();if(!b.project)return false;
+    if(!spot){b.writeScreenplay();return true;}
+    // Back into the same room: the full screenplay when the page belongs to the active draft, otherwise that document on its own.
+    if(compileNodes(b.project).some(n=>n.id===spot.documentId&&n.kind==='screenplay'))b.writeScreenplay();
+    else if(spot.sceneKey)b.openScene(spot.documentId,spot.sceneKey);else b.openNode(spot.documentId);
+    let frames=0,seen=0;
+    const place=()=>{const dom=document.querySelector('.main-editor .ProseMirror, .editor-body .ProseMirror') as (HTMLElement&{editor?:Editor})|null;const editor=dom?.editor;if(editor&&!editor.isDestroyed&&++seen>2){lbxPlaceSpot(editor,spot);return;}if(++frames<90)requestAnimationFrame(place);};
+    requestAnimationFrame(place);return true;
+   },
+   openNode:(id:string)=>current().openNode(id),
+   // Research board: positions (x, y), reading order and red-string links of notes
+   placeNotes:(updates:{id:string;x?:number;y?:number;order?:number}[])=>current().changeProject(p=>{for(const u of updates||[]){const n=p.nodes.find(x=>x.id===u.id);if(!n)continue;if(Number.isFinite(u.x))n.x=Math.round(u.x!);if(Number.isFinite(u.y))n.y=Math.round(u.y!);if(Number.isFinite(u.order))n.order=u.order!;}},true),
+   linkNotes:(a:string,b:string)=>current().changeProject(p=>{const na=p.nodes.find(x=>x.id===a),nb=p.nodes.find(x=>x.id===b);if(!na||!nb||a===b)return;const read=(n:DeskNode)=>(n.fields['research.links']||'').split(',').filter(Boolean);const la=read(na),lb=read(nb),linked=la.includes(b)||lb.includes(a);na.fields={...na.fields,'research.links':(linked?la.filter(x=>x!==b):[...la,b]).join(',')};nb.fields={...nb.fields,'research.links':lb.filter(x=>x!==a).join(',')};},true)
+  };
+  window.LightboxStudio=api;
+  return()=>{if(window.LightboxStudio===api)delete window.LightboxStudio;};
+ },[]);
+ useEffect(()=>{document.dispatchEvent(new CustomEvent('lightbox:project',{detail:{id:projectId}}));},[workspace,projectId,stage,mode,selectedId]);
  function update(mutate:(draft:Workspace)=>void,checkpoint=false){if(!ready.current)return;if(recoverBlock.current){setModal('recover');return;}if(checkpoint){lastMutation.current='structure';undoStack.current.push(structuredClone(stateRef.current));if(undoStack.current.length>20)undoStack.current.shift();redoStack.current=[];}const next=structuredClone(stateRef.current);mutate(next);stateRef.current=next;generation.current++;setWorkspace(next);if(!blocked.current)setStatus('pending');}
  function changeProject(mutate:(p:Project,s:Workspace)=>void,checkpoint=false){update(s=>{const p=s.projects.find(x=>x.id===projectId);if(p){mutate(p,s);p.updated=now();}},checkpoint);}
  function patch(id:string,values:Partial<DeskNode>){if(values.html!==undefined)lastMutation.current='text';changeProject((p,s)=>{const n=p.nodes.find(x=>x.id===id);if(!n)return;if(values.html!==undefined){const delta=wordCount(values.html)-wordCount(n.html);const day=new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Kolkata',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());s.history[p.id]||={};s.history[p.id][day]=(s.history[p.id][day]||0)+delta;}Object.assign(n,values,{updated:now()});});}
@@ -273,7 +357,7 @@ async function restoreBackup(file:File|undefined){if(!file)return;try{if(file.si
  function tree(n:DeskNode,depth=0):ReactNode {const list=project?children(project,n.id):[],open=expanded.includes(n.id),selectedHere=selectedId===n.id;return <div key={n.id} className="tree-item"><div className={'tree-row '+(selectedHere?'selected ':'')+(dragId===n.id?'dragging':'')} style={{paddingLeft:12+depth*17}} draggable={!n.role} onDragStart={e=>{setDragId(n.id);e.dataTransfer.setData('text/desk-node',n.id);e.dataTransfer.effectAllowed='move';}} onDragEnd={()=>setDragId('')} onDragOver={e=>{if(dragId&&dragId!==n.id){e.preventDefault();e.dataTransfer.dropEffect='move';e.currentTarget.classList.add('drop-target');}}} onDragLeave={e=>e.currentTarget.classList.remove('drop-target')} onDrop={e=>{e.preventDefault();e.currentTarget.classList.remove('drop-target');const id=e.dataTransfer.getData('text/desk-node');if(!project||!id)return;changeProject(p=>{moveNode(p,id,n.kind==='folder'?n.id:n.parent,n.kind==='folder'?undefined:n.id);},true);setDragId('');}} onContextMenu={e=>{e.preventDefault();setSelectedId(n.id);setMenu('Documents');}}>
   <button className="tree-disclosure" aria-label={(open?'Collapse ':'Expand ')+n.title} onClick={()=>setExpanded(x=>x.includes(n.id)?x.filter(id=>id!==n.id):[...x,n.id])} style={{visibility:n.kind==='folder'||list.length?'visible':'hidden'}}>{open?<ChevronDown size={12}/>:<ChevronRight size={12}/>}</button><button className="tree-select" onClick={()=>openNode(n.id)} onDoubleClick={()=>{const title=window.prompt('Document title',n.title);if(title?.trim())patch(n.id,{title:title.trim()});}}><span className={'node-icon '+(n.kind==='folder'?'folder-icon':'')}><NodeIcon n={n} open={open}/></span><span className="tree-title">{n.title}</span>{n.label!=='None'&&<i className="label-dot" style={{background:COLORS[n.label]||COLORS.None}}/>}{n.kind==='folder'&&list.length>0&&<small>{list.length}</small>}</button>{!n.role&&<button className="tree-delete" aria-label={'Delete '+n.title} title={inTrash(project!,n)?'Delete permanently':'Move to Trash'} onClick={e=>{e.stopPropagation();deleteNode(n.id);}}><Trash2 size={13}/></button>}</div>{open&&list.map(c=>tree(c,depth+1))}</div>;}
  function editorFor(n:DeskNode){if(!project)return null;if(n.kind==='file'){const url=safeUrl(n.asset?.url||'');return <div className="file-view"><div className="file-heading"><h2>{n.title}</h2><a className="button secondary" href={url} download={n.title} target="_blank" rel="noreferrer"><Download size={14}/>Open original</a></div>{n.asset?.mime==='application/pdf'?<iframe title={n.title} src={url}/>:n.asset?.mime.startsWith('image/')?<img src={url} alt={n.title}/>:n.asset?.mime.startsWith('audio/')?<audio controls src={url}/>:n.asset?.mime.startsWith('video/')?<video controls src={url}/>:<div className="empty-small"><FileText size={34}/><p>This reference is saved with your project.</p><a href={url} className="button secondary">Download file</a></div>}</div>;}
- if(n.kind==='screenplay')return <ScreenplayEditor key={n.id+'-script'} n={n} project={project} onChange={html=>patch(n.id,{html})} onActivate={(el,tiptap)=>{activeEditor.current={el,id:n.id,tiptap};lastMutation.current='text';}} onSelection={selection} zoom={prefs.zoom} onZoom={zoom=>setPrefs(p=>({...p,zoom}))} dialogueFocus={prefs.dialogueFocus} onOpenProfile={openProfile} revealScene={sceneReveal?.documentId===n.id?sceneReveal:undefined} spellcheck={prefs.spellcheck} onSpellcheck={spellcheck=>setPrefs(p=>({...p,spellcheck}))}/>;
+ if(n.kind==='screenplay')return <ScreenplayEditor key={n.id+'-script'} n={n} project={project} onChange={html=>{patch(n.id,{html});lbxRememberSpot(n.id);}} onActivate={(el,tiptap)=>{activeEditor.current={el,id:n.id,tiptap};lastMutation.current='text';}} onSelection={selection} zoom={prefs.zoom} onZoom={zoom=>setPrefs(p=>({...p,zoom}))} dialogueFocus={prefs.dialogueFocus} onOpenProfile={openProfile} revealScene={sceneReveal?.documentId===n.id?sceneReveal:undefined} spellcheck={prefs.spellcheck} onSpellcheck={spellcheck=>setPrefs(p=>({...p,spellcheck}))}/>;
  const prose=<RichEditor key={n.id+'-'+n.kind} n={n} project={project} patch={patch} register={(el,n)=>{if(el)activeEditor.current={el,id:n.id};}} onSelection={selection} zoom={prefs.zoom} font={prefs.font} page={false} dialogueFocus={false}/>;return saveDocument(n,n.fields['development.kind']==='foundation'?<DevelopmentSheet n={n} patch={patch}>{prose}</DevelopmentSheet>:isProfileKind(n.kind)?<PlanningSheet n={n} patch={patch} images={<ProfileImages key={n.id} n={n} mutate={(fn,removed)=>updateProfileImages(n.id,fn,removed)}/>}>{prose}</PlanningSheet>:n.kind==='text'&&sectionForNode(project,n.id)?.role==='research'?<FieldNoteSheet n={n} patch={patch}>{prose}</FieldNoteSheet>:prose);}
  const totalWords=project?compileNodes(project).reduce((s,n)=>s+wordCount(n.html),0):0;
  const saveLabel={loading:'Opening workspace…',saved:'All changes saved locally',saving:'Saving…',pending:'Unsaved changes',offline:'Offline · device copy',error:'Save needs attention',conflict:'Another session changed this workspace'}[status];
@@ -297,9 +381,11 @@ async function restoreBackup(file:File|undefined){if(!file)return;try{if(file.si
    const descriptions:Record<string,string>={development:'The ideas, questions, and discoveries behind your film.',characters:'The people who bring your story into focus.',locations:'Every place has a part in the story.',props:'Objects, details, and the meaning they carry.',research:'A collection of things worth keeping.',draft:'Scenes in progress. A story taking shape.','draft-version':'A new perspective on the same story.',trash:'Removed work stays here until you choose what happens next.'};
    const singular:Record<string,string>={characters:'character',locations:'location',props:'prop',research:'note',development:'note',draft:'scene','draft-version':'scene'};
    const addLabel='New '+(singular[section]||'document');
-   return <div className={'collection-workspace corkboard '+(freeform?'freeform':'')}>
+   return <div className={'collection-workspace corkboard '+(freeform?'freeform':'')} data-section={section}>
     <header className="collection-heading"><div><div className="collection-eyebrow"><span/>{project.title} / {isBin?'ARCHIVE':'WORLD LIBRARY'}</div>{searching?<h1>{collection?.title||'Search results'}</h1>:<label className="collection-name"><input aria-label="Collection title" value={scope?.title||'Documents'} onChange={e=>scope&&patch(scope.id,{title:e.target.value})} disabled={!scope}/><Pencil size={15}/></label>}<p>{searching?'The threads that match your search.':descriptions[section]||'Notes, references, and details for this part of your world.'}</p></div>{!searching&&!isBin&&<button className="button primary collection-create" onClick={()=>addNode('auto')}><Plus size={16}/>{addLabel}</button>}{isBin&&<button className="button secondary" disabled={!project.nodes.some(n=>inTrash(project,n)&&!n.role)} onClick={()=>deleteTrash()}><Trash2 size={14}/>Empty Trash</button>}</header>
     <div className="board-toolbar collection-toolbar"><div><LayoutGrid size={15}/><span>{items.length} {items.length===1?'item':'items'}</span>{freeform&&<small>Drag cards to arrange</small>}</div><div>{['draft','draft-version'].includes(section)&&project.template==='screenplay'&&<button className="write-screenplay-button" onClick={()=>setMode('scrivenings')}><Film size={14}/>Write screenplay</button>}<select aria-label="Sort cards" value={sort} onChange={e=>setSort(e.target.value)}><option value="order">Custom order</option><option value="title">Title A–Z</option><option value="updated">Recently edited</option></select><button onClick={()=>setMode('outline')}><ListTree size={14}/>List</button><button className={freeform?'active':''} aria-pressed={freeform} onClick={()=>setFreeform(v=>!v)}><GripVertical size={14}/>{freeform?'Grid view':'Arrange'}</button>{freeform&&<button onClick={()=>{changeProject(p=>{const ordered=[...items].sort((a,b)=>(a.y||0)-(b.y||0)||(a.x||0)-(b.x||0));ordered.forEach((n,i)=>{p.nodes.find(x=>x.id===n.id)!.order=i;});},true);setFreeform(false);notify('Arrangement saved as custom order');}}>Save order</button>}</div></div>
+    {/* Research board: an empty, stable host that research-board.js draws into (React never renders its children). */}
+    {section==='research'&&!searching&&<div key={'lbx-board-'+(scope?.id||'')} className="lbx-board-host" data-folder={scope?.id||''}/>}
     <div className="card-stage collection-grid" style={freeform?{minHeight:Math.max(650,...items.map((n,i)=>(n.y??Math.floor(i/3)*330)+340))}:undefined} onDragOver={e=>{if(freeform&&dragId)e.preventDefault();}} onDrop={e=>{if(!freeform)return;e.preventDefault();const id=e.dataTransfer.getData('text/desk-node'),rect=e.currentTarget.getBoundingClientRect();if(id)patch(id,{x:Math.max(0,e.clientX-rect.left+e.currentTarget.scrollLeft-140),y:Math.max(0,e.clientY-rect.top+e.currentTarget.scrollTop-30)});setDragId('');}}>
      {items.map((n,i)=>{const kind=n.fields['development.kind']==='foundation'?'Story foundation':n.kind==='text'?'Note':n.kind==='file'?'Reference file':n.kind==='folder'?'Collection':n.kind==='screenplay'?'Screenplay':n.kind.charAt(0).toUpperCase()+n.kind.slice(1);return <article key={n.id} className={'index-card collection-card '+(selectedId===n.id?'selected-card':'')} style={freeform?{position:'absolute',left:n.x??(i%3)*340,top:n.y??Math.floor(i/3)*330}:undefined} draggable onDragStart={e=>{setDragId(n.id);e.dataTransfer.setData('text/desk-node',n.id);}} onDragEnd={()=>setDragId('')} onDragOver={e=>{if(!freeform&&dragId&&dragId!==n.id){e.preventDefault();e.currentTarget.classList.add('card-drop');}}} onDragLeave={e=>e.currentTarget.classList.remove('card-drop')} onDrop={e=>{if(freeform)return;e.preventDefault();e.stopPropagation();e.currentTarget.classList.remove('card-drop');const id=e.dataTransfer.getData('text/desk-node');changeProject(p=>{moveNode(p,id,n.parent,n.id);},true);setSort('order');setDragId('');}} onClick={e=>{if(!(e.target as HTMLElement).closest('input,textarea,button,a'))openNode(n.id);}}>
       <div className="collection-card-top"><span className="collection-card-icon"><NodeIcon n={n}/></span><span className="collection-card-kind">{kind}</span>{n.label!=='None'&&<span className="collection-label-dot" title={n.label} style={{background:COLORS[n.label]}}/>}<span className="collection-card-number">{String(i+1).padStart(2,'0')}</span></div>
@@ -316,7 +402,7 @@ async function restoreBackup(file:File|undefined){if(!file)return;try{if(file.si
    </div>;
   }
   if(mode==='outline')return <div className="outliner"><div className="board-toolbar"><div><ListTree size={15}/><span>{scope?.title||'Outline'}</span><small>{items.length} items</small></div><button className="text-button" onClick={()=>addNode('auto')}><Plus size={14}/>Add document</button></div><table><thead><tr><th>Title & synopsis</th><th>Status</th><th>Label</th><th>Words</th><th>Compile</th><th>Order</th><th>Delete</th></tr></thead><tbody>{items.map((n,i)=><tr key={n.id} className={selectedId===n.id?'outline-selected':''}><td><button className="outline-title" onClick={()=>openNode(n.id)}><NodeIcon n={n}/>{n.title}</button><input aria-label={n.title+' outline synopsis'} placeholder="Add synopsis…" value={n.synopsis} onChange={e=>patch(n.id,{synopsis:e.target.value})}/></td><td><select aria-label={n.title+' status'} value={n.status} onChange={e=>patch(n.id,{status:e.target.value})}>{STATUSES.map(s=><option key={s}>{s}</option>)}</select></td><td><select aria-label={n.title+' label'} value={n.label} onChange={e=>patch(n.id,{label:e.target.value})}>{Object.keys(COLORS).map(c=><option key={c}>{c}</option>)}</select></td><td>{wordCount(n.html)}</td><td><input type="checkbox" aria-label={'Include '+n.title+' in Compile'} checked={n.include} onChange={e=>patch(n.id,{include:e.target.checked})}/></td><td><div className="row-move"><IconButton title="Move earlier" disabled={i===0} onClick={()=>changeProject(p=>{moveNode(p,n.id,n.parent,items[i-1].id);},true)}><ArrowUp size={12}/></IconButton><IconButton title="Move later" disabled={i===items.length-1} onClick={()=>changeProject(p=>{const after=items[i+2];moveNode(p,n.id,n.parent,after?.id);},true)}><ArrowDown size={12}/></IconButton></div></td><td>{!n.role&&<button className="delete-control" aria-label={"Delete "+n.title} onClick={()=>deleteNode(n.id)}><Trash2 size={13}/>Delete</button>}</td></tr>)}</tbody></table>{!items.length&&<div className="empty-small">No documents in this view.</div>}</div>;
-  if(mode==='scrivenings'&&scope&&project.template==='screenplay'&&activeDraftRoot(project)?.id===scope.id){const docs=compileNodes(project).filter(n=>n.kind==='screenplay');if(docs.length){const full={...docs[0],id:'full-draft-'+project.id+'-'+activeDraftRoot(project)?.id,title:'Full screenplay',html:combineScriptHTML(docs)};return <ScreenplayEditor key={full.id} n={full} project={project} fullDraft onChange={html=>{const parts=splitScriptHTML(html,docs[0].id,docs.map(d=>d.id));changeProject((p,s)=>{let delta=0;for(const d of docs){const target=p.nodes.find(n=>n.id===d.id),next=parts.get(d.id)||'';if(target&&target.html!==next){delta+=wordCount(next)-wordCount(target.html);target.html=next;target.updated=now();}}const day=new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Kolkata',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());s.history[p.id]||={};s.history[p.id][day]=(s.history[p.id][day]||0)+delta;});}} onActivate={(el,tiptap)=>{activeEditor.current={el,id:full.id,tiptap};lastMutation.current='text';}} onSelection={selection} zoom={prefs.zoom} onZoom={zoom=>setPrefs(p=>({...p,zoom}))} dialogueFocus={prefs.dialogueFocus} onOpenProfile={openProfile} spellcheck={prefs.spellcheck} onSpellcheck={spellcheck=>setPrefs(p=>({...p,spellcheck}))}/>;}}
+  if(mode==='scrivenings'&&scope&&project.template==='screenplay'&&activeDraftRoot(project)?.id===scope.id){const docs=compileNodes(project).filter(n=>n.kind==='screenplay');if(docs.length){const full={...docs[0],id:'full-draft-'+project.id+'-'+activeDraftRoot(project)?.id,title:'Full screenplay',html:combineScriptHTML(docs)};return <ScreenplayEditor key={full.id} n={full} project={project} fullDraft onChange={html=>{const parts=splitScriptHTML(html,docs[0].id,docs.map(d=>d.id));changeProject((p,s)=>{let delta=0;for(const d of docs){const target=p.nodes.find(n=>n.id===d.id),next=parts.get(d.id)||'';if(target&&target.html!==next){delta+=wordCount(next)-wordCount(target.html);target.html=next;target.updated=now();}}const day=new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Kolkata',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());s.history[p.id]||={};s.history[p.id][day]=(s.history[p.id][day]||0)+delta;});lbxRememberSpot(docs[0].id);}} onActivate={(el,tiptap)=>{activeEditor.current={el,id:full.id,tiptap};lastMutation.current='text';}} onSelection={selection} zoom={prefs.zoom} onZoom={zoom=>setPrefs(p=>({...p,zoom}))} dialogueFocus={prefs.dialogueFocus} onOpenProfile={openProfile} spellcheck={prefs.spellcheck} onSpellcheck={spellcheck=>setPrefs(p=>({...p,spellcheck}))}/>;}}
   if(mode==='scrivenings'){const docs=searching?items.filter(n=>n.kind!=='folder'&&n.kind!=='file'):scope?descendants(project,scope.id).filter(n=>n.kind!=='folder'&&n.kind!=='file'):[];return <div className="scrivenings">{docs.map(n=><section key={n.id}><div className="scrivening-divider"><button onClick={()=>{setSelectedId(n.id);setTabs(t=>t.includes(n.id)?t:[...t,n.id]);}}><FileText size={12}/>{n.title}</button></div>{editorFor(n)}</section>)}{!docs.length&&<div className="empty-small">Add text documents to this folder to read them together.</div>}</div>;}
   if(selected?.kind==='folder')return <div className="folder-cover"><FolderOpen size={42} strokeWidth={1}/><h2>{selected.title}</h2><p>{descendants(project,selected.id).filter(n=>n.kind!=='folder').length} documents in this folder.</p><div className="folder-cover-actions"><button className="button secondary" onClick={()=>setMode('corkboard')}><LayoutGrid size={15}/>Corkboard</button><button className="button secondary" onClick={()=>setMode('scrivenings')}><AlignLeft size={15}/>Read together</button></div></div>;
   if(!selected)return <div className="folder-cover"><FileText size={40} strokeWidth={1}/><h2>Choose a document.</h2><p>Open one from the Binder or create a new page.</p><button className="button primary" onClick={()=>addNode('auto')}><Plus size={15}/>New document</button></div>;

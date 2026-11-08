@@ -64280,6 +64280,71 @@ ${formatDuration(t.seconds)}${t.source === "pages" ? "" : " (" + (t.source === "
       } }) })
     ] });
   }
+  // components/lightbox-bridge (Atlas light table)
+  // Where the writer stopped, read from the screenplay editor after each edit:
+  // the document, the scene heading's key, the block within that scene and
+  // the caret offset in it. Kept per project in this browser only.
+  var LBX_SPOT_KEY = "lightbox.atlas.spot:";
+  function lbxSpotFrom(editor, documentId) {
+    if (!editor || editor.isDestroyed) return null;
+    const from = editor.state.selection.from;
+    let sceneKey = null, sceneDoc = documentId, block = 0, docId = documentId, offset = 0, found = false;
+    editor.state.doc.descendants((node2, pos) => {
+      if (found) return false;
+      if (!node2.isTextblock) return true;
+      const source = node2.attrs.source || documentId;
+      if (node2.attrs.element === "scene" && node2.textContent.trim()) {
+        sceneKey = node2.attrs.sceneKey || null;
+        sceneDoc = source;
+        block = 0;
+      } else block++;
+      if (from > pos && from < pos + node2.nodeSize) {
+        docId = source;
+        offset = from - pos - 1;
+        found = true;
+      }
+      return false;
+    });
+    if (!found) return null;
+    if (sceneDoc !== docId) {
+      sceneKey = null;
+    }
+    return { documentId: docId, sceneKey, block, offset, at: Date.now() };
+  }
+  function lbxPlaceSpot(editor, spot) {
+    if (!editor || editor.isDestroyed || !spot) return false;
+    let target = null, inScene = !spot.sceneKey, block = inScene ? 0 : -1, last = null;
+    editor.state.doc.descendants((node2, pos) => {
+      if (target) return false;
+      if (!node2.isTextblock) return true;
+      const source = node2.attrs.source;
+      if (source && source !== spot.documentId) return false;
+      if (spot.sceneKey && node2.attrs.element === "scene" && node2.textContent.trim()) {
+        if (inScene && block >= 0) {
+          target = last;
+          return false;
+        }
+        inScene = node2.attrs.sceneKey === spot.sceneKey;
+        block = inScene ? 0 : -1;
+        if (inScene) {
+          last = { pos, node: node2 };
+          if (!spot.block) target = last;
+        }
+        return false;
+      }
+      if (inScene) {
+        block++;
+        last = { pos, node: node2 };
+        if (block >= spot.block) target = last;
+      }
+      return false;
+    });
+    target ||= last;
+    if (!target) return false;
+    const at = target.pos + 1 + Math.min(Math.max(0, spot.offset || 0), target.node.content.size);
+    editor.chain().focus().setTextSelection(at).scrollIntoView().run();
+    return true;
+  }
   function Studio({ accountName = "", accountUserId = "", allowLegacyArchive = false } = {}) {
     const [stage, setStage] = (0, import_react18.useState)("atlas");
     const [dockOpen, setDockOpen] = (0, import_react18.useState)(false);
@@ -64564,6 +64629,95 @@ ${formatDuration(t.seconds)}${t.source === "pages" ? "" : " (" + (t.source === "
         }).then((data) => setVault(data)).catch((e) => setVaultError(e.message));
       }
     }, [modal, vault]);
+    // Lightbox bridge: the Atlas light table and the research board read the
+    // open project here and act through the app's own functions, so writes go
+    // through changeProject (undo, saving, export unchanged).
+    const lbxBridge = (0, import_react18.useRef)(null);
+    const lbxSpotTimer = (0, import_react18.useRef)(0);
+    lbxBridge.current = { project, openScene, openNode, changeProject, writeScreenplay, activeEditor };
+    function lbxRememberSpot(documentId) {
+      clearTimeout(lbxSpotTimer.current);
+      lbxSpotTimer.current = setTimeout(() => {
+        const p = lbxBridge.current.project, spot = lbxSpotFrom(lbxBridge.current.activeEditor.current?.tiptap, documentId);
+        if (p && spot) try {
+          localStorage.setItem(LBX_SPOT_KEY + p.id, JSON.stringify(spot));
+        } catch {
+        }
+      }, 350);
+    }
+    (0, import_react18.useEffect)(() => {
+      const current = () => lbxBridge.current;
+      const api = {
+        version: 1,
+        project: () => current().project,
+        scenes: () => current().project ? scenesForDraft(current().project) : [],
+        timing: (scene) => sceneTiming(scene),
+        formatDuration,
+        formatEighths,
+        referenceInScene,
+        spot: () => {
+          const p = current().project;
+          if (!p) return null;
+          try {
+            const spot = JSON.parse(localStorage.getItem(LBX_SPOT_KEY + p.id) || "null");
+            return spot && p.nodes.some((n) => n.id === spot.documentId && !inTrash(p, n)) ? spot : null;
+          } catch {
+            return null;
+          }
+        },
+        continueWriting: (spot) => {
+          const b = current();
+          if (!b.project) return false;
+          if (!spot) {
+            b.writeScreenplay();
+            return true;
+          }
+          // Back into the same room: the full screenplay when the page belongs
+          // to the active draft, otherwise that document on its own.
+          if (compileNodes(b.project).some((n) => n.id === spot.documentId && n.kind === "screenplay")) b.writeScreenplay();
+          else if (spot.sceneKey) b.openScene(spot.documentId, spot.sceneKey);
+          else b.openNode(spot.documentId);
+          let frames = 0, seen = 0;
+          const place = () => {
+            const dom = document.querySelector(".main-editor .ProseMirror, .editor-body .ProseMirror");
+            const editor = dom?.editor;
+            if (editor && !editor.isDestroyed && ++seen > 2) {
+              lbxPlaceSpot(editor, spot);
+              return;
+            }
+            if (++frames < 90) requestAnimationFrame(place);
+          };
+          requestAnimationFrame(place);
+          return true;
+        },
+        openNode: (id) => current().openNode(id),
+        // Research board: positions (x, y), reading order and red-string links of notes
+        placeNotes: (updates) => current().changeProject((p) => {
+          for (const u of updates || []) {
+            const n = p.nodes.find((x) => x.id === u.id);
+            if (!n) continue;
+            if (Number.isFinite(u.x)) n.x = Math.round(u.x);
+            if (Number.isFinite(u.y)) n.y = Math.round(u.y);
+            if (Number.isFinite(u.order)) n.order = u.order;
+          }
+        }, true),
+        linkNotes: (a, b2) => current().changeProject((p) => {
+          const na = p.nodes.find((x) => x.id === a), nb = p.nodes.find((x) => x.id === b2);
+          if (!na || !nb || a === b2) return;
+          const read = (n) => (n.fields["research.links"] || "").split(",").filter(Boolean);
+          const la = read(na), lb = read(nb), linked = la.includes(b2) || lb.includes(a);
+          na.fields = { ...na.fields, "research.links": (linked ? la.filter((x) => x !== b2) : [...la, b2]).join(",") };
+          nb.fields = { ...nb.fields, "research.links": lb.filter((x) => x !== a).join(",") };
+        }, true)
+      };
+      window.LightboxStudio = api;
+      return () => {
+        if (window.LightboxStudio === api) delete window.LightboxStudio;
+      };
+    }, []);
+    (0, import_react18.useEffect)(() => {
+      document.dispatchEvent(new CustomEvent("lightbox:project", { detail: { id: projectId } }));
+    }, [workspace, projectId, stage, mode, selectedId]);
     function update(mutate, checkpoint = false) {
       if (!ready.current) return;
       if (recoverBlock.current) {
@@ -65577,7 +65731,10 @@ ${formatDuration(t.seconds)}${t.source === "pages" ? "" : " (" + (t.source === "
           ] })
         ] });
       }
-      if (n.kind === "screenplay") return /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(ScreenplayEditor, { n, project, onChange: (html) => patch(n.id, { html }), onActivate: (el, tiptap) => {
+      if (n.kind === "screenplay") return /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(ScreenplayEditor, { n, project, onChange: (html) => {
+        patch(n.id, { html });
+        lbxRememberSpot(n.id);
+      }, onActivate: (el, tiptap) => {
         activeEditor.current = { el, id: n.id, tiptap };
         lastMutation.current = "text";
       }, onSelection: selection, zoom: prefs.zoom, onZoom: (zoom) => setPrefs((p) => ({ ...p, zoom })), dialogueFocus: prefs.dialogueFocus, onOpenProfile: openProfile, revealScene: sceneReveal?.documentId === n.id ? sceneReveal : void 0, spellcheck: prefs.spellcheck, onSpellcheck: (spellcheck) => setPrefs((p) => ({ ...p, spellcheck })) }, n.id + "-script");
@@ -65876,7 +66033,7 @@ ${formatDuration(t.seconds)}${t.source === "pages" ? "" : " (" + (t.source === "
         const descriptions = { development: "The ideas, questions, and discoveries behind your film.", characters: "The people who bring your story into focus.", locations: "Every place has a part in the story.", props: "Objects, details, and the meaning they carry.", research: "A collection of things worth keeping.", draft: "Scenes in progress. A story taking shape.", "draft-version": "A new perspective on the same story.", trash: "Removed work stays here until you choose what happens next." };
         const singular = { characters: "character", locations: "location", props: "prop", research: "note", development: "note", draft: "scene", "draft-version": "scene" };
         const addLabel = "New " + (singular[section] || "document");
-        return /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "collection-workspace corkboard " + (freeform ? "freeform" : ""), children: [
+        return /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "collection-workspace corkboard " + (freeform ? "freeform" : ""), "data-section": section, children: [
           /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("header", { className: "collection-heading", children: [
             /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { children: [
               /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "collection-eyebrow", children: [
@@ -65940,6 +66097,8 @@ ${formatDuration(t.seconds)}${t.source === "pages" ? "" : " (" + (t.source === "
               }, children: "Save order" })
             ] })
           ] }),
+          // Research board: an empty, stable host that research-board.js draws into (React never renders its children).
+          section === "research" && !searching && /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("div", { className: "lbx-board-host", "data-folder": scope?.id || "" }, "lbx-board-" + (scope?.id || "")),
           /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "card-stage collection-grid", style: freeform ? { minHeight: Math.max(650, ...items.map((n, i) => (n.y ?? Math.floor(i / 3) * 330) + 340)) } : void 0, onDragOver: (e) => {
             if (freeform && dragId) e.preventDefault();
           }, onDrop: (e) => {
@@ -66098,6 +66257,7 @@ ${formatDuration(t.seconds)}${t.source === "pages" ? "" : " (" + (t.source === "
               s.history[p.id] ||= {};
               s.history[p.id][day] = (s.history[p.id][day] || 0) + delta;
             });
+            lbxRememberSpot(docs[0].id);
           }, onActivate: (el, tiptap) => {
             activeEditor.current = { el, id: full.id, tiptap };
             lastMutation.current = "text";

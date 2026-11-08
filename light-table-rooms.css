@@ -1,0 +1,124 @@
+/* ==========================================================================
+   Lightbox / Light-table details inside the rooms
+   1. The research board (Field Notes room): pinned index cards, red string.
+      Drawn by research-board.js into .lbx-board-host.
+   2. Film frames (Visual Language only): sprocket holes and edge codes on
+      the scene-board frames. Edge codes are written by film-frames.js.
+   Loaded last. Nothing here animates except a dragged card's transform.
+   ========================================================================== */
+
+/* --- 1. The research board ---------------------------------------------------- */
+html:not(.lbx-research-cards) .collection-workspace[data-section="research"]:not(.freeform)>.card-stage{display:none!important}
+.collection-workspace.freeform .lbx-board-host .lbx-board,
+.collection-workspace.freeform .lbx-board-host .lbx-board-bar{display:none}
+.lbx-board-host{
+  --rb-ink:#1C1B19;--rb-ink-2:#4B4842;--rb-ink-3:#6B675F;--rb-rule:#E7E3DA;
+  --rb-red:#D4301F;--rb-red-ink:#B3261A;--rb-card:#FFFDFA;
+  position:relative;margin:4px 0 28px;min-width:0
+}
+.lbx-board-bar{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin:0 0 14px}
+.lbx-board-hint{margin:0;font:400 13px/1.45 "DM Sans","Segoe UI",sans-serif;color:var(--rb-ink-3)}
+.lbx-board-hint b{font:500 10px/1 "DM Mono",monospace;letter-spacing:.16em;text-transform:uppercase;color:var(--rb-red-ink)}
+.lbx-board-toggle{display:inline-flex;padding:3px;border:1px solid rgba(28,27,25,.14);border-radius:999px;background:var(--rb-card)}
+.lbx-board-toggle button{
+  min-height:30px;padding:0 14px;border:0;border-radius:999px;background:transparent;cursor:pointer;
+  font:500 10px/1 "DM Mono",monospace;letter-spacing:.14em;text-transform:uppercase;color:var(--rb-ink-3)
+}
+.lbx-board-toggle button[aria-pressed="true"]{background:var(--rb-ink);color:#fff}
+.lbx-board-toggle button:focus-visible{outline:2px solid var(--rb-red);outline-offset:2px}
+
+/* The board: the lit table itself, with a soft pool of light in the middle */
+.lbx-board{
+  position:relative;min-height:360px;border-radius:14px;overflow:hidden;touch-action:pan-y;
+  background:
+    radial-gradient(ellipse 70% 60% at 50% 40%,rgba(255,236,204,.55) 0%,rgba(255,236,204,0) 100%),
+    linear-gradient(rgba(28,27,25,.045) 1px,transparent 1px) 0 0/24px 24px,
+    linear-gradient(90deg,rgba(28,27,25,.045) 1px,transparent 1px) 0 0/24px 24px,
+    #F4F1EA;
+  box-shadow:inset 0 0 0 1px rgba(28,27,25,.08),inset 0 0 60px rgba(44,38,31,.08)
+}
+.lbx-strings{position:absolute;inset:0;width:100%;height:100%;overflow:visible;pointer-events:none;z-index:3}
+.lbx-string{fill:none;stroke:var(--rb-red);stroke-width:1.7;stroke-linecap:round}
+.lbx-string.is-thread{stroke-width:1.2;stroke-dasharray:4 4;opacity:.65}
+.lbx-string-shadow{fill:none;stroke:rgba(28,27,25,.14);stroke-width:2;stroke-linecap:round}
+.lbx-board-empty{position:absolute;inset:0;display:grid;place-items:center;margin:0;font:400 14px "DM Sans",sans-serif;color:var(--rb-ink-3)}
+
+/* An index card, pinned. Its tilt is static; dragging moves it by transform. */
+.lbx-pin{
+  position:absolute;left:0;top:0;z-index:2;display:flex;flex-direction:column;
+  width:240px;height:160px;padding:10px 14px 6px;
+  border-radius:3px;
+  /* An index card: a red head rule, then faint lines every 20px that the text sits on */
+  background:
+    linear-gradient(transparent 31px,rgba(212,48,31,.5) 31px,rgba(212,48,31,.5) 32px,transparent 32px),
+    repeating-linear-gradient(transparent 0 19px,rgba(28,27,25,.07) 19px 20px) 0 32px/100% calc(100% - 62px) no-repeat,
+    var(--rb-card);
+  box-shadow:0 1px 1px rgba(28,27,25,.08),0 8px 16px -10px rgba(28,27,25,.45);
+  color:var(--rb-ink);cursor:grab;user-select:none;-webkit-user-select:none;will-change:transform;
+  touch-action:none;outline:none;text-align:left
+}
+.lbx-pin-tack{
+  position:absolute;left:50%;top:5px;width:12px;height:12px;margin-left:-6px;border-radius:50%;
+  background:radial-gradient(circle at 35% 30%,#F26B5E 0,#D4301F 45%,#8E1C12 100%);
+  box-shadow:0 2px 3px rgba(28,27,25,.35)
+}
+.lbx-pin-head{display:flex;justify-content:space-between;align-items:center;height:18px;margin:0 0 8px;padding:0 2px}
+.lbx-pin-kind{font:600 9px/1 "DM Mono",monospace;letter-spacing:.16em;text-transform:uppercase;color:var(--rb-red-ink)}
+.lbx-pin-no{font:500 9px/1 "DM Mono",monospace;letter-spacing:.1em;color:var(--rb-ink-3)}
+.studio.atlas-shell .lbx-pin .lbx-pin-title{
+  margin:0;padding:0;font:400 19px/20px "Instrument Serif",Georgia,serif!important;letter-spacing:-.01em;color:var(--rb-ink);
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;flex:0 0 auto
+}
+.studio.atlas-shell .lbx-pin .lbx-pin-title.is-untitled{color:var(--rb-ink-3);font-style:italic}
+.studio.atlas-shell .lbx-pin .lbx-pin-text{
+  flex:0 1 auto;min-height:0;margin:0;padding:0;font:400 11.5px/20px "DM Sans","Segoe UI",sans-serif!important;color:var(--rb-ink-2);
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden
+}
+.studio.atlas-shell .lbx-pin .lbx-pin-text.is-empty{color:var(--rb-ink-3);font-style:italic}
+.lbx-pin-foot{display:flex;align-items:center;gap:4px;height:26px;margin-top:auto}
+.lbx-pin-meta{flex:1 1 auto;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font:500 8.5px/1 "DM Mono",monospace;letter-spacing:.08em;text-transform:uppercase;color:var(--rb-ink-3)}
+.lbx-pin-meta.is-open::before{content:"";display:inline-block;width:5px;height:5px;margin-right:6px;border-radius:50%;background:var(--rb-red);vertical-align:1px}
+.lbx-pin-tie,.lbx-pin-open{
+  display:inline-flex;align-items:center;gap:4px;height:24px;padding:0 7px;border:1px solid transparent;border-radius:999px;
+  background:transparent;cursor:pointer;color:var(--rb-ink-3);font:500 11px/1 "DM Sans",sans-serif
+}
+.lbx-pin-open{color:var(--rb-red-ink)}
+.lbx-pin-tie:hover,.lbx-pin-open:hover{border-color:rgba(28,27,25,.14);background:#fff}
+.lbx-pin-tie:focus-visible,.lbx-pin-open:focus-visible{outline:2px solid var(--rb-red);outline-offset:1px}
+.lbx-pin:focus-visible{box-shadow:0 0 0 2px var(--rb-card),0 0 0 4px var(--rb-red),0 8px 16px -10px rgba(28,27,25,.45)}
+.lbx-pin.is-dragging{z-index:5;cursor:grabbing;box-shadow:0 2px 2px rgba(28,27,25,.08),0 22px 30px -14px rgba(28,27,25,.5)}
+.lbx-board.is-dragging{cursor:grabbing}
+/* Tying a string: the first note glows, the others wait to be chosen */
+.lbx-board.is-tying .lbx-pin{cursor:crosshair}
+.lbx-pin.is-tying{box-shadow:0 0 0 2px var(--rb-red),0 0 26px 4px rgba(255,226,176,.9)}
+.lbx-pin.is-tying .lbx-pin-tie{color:#fff;background:var(--rb-red);border-color:var(--rb-red)}
+@media (max-width:700px){
+  .lbx-board-hint span{display:none}
+}
+@media (pointer:coarse){
+  .lbx-pin{touch-action:pan-y}
+  .lbx-pin-head{touch-action:none;cursor:grab}
+}
+
+/* --- 2. Film frames: Visual Language scene boards only ------------------------- */
+/* A strip of film: a dark band top and bottom, with sprocket holes along the
+   outer edge and the edge code printed along the inner edge of the bottom band. */
+.studio.atlas-shell .visual-language .vl-scene-cover.lbx-film{
+  --film-band:#1C1B19;--film-hole:#EFEDE7;--film-print:#F08A7C;
+}
+.studio.atlas-shell .visual-language .vl-scene-cover.lbx-film::before,
+.studio.atlas-shell .visual-language .vl-scene-cover.lbx-film::after{
+  content:"";position:absolute;left:0;right:0;z-index:2;pointer-events:none;
+  background-color:var(--film-band);
+  background-image:radial-gradient(3.2px 2.3px at 50% 50%,var(--film-hole) 92%,transparent 100%);
+  background-size:14px 6px;background-repeat:repeat-x
+}
+.studio.atlas-shell .visual-language .vl-scene-cover.lbx-film::before{top:0;height:11px;background-position:4px 2px}
+.studio.atlas-shell .visual-language .vl-scene-cover.lbx-film::after{
+  bottom:0;height:20px;background-position:4px 13px;
+  content:attr(data-edge);
+  padding:2px 10px 0;overflow:hidden;white-space:nowrap;text-overflow:clip;
+  font:500 7.5px/9px "DM Mono",monospace;letter-spacing:.18em;color:var(--film-print);text-align:left
+}
+.studio.atlas-shell .visual-language .vl-scene-cover.lbx-film>small{bottom:28px!important}
+.studio.atlas-shell .visual-language .vl-scene-cover.lbx-film>div{bottom:20px!important}

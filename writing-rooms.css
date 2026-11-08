@@ -354,6 +354,114 @@
   .lbw-note{font-size:17px}
 }
 
+/* ======================================================================
+   3. RESEARCH & EXPLORATION  (.lbn) — a page from the field notebook
+   ====================================================================== */
+.studio .lbn{position:relative;box-sizing:border-box;width:100%;max-width:1000px;margin:0 auto;padding:40px clamp(18px,4vw,56px) 128px;color:var(--wr-ink);font-family:var(--wr-ui)}
+.lbn *,.lbn *::before,.lbn *::after{box-sizing:border-box}
+.lbn-head{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;margin-bottom:18px}
+.lbn-eyebrow{display:flex;align-items:center;gap:9px;font:500 11px/1 var(--wr-mono);letter-spacing:.2em;color:var(--wr-red-ink)}
+.lbn-eyebrow span[aria-hidden]{color:var(--wr-faint)}
+.lbn-dot{width:7px;height:7px;border-radius:50%;background:var(--wr-red);box-shadow:0 0 0 3px var(--wr-red-wash)}
+.lbn-log{display:flex;align-items:baseline;gap:12px;font:500 9.5px/1 var(--wr-mono);letter-spacing:.16em;color:var(--wr-muted);white-space:nowrap}
+.lbn-log b{font:600 30px/1 var(--wr-frame);letter-spacing:.02em;color:var(--wr-red)}
+
+.lbn-page{--lbn-paper:#FCFAF4;position:relative;padding:34px clamp(22px,4.4vw,58px) 26px clamp(58px,7vw,84px);border-radius:3px 12px 12px 3px;
+  background:radial-gradient(circle,rgba(28,27,25,.15) 1px,transparent 1.5px) 11px 11px/22px 22px,var(--lbn-paper);box-shadow:var(--wr-lift);overflow:hidden}
+.lbn-holes{position:absolute;top:26px;bottom:26px;left:clamp(18px,2.4vw,28px);width:16px;
+  background:radial-gradient(circle at 50% 8px,var(--lt-table,#EFEDE7) 0 5.5px,rgba(28,27,25,.28) 6px,transparent 7px) 0 0/16px 46px repeat-y}
+.lbn-page::after{content:"";position:absolute;top:0;bottom:0;left:clamp(46px,5.6vw,66px);width:1px;background:rgba(212,48,31,.22)}
+
+/* What kind of note */
+.lbn-kinds{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 22px;padding-right:150px}
+.studio.atlas-shell .lbn-kinds button{min-height:30px;padding:0 11px;border:1px dashed rgba(28,27,25,.28);border-radius:999px;background:transparent;color:var(--wr-muted);
+  font:500 9.5px/1 var(--wr-mono);letter-spacing:.14em;text-transform:uppercase;cursor:pointer;transition:background-color .2s,color .2s,border-color .2s}
+.studio.atlas-shell .lbn-kinds button:hover{border-color:var(--wr-ink);color:var(--wr-ink)}
+.studio.atlas-shell .lbn-kinds button[aria-pressed="true"]{border:1px solid var(--wr-red);background:var(--wr-red);color:#fff}
+.lbn-stamp{position:absolute;top:26px;right:clamp(18px,3vw,40px);z-index:2;padding:6px 12px 4px;border:2.5px solid var(--wr-red);border-radius:4px;color:var(--wr-red);
+  font:700 26px/1 var(--wr-frame);letter-spacing:.12em;text-transform:uppercase;opacity:.82;transform:rotate(-7deg);pointer-events:none;mix-blend-mode:multiply;
+  box-shadow:inset 0 0 0 2px rgba(212,48,31,.12);animation:lbn-stamp .32s cubic-bezier(.3,1.4,.5,1) both}
+@keyframes lbn-stamp{from{opacity:0;transform:rotate(-7deg) scale(1.7)}to{opacity:.82;transform:rotate(-7deg) scale(1)}}
+
+/* Title and source */
+.studio.atlas-shell .lbn .lbn-title{display:block;width:100%;min-width:0;margin:0;padding:0 0 4px;padding-right:120px;border:0;border-radius:0;background:transparent;box-shadow:none;outline:none;
+  font:400 clamp(36px,5vw,62px)/1.02 var(--wr-display);letter-spacing:-.03em;color:var(--wr-ink);caret-color:var(--wr-red);text-overflow:ellipsis}
+.studio.atlas-shell .lbn .lbn-title::placeholder{color:#C4BFB4;font-style:italic;opacity:1}
+.studio.atlas-shell .lbn .lbn-title:focus-visible{outline:none}
+.studio.atlas-shell .lbn[data-status="dead"] .lbn-title{text-decoration:line-through;text-decoration-color:var(--wr-red);text-decoration-thickness:2px;color:var(--wr-muted)}
+.lbn-source-row{display:flex;align-items:baseline;gap:14px;margin:12px 0 0;padding-bottom:6px;border-bottom:1px dotted rgba(28,27,25,.3)}
+.lbn-source-row>span{flex:none;font:500 9.5px/1 var(--wr-mono);letter-spacing:.18em;color:var(--wr-red-ink)}
+.studio.atlas-shell .lbn .lbn-source{flex:1;min-width:0;height:auto;min-height:30px;margin:0;padding:0;border:0;border-radius:0;background:transparent;box-shadow:none;outline:none;
+  font:italic 400 16px/1.5 var(--wr-write);color:var(--wr-ink)}
+.studio.atlas-shell .lbn .lbn-source::placeholder{color:var(--wr-faint);opacity:1}
+.studio.atlas-shell .lbn .lbn-source:focus-visible{outline:none}
+.lbn-source-row:focus-within{border-bottom-color:var(--wr-red)}
+
+/* The note itself: written straight onto the page */
+.lbn-body{position:relative;margin:30px 0 0}
+.lbn-body-head{display:flex;align-items:baseline;gap:16px;flex-wrap:wrap;margin-bottom:10px}
+.lbn-body-head p{margin:0;font-size:13.5px;line-height:1.5;color:var(--wr-muted)}
+.studio.atlas-shell .lbn .lbn-body .editor-document>.paper{min-height:200px;padding:6px 0 10px;background:transparent;box-shadow:none;border-radius:0}
+.studio.atlas-shell .lbn .lbn-body .rich-editor{min-height:180px;background:transparent}
+.studio.atlas-shell .lbn .prose-document .rich-editor.is-empty:before{content:"Start with the thing that surprised you."}
+.studio.atlas-shell .lbn[data-kind="question"] .prose-document .rich-editor.is-empty:before{content:"What you suspect so far…"}
+.studio.atlas-shell .lbn[data-kind="fact"] .prose-document .rich-editor.is-empty:before{content:"The fact, and how you know it."}
+.studio.atlas-shell .lbn[data-kind="quote"] .prose-document .rich-editor.is-empty:before{content:"Paste the words exactly as they were said."}
+.studio.atlas-shell .lbn[data-kind="place"] .prose-document .rich-editor.is-empty:before{content:"What you saw when you got there."}
+.studio.atlas-shell .lbn[data-kind="person"] .prose-document .rich-editor.is-empty:before{content:"What they told you, and how they said it."}
+.studio.atlas-shell .lbn[data-kind="image"] .prose-document .rich-editor.is-empty:before{content:"Describe what is in the frame."}
+.studio.atlas-shell .lbn[data-kind="lead"] .prose-document .rich-editor.is-empty:before{content:"Where to go next, and who to ask."}
+/* A quote becomes a quotation */
+.lbn[data-kind="quote"] .lbn-body::before{content:"\201C";position:absolute;top:8px;left:-.12em;font:400 150px/1 var(--wr-display);color:rgba(212,48,31,.16);pointer-events:none}
+.studio.atlas-shell .lbn[data-kind="quote"] .lbn-body .rich-editor{padding-left:min(9%,56px);font-family:var(--wr-display);font-style:italic;font-size:clamp(23px,2.6vw,30px);line-height:1.32}
+/* A question carries its mark */
+.lbn[data-kind="question"] .lbn-page::before{content:"?";position:absolute;right:-10px;bottom:-60px;font:400 330px/1 var(--wr-display);color:rgba(212,48,31,.06);pointer-events:none}
+/* A lead is a thread to pull */
+.lbn[data-kind="lead"] .lbn-body{padding-left:18px;border-left:2px solid var(--wr-red)}
+/* A place gets survey lines; an image gets photo corners */
+.lbn[data-kind="place"] .lbn-page{background:radial-gradient(circle at 92% 18%,transparent 0 46px,rgba(212,48,31,.08) 47px 48px,transparent 49px 76px,rgba(212,48,31,.07) 77px 78px,transparent 79px 108px,rgba(212,48,31,.06) 109px 110px,transparent 111px),
+  radial-gradient(circle,rgba(28,27,25,.15) 1px,transparent 1.5px) 11px 11px/22px 22px,var(--lbn-paper)}
+.lbn[data-kind="image"] .lbn-body .editor-document>.paper{background:linear-gradient(var(--wr-ink),var(--wr-ink)) 0 0/18px 2px,linear-gradient(var(--wr-ink),var(--wr-ink)) 0 0/2px 18px,
+  linear-gradient(var(--wr-ink),var(--wr-ink)) 100% 100%/18px 2px,linear-gradient(var(--wr-ink),var(--wr-ink)) 100% 100%/2px 18px!important;background-repeat:no-repeat!important;padding:14px 16px!important}
+
+/* Why it matters / the next question */
+.lbn-q{margin:22px 0 0;padding-top:20px;border-top:1px dashed rgba(28,27,25,.18)}
+.lbn-q label{display:block;margin-bottom:10px;font:400 clamp(21px,2.2vw,26px)/1.15 var(--wr-display);color:var(--wr-ink);cursor:text}
+.lbn-q label span{display:block;margin-bottom:8px;font:500 9.5px/1 var(--wr-mono);letter-spacing:.18em;color:var(--wr-red-ink)}
+.studio.atlas-shell .lbn .lbn-answer{min-height:30px;font:400 17px/30px var(--wr-write);caret-color:var(--wr-red);
+  background:linear-gradient(to bottom,transparent 29px,rgba(28,27,25,.12) 29px,rgba(28,27,25,.12) 30px) 0 0/100% 30px local}
+
+/* Where the thread stands */
+.lbn-status{display:flex;flex-wrap:wrap;gap:8px;margin:28px 0 0;padding-top:16px;border-top:1px solid var(--wr-line)}
+.studio.atlas-shell .lbn-status button{display:inline-flex;align-items:center;gap:8px;min-height:36px;padding:0 14px 0 11px;border:1px solid var(--wr-rule);border-radius:999px;background:var(--wr-paper);
+  color:var(--wr-muted);font:500 13px/1 var(--wr-ui);cursor:pointer;transition:border-color .2s,color .2s,background-color .2s}
+.lbn-status i{width:10px;height:10px;border-radius:50%;border:1.5px solid currentColor}
+.lbn-status button[data-status="followed"] i{border:0;border-radius:0;width:14px;height:14px;background:var(--lt-tick) center/contain no-repeat;opacity:.5}
+.lbn-status button[data-status="dead"] i{border:0;border-radius:0;width:14px;height:2px;background:currentColor}
+.studio.atlas-shell .lbn-status button:hover{color:var(--wr-ink);border-color:var(--wr-rule-strong,#B8B3A7)}
+.studio.atlas-shell .lbn-status button[aria-pressed="true"]{border-color:var(--wr-ink);color:var(--wr-ink);font-weight:600}
+.lbn-status button[data-status="open"][aria-pressed="true"] i{border-color:var(--wr-red);background:var(--wr-red);box-shadow:0 0 0 3px var(--wr-red-wash)}
+.lbn-status button[data-status="followed"][aria-pressed="true"] i{opacity:1}
+.lbn-status button[data-status="dead"][aria-pressed="true"] i{background:var(--wr-red)}
+
+@media (max-width:760px){
+  .studio .lbn{padding:20px 12px calc(120px + env(safe-area-inset-bottom))}
+  .lbn-head{flex-direction:column;align-items:flex-start;gap:12px}
+  .lbn-log b{font-size:24px}
+  .lbn-page{padding:24px 16px 20px 44px}
+  .lbn-holes{left:12px;width:14px;background-size:14px 40px}
+  .lbn-page::after{left:34px}
+  .lbn-kinds{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;margin-right:-16px;padding-right:16px;padding-top:44px}
+  .lbn-kinds::-webkit-scrollbar{display:none}
+  .lbn-kinds button{flex:none}
+  .lbn-stamp{top:16px;right:16px;font-size:19px}
+  .studio.atlas-shell .lbn .lbn-title{font-size:clamp(32px,9.5vw,44px)!important;min-height:0!important;padding-right:0}
+  .studio.atlas-shell .lbn .lbn-source{font-size:16px!important}
+  .lbn-source-row{flex-direction:column;gap:6px}
+  .studio.atlas-shell .lbn .lbn-answer{font-size:16px}
+  .lbn[data-kind="question"] .lbn-page::before{font-size:220px;bottom:-40px}
+}
+
 /* ---- Phone ---- */
 @media (max-width:760px){
   .studio .lbs{padding:22px 14px calc(120px + env(safe-area-inset-bottom))}

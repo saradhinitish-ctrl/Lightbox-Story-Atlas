@@ -131,3 +131,65 @@ export default function PlanningSheet({n,patch,children,images}:{n:DeskNode;patc
   </div>
  </div>;
 }
+
+/* ---- Research & Exploration — a page from the field notebook -------------
+   The note's own writing stays in `html` (so search, compile and export read it
+   as before). The page adds a kind, a source, why it matters, the next
+   question and a thread status as `research.*` fields. */
+const NOTE_KINDS=[
+ {key:'question',label:'Question',title:'What do you need to find out?',body:'Write down what you already suspect, and where you could look.'},
+ {key:'fact',label:'Fact',title:'State the fact in one line.',body:'The detail, the number, the date. Note how sure you are.'},
+ {key:'quote',label:'Quote',title:'Who said it, and where?',body:'Copy the words exactly. Then who said them, to whom, and when.'},
+ {key:'place',label:'Place',title:'Name the place.',body:'What you saw, heard and smelled there. How people moved through it.'},
+ {key:'person',label:'Person',title:'Who is this?',body:'Who they are, what they know, how they talk, how to reach them.'},
+ {key:'image',label:'Image',title:'Caption the image.',body:'Paste or describe the image. What in it belongs in the film?'},
+ {key:'lead',label:'Lead',title:'Where does this lead?',body:'Who or what to follow next, and what you hope to find.'}
+] as const;
+const NOTE_STATUS=[{key:'open',label:'Open thread'},{key:'followed',label:'Followed up'},{key:'dead',label:'Dead end'}] as const;
+const lbnDate=(iso:string)=>{const d=new Date(iso);if(isNaN(+d))return '';return String(d.getDate()).padStart(2,'0')+' '+d.toLocaleString('en-GB',{month:'short'}).toUpperCase()+' '+d.getFullYear()+' · '+String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');};
+
+export function FieldNoteSheet({n,patch,children}:{n:DeskNode;patch:Patch;children:ReactNode}){
+ const get=(k:string)=>n.fields['research.'+k]||'';
+ const set=(k:string,v:string)=>patch(n.id,{fields:{...n.fields,['research.'+k]:v}});
+ const kind=NOTE_KINDS.find(k=>k.key===get('kind'));
+ const status=get('status')||'open';
+ const untitled=!n.title.trim()||/^Untitled (note|document|scene)$/i.test(n.title);
+ const page=LbxR.useRef<HTMLElement|null>(null);
+ const go=(sel:string)=>{const el=page.current?.querySelector(sel) as HTMLElement|null;el?.focus();};
+ const enterTo=(sel:string)=>(e:LbxR.KeyboardEvent<HTMLTextAreaElement>)=>{if(e.key==='Enter'&&!e.shiftKey&&!e.nativeEvent.isComposing){e.preventDefault();go(sel);}};
+ const nextOnCmd=(sel:string)=>(e:LbxR.KeyboardEvent<HTMLTextAreaElement>)=>{if((e.metaKey||e.ctrlKey)&&e.key==='Enter'){e.preventDefault();go(sel);}};
+ const logged=lbnDate(n.created);
+ return <div className="lbn" data-kind={kind?.key||'none'} data-status={status}>
+  <header className="lbn-head">
+   <div className="lbn-eyebrow"><span className="lbn-dot" aria-hidden="true"/>RESEARCH &amp; EXPLORATION <span aria-hidden="true">/</span> FIELD NOTES</div>
+   <div className="lbn-log" aria-label={'Note '+(n.order+1)+(logged?', logged '+logged:'')}><b>Nº {String(n.order+1).padStart(2,'0')}</b>{logged&&<span>LOGGED {logged}</span>}</div>
+  </header>
+  <article className="lbn-page" ref={page}>
+   <span className="lbn-holes" aria-hidden="true"/>
+   <div className="lbn-kinds" role="group" aria-label="What kind of note is this?">
+    {NOTE_KINDS.map(k=><button type="button" key={k.key} aria-pressed={kind?.key===k.key} onClick={()=>set('kind',kind?.key===k.key?'':k.key)}>{k.label}</button>)}
+   </div>
+   {kind&&<span className="lbn-stamp" key={kind.key} aria-hidden="true">{kind.label}</span>}
+   <LbxText className="lbn-title" label="Note title" placeholder={kind?.title||'What did you find?'} value={untitled?'':n.title} minRows={1}
+    onChange={v=>patch(n.id,{title:v.replace(/\s*\n\s*/g,' ')||'Untitled note'})} onKeyDown={enterTo('.lbn-source')}/>
+   <div className="lbn-source-row"><span aria-hidden="true">SOURCE</span>
+    <LbxText className="lbn-source" label="Source" placeholder="Book and page, a link, a conversation, or your own eyes." value={get('source')} minRows={1} onChange={v=>set('source',v.replace(/\s*\n\s*/g,' '))} onKeyDown={enterTo('.lbn-body .rich-editor')}/>
+   </div>
+   <section className="lbn-body" aria-label="The note">
+    <div className="lbn-body-head"><span>THE NOTE</span><p>{kind?.body||'Get it down while it’s fresh: exact words, numbers, what surprised you.'}</p></div>
+    {children}
+   </section>
+   <div className="lbn-q">
+    <label htmlFor={'lbn-why-'+n.id}><span>WHY IT MATTERS</span>How could this change a scene, a character, or the ending?</label>
+    <LbxText id={'lbn-why-'+n.id} className="lbn-answer lbn-why" label="Why it matters" placeholder="Name the scene or the person it touches." value={get('why')} onChange={v=>set('why',v)} onKeyDown={nextOnCmd('.lbn-next')}/>
+   </div>
+   <div className="lbn-q">
+    <label htmlFor={'lbn-next-'+n.id}><span>THE NEXT QUESTION</span>What does this make you want to find out next?</label>
+    <LbxText id={'lbn-next-'+n.id} className="lbn-answer lbn-next" label="The next question" placeholder="Follow the thread one step further." value={get('next')} onChange={v=>set('next',v)}/>
+   </div>
+   <footer className="lbn-status" role="group" aria-label="Where this thread stands">
+    {NOTE_STATUS.map(s=><button type="button" key={s.key} data-status={s.key} aria-pressed={status===s.key} onClick={()=>set('status',s.key)}><i aria-hidden="true"/>{s.label}</button>)}
+   </footer>
+  </article>
+ </div>;
+}

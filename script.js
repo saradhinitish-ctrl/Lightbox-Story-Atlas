@@ -63975,6 +63975,112 @@ ${formatDuration(t.seconds)}${t.source === "pages" ? "" : " (" + (t.source === "
       ] })
     ] });
   }
+  var NOTE_KINDS = [
+    { key: "question", label: "Question", title: "What do you need to find out?", body: "Write down what you already suspect, and where you could look." },
+    { key: "fact", label: "Fact", title: "State the fact in one line.", body: "The detail, the number, the date. Note how sure you are." },
+    { key: "quote", label: "Quote", title: "Who said it, and where?", body: "Copy the words exactly. Then who said them, to whom, and when." },
+    { key: "place", label: "Place", title: "Name the place.", body: "What you saw, heard and smelled there. How people moved through it." },
+    { key: "person", label: "Person", title: "Who is this?", body: "Who they are, what they know, how they talk, how to reach them." },
+    { key: "image", label: "Image", title: "Caption the image.", body: "Paste or describe the image. What in it belongs in the film?" },
+    { key: "lead", label: "Lead", title: "Where does this lead?", body: "Who or what to follow next, and what you hope to find." }
+  ];
+  var NOTE_STATUS = [{ key: "open", label: "Open thread" }, { key: "followed", label: "Followed up" }, { key: "dead", label: "Dead end" }];
+  var lbnDate = (iso) => {
+    const d = new Date(iso);
+    if (isNaN(+d)) return "";
+    return String(d.getDate()).padStart(2, "0") + " " + d.toLocaleString("en-GB", { month: "short" }).toUpperCase() + " " + d.getFullYear() + " \xB7 " + String(d.getHours()).padStart(2, "0") + ":" + String(d.getMinutes()).padStart(2, "0");
+  };
+  function FieldNoteSheet({ n, patch, children: children3 }) {
+    const get2 = (k) => n.fields["research." + k] || "";
+    const set = (k, v) => patch(n.id, { fields: { ...n.fields, ["research." + k]: v } });
+    const kind = NOTE_KINDS.find((k) => k.key === get2("kind"));
+    const status = get2("status") || "open";
+    const untitled = !n.title.trim() || /^Untitled (note|document|scene)$/i.test(n.title);
+    const page = LbxR.useRef(null);
+    const go = (sel) => {
+      const el = page.current?.querySelector(sel);
+      el?.focus();
+    };
+    const enterTo = (sel) => (e) => {
+      if (e.key === "Enter" && !e.shiftKey && !e.nativeEvent.isComposing) {
+        e.preventDefault();
+        go(sel);
+      }
+    };
+    const nextOnCmd = (sel) => (e) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === "Enter") {
+        e.preventDefault();
+        go(sel);
+      }
+    };
+    const logged = lbnDate(n.created);
+    return /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "lbn", "data-kind": kind?.key || "none", "data-status": status, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("header", { className: "lbn-head", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "lbn-eyebrow", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("span", { className: "lbn-dot", "aria-hidden": "true" }),
+          "RESEARCH & EXPLORATION ",
+          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("span", { "aria-hidden": "true", children: "/" }),
+          " FIELD NOTES"
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "lbn-log", "aria-label": "Note " + (n.order + 1) + (logged ? ", logged " + logged : ""), children: [
+          /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("b", { children: [
+            "N\xBA ",
+            String(n.order + 1).padStart(2, "0")
+          ] }),
+          logged && /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("span", { children: [
+            "LOGGED ",
+            logged
+          ] })
+        ] })
+      ] }),
+      /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("article", { className: "lbn-page", ref: page, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("span", { className: "lbn-holes", "aria-hidden": "true" }),
+        /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { className: "lbn-kinds", role: "group", "aria-label": "What kind of note is this?", children: NOTE_KINDS.map((k) => /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("button", { type: "button", "aria-pressed": kind?.key === k.key, onClick: () => set("kind", kind?.key === k.key ? "" : k.key), children: k.label }, k.key)) }),
+        kind && /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("span", { className: "lbn-stamp", "aria-hidden": "true", children: kind.label }, kind.key),
+        /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(
+          LbxText,
+          {
+            className: "lbn-title",
+            label: "Note title",
+            placeholder: kind?.title || "What did you find?",
+            value: untitled ? "" : n.title,
+            minRows: 1,
+            onChange: (v) => patch(n.id, { title: v.replace(/\s*\n\s*/g, " ") || "Untitled note" }),
+            onKeyDown: enterTo(".lbn-source")
+          }
+        ),
+        /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "lbn-source-row", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("span", { "aria-hidden": "true", children: "SOURCE" }),
+          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(LbxText, { className: "lbn-source", label: "Source", placeholder: "Book and page, a link, a conversation, or your own eyes.", value: get2("source"), minRows: 1, onChange: (v) => set("source", v.replace(/\s*\n\s*/g, " ")), onKeyDown: enterTo(".lbn-body .rich-editor") })
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("section", { className: "lbn-body", "aria-label": "The note", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "lbn-body-head", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("span", { children: "THE NOTE" }),
+            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("p", { children: kind?.body || "Get it down while it\u2019s fresh: exact words, numbers, what surprised you." })
+          ] }),
+          children3
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "lbn-q", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("label", { htmlFor: "lbn-why-" + n.id, children: [
+            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("span", { children: "WHY IT MATTERS" }),
+            "How could this change a scene, a character, or the ending?"
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(LbxText, { id: "lbn-why-" + n.id, className: "lbn-answer lbn-why", label: "Why it matters", placeholder: "Name the scene or the person it touches.", value: get2("why"), onChange: (v) => set("why", v), onKeyDown: nextOnCmd(".lbn-next") })
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "lbn-q", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("label", { htmlFor: "lbn-next-" + n.id, children: [
+            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("span", { children: "THE NEXT QUESTION" }),
+            "What does this make you want to find out next?"
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(LbxText, { id: "lbn-next-" + n.id, className: "lbn-answer lbn-next", label: "The next question", placeholder: "Follow the thread one step further.", value: get2("next"), onChange: (v) => set("next", v) })
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("footer", { className: "lbn-status", role: "group", "aria-label": "Where this thread stands", children: NOTE_STATUS.map((s) => /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("button", { type: "button", "data-status": s.key, "aria-pressed": status === s.key, onClick: () => set("status", s.key), children: [
+          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("i", { "aria-hidden": "true" }),
+          s.label
+        ] }, s.key)) })
+      ] })
+    ] });
+  }
 
   // lib/screenplay-fdx.ts
   init_screenplay_layout();
@@ -65478,7 +65584,7 @@ ${formatDuration(t.seconds)}${t.source === "pages" ? "" : " (" + (t.source === "
       const prose = /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(RichEditor, { n, project, patch, register: (el, n2) => {
         if (el) activeEditor.current = { el, id: n2.id };
       }, onSelection: selection, zoom: prefs.zoom, font: prefs.font, page: false, dialogueFocus: false }, n.id + "-" + n.kind);
-      return saveDocument(n, n.fields["development.kind"] === "foundation" ? /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(DevelopmentSheet, { n, patch, children: prose }) : isProfileKind(n.kind) ? /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(PlanningSheet, { n, patch, images: /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(ProfileImages, { n, mutate: (fn, removed) => updateProfileImages(n.id, fn, removed) }, n.id), children: prose }) : prose);
+      return saveDocument(n, n.fields["development.kind"] === "foundation" ? /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(DevelopmentSheet, { n, patch, children: prose }) : isProfileKind(n.kind) ? /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(PlanningSheet, { n, patch, images: /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(ProfileImages, { n, mutate: (fn, removed) => updateProfileImages(n.id, fn, removed) }, n.id), children: prose }) : n.kind === "text" && sectionForNode(project, n.id)?.role === "research" ? /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(FieldNoteSheet, { n, patch, children: prose }) : prose);
     }
     const totalWords = project ? compileNodes(project).reduce((s, n) => s + wordCount(n.html), 0) : 0;
     const saveLabel = { loading: "Opening workspace\u2026", saved: "All changes saved locally", saving: "Saving\u2026", pending: "Unsaved changes", offline: "Offline \xB7 device copy", error: "Save needs attention", conflict: "Another session changed this workspace" }[status];

@@ -117,7 +117,9 @@
 
 /* --- Reduced motion: no slides, a simple fade -------------------------------- */
 @media (prefers-reduced-motion:reduce){
-  .lb-cylinder-v9.is-rack .lb-cylinder-rotor.is-fading{animation:lbx-rack-fade .2s ease-out}
+  /* styles.css turns every animation off for reduced motion; this one fade is the
+     intended replacement for movement, so it is reinstated explicitly. */
+  .lb-cylinder-v9.is-rack .lb-cylinder-rotor.is-fading{animation:lbx-rack-fade .2s ease-out!important}
   .lb-cylinder-v9.is-rack .lb-cylinder-veil,
   .lb-cylinder-v9.is-rack .lb-cylinder-lift{transition:opacity .2s linear!important}
 }
@@ -238,3 +240,15 @@ html.lbx-push-active::view-transition-new(root){animation:lbx-push-in .34s ease 
 /* Reduced motion: no growth, a short cross-fade of the whole view */
 html.lbx-push-fade::view-transition-old(root){animation:lbx-push-out .18s linear both}
 html.lbx-push-fade::view-transition-new(root){animation:lbx-push-in .18s linear both}
+
+/* --- Room for the status line ---------------------------------------------------- */
+/* Previews clip cleanly instead of running under the status line */
+.studio.atlas-shell .lb-cylinder-v9 .lbx--live .lbx-preview{overflow:hidden!important}
+/* The premise keeps whole lines: three on the table, two on short screens */
+.studio.atlas-shell .lb-cylinder-v9 .lbx--live.lbx--foundation .spark-note>p{flex:0 0 auto;-webkit-line-clamp:3}
+.lb-cylinder-v9.is-compact .lbx--live.lbx--foundation .spark-note>p{-webkit-line-clamp:2}
+.lb-cylinder-v9.is-compact .lbx--live.lbx--foundation .spark-note>small{margin-bottom:6px!important}
+.lb-cylinder-v9.is-compact .lbx--live .lbx-preview{margin:10px 0 8px!important}
+.lb-cylinder-v9.is-compact .lbx--live.lbx--world .world-index>button{height:27px!important;min-height:0!important}
+.lb-cylinder-v9.is-compact .lbx--live.lbx--world .lbx-map{display:none}
+.lb-cylinder-v9.is-compact .lbx--live.lbx--visual .lbx-chips-label{display:none}

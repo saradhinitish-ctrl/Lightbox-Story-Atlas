@@ -42,6 +42,8 @@ Instrument Serif (titles), DM Sans (interface), DM Mono (edge print and labels),
 - **Screenplay page:** a computed-style diff shows 0 differences.
 
 ## The Atlas cards
+The Atlas now opens as a light table with rack focus, a continue-writing card and live status lines; see `atlas-light-table.md`. The cylinder described below is the **Classic view**, unchanged.
+
 `light-table-atlas.css` styles them; `story-cylinder-v9.js` (`shape()`) re-lays each card's replica into one skeleton. Text is read from the native React card with `textContent`, so data stays live and nothing is written back.
 
 ### Anatomy (shared by all five)

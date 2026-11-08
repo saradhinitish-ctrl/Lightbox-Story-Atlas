@@ -1,0 +1,261 @@
+/* ==========================================================================
+   Lightbox / The Atlas: a zoetrope in the viewing room
+
+   A cylinder of picture frames you spin is a zoetrope, the first moving-
+   picture machine. The Story Atlas becomes a dark viewing room with the drum
+   standing on a pool of light from the table below. Each card is a length of
+   35mm film: sprocket holes down both sides, edge print, a frame number.
+   Inside each frame, a real photographic process suited to what it holds:
+
+     01A  World         cyanotype: the blue blueprint print, with map contours
+     02A  Field notes   a graph-paper notebook with taped slips
+     03A  Screenplay    the lit page, the brightest frame on the drum
+     04A  Visual        a projected frame with a colour-control strip
+     05A  Foundation    orange negative film base, with a light leak: the spark
+
+   Visual only. The cylinder's geometry, motion, canvas and script
+   (story-cylinder-v9.*) are untouched; tests/story-cylinder-qa.mjs still runs.
+   ========================================================================== */
+
+:root{
+  --za-booth:#111113;
+  --za-booth-2:#19191C;
+  --za-film:#16120E;
+  --za-film-edge:#0E0B08;
+  --za-hole:#F6EAD3;
+  --za-edge-print:#E8823F;
+  --za-ink-light:#F1ECE2;
+  --za-ink-light-2:#B7B0A4;
+  --za-sprockets:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='20'%3E%3Crect x='4.5' y='5' width='7' height='10' rx='1.8' fill='%23F6EAD3'/%3E%3C/svg%3E");
+  /* Map contours for the cyanotype: places drawn as a survey */
+  --za-contours:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 400' fill='none' stroke='%23ffffff' stroke-width='1'%3E%3Cg transform='translate(70 -58)'%3E%3Cpath d='M210 70c40 10 62 52 48 90s-64 46-98 30-52-56-30-90 50-38 80-30z' opacity='.34'/%3E%3Cpath d='M205 92c26 6 40 34 30 58s-42 30-64 20-34-36-20-58 34-26 54-20z' opacity='.28'/%3E%3Cpath d='M200 112c13 3 20 17 15 29s-21 15-32 10-17-18-10-29 17-13 27-10z' opacity='.24'/%3E%3C/g%3E%3Cpath d='M-20 236c60-40 120-10 170-30s110-70 180-40' opacity='.16'/%3E%3Cpath d='M-20 262c60-36 126-6 176-26s108-64 178-34' opacity='.13'/%3E%3Cpath d='M250 34l12 0m-6-6v12' opacity='.45'/%3E%3C/svg%3E");
+}
+
+/* --- The viewing room ------------------------------------------------------ */
+.studio.atlas-shell.lb-cylinder-atlas{
+  background:
+    radial-gradient(ellipse 70% 55% at 50% 52%,rgba(255,214,170,.07),transparent 70%),
+    radial-gradient(ellipse 120% 90% at 50% 40%,var(--za-booth-2) 0%,var(--za-booth) 62%,#0B0B0C 100%)!important;
+  background-size:100% 100%,100% 100%!important;
+  background-blend-mode:normal,normal!important;
+  color:var(--za-ink-light);
+}
+.studio.atlas-shell.lb-cylinder-atlas .story-atlas{color:var(--za-ink-light)!important}
+/* Title over the drum */
+.studio.atlas-shell.lb-cylinder-atlas .atlas-heading .atlas-eyebrow::before{color:var(--za-edge-print)!important}
+.studio.atlas-shell.lb-cylinder-atlas .atlas-world-name>input{color:var(--za-ink-light)!important;caret-color:var(--za-edge-print)}
+.studio.atlas-shell.lb-cylinder-atlas .atlas-heading p{color:var(--za-ink-light-2)!important}
+.studio.atlas-shell.lb-cylinder-atlas .pitch-launch{
+  background:rgba(255,255,255,.04)!important;color:var(--za-ink-light)!important;
+  border:1px solid rgba(241,236,226,.22)!important;box-shadow:none!important;
+}
+.studio.atlas-shell.lb-cylinder-atlas .pitch-launch:hover{border-color:var(--za-edge-print)!important;color:#fff!important;background:rgba(255,255,255,.07)!important}
+@media (min-width:1100px){
+  .studio.atlas-shell.lb-cylinder-atlas .story-atlas::before,
+  .studio.atlas-shell.lb-cylinder-atlas .story-atlas::after{color:var(--za-edge-print)!important;opacity:.7!important}
+}
+/* The pool of light the drum stands on, and the backlight behind it */
+.lb-cylinder-v9 .lb-cylinder-aura{
+  inset:0!important;
+  background:
+    radial-gradient(ellipse 34% 12% at 50% 90%,rgba(255,244,226,.55) 0%,rgba(255,214,168,.22) 45%,transparent 72%),
+    radial-gradient(ellipse 52% 22% at 50% 92%,rgba(232,120,60,.14) 0%,transparent 70%),
+    radial-gradient(ellipse 40% 52% at 50% 46%,rgba(255,226,190,.09) 0%,transparent 72%)!important;
+}
+/* The lit table, seen in perspective under the drum */
+.lb-cylinder-v9 .lb-cylinder-aura::before{
+  content:"";position:absolute;left:14%;right:14%;bottom:-2%;height:46%;pointer-events:none;
+  background:
+    linear-gradient(rgba(255,236,210,.16) 1px,transparent 1px) 0 0/28px 28px,
+    linear-gradient(90deg,rgba(255,236,210,.16) 1px,transparent 1px) 0 0/28px 28px;
+  transform:perspective(420px) rotateX(62deg);transform-origin:50% 100%;
+  -webkit-mask-image:radial-gradient(ellipse 50% 60% at 50% 70%,#000 0%,rgba(0,0,0,.55) 40%,transparent 72%);
+  mask-image:radial-gradient(ellipse 50% 60% at 50% 70%,#000 0%,rgba(0,0,0,.55) 40%,transparent 72%);
+}
+/* Under each frame, light instead of shadow: the backlit film glows onto the table */
+.lb-cylinder-v9 .lb-cylinder-card::before{
+  background:radial-gradient(ellipse,rgba(255,206,160,.32) 0%,rgba(232,120,60,.12) 45%,transparent 75%)!important;
+}
+
+/* --- The film strip ----------------------------------------------------------- */
+.studio.atlas-shell .lb-cylinder-v9 .lb-cylinder-plaque{
+  padding:0!important;border:0!important;border-radius:5px!important;
+  background:
+    var(--za-sprockets) 0 0/16px 20px repeat-y,
+    var(--za-sprockets) 100% 10px/16px 20px repeat-y,
+    linear-gradient(90deg,var(--za-film-edge),var(--za-film) 8%,var(--za-film) 92%,var(--za-film-edge))!important;
+  /* Halation: backlit film glows red-orange at its edges */
+  box-shadow:0 0 0 1px rgba(255,220,180,.08),0 0 34px -6px rgba(240,120,60,.38),0 24px 40px -22px rgba(0,0,0,.9)!important;
+}
+.studio.atlas-shell .lb-cylinder-v9 .lb-cylinder-card.is-active .lb-cylinder-plaque{
+  box-shadow:0 0 0 1px rgba(255,226,190,.14),0 0 46px -4px rgba(244,128,64,.52),0 30px 50px -24px rgba(0,0,0,.95)!important;
+}
+/* Edge print along the top of every frame */
+.studio.atlas-shell .lb-cylinder-v9 .lb-cylinder-plaque::after{
+  position:absolute;left:18px;right:18px;top:6px;z-index:3;pointer-events:none;
+  display:flex;justify-content:space-between;white-space:pre;
+  font:500 8.5px/1 "DM Mono",monospace;letter-spacing:.16em;color:var(--za-edge-print);
+}
+.studio.atlas-shell .lb-cylinder-v9 .lb-cylinder-world .lb-cylinder-plaque::after{content:"◂ 01A   LIGHTBOX 5219   ▸"}
+.studio.atlas-shell .lb-cylinder-v9 .lb-cylinder-research .lb-cylinder-plaque::after{content:"◂ 02A   LIGHTBOX 5219   ▸"}
+.studio.atlas-shell .lb-cylinder-v9 .lb-cylinder-script .lb-cylinder-plaque::after{content:"◂ 03A   LIGHTBOX 5219   ▸"}
+.studio.atlas-shell .lb-cylinder-v9 .lb-cylinder-visual .lb-cylinder-plaque::after{content:"◂ 04A   LIGHTBOX 5219   ▸"}
+.studio.atlas-shell .lb-cylinder-v9 .lb-cylinder-foundation .lb-cylinder-plaque::after{content:"◂ 05A   LIGHTBOX 5219   ▸"}
+/* The picture area of the frame */
+.studio.atlas-shell .lb-cylinder-v9 .lb-cylinder-content{
+  inset:22px 17px 14px!important;border-radius:3px!important;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.08),inset 0 0 24px rgba(0,0,0,.18)!important;
+}
+/* Curvature shading stays, fitted to the strip */
+.studio.atlas-shell .lb-cylinder-v9 .lb-cylinder-sheen{inset:0!important;border-radius:5px!important}
+/* Frames turned away from you are dimmer; the one facing you is fully lit */
+.studio.atlas-shell .lb-cylinder-v9 .lb-cylinder-card:not(.is-active) .lb-cylinder-content{filter:brightness(.84) saturate(.92)}
+.studio.atlas-shell .lb-cylinder-v9 .lb-cylinder-card:focus-visible .lb-cylinder-plaque{outline:2px solid var(--za-edge-print)!important;outline-offset:5px}
+.lb-cylinder-v9 .lb-cylinder-stage:focus-visible{outline-color:var(--za-edge-print)!important}
+
+/* Shared furniture inside every frame */
+.studio.atlas-shell .lb-cylinder-v9 .lb-cylinder-source{padding:clamp(14px,1.3vw,19px)!important}
+.studio.atlas-shell .lb-cylinder-v9 .lb-cylinder-source .node-overline{
+  font:500 8.5px/1.5 "DM Mono",monospace!important;letter-spacing:.2em!important;
+  border-bottom:1px solid currentColor!important;padding:0 0 9px!important;
+}
+.studio.atlas-shell .lb-cylinder-v9 .lb-cylinder-source>.node-footer{
+  font:600 10.5px/1.3 "DM Mono",monospace!important;letter-spacing:.08em!important;text-transform:uppercase;
+}
+
+/* --- 01A World: cyanotype ----------------------------------------------------- */
+.studio.atlas-shell .lb-cylinder-v9 .lb-cylinder-world .atlas-world{
+  color:#EAF1FA!important;
+  background:
+    var(--za-contours) center/cover no-repeat,
+    radial-gradient(ellipse 90% 70% at 30% 20%,rgba(255,255,255,.08),transparent 60%),
+    linear-gradient(162deg,#24508A 0%,#1A3D6E 48%,#122C52 100%)!important;
+}
+.studio.atlas-shell .lb-cylinder-v9 .atlas-world .node-overline{color:#A9C6EC!important}
+.studio.atlas-shell .lb-cylinder-v9 .atlas-world .world-card-heading strong{color:#F5F8FC!important}
+.studio.atlas-shell .lb-cylinder-v9 .atlas-world .world-card-heading small{color:#B9CDE8!important}
+.studio.atlas-shell .lb-cylinder-v9 .atlas-world .world-index>button{
+  color:#EAF1FA!important;border-top:1px solid rgba(234,241,250,.26)!important;
+  transition:background-color .18s ease,padding .18s ease!important;
+}
+.studio.atlas-shell .lb-cylinder-v9 .atlas-world .world-index>button:last-child{border-bottom:1px solid rgba(234,241,250,.26)!important}
+.studio.atlas-shell .lb-cylinder-v9 .atlas-world .world-index>button :is(svg,span){color:#A9C6EC!important}
+.studio.atlas-shell .lb-cylinder-v9 .atlas-world .world-index>button strong{color:#F5F8FC!important;font-weight:500!important}
+/* Hover: the row is lit, as if the print were held up to the lamp */
+.studio.atlas-shell .lb-cylinder-v9 .atlas-world .world-index>button:hover,
+.studio.atlas-shell .lb-cylinder-v9 .atlas-world .world-index>button:focus-visible{
+  background:linear-gradient(90deg,rgba(255,255,255,.16),rgba(255,255,255,.04))!important;
+  outline:0!important;padding-left:6px!important;box-shadow:inset 2px 0 0 #fff!important;
+}
+.studio.atlas-shell .lb-cylinder-v9 .atlas-world .world-index>button:hover :is(svg,span){color:#fff!important}
+
+/* --- 02A Field notes: the notebook ------------------------------------------- */
+.studio.atlas-shell .lb-cylinder-v9 .lb-cylinder-research .atlas-research{
+  color:#2B2620!important;
+  background:
+    linear-gradient(90deg,transparent 22px,rgba(212,48,31,.55) 22px,rgba(212,48,31,.55) 23px,transparent 23px),
+    linear-gradient(rgba(58,104,160,.17) 1px,transparent 1px) 0 6px/12px 12px,
+    linear-gradient(90deg,rgba(58,104,160,.17) 1px,transparent 1px) 0 0/12px 12px,
+    linear-gradient(170deg,#F7F0DE,#EFE5CC)!important;
+  border:0!important;
+}
+.studio.atlas-shell .lb-cylinder-v9 .atlas-research .node-overline{color:#7A5A2E!important}
+.studio.atlas-shell .lb-cylinder-v9 .atlas-research h2{color:#211D18!important}
+.studio.atlas-shell .lb-cylinder-v9 .atlas-research .research-card-body small{color:#5E5446!important}
+/* Notes are slips of paper taped into the book */
+.studio.atlas-shell .lb-cylinder-v9 .atlas-research .research-stack>span{
+  position:relative;background:#FFFDF7!important;color:#3A332A!important;border:0!important;
+  box-shadow:0 1px 1px rgba(60,40,20,.12),0 6px 10px -6px rgba(60,40,20,.35)!important;
+  font:500 10px/1.4 "DM Mono",monospace!important;padding:9px 10px!important;
+}
+.studio.atlas-shell .lb-cylinder-v9 .atlas-research .research-stack>span:nth-child(1){transform:rotate(-1.4deg)}
+.studio.atlas-shell .lb-cylinder-v9 .atlas-research .research-stack>span:nth-child(2){transform:rotate(1.1deg) translateX(6px)}
+.studio.atlas-shell .lb-cylinder-v9 .atlas-research .research-stack>span::before{
+  content:"";position:absolute;left:50%;top:-6px;width:34px;height:11px;transform:translateX(-50%) rotate(-3deg);
+  background:var(--lt-tex-tape,rgba(231,223,199,.85)) center/100% 100% no-repeat;opacity:.95;
+  clip-path:polygon(3% 0,97% 6%,100% 40%,96% 100%,2% 94%,0 50%);
+}
+.studio.atlas-shell .lb-cylinder-v9 .atlas-research>.node-footer{color:#B3261A!important;border-top-color:rgba(179,38,26,.45)!important}
+
+/* --- 03A Screenplay: the lit page, brightest frame on the drum --------------- */
+.studio.atlas-shell .lb-cylinder-v9 .lb-cylinder-script .atlas-script{
+  color:#1F1B16!important;
+  background:
+    radial-gradient(ellipse 80% 60% at 50% 38%,#FFFFFF 0%,#FBF6EC 55%,#EFE6D4 100%)!important;
+}
+.studio.atlas-shell .lb-cylinder-v9 .atlas-script .node-overline{color:#B3261A!important;border-color:rgba(179,38,26,.4)!important}
+.studio.atlas-shell .lb-cylinder-v9 .atlas-script h2{color:#1A1714!important}
+.studio.atlas-shell .lb-cylinder-v9 .atlas-script>p{color:#6A6154!important}
+.studio.atlas-shell .lb-cylinder-v9 .atlas-script .script-page-preview{
+  background:#FFFFFF!important;border:1px solid rgba(31,27,22,.12)!important;
+  box-shadow:0 1px 1px rgba(31,27,22,.08),0 14px 20px -12px rgba(31,27,22,.45)!important;
+}
+/* The scene count is circled in grease pencil */
+.studio.atlas-shell .lb-cylinder-v9 .atlas-script .script-page-preview em{
+  position:relative;color:#1F1B16!important;
+}
+.studio.atlas-shell .lb-cylinder-v9 .atlas-script .script-page-preview em::after{
+  content:"";position:absolute;inset:-6px -10px;pointer-events:none;
+  background:var(--lt-circle) center/100% 100% no-repeat;
+}
+.studio.atlas-shell .lb-cylinder-v9 .atlas-script>.node-footer{
+  background:#D4301F!important;color:#fff!important;border-radius:3px!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.22),0 8px 16px -8px rgba(212,48,31,.8)!important;
+}
+
+/* --- 04A Visual language: the projected frame -------------------------------- */
+.studio.atlas-shell .lb-cylinder-v9 .lb-cylinder-visual .atlas-visual{
+  color:#EDE8DE!important;padding-top:30px!important;
+  background:
+    linear-gradient(90deg,#1FA3C4 0 12.5%,#C2367F 12.5% 25%,#E9C531 25% 37.5%,#D4301F 37.5% 50%,#3E9A4E 50% 62.5%,#2D4FA2 62.5% 75%,#F4F1EA 75% 87.5%,#141414 87.5%) 0 0/100% 7px no-repeat,
+    radial-gradient(ellipse 90% 70% at 50% 40%,#25221F 0%,#161513 70%,#0F0E0D 100%)!important;
+}
+.studio.atlas-shell .lb-cylinder-v9 .atlas-visual .node-overline{color:#C9C1B3!important}
+.studio.atlas-shell .lb-cylinder-v9 .atlas-visual h2{color:#F7F2E8!important}
+.studio.atlas-shell .lb-cylinder-v9 .atlas-visual .atlas-visual-scenes>span{
+  background:rgba(255,255,255,.04)!important;border-top:1px solid rgba(237,232,222,.18)!important;color:#EDE8DE!important;
+}
+.studio.atlas-shell .lb-cylinder-v9 .atlas-visual .atlas-visual-scenes>span i{
+  background:transparent!important;color:var(--za-edge-print)!important;border:1px solid rgba(232,130,63,.5)!important;
+  font-family:"Big Shoulders Display","DM Mono",sans-serif!important;font-weight:600!important;font-style:normal!important;
+}
+.studio.atlas-shell .lb-cylinder-v9 .atlas-visual .atlas-visual-scenes>span :is(strong){color:#F7F2E8!important}
+.studio.atlas-shell .lb-cylinder-v9 .atlas-visual .atlas-visual-scenes>span :is(small){color:#A8A090!important}
+.studio.atlas-shell .lb-cylinder-v9 .atlas-visual .atlas-visual-board-footer{color:#C9C1B3!important;border-color:rgba(237,232,222,.3)!important}
+
+/* --- 05A Foundation: orange negative base, a light leak for the spark -------- */
+.studio.atlas-shell .lb-cylinder-v9 .lb-cylinder-foundation .atlas-foundation{
+  color:#2A1608!important;
+  background:
+    radial-gradient(ellipse 60% 45% at 100% 0%,rgba(255,236,170,.75) 0%,rgba(255,170,90,.35) 35%,transparent 70%),
+    radial-gradient(ellipse 40% 30% at 0% 100%,rgba(212,48,31,.35) 0%,transparent 70%),
+    linear-gradient(165deg,#E99A55 0%,#DA7B3B 50%,#C8642C 100%)!important;
+}
+.studio.atlas-shell .lb-cylinder-v9 .atlas-foundation .node-overline{color:#4A250C!important;border-color:rgba(42,22,8,.4)!important}
+.studio.atlas-shell .lb-cylinder-v9 .atlas-foundation h2{color:#1F0F05!important}
+.studio.atlas-shell .lb-cylinder-v9 .atlas-foundation .spark-note{
+  background:rgba(255,244,228,.78)!important;border-left:3px solid #D4301F!important;
+  box-shadow:0 8px 14px -10px rgba(60,20,0,.6)!important;
+}
+.studio.atlas-shell .lb-cylinder-v9 .atlas-foundation .spark-note small{color:#8A3A14!important;font-family:"DM Mono",monospace!important;letter-spacing:.16em!important}
+.studio.atlas-shell .lb-cylinder-v9 .atlas-foundation .spark-note p{color:#2A1608!important}
+.studio.atlas-shell .lb-cylinder-v9 .atlas-foundation>.node-footer{color:#2A1608!important;border-top-color:rgba(42,22,8,.45)!important}
+
+/* --- Frame controls under the drum ---------------------------------------------- */
+.lb-cylinder-v9 .lb-cylinder-controls>button{
+  background:rgba(255,255,255,.04)!important;color:var(--za-ink-light)!important;
+  border:1px solid rgba(241,236,226,.24)!important;box-shadow:none!important;
+}
+.lb-cylinder-v9 .lb-cylinder-controls>button:hover,
+.lb-cylinder-v9 .lb-cylinder-controls>button:focus-visible{background:rgba(255,255,255,.08)!important;border-color:var(--za-edge-print)!important;color:#fff!important}
+.lb-cylinder-v9 .lb-cylinder-control-label{color:var(--za-ink-light)!important}
+.lb-cylinder-v9 .lb-cylinder-dots i{background:rgba(241,236,226,.25)!important}
+.lb-cylinder-v9 .lb-cylinder-dots i.is-current{background:#E3412E!important;box-shadow:0 0 0 3px rgba(227,65,46,.22),0 0 10px rgba(240,110,60,.7)!important}
+.lb-cylinder-v9 .lb-cylinder-counter{color:var(--za-edge-print)!important}
+
+/* The Android line at the foot of the room */
+.studio.atlas-shell.lb-cylinder-atlas .lb-android-footer{border-top-color:rgba(241,236,226,.14)!important;color:var(--za-edge-print)!important}
+.studio.atlas-shell.lb-cylinder-atlas .lb-android-footer a{color:var(--za-ink-light)!important}
+.studio.atlas-shell .lb-android-footer{border:0!important;border-top:1px solid rgba(241,236,226,.14)!important;background:transparent!important;background-image:none!important;box-shadow:none!important;border-radius:0!important}
+/* Every frame's overline icons take the frame's own ink */
+.studio.atlas-shell .lb-cylinder-v9 .lb-cylinder-source .node-overline svg{color:inherit!important;stroke:currentColor!important}

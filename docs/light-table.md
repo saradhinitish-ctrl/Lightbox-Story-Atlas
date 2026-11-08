@@ -41,3 +41,16 @@ Instrument Serif (titles), DM Sans (interface), DM Mono (edge print and labels),
 ## Untouched, and verified
 - **Story Cylinder:** a computed-style diff of all 143 card elements at 1440px and 390px shows 0 differences, and `tests/story-cylinder-qa.mjs` passes 8/8. Only the table, the title and the frame controls around it changed. The lime accents inside the cards are part of the cylinder and were left alone.
 - **Screenplay page:** a computed-style diff shows 0 differences.
+
+## The Atlas: a zoetrope in the viewing room
+`light-table-atlas.css`. A spinning cylinder of frames is a zoetrope, so the Atlas is a dark viewing room with the drum standing on a pool of light from the table below. Each card is a length of 35mm film: sprocket holes down both sides, orange edge print with a frame number along the top, and a red-orange halation glow at its edges. Frames turned away are dimmer; the frame facing you is fully lit.
+
+| Frame | Card | Process |
+|---|---|---|
+| 01A | World | Cyanotype: blueprint blue with map contour lines. Rows light up on hover. |
+| 02A | Field notes | A graph-paper notebook with a red margin rule; notes are taped-in slips |
+| 03A | Screenplay | The lit page. The scene count is circled in grease pencil; red "Enter writing room" button. |
+| 04A | Visual language | A projected frame with a colour-control strip along the top |
+| 05A | Foundation | Orange negative film base with a light leak, the spark |
+
+Only the cylinder's look changed. Its geometry, motion, canvas and script (`story-cylinder-v9.*`) are untouched, and `tests/story-cylinder-qa.mjs` passes 8/8.

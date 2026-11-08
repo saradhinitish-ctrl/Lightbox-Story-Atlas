@@ -42,23 +42,39 @@ Instrument Serif (titles), DM Sans (interface), DM Mono (edge print and labels),
 - **Screenplay page:** a computed-style diff shows 0 differences.
 
 ## The Atlas cards
-`light-table-atlas.css`. The Atlas sits on the same light table as every other screen. All five cylinder cards share one design:
-- a white rounded card (14px radius)
-- a red frame number (`01A` to `05A`) and a small label over a thin red rule
-- the title in Instrument Serif
-- rows with red numbers that take a red wash and a red edge on hover
-- a red action at the foot
+`light-table-atlas.css` styles them; `story-cylinder-v9.js` (`shape()`) re-lays each card's replica into one skeleton. Text is read from the native React card with `textContent`, so data stays live and nothing is written back.
 
-Each card also has its own signature element, drawn from its job, in its own shade of red on cotton card stock (`assets/textures/card.webp`). Its shade shows as a coloured top edge, and the shades run dark to light around the drum:
+### Anatomy (shared by all five)
+| Slot | Spec |
+|---|---|
+| Edge | 12px radius, 1px ink hairline at 10%, cotton card stock (`card.webp`), 3px top edge in the card's shade |
+| Head | 33px: frame number (Big Shoulders 13px, red) · label (DM Mono 9px, .16em) · ↗, over a hairline with a 22px red tick |
+| Title | Instrument Serif, `clamp(36px, 2.75vw, 42px)` / .98, -.035em; 18px below the head |
+| Meta | DM Sans 11.5px, muted, one line; 8px below the title |
+| Preview | Fills the remaining height (16px above, 12px below) and clips cleanly |
+| Foot | 48px on a full-bleed rule; the action in DM Sans 600 12.5px red and a → that leans in on hover |
 
-| Card | Shade | Element |
+Spacing runs on 4px steps. Short screens (`.is-compact`, card under 346px) tighten the same skeleton and drop the meta line.
+
+### Previews
+| Card | Shade | Preview |
 |---|---|---|
-| 01A World | Oxblood `#7E1A14` | A red survey map: contour lines, a dotted route and a map pin |
-| 02A Field notes | Brick `#A3241A` | Red-ruled ledger paper with a double margin line; a red paperclip on the notes |
-| 03A Screenplay | Signal red `#D4301F` | A bound script: a stack of pages held by two brads; the scene count circled in grease pencil |
-| 04A Visual language | Scarlet `#E5483A` | A strip of six red colour chips and a halftone dot field |
-| 05A Foundation | Blush `#EE9A91` | The spark: a soft red sunburst and a four-point star |
+| 01A World | Oxblood `#7E1A14` | A survey sheet with a pin over the Characters / Locations / Objects index |
+| 02A Field notes | Brick `#A3241A` | Two index cards on a red thread. Empty prompts are muted; an "Untitled document" shows as *Untitled note* with a pencilled "needs a title" |
+| 03A Screenplay | Signal red `#D4301F` | Page 1 in Courier Prime on a short stack, with brads, and the scene count underlined in grease pencil |
+| 04A Visual language | Scarlet `#E5483A` | Scene frames (letterboxed when empty) over a six-key colour script |
+| 05A Foundation | Blush `#EE9A91` | Empty: a logline in four blanks (When / a / must / or else). Written: the premise, with a word count |
 
-The palette is white, ink and grease-pencil red only. The former film-edge orange now resolves to the same red everywhere.
+### Depth
+The active card lifts 9px with a long ambient shadow (`.lb-cylinder-lift`, opacity-driven). Each step away, a card shrinks by about 4% and a veil in the table's tone (`.lb-cylinder-veil`) rises to 26%, then to 80% for the far pair. Only transform and opacity animate. Reduced motion snaps.
 
-Only the cylinder's look changed. Its geometry, motion, canvas and script (`story-cylinder-v9.*`) are untouched, and `tests/story-cylinder-qa.mjs` passes 8/8.
+### The desk
+The desk (`.lbx-desk`) is aria-hidden and pointer-events:none apart from the slate and the tally:
+- **Slate** (top-left): a slug line that reads the hour (`INT. WRITING ROOM — DAWN/DAY/DUSK/NIGHT`). The scene number follows the active card. Click for another take; take 07 is circled, "print it."
+- **Tally** (bottom-left, by the arrows): grease-pencil tally marks for the days you've opened the Atlas (`localStorage: lightbox.desk.days`). Hover to read them.
+- **Coffee ring** with the script supervisor's note "cont. — cup was full in the wide" (left margin, 1240px and wider)
+- **"1 page ≈ 1 minute"**, pencilled in the right margin (1240px and wider)
+- **Registration marks** at the sheet's corners, and **DO NOT SCALE** by the last one
+- **Edge print** down the right margin: `LBX 0001 ▸ 24 FPS ▸ 180° SHUTTER ▸ 1.85 : 1 ▸ SHEET 01` (1100px and wider)
+
+`tests/story-cylinder-qa.mjs` passes 8/8.

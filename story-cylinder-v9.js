@@ -633,6 +633,8 @@
     const frame = (now) => {
       s.frame = 0;
       if (!s.host.isConnected) return;
+      if (now - prev > 50) s.jank = (s.jank || 0) + 1;
+      else if (s.jank) s.jank = Math.max(0, s.jank - .05);
       const delta = clamp(now - prev, 1, 50);
       prev = now;
       const error = s.target - s.value;
@@ -667,6 +669,47 @@
   }
   function snap(s, projected = 0) { aim(s, Math.round(s.target + projected)); }
 
+  /* ---- Push-in ---------------------------------------------------------------
+   * Entering a room from the light table is a dolly in: the lit card grows to
+   * fill the workspace and becomes the room (View Transitions, shared element).
+   * Only the clicked card carries the name, and only until the old view is
+   * captured; the room's <main> takes it for the new view, so the name is
+   * never on two elements at once. Reduced motion: a short cross-fade.
+   * A heavy page or a browser without the API: straight in, as before.
+   */
+  const PUSH = 'lbx-push';
+  let lastLongTask = 0, longTasks = 0;
+  try {
+    new PerformanceObserver((list) => { for (const e of list.getEntries()) { lastLongTask = e.startTime + e.duration; longTasks++; } })
+      .observe({ type: 'longtask', buffered: false });
+  } catch {}
+  function heavyPage(s) {
+    const nav = navigator;
+    if (nav.connection?.saveData) return true;
+    if ((nav.hardwareConcurrency || 8) <= 2 || (nav.deviceMemory || 8) <= 2) return true;
+    if (s.jank >= 3) return true;                                    // slow frames while the table moved
+    if (performance.now() - lastLongTask < 1500) return true;        // the main thread is busy right now
+    return document.getElementsByTagName('*').length > 6000;         // a very large document to snapshot
+  }
+  function pushIn(s, i, complete) {
+    const fade = prefersReduced.matches;
+    const plaque = s.cards[i].querySelector('.lb-cylinder-plaque');
+    if (!fade) plaque.style.viewTransitionName = PUSH;
+    const html = document.documentElement;
+    html.classList.add(fade ? 'lbx-push-fade' : 'lbx-push-active');
+    let transition;
+    try {
+      transition = document.startViewTransition(async () => {
+        plaque.style.viewTransitionName = '';
+        complete();
+        // React commits the room in a microtask after the native click; wait for it.
+        for (let t = 0; t < 20 && root.querySelector('.story-atlas'); t++) await new Promise((r) => setTimeout(r, 15));
+        if (!fade) html.classList.add('lbx-push-target');
+      });
+    } catch { plaque.style.viewTransitionName = ''; html.classList.remove('lbx-push-active', 'lbx-push-fade'); complete(); return; }
+    transition.finished.finally(() => html.classList.remove('lbx-push-active', 'lbx-push-fade', 'lbx-push-target'));
+  }
+
   function openCard(s, i, destination) {
     if (opening || !s.host.isConnected) return;
     opening = true;
@@ -679,6 +722,8 @@
       opening = false;
       sync();
     };
+    const centred = Math.abs(s.value - s.target) < .05;
+    if (isRack() && centred && typeof document.startViewTransition === 'function' && !heavyPage(s)) { pushIn(s, i, complete); return; }
     if (prefersReduced.matches) { complete(); return; }
     const delay = Math.abs(s.value - s.target) > .2 ? 210 : 95;
     setTimeout(complete, delay);
@@ -988,6 +1033,11 @@
       returnButton.setAttribute('aria-label','Return to Story Cylinder');
       returnButton.addEventListener('click', () => root.querySelector('.studio.atlas-shell .app-wordmark')?.click());
       document.body.append(returnButton);
+    }
+    const backLabel = isRack() ? '← STORY ATLAS' : '← STORY CYLINDER';
+    if (returnButton.textContent !== backLabel) {
+      returnButton.textContent = backLabel;
+      returnButton.setAttribute('aria-label', isRack() ? 'Return to the Story Atlas' : 'Return to Story Cylinder');
     }
     returnButton.hidden = !(hasEnteredAtlas && studio && !atlas
       && !studio.classList.contains('composition')

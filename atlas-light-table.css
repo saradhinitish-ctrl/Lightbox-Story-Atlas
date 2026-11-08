@@ -209,3 +209,32 @@
 .studio.atlas-shell .lb-cylinder-v9 .lbx .lbx-preview--continue>.lbx-lines{padding:10px 14px 11px!important}
 .studio.atlas-shell .lb-cylinder-v9 .lbx .lbx-lines>.lbx-line{text-align:left!important}
 .studio.atlas-shell .lb-cylinder-v9 .lbx .lbx-lines>.lbx-line--transition{text-align:right!important}
+
+/* --- Push-in: the lit card becomes the room ---------------------------------- */
+/* The room's <main> takes the name only after the old view is captured
+   (html.lbx-push-target is set inside the transition's update callback). */
+html.lbx-push-target .studio .main-editor{view-transition-name:lbx-push}
+::view-transition-group(lbx-push){
+  animation-duration:.56s;animation-timing-function:cubic-bezier(.25,.75,.15,1);
+  overflow:clip;border-radius:12px
+}
+/* Both pictures fill the moving frame; the card hands over to the room early
+   so it reads as one surface pushing in, not two layers swapping. */
+::view-transition-old(lbx-push),
+::view-transition-new(lbx-push){height:100%;width:100%;object-fit:cover;object-position:50% 0}
+::view-transition-old(lbx-push){animation:lbx-push-out .32s cubic-bezier(.4,0,.6,1) both}
+::view-transition-new(lbx-push){animation:lbx-push-in .32s cubic-bezier(.3,.6,.3,1) .04s both}
+@keyframes lbx-push-out{to{opacity:0}}
+@keyframes lbx-push-in{from{opacity:0}}
+/* The dark chrome stays put: it is the same in both views, so it is its own
+   layer during the push (one element, only while the push runs). */
+html:is(.lbx-push-active,.lbx-push-fade) .studio .app-header{view-transition-name:lbx-chrome}
+::view-transition-group(lbx-chrome){animation:none;z-index:2}
+::view-transition-old(lbx-chrome){animation:none;opacity:0}
+::view-transition-new(lbx-chrome){animation:none}
+/* The rest of the table gives way behind the push */
+html.lbx-push-active::view-transition-old(root){animation:lbx-push-out .34s ease both}
+html.lbx-push-active::view-transition-new(root){animation:lbx-push-in .34s ease both}
+/* Reduced motion: no growth, a short cross-fade of the whole view */
+html.lbx-push-fade::view-transition-old(root){animation:lbx-push-out .18s linear both}
+html.lbx-push-fade::view-transition-new(root){animation:lbx-push-in .18s linear both}

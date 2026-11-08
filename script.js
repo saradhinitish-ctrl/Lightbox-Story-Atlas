@@ -12765,7 +12765,7 @@
       }
       var objectIs = "function" === typeof Object.is ? Object.is : is;
       var useState13 = React3.useState;
-      var useEffect12 = React3.useEffect;
+      var useEffect13 = React3.useEffect;
       var useLayoutEffect2 = React3.useLayoutEffect;
       var useDebugValue2 = React3.useDebugValue;
       function useSyncExternalStore$2(subscribe, getSnapshot) {
@@ -12778,7 +12778,7 @@
           },
           [subscribe, value, getSnapshot]
         );
-        useEffect12(
+        useEffect13(
           function() {
             checkIfSnapshotChanged(inst) && forceUpdate({ inst });
             return subscribe(function() {
@@ -12831,12 +12831,12 @@
       }
       var objectIs = "function" === typeof Object.is ? Object.is : is;
       var useSyncExternalStore2 = shim.useSyncExternalStore;
-      var useRef11 = React3.useRef;
-      var useEffect12 = React3.useEffect;
+      var useRef12 = React3.useRef;
+      var useEffect13 = React3.useEffect;
       var useMemo5 = React3.useMemo;
       var useDebugValue2 = React3.useDebugValue;
       exports.useSyncExternalStoreWithSelector = function(subscribe, getSnapshot, getServerSnapshot, selector, isEqual) {
-        var instRef = useRef11(null);
+        var instRef = useRef12(null);
         if (null === instRef.current) {
           var inst = { hasValue: false, value: null };
           instRef.current = inst;
@@ -12876,7 +12876,7 @@
           [getSnapshot, getServerSnapshot, selector, isEqual]
         );
         var value = useSyncExternalStore2(subscribe, instRef[0], instRef[1]);
-        useEffect12(
+        useEffect13(
           function() {
             inst.hasValue = true;
             inst.value = value;
@@ -62955,25 +62955,158 @@ ${prefix}
   }
 
   // components/beat-timeline.tsx
+  var ReactBeat = __toESM(require_react(), 1);
   var import_react16 = __toESM(require_react(), 1);
+
+  // lib/scene-runtime.ts
+  init_screenplay_layout();
+  var RUNTIME_LINE_SECONDS = 60 / SCRIPT_PROFILE.lines;
+  var RUNTIME_WORDS_PER_SECOND = 2.6;
+  var RUNTIME_PLACEHOLDER_MINUTES = 1;
+  var RUNTIME_EIGHTH_LINES = SCRIPT_PROFILE.lines / 8;
+  var runtimeWordCount = (s) => s.trim().split(/\s+/).filter(Boolean).length;
+  var runtimeLineCount = (b) => wrapScript(scriptText(b), COLUMN_CHARS[b.type]).length;
+  function hasPages(blocks) {
+    return blocks.some((b) => b.type !== "scene" && b.text.trim());
+  }
+  function blockSeconds(b) {
+    if (!b.text.trim()) return 0;
+    switch (b.type) {
+      case "scene":
+        return 2;
+      // the establishing beat of a new place
+      case "dialogue":
+        return Math.max(0.8, runtimeWordCount(b.text) / RUNTIME_WORDS_PER_SECOND) + 0.3;
+      case "parenthetical":
+        return 0.8;
+      case "transition":
+        return 1;
+      case "character":
+        return 0;
+      // the cue itself takes no screen time
+      default:
+        return (runtimeLineCount(b) + 1) * RUNTIME_LINE_SECONDS;
+    }
+  }
+  function sceneTiming(scene) {
+    const blocks = scene.blocks.filter((b) => b.text.trim());
+    if (!hasPages(blocks)) {
+      const manual = typeof scene.meta.minutes === "number" && Number.isFinite(scene.meta.minutes);
+      const seconds = (manual ? scene.meta.minutes : RUNTIME_PLACEHOLDER_MINUTES) * 60;
+      return { seconds, source: manual ? "manual" : "placeholder", lines: 0, eighths: 0, dialogue: 0, action: 0 };
+    }
+    let lines = 0, dialogue = 0, action = 0;
+    for (const b of blocks) {
+      lines += runtimeLineCount(b) + (b.type === "dialogue" || b.type === "parenthetical" ? 0 : 1);
+      const s = blockSeconds(b);
+      if (b.type === "dialogue" || b.type === "parenthetical") dialogue += s;
+      else action += s;
+    }
+    return { seconds: dialogue + action, source: "pages", lines, eighths: Math.max(1, Math.round(lines / RUNTIME_EIGHTH_LINES)), dialogue, action };
+  }
+  function filmTiming(scenes) {
+    const timings = scenes.map(sceneTiming);
+    const sum2 = (pick) => timings.filter(pick).reduce((a, t) => a + t.seconds, 0);
+    return { seconds: sum2(() => true), written: sum2((t) => t.source === "pages"), planned: sum2((t) => t.source !== "pages"), placeholders: timings.filter((t) => t.source === "placeholder").length, manual: timings.filter((t) => t.source === "manual").length, scenes: timings };
+  }
+  function formatDuration(seconds) {
+    const s = Math.max(0, Math.round(seconds));
+    if (s < 60) return s + " s";
+    const h2 = Math.floor(s / 3600), m = Math.floor(s % 3600 / 60), r = s % 60;
+    if (h2) return h2 + " h " + String(m).padStart(2, "0") + " min";
+    return r ? m + " min " + String(r).padStart(2, "0") + " s" : m + " min";
+  }
+  function formatTimecode(seconds) {
+    const s = Math.max(0, Math.round(seconds)), h2 = Math.floor(s / 3600), m = Math.floor(s % 3600 / 60), r = String(s % 60).padStart(2, "0");
+    return h2 ? h2 + ":" + String(m).padStart(2, "0") + ":" + r : m + ":" + r;
+  }
+  function formatEighths(eighths) {
+    const whole = Math.floor(eighths / 8), part = eighths % 8;
+    return [whole ? String(whole) : "", part ? part + "/8" : ""].filter(Boolean).join(" ") || "0";
+  }
+  function parseDuration(value) {
+    const t = value.trim().toLowerCase();
+    if (!t) return null;
+    let m = t.match(/^(\d+):([0-5]?\d)$/);
+    if (m) return (Number(m[1]) * 60 + Number(m[2])) / 60;
+    if (/^\d+(\.\d+)?$/.test(t)) return Number(t);
+    m = t.match(/^(?:(\d+(?:\.\d+)?)\s*m(?:in(?:ute)?s?)?)?\s*(?:(\d+(?:\.\d+)?)\s*s(?:ec(?:ond)?s?)?)?$/);
+    if (m && (m[1] || m[2])) return (Number(m[1] || 0) * 60 + Number(m[2] || 0)) / 60;
+    return null;
+  }
+
+  // components/beat-timeline.tsx
   var import_jsx_runtime15 = __toESM(require_jsx_runtime(), 1);
+  var BEAT_DRAG_TYPE = "application/x-beat-scene";
+  var beatScore = (v) => v ?? 5;
+  var beatPlural = (n, word) => n + " " + word + (n === 1 ? "" : "s");
+  function beatCurve(points) {
+    if (!points.length) return "";
+    let d = `M${points[0][0].toFixed(1)},${points[0][1].toFixed(1)}`;
+    for (let i = 1; i < points.length; i++) {
+      const [x0, y0] = points[i - 1], [x1, y1] = points[i], mx = (x0 + x1) / 2;
+      d += ` C${mx.toFixed(1)},${y0.toFixed(1)} ${mx.toFixed(1)},${y1.toFixed(1)} ${x1.toFixed(1)},${y1.toFixed(1)}`;
+    }
+    return d;
+  }
+  var beatY = (v) => 90 - v * 8;
+  function BeatDurationInput({ minutes, label, onCommit }) {
+    const shown = minutes === void 0 ? "" : formatTimecode(minutes * 60);
+    const [text, setText] = (0, import_react16.useState)(shown);
+    ReactBeat.useEffect(() => setText(shown), [shown]);
+    function commit() {
+      const value = parseDuration(text);
+      if (value === null) {
+        setText(shown);
+        return;
+      }
+      const next = Math.max(0, Math.min(120, Math.round(value * 60) / 60));
+      setText(formatTimecode(next * 60));
+      if (next !== minutes) onCommit(next);
+    }
+    return /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("input", { className: "btl-rt-input", "aria-label": label, title: "Type a time such as 0:45, 90s or 2 (minutes)", placeholder: formatTimecode(RUNTIME_PLACEHOLDER_MINUTES * 60), value: text, onChange: (e) => setText(e.target.value), onBlur: commit, onKeyDown: (e) => {
+      if (e.key === "Enter") e.currentTarget.blur();
+      if (e.key === "Escape") {
+        setText(shown);
+        e.currentTarget.blur();
+      }
+    } });
+  }
+  function BeatRunTime({ timing, minutes, onMinutes }) {
+    if (timing.source === "pages") return /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("span", { className: "btl-rt", title: `Timed from the page: ${formatDuration(timing.dialogue)} of dialogue, ${formatDuration(timing.action)} of action and headings`, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("b", { children: formatDuration(timing.seconds) }),
+      /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("small", { children: [
+        formatEighths(timing.eighths),
+        " pg"
+      ] })
+    ] });
+    return /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("span", { className: "btl-rt is-" + timing.source, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(BeatDurationInput, { minutes, label: "Planned screen time for this unwritten scene", onCommit: onMinutes }),
+      /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("small", { children: timing.source === "manual" ? "planned" : "placeholder" })
+    ] });
+  }
+  function BeatScoreSlider({ label, name, value, onChange }) {
+    return /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("label", { className: "btl-score", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("span", { children: label }),
+      /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("input", { type: "range", min: "0", max: "10", step: "1", "aria-label": name, value, style: { "--v": value * 10 + "%" }, onChange: (e) => onChange(Number(e.target.value)) }),
+      /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("b", { "aria-hidden": "true", children: value })
+    ] });
+  }
   function BeatTimeline({ project, onBeat, onOrder, onAdd, onOpen, onDelete, onSave, saving, saveLabel }) {
-    const [mode, setMode] = (0, import_react16.useState)("emotion"), [character, setCharacter] = (0, import_react16.useState)("");
+    const [character, setCharacter] = (0, import_react16.useState)(""), [open, setOpen] = (0, import_react16.useState)({});
+    const rootRef = ReactBeat.useRef(null), refocus = ReactBeat.useRef(""), reveal = ReactBeat.useRef("");
     const scenes = timelineScenes(project), people = profileNodes(project, "character"), places = profileNodes(project, "location"), props = profileNodes(project, "prop");
-    const visible = scenes.filter((s) => !character || [...s.characters, ...s.meta.characters || []].includes(character));
-    const color = (s) => {
-      if (mode === "tension" || mode === "pressure") {
-        const n = (mode === "pressure" ? s.meta.pressure : s.meta.tension) ?? 5;
-        return `hsl(${Math.round(125 - n * 12)}, 33%, 55%)`;
-      }
-      if (mode === "character") {
-        const id = [...s.characters, ...s.meta.characters || []][0];
-        if (!id) return "#8b9091";
-        return `hsl(${[...id].reduce((a, c) => a + c.charCodeAt(0), 0) % 360}, 33%, 57%)`;
-      }
-      return EMOTIONS[s.meta.emotion || "Neutral"] || EMOTIONS.Neutral;
-    };
-    const minutes = scenes.reduce((sum2, s) => sum2 + (s.meta.minutes ?? 1), 0), points = (key2) => scenes.map((s, i) => `${scenes.length < 2 ? 450 : 40 + i * 820 / (scenes.length - 1)},${145 - (s.meta[key2] ?? 5) * 12}`).join(" ");
+    const names2 = new Map(people.map((p) => [p.id, p.title]));
+    const timing = filmTiming(scenes), timeOf = new Map(scenes.map((s, i) => [s.id, timing.scenes[i]]));
+    const cast = (s) => /* @__PURE__ */ new Set([...s.characters, ...s.meta.characters || []]);
+    const visible = scenes.filter((s) => !character || cast(s).has(character));
+    const root = activeDraftRoot(project), customOrder = (project.beatOrders?.[root?.id || ""] || []).length > 0;
+    const number = (id) => String(scenes.findIndex((s) => s.id === id) + 1).padStart(2, "0");
+    const color = (s) => EMOTIONS[s.meta.emotion || "Neutral"] || EMOTIONS.Neutral;
+    const total = timing.seconds || 1, floor = Math.min(0.03, 0.5 / Math.max(1, scenes.length));
+    const raw = timing.scenes.map((t) => Math.max(t.seconds / total, floor)), rawSum = raw.reduce((a, b) => a + b, 0) || 1;
+    const shares = raw.map((v) => v / rawSum), starts = shares.map((_, i) => shares.slice(0, i).reduce((a, b) => a + b, 0));
+    const line = (key2) => scenes.length === 1 ? beatCurve([[150, beatY(beatScore(scenes[0].meta[key2]))], [850, beatY(beatScore(scenes[0].meta[key2]))]]) : beatCurve(scenes.map((s, i) => [(starts[i] + shares[i] / 2) * 1e3, beatY(beatScore(s.meta[key2]))]));
     function move(from2, to) {
       const ids = scenes.map((s) => s.id), start = ids.indexOf(from2), end = ids.indexOf(to);
       if (start < 0 || end < 0 || start === end) return;
@@ -62981,209 +63114,278 @@ ${prefix}
       ids.splice(end, 0, from2);
       onOrder(ids);
     }
-    return /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "director-tool-view beat-view", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("header", { className: "director-tool-heading", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { children: [
-          /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "eyebrow", children: [
+    function step(id, by) {
+      const ids = scenes.map((s) => s.id), i = ids.indexOf(id), j = i + by;
+      if (i < 0 || j < 0 || j >= ids.length) return;
+      refocus.current = id;
+      move(id, ids[j]);
+    }
+    const find2 = (id, attr = "data-scene") => rootRef.current?.querySelector(`.btl-board [${attr}="${CSS.escape(id)}"]`);
+    function link(id) {
+      rootRef.current?.querySelectorAll(".is-linked").forEach((e) => e.classList.remove("is-linked"));
+      if (id) rootRef.current?.querySelectorAll(`[data-scene="${CSS.escape(id)}"]`).forEach((e) => e.classList.add("is-linked"));
+    }
+    function showCard(id) {
+      const card = find2(id);
+      if (!card) {
+        reveal.current = id;
+        setCharacter("");
+        return;
+      }
+      const still = matchMedia("(prefers-reduced-motion: reduce)").matches;
+      card.scrollIntoView({ behavior: still ? "auto" : "smooth", block: "center" });
+      card.classList.remove("is-called");
+      void card.offsetWidth;
+      card.classList.add("is-called");
+      card.querySelector(".btl-title")?.focus({ preventScroll: true });
+    }
+    ReactBeat.useEffect(() => {
+      if (refocus.current) {
+        find2(refocus.current, "data-grip")?.focus();
+        refocus.current = "";
+      }
+      if (reveal.current && find2(reveal.current)) {
+        const id = reveal.current;
+        reveal.current = "";
+        showCard(id);
+      }
+    });
+    function gripKeys(e, id) {
+      const by = e.key === "ArrowLeft" || e.key === "ArrowUp" ? -1 : e.key === "ArrowRight" || e.key === "ArrowDown" ? 1 : 0;
+      if (by) {
+        e.preventDefault();
+        step(id, by);
+      }
+    }
+    function dragOver(e) {
+      if (!e.dataTransfer.types.includes(BEAT_DRAG_TYPE)) return;
+      e.preventDefault();
+      e.dataTransfer.dropEffect = "move";
+      e.currentTarget.classList.add("is-drop");
+    }
+    function drop(e, id) {
+      e.currentTarget.classList.remove("is-drop");
+      const from2 = e.dataTransfer.getData(BEAT_DRAG_TYPE);
+      if (from2) {
+        e.preventDefault();
+        move(from2, id);
+      }
+    }
+    const parts = [timing.written > 0 && formatDuration(timing.written) + " timed from pages", timing.planned > 0 && formatDuration(timing.planned) + " planned" + (timing.placeholders ? ` (${beatPlural(timing.placeholders, "placeholder")})` : "")].filter(Boolean).join(" \xB7 ");
+    const filtered = character ? names2.get(character) || "this character" : "";
+    return /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "btl", ref: rootRef, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("header", { className: "btl-head", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "btl-head-copy", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "btl-eyebrow", children: [
             project.title,
-            " / ",
-            activeDraftRoot(project)?.role === "draft" ? "ORIGINAL DRAFT" : activeDraftRoot(project)?.title
+            /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("span", { "aria-hidden": "true", children: "/" }),
+            root?.role === "draft" ? "Original draft" : root?.title
           ] }),
           /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("h1", { children: "Beat timeline" }),
-          /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("p", { children: "Shape the emotional movement before the pages. Scene headings and linked profiles stay connected to the screenplay." })
+          /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("p", { children: "Plan each scene before the pages. Headings and linked profiles stay connected to the screenplay." })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "tool-save", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("small", { children: saveLabel }),
-          /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("button", { className: "button primary", disabled: saving, onClick: onSave, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "btl-save", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("small", { "aria-live": "polite", children: saveLabel }),
+          /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("button", { className: "btl-btn", disabled: saving, onClick: onSave, children: [
             /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(Save, { size: 14 }),
             saving ? "Saving\u2026" : "Save beats"
           ] })
         ] })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "director-tool-actions", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("button", { className: "button secondary", onClick: onAdd, children: [
-          /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(Plus, { size: 14 }),
-          "Plan a scene"
-        ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("label", { children: [
-          "Color by ",
-          /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("select", { "aria-label": "Beat card colors", value: mode, onChange: (e) => setMode(e.target.value), children: [
-            /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("option", { value: "emotion", children: "Emotional arc" }),
-            /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("option", { value: "tension", children: "Story tension" }),
-            /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("option", { value: "pressure", children: "Character pressure" }),
-            /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("option", { value: "character", children: "Character presence" })
-          ] })
-        ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("select", { "aria-label": "Filter beats by character", value: character, onChange: (e) => setCharacter(e.target.value), children: [
-          /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("option", { value: "", children: "All characters" }),
-          people.map((p) => /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("option", { value: p.id, children: p.title }, p.id))
-        ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("button", { className: "text-button", onClick: () => onOrder([]), children: [
-          /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(RotateCcw, { size: 12 }),
-          "Reset board order"
-        ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("span", { children: [
-          scenes.length,
-          " scenes \xB7 ",
-          minutes.toFixed(1),
-          " planned min"
-        ] })
-      ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "beat-workspace", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("section", { className: "beat-board", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "beat-board-description", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("span", { children: [
-              "SCENE BOARD ",
-              /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("b", { children: [
-                "/ ",
-                String(visible.length).padStart(2, "0")
-              ] })
-            ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("span", { children: scenes.length > 1 ? "Drag cards to reorder the plan." : "The shape of the story starts with a scene." })
-          ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "beat-timeline", role: "list", "aria-label": "Scene beat cards", children: [
-            visible.map((scene, i) => {
-              const selected = /* @__PURE__ */ new Set([...scene.characters, ...scene.meta.characters || []]);
-              return /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("article", { className: "beat-card", role: "listitem", style: { borderTopColor: color(scene) }, draggable: true, onDragStart: (e) => e.dataTransfer.setData("application/x-beat-scene", scene.id), onDragOver: (e) => {
-                if (e.dataTransfer.types.includes("application/x-beat-scene")) e.preventDefault();
-              }, onDrop: (e) => {
-                const id = e.dataTransfer.getData("application/x-beat-scene");
-                if (id) {
-                  e.preventDefault();
-                  move(id, scene.id);
-                }
-              }, children: [
-                /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "beat-number", children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("span", { children: String(scenes.findIndex((s) => s.id === scene.id) + 1).padStart(2, "0") }),
-                  /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("button", { title: "Open scene in screenplay", onClick: () => onOpen(scene.documentId, scene.key), children: /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(ArrowUpRight, { size: 15 }) })
-                ] }),
-                /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("input", { className: "beat-title", "aria-label": "Beat title", value: scene.meta.title || scene.heading, onChange: (e) => onBeat(scene.id, { title: e.target.value }) }),
-                /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("textarea", { rows: 4, "aria-label": "Beat summary for " + scene.heading, placeholder: "What changes in this scene? What turns, breaks, or becomes possible?", value: scene.meta.summary || "", onChange: (e) => onBeat(scene.id, { summary: e.target.value }) }),
-                /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "beat-fields", children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("label", { children: [
-                    "Emotional beat",
-                    /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("select", { value: scene.meta.emotion || "Neutral", onChange: (e) => onBeat(scene.id, { emotion: e.target.value }), children: Object.keys(EMOTIONS).map((v) => /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("option", { children: v }, v)) })
-                  ] }),
-                  /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("label", { children: [
-                    "Planned minutes",
-                    /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("input", { type: "number", min: "0", max: "120", step: "0.5", value: scene.meta.minutes ?? 1, onChange: (e) => onBeat(scene.id, { minutes: Math.max(0, Math.min(120, Number(e.target.value) || 0)) }) })
-                  ] })
-                ] }),
-                /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("label", { className: "beat-slider", children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("span", { children: [
-                    "Story tension ",
-                    /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("b", { children: [
-                      scene.meta.tension ?? 5,
-                      "/10"
-                    ] })
-                  ] }),
-                  /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("input", { type: "range", min: "0", max: "10", value: scene.meta.tension ?? 5, onChange: (e) => onBeat(scene.id, { tension: Number(e.target.value) }) })
-                ] }),
-                /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("label", { className: "beat-slider", children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("span", { children: [
-                    "Character pressure ",
-                    /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("b", { children: [
-                      scene.meta.pressure ?? 5,
-                      "/10"
-                    ] })
-                  ] }),
-                  /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("input", { type: "range", min: "0", max: "10", value: scene.meta.pressure ?? 5, onChange: (e) => onBeat(scene.id, { pressure: Number(e.target.value) }) })
-                ] }),
-                /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "beat-cast", children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("span", { children: "CHARACTERS" }),
-                  /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("div", { children: people.length ? people.map((p) => /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("button", { disabled: scene.characters.includes(p.id), title: scene.characters.includes(p.id) ? "Linked in the screenplay" : "Toggle planned character presence", "aria-pressed": selected.has(p.id), className: selected.has(p.id) ? "selected" : "", onClick: () => {
-                    const manual = new Set(scene.meta.characters || []);
-                    if (manual.has(p.id)) manual.delete(p.id);
-                    else manual.add(p.id);
-                    onBeat(scene.id, { characters: [...manual] });
-                  }, children: [
-                    p.title,
-                    scene.characters.includes(p.id) && /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("small", { children: " \xB7 script" })
-                  ] }, p.id)) : /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("small", { children: "Add character profiles, then link them here or use @Name in the script." }) })
-                ] }),
-                props.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "beat-cast", children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("span", { children: "PROPS" }),
-                  /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("div", { children: props.map((p) => {
-                    const linked = scene.props.includes(p.id), selected2 = linked || (scene.meta.props || []).includes(p.id);
-                    return /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("button", { disabled: linked, title: linked ? "Linked in the screenplay" : "Toggle planned prop presence", "aria-pressed": selected2, className: selected2 ? "selected" : "", onClick: () => onBeat(scene.id, { props: selected2 ? (scene.meta.props || []).filter((id) => id !== p.id) : [...scene.meta.props || [], p.id] }), children: [
-                      p.title,
-                      linked && /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("small", { children: " \xB7 script" })
-                    ] }, p.id);
-                  }) })
-                ] }),
-                /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("label", { className: "beat-location", children: [
-                  "LOCATION",
-                  /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("select", { value: scene.meta.location || scene.locations[0] || "", onChange: (e) => onBeat(scene.id, { location: e.target.value }), children: [
-                    /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("option", { value: "", children: "Not assigned" }),
-                    places.map((p) => /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("option", { value: p.id, children: p.title }, p.id))
-                  ] })
-                ] }),
-                /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("footer", { children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("button", { className: "delete-control", "aria-label": "Delete beat " + (scene.meta.title || scene.heading), onClick: () => onDelete(scene.id), children: [
-                    /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(Trash, { size: 12 }),
-                    "Delete beat"
-                  ] }),
-                  /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("button", { onClick: () => onOpen(scene.documentId, scene.key), children: [
-                    /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(Film, { size: 12 }),
-                    "Open scene"
-                  ] })
-                ] })
-              ] }, scene.id);
-            }),
-            /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("button", { className: "beat-add-card", onClick: onAdd, children: [
-              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(Plus, { size: 24, strokeWidth: 1 }),
-              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("span", { children: "Plan the next scene" })
-            ] })
-          ] }),
-          !visible.length && scenes.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("div", { className: "empty-small", children: "No scenes match this character yet." })
-        ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("aside", { className: "beat-insights", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "beat-insight-label", children: [
-            "THE SHAPE OF THE FILM ",
-            /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("span", { children: "01 / 02" })
-          ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "beat-arc", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("div", { children: /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("strong", { children: "Pressure across the film" }) }),
-            scenes.length > 1 ? /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("svg", { viewBox: "0 0 900 170", role: "img", "aria-label": "Planned story tension and character pressure across scene order", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("line", { x1: "40", x2: "860", y1: "25", y2: "25" }),
-              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("line", { x1: "40", x2: "860", y1: "85", y2: "85" }),
-              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("line", { x1: "40", x2: "860", y1: "145", y2: "145" }),
-              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("text", { x: "4", y: "29", children: "10" }),
-              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("text", { x: "12", y: "149", children: "0" }),
-              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("polyline", { className: "arc-tension", points: points("tension") }),
-              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("polyline", { className: "arc-pressure", points: points("pressure") }),
-              scenes.map((s, i) => /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("circle", { cx: 40 + i * 820 / (scenes.length - 1), cy: 145 - (s.meta.tension ?? 5) * 12, r: "4" }, s.id))
-            ] }) : /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "beat-arc-beginning", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("span", { className: "arc-opening-mark", children: "01" }),
-              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("p", { children: scenes.length ? "One scene is a beginning. Add the next turn to see the pressure move." : "Plan your opening scene to start tracing the story." })
-            ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "beat-arc-legend", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("section", { className: "btl-reel", "aria-label": "The shape of the film", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "btl-reel-head", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("h2", { className: "btl-label", children: "The shape of the film" }),
+            /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "btl-legend", "aria-hidden": scenes.length < 1, children: [
               /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("span", { children: [
-                /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("i", { className: "arc-tension" }),
+                /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("i", { className: "is-tension" }),
                 "Story tension"
               ] }),
               /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("span", { children: [
-                /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("i", { className: "arc-pressure" }),
+                /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("i", { className: "is-pressure" }),
                 "Character pressure"
               ] })
             ] })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "beat-plan-facts", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { children: [
-              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("small", { children: "PLANNED SCENES" }),
-              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("strong", { children: String(scenes.length).padStart(2, "0") })
-            ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { children: [
-              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("small", { children: "ESTIMATED RUN TIME" }),
-              /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("strong", { children: [
-                minutes.toFixed(1),
-                " ",
-                /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("em", { children: "min" })
-              ] })
-            ] })
+          /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "btl-runtime", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("span", { className: "btl-label", children: "Running time" }),
+            /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("strong", { children: scenes.length ? formatDuration(timing.seconds) : "\u2014" }),
+            parts && /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("small", { children: parts })
+          ] })
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("div", { className: "btl-strip", children: scenes.length ? /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)(import_jsx_runtime15.Fragment, { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("div", { className: "btl-frames", children: scenes.map((s, i) => {
+            const t = timing.scenes[i], dim = character && !cast(s).has(character);
+            return /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("button", { type: "button", "data-scene": s.id, className: "btl-cell" + (t.source !== "pages" ? " is-planned" : "") + (dim ? " is-dim" : ""), style: { width: shares[i] * 100 + "%", "--beat": color(s) }, "aria-label": `Scene ${number(s.id)}: ${s.meta.title || s.heading}, ${formatDuration(t.seconds)}${t.source === "pages" ? "" : " " + (t.source === "manual" ? "planned" : "placeholder")}, ${s.meta.emotion || "Neutral"}. Show its card`, title: `${number(s.id)}  ${s.meta.title || s.heading}
+${formatDuration(t.seconds)}${t.source === "pages" ? "" : " (" + (t.source === "manual" ? "planned" : "placeholder") + ")"} \xB7 ${s.meta.emotion || "Neutral"} \xB7 tension ${beatScore(s.meta.tension)} \xB7 pressure ${beatScore(s.meta.pressure)}`, onClick: () => showCard(s.id), onMouseEnter: () => link(s.id), onMouseLeave: () => link(""), onFocus: () => link(s.id), onBlur: () => link(""), children: [
+              shares[i] > 0.045 && /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("span", { className: "btl-cell-no", children: number(s.id) }),
+              shares[i] > 0.085 && /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("span", { className: "btl-cell-time", children: formatDuration(t.seconds) })
+            ] }, s.id);
+          }) }),
+          /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("svg", { className: "btl-arc", viewBox: "0 0 1000 100", preserveAspectRatio: "none", "aria-hidden": "true", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("line", { x1: "0", x2: "1000", y1: beatY(10), y2: beatY(10) }),
+            /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("line", { x1: "0", x2: "1000", y1: beatY(5), y2: beatY(5) }),
+            /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("line", { x1: "0", x2: "1000", y1: beatY(0), y2: beatY(0) }),
+            /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("path", { className: "is-pressure", d: line("pressure") }),
+            /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("path", { className: "is-tension", d: line("tension") })
           ] }),
-          /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("p", { className: "beat-insight-note", children: "The arc follows your own 0\u201310 scores. Minutes are planning estimates you can change on each card." })
-        ] })
+          scenes.length > 1 && /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("div", { className: "btl-dots", "aria-hidden": "true", children: scenes.map((s, i) => /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("i", { className: "btl-dot", "aria-hidden": "true", style: { left: (starts[i] + shares[i] / 2) * 100 + "%", top: beatY(beatScore(s.meta.tension)) + "%" } }, s.id)) })
+        ] }) : /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("p", { className: "btl-leader", children: "Plan your opening scene and the film's shape starts here." }) }),
+        /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "btl-ruler", "aria-hidden": "true", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("span", { children: "0:00" }),
+          /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("span", { children: scenes.length ? beatPlural(scenes.length, "scene") : "" }),
+          /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("span", { children: formatTimecode(scenes.length ? timing.seconds : 0) })
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("p", { className: "btl-method", children: "Written scenes are timed from their pages: dialogue at speaking pace, action by its length on the page. Scenes without pages use the time you plan on their card." })
+      ] }),
+      /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("section", { className: "btl-board", "aria-label": "Scene board", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "btl-board-bar", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("h2", { className: "btl-label", children: [
+            "Scene board ",
+            /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("b", { children: String(visible.length).padStart(2, "0") })
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "btl-tools", children: [
+            customOrder && /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("button", { className: "btl-text", onClick: () => onOrder([]), children: [
+              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(RotateCcw, { size: 12 }),
+              "Screenplay order"
+            ] }),
+            people.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("select", { className: "btl-filter", "aria-label": "Show scenes with a character", value: character, onChange: (e) => setCharacter(e.target.value), children: [
+              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("option", { value: "", children: "All characters" }),
+              people.map((p) => /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("option", { value: p.id, children: p.title }, p.id))
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("button", { className: "btl-btn is-ink", onClick: onAdd, children: [
+              /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(Plus, { size: 14 }),
+              "Plan a scene"
+            ] })
+          ] })
+        ] }),
+        !scenes.length && /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("button", { className: "btl-ghost", onClick: onAdd, children: [
+          /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(Plus, { size: 22, strokeWidth: 1.25 }),
+          /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("span", { children: "Plan the first scene" })
+        ] }),
+        !visible.length && scenes.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("p", { className: "btl-empty", children: [
+          "No scenes with ",
+          filtered,
+          " yet. ",
+          /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("button", { className: "btl-text", onClick: () => setCharacter(""), children: "Show all scenes" })
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("div", { className: "btl-grid", role: "list", children: visible.map((scene) => {
+          const id = scene.id, n = number(id), t = timeOf.get(id), present = cast(scene), emotion = scene.meta.emotion || "Neutral", expanded = !!open[id];
+          const title = scene.meta.title || scene.heading, who = [...present].map((p) => names2.get(p)).filter(Boolean);
+          const panel = "btl-details-" + n;
+          return /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)(
+            "article",
+            {
+              role: "listitem",
+              "data-scene": id,
+              className: "btl-card" + (t.source !== "pages" ? " is-planned" : ""),
+              style: { "--beat": color(scene) },
+              onMouseEnter: () => link(id),
+              onMouseLeave: () => link(""),
+              onDragOver: dragOver,
+              onDragLeave: (e) => e.currentTarget.classList.remove("is-drop"),
+              onDrop: (e) => drop(e, id),
+              children: [
+                /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("span", { className: "btl-tape", "aria-hidden": "true" }),
+                /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("header", { className: "btl-card-head", children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
+                    "button",
+                    {
+                      type: "button",
+                      className: "btl-grip",
+                      "data-grip": id,
+                      draggable: true,
+                      "aria-label": `Move scene ${n}. Drag, or use the arrow keys`,
+                      title: "Drag to reorder",
+                      onDragStart: (e) => {
+                        e.dataTransfer.setData(BEAT_DRAG_TYPE, id);
+                        e.dataTransfer.effectAllowed = "move";
+                        const card = e.currentTarget.closest("article");
+                        if (card) {
+                          e.dataTransfer.setDragImage(card, 28, 28);
+                          requestAnimationFrame(() => card.classList.add("is-dragging"));
+                        }
+                      },
+                      onDragEnd: (e) => e.currentTarget.closest("article")?.classList.remove("is-dragging"),
+                      onKeyDown: (e) => gripKeys(e, id),
+                      children: /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(GripVertical, { size: 14 })
+                    }
+                  ),
+                  /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("span", { className: "btl-num", children: n }),
+                  /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("span", { className: "btl-slug", title: scene.heading, children: title !== scene.heading ? scene.heading : t.source === "pages" ? beatPlural(scene.words, "word") + " on the page" : "Not yet written" }),
+                  /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("button", { type: "button", className: "btl-icon", title: "Open scene in screenplay", "aria-label": "Open scene " + n + " in the screenplay", onClick: () => onOpen(scene.documentId, scene.key), children: /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(ArrowUpRight, { size: 16 }) })
+                ] }),
+                /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("input", { className: "btl-title", "aria-label": "Beat title for scene " + n, value: title, onChange: (e) => onBeat(id, { title: e.target.value }), onFocus: () => link(id) }),
+                /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("textarea", { className: "btl-summary", rows: 3, "aria-label": "Beat summary for " + scene.heading, placeholder: "What changes in this scene? What turns, breaks, or becomes possible?", value: scene.meta.summary || "", onChange: (e) => onBeat(id, { summary: e.target.value }) }),
+                /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "btl-emotion", role: "radiogroup", "aria-label": "Emotional beat", children: [
+                  Object.entries(EMOTIONS).map(([name, c]) => /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("button", { type: "button", role: "radio", "aria-checked": emotion === name, "aria-label": name, title: name, style: { "--c": c }, onClick: () => onBeat(id, { emotion: name }) }, name)),
+                  /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("span", { children: emotion })
+                ] }),
+                /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "btl-scores", children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(BeatScoreSlider, { label: "Tension", name: "Story tension", value: beatScore(scene.meta.tension), onChange: (v) => onBeat(id, { tension: v }) }),
+                  /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(BeatScoreSlider, { label: "Pressure", name: "Character pressure", value: beatScore(scene.meta.pressure), onChange: (v) => onBeat(id, { pressure: v }) })
+                ] }),
+                /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("footer", { className: "btl-card-foot", children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(BeatRunTime, { timing: t, minutes: scene.meta.minutes, onMinutes: (m) => onBeat(id, { minutes: m }) }),
+                  /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("span", { className: "btl-who", title: who.join(", "), children: who.join(", ") }),
+                  /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("button", { type: "button", className: "btl-more", "aria-expanded": expanded, "aria-controls": panel, onClick: () => setOpen((o) => ({ ...o, [id]: !o[id] })), children: [
+                    "Details",
+                    /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(ChevronDown, { size: 13 })
+                  ] })
+                ] }),
+                expanded && /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "btl-details", id: panel, children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "btl-group", children: [
+                    /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("span", { className: "btl-label", children: "Characters" }),
+                    /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("div", { className: "btl-chips", children: people.length ? people.map((p) => {
+                      const scripted = scene.characters.includes(p.id), on = present.has(p.id);
+                      return /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("button", { type: "button", disabled: scripted, "aria-pressed": on, className: on ? "is-on" : "", title: scripted ? "Linked in the screenplay" : "Toggle planned character presence", onClick: () => {
+                        const manual = new Set(scene.meta.characters || []);
+                        if (manual.has(p.id)) manual.delete(p.id);
+                        else manual.add(p.id);
+                        onBeat(id, { characters: [...manual] });
+                      }, children: [
+                        p.title,
+                        scripted && /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("small", { children: "script" })
+                      ] }, p.id);
+                    }) : /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("small", { children: "Add character profiles, then link them here or use @Name in the script." }) })
+                  ] }),
+                  props.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "btl-group", children: [
+                    /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("span", { className: "btl-label", children: "Props" }),
+                    /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("div", { className: "btl-chips", children: props.map((p) => {
+                      const scripted = scene.props.includes(p.id), on = scripted || (scene.meta.props || []).includes(p.id);
+                      return /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("button", { type: "button", disabled: scripted, "aria-pressed": on, className: on ? "is-on" : "", title: scripted ? "Linked in the screenplay" : "Toggle planned prop presence", onClick: () => onBeat(id, { props: on ? (scene.meta.props || []).filter((x) => x !== p.id) : [...scene.meta.props || [], p.id] }), children: [
+                        p.title,
+                        scripted && /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("small", { children: "script" })
+                      ] }, p.id);
+                    }) })
+                  ] }),
+                  /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("label", { className: "btl-group", children: [
+                    /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("span", { className: "btl-label", children: "Location" }),
+                    /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("select", { className: "btl-select", value: scene.meta.location || scene.locations[0] || "", onChange: (e) => onBeat(id, { location: e.target.value }), children: [
+                      /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("option", { value: "", children: "Not assigned" }),
+                      places.map((p) => /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("option", { value: p.id, children: p.title }, p.id))
+                    ] })
+                  ] }),
+                  /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("div", { className: "btl-detail-actions", children: [
+                    /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("button", { type: "button", className: "btl-text", disabled: n === "01", onClick: () => step(id, -1), children: [
+                      /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(ChevronLeft, { size: 13 }),
+                      "Earlier"
+                    ] }),
+                    /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("button", { type: "button", className: "btl-text", disabled: Number(n) === scenes.length, onClick: () => step(id, 1), children: [
+                      "Later",
+                      /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(ChevronRight, { size: 13 })
+                    ] }),
+                    /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)("button", { type: "button", className: "btl-text is-danger", "aria-label": "Delete beat " + title, onClick: () => onDelete(id), children: [
+                      /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(Trash, { size: 12 }),
+                      "Delete beat"
+                    ] })
+                  ] })
+                ] })
+              ]
+            },
+            id
+          );
+        }) })
       ] })
     ] });
   }

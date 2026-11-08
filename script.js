@@ -66033,7 +66033,7 @@ ${formatDuration(t.seconds)}${t.source === "pages" ? "" : " (" + (t.source === "
         const descriptions = { development: "The ideas, questions, and discoveries behind your film.", characters: "The people who bring your story into focus.", locations: "Every place has a part in the story.", props: "Objects, details, and the meaning they carry.", research: "A collection of things worth keeping.", draft: "Scenes in progress. A story taking shape.", "draft-version": "A new perspective on the same story.", trash: "Removed work stays here until you choose what happens next." };
         const singular = { characters: "character", locations: "location", props: "prop", research: "note", development: "note", draft: "scene", "draft-version": "scene" };
         const addLabel = "New " + (singular[section] || "document");
-        return /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "collection-workspace corkboard " + (freeform ? "freeform" : ""), children: [
+        return /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "collection-workspace corkboard " + (freeform ? "freeform" : ""), "data-section": section, children: [
           /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("header", { className: "collection-heading", children: [
             /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { children: [
               /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "collection-eyebrow", children: [
@@ -66097,6 +66097,8 @@ ${formatDuration(t.seconds)}${t.source === "pages" ? "" : " (" + (t.source === "
               }, children: "Save order" })
             ] })
           ] }),
+          // Research board: an empty, stable host that research-board.js draws into (React never renders its children).
+          section === "research" && !searching && /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("div", { className: "lbx-board-host", "data-folder": scope?.id || "" }, "lbx-board-" + (scope?.id || "")),
           /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { className: "card-stage collection-grid", style: freeform ? { minHeight: Math.max(650, ...items.map((n, i) => (n.y ?? Math.floor(i / 3) * 330) + 340)) } : void 0, onDragOver: (e) => {
             if (freeform && dragId) e.preventDefault();
           }, onDrop: (e) => {

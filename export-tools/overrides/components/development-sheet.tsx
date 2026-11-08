@@ -37,7 +37,7 @@ const TAKES:Take[]=[
  {key:'questions',label:'The unknown',short:'Unknown',q:'What don’t you know yet?',hint:'The open questions, the versions you’re torn between, the facts you still need. Unknowns are where research begins.',placeholder:'List what you still have to find out.',notes:['Which unknown, if you answered it, would change everything else?','What are you putting off deciding?','What do you need to see with your own eyes?']}
 ];
 const ONE_BREATH=35;
-const pad=(i:number)=>String(i+1).padStart(2,'0');
+const lbsPad=(i:number)=>String(i+1).padStart(2,'0');
 // Remember the take per foundation for this session, so returning picks up where you left off.
 const lastTake=new Map<string,number>();
 
@@ -86,7 +86,7 @@ export default function DevelopmentSheet({n,patch,children}:{n:DeskNode;patch:Pa
    </div>
    <div className="lbs-slate" aria-hidden="true">
     <span className="lbs-slate-bar" key={view+take}/>
-    <dl><div><dt>ROLL</dt><dd>A</dd></div><div><dt>SC.</dt><dd>{view==='sheet'?'—':pad(take)}</dd></div><div><dt>TK.</dt><dd>01</dd></div></dl>
+    <dl><div><dt>ROLL</dt><dd>A</dd></div><div><dt>SC.</dt><dd>{view==='sheet'?'—':lbsPad(take)}</dd></div><div><dt>TK.</dt><dd>01</dd></div></dl>
     <span className="lbs-slate-count">{done}/{TAKES.length} EXPOSED</span>
    </div>
   </header>
@@ -94,7 +94,7 @@ export default function DevelopmentSheet({n,patch,children}:{n:DeskNode;patch:Pa
   <div className="lbs-bar">
    <div className="lbs-strip" ref={strip} role="toolbar" aria-label="The spark’s eight questions" onKeyDown={stripKeys}>
     {TAKES.map((x,i)=><button key={x.key} type="button" className={'lbs-frame'+(answered[i]?' is-exposed':'')} aria-current={view==='reel'&&i===take?'step':undefined} tabIndex={(view==='reel'?i===take:i===0)?0:-1} onClick={()=>go(i)} title={x.label+(answered[i]?' — written':' — not yet written')}>
-     <b>{pad(i)}A</b><span>{x.short}</span><i aria-hidden="true"/>
+     <b>{lbsPad(i)}A</b><span>{x.short}</span><i aria-hidden="true"/>
     </button>)}
    </div>
    <div className="lbs-views" role="group" aria-label="View">
@@ -105,7 +105,7 @@ export default function DevelopmentSheet({n,patch,children}:{n:DeskNode;patch:Pa
 
   {view==='reel'?<section className="lbs-stage" ref={stage} aria-label={t.label}>
    <div className="lbs-take" key={t.key} data-dir={dir>0?'next':'prev'}>
-    <p className="lbs-slug"><b>SC. {pad(take)}</b><span aria-hidden="true"> — </span>{t.label.toUpperCase()}</p>
+    <p className="lbs-slug"><b>SC. {lbsPad(take)}</b><span aria-hidden="true"> — </span>{t.label.toUpperCase()}</p>
     <label className="lbs-q" htmlFor={'lbs-'+n.id}>{t.q}</label>
     <p className="lbs-hint">{t.hint}</p>
     {t.key==='premise'&&<p className="lbs-guide" aria-label="A shape to try: When something happens, someone must do something, or else it costs them.">
@@ -138,7 +138,7 @@ export default function DevelopmentSheet({n,patch,children}:{n:DeskNode;patch:Pa
    <p className="lbs-sheet-cap">{done===TAKES.length?'Every frame exposed. Circle the ones you’d print.':done?`${done} of ${TAKES.length} frames exposed. Choose a frame to keep shooting.`:'Nothing exposed yet. Choose any frame to begin.'}</p>
    <ol className="lbs-sheet-grid">
     {TAKES.map((x,i)=><li key={x.key}><button type="button" className={'lbs-print'+(answered[i]?' is-exposed':'')} onClick={()=>go(i)}>
-     <span className="lbs-print-head"><b>{pad(i)}A</b>{x.label.toUpperCase()}</span>
+     <span className="lbs-print-head"><b>{lbsPad(i)}A</b>{x.label.toUpperCase()}</span>
      <span className="lbs-print-body">{value(x.key).trim()||x.q}</span>
      <span className="lbs-print-foot">{answered[i]?lbxWordCount(value(x.key))+' words':'Not shot yet'}</span>
     </button></li>)}

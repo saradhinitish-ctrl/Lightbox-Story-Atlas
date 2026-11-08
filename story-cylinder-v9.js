@@ -88,8 +88,146 @@
   const RESEARCH_PROMPTS = ['A question to follow', 'A detail to remember'];
   const PREMISE_PROMPT = 'Add your premise in Story Foundation.';
 
-  function shape(card, id) {
-    const parts = { head: null, title: null, meta: null, body: null, foot: null };
+
+  /* ---- Live status (light table) -------------------------------------------
+   * Read-only figures from the open project through window.LightboxStudio,
+   * the small bridge in script.js. Nothing here writes project data. Without
+   * the bridge (or in Classic view) the cards fall back to their native text.
+   */
+  const FOUNDATION_TAKES = ['seed','world','conflict','premise','theme','tone','logline','questions'];
+  const pad2 = (n) => String(n).padStart(2, '0');
+  const plural = (n, word, many) => n + ' ' + (n === 1 ? word : (many || word + 's'));
+  function sectionNodes(project, role) {
+    const byId = new Map(project.nodes.map((n) => [n.id, n]));
+    const trashed = (n) => { const seen = new Set(); let c = n; while (c && !seen.has(c.id)) { if (c.role === 'trash') return true; seen.add(c.id); c = byId.get(c.parent); } return false; };
+    const root = project.nodes.find((n) => n.role === role);
+    if (!root) return [];
+    const out = [], walk = (id) => project.nodes.filter((n) => n.parent === id).forEach((n) => { if (!trashed(n)) { out.push(n); if (n.kind === 'folder') walk(n.id); } });
+    walk(root.id);
+    return out;
+  }
+  function liveData() {
+    const api = window.LightboxStudio;
+    const project = api?.project?.();
+    if (!project) return null;
+    let scenes = [];
+    try { scenes = api.scenes(); } catch { scenes = []; }
+    const written = scenes.filter((sc) => sc.blocks.some((b) => b.type !== 'scene' && b.text.trim()));
+    // Where the writer stopped: the remembered caret, else the end of the last written scene.
+    let spot = null;
+    try { spot = api.spot(); } catch {}
+    let index = spot ? scenes.findIndex((sc) => sc.documentId === spot.documentId
+      && (spot.sceneKey ? sc.key === spot.sceneKey : sc.key === 'document' || sc.blockIndex === 0)) : -1;
+    if (index < 0 && scenes.length) {
+      const last = written.at(-1) || scenes[0];
+      index = scenes.indexOf(last);
+      const blocks = last.blocks;
+      spot = { documentId: last.documentId, sceneKey: last.key.startsWith('legacy-') || last.key === 'document' ? null : last.key,
+        block: Math.max(0, blocks.length - 1), offset: (blocks.at(-1)?.text || '').length };
+    }
+    const scene = scenes[index] || null;
+    let lines = [];
+    if (scene) {
+      const upTo = clamp(spot?.block ?? scene.blocks.length - 1, 0, scene.blocks.length - 1);
+      lines = scene.blocks.slice(0, upTo + 1)
+        .map((b, i) => ({ type: b.type, text: b.text, caret: i === upTo ? clamp(spot?.offset ?? b.text.length, 0, b.text.length) : -1 }))
+        .filter((b, i) => i > 0 && b.text.trim()).slice(-4);
+    }
+    let timing = null, sceneTime = null;
+    try {
+      const all = scenes.map((sc) => api.timing(sc));
+      timing = { seconds: all.reduce((a, t) => a + t.seconds, 0), written: all.filter((t) => t.source === 'pages').length };
+      sceneTime = scene ? all[index] : null;
+    } catch {}
+    const shaped = scenes.filter((sc) => sc.meta && (sc.meta.title || sc.meta.emotion || sc.meta.tension != null)).length;
+    const notes = sectionNodes(project, 'research').filter((n) => n.kind !== 'folder');
+    const open = notes.filter((n) => (n.fields['research.status'] || 'open') === 'open').length;
+    const takes = FOUNDATION_TAKES.filter((k) => (project.nodes.find((n) => n.fields['development.kind'] === 'foundation')?.fields['development.' + k] || '').trim()).length;
+    const kinds = { character: 0, location: 0, prop: 0 };
+    ['characters', 'locations', 'props'].forEach((role) => sectionNodes(project, role).forEach((n) => { if (n.kind in kinds) kinds[n.kind]++; }));
+    const boards = scenes.filter((sc) => (project.moodboard || []).some((c) => { try { return api.referenceInScene(c, sc.id); } catch { return false; } })).length;
+    return { api, project, scenes, written, spot, index, scene, lines, timing, sceneTime, shaped, notes, open, takes, kinds, boards };
+  }
+  function statusLine(id, d) {
+    if (!d) return '';
+    if (id === 'world') return [plural(d.kinds.character, 'character'), plural(d.kinds.location, 'location'), plural(d.kinds.prop, 'object')].join(' · ');
+    if (id === 'research') return d.notes.length ? plural(d.notes.length, 'note') + ' · ' + plural(d.open, 'open thread') : 'No notes yet';
+    if (id === 'visual') return d.boards + ' of ' + plural(d.scenes.length, 'scene board') + ' started';
+    if (id === 'foundation') return d.takes + ' of 8 takes answered';
+    if (id === 'script') {
+      if (!d.scenes.length) return 'Sequence · not started';
+      const run = d.timing ? ' · ' + d.api.formatDuration(d.timing.seconds) : '';
+      return 'Sequence · ' + d.written.length + ' of ' + plural(d.scenes.length, 'scene') + ' written' + run
+        + (d.shaped ? ' · ' + d.shaped + ' shaped' : '');
+    }
+    return '';
+  }
+  function statusNode(id, d) {
+    const text = statusLine(id, d);
+    if (!text) return null;
+    const line = make('p', 'lbx-status');
+    line.append(make('i', 'lbx-status-dot'), make('span', '', text));
+    return line;
+  }
+  /* The continue card: the last lines written, the scene and its place in the
+   * film, and one clear way back in. */
+  function continueParts(card, d) {
+    const parts = {};
+    const sceneNo = d.scene ? d.index + 1 : 1;
+    const label = (d.lines.length ? 'Continue' : 'Start') + ' Scene ' + pad2(sceneNo);
+    const body = make('div', 'lbx-preview lbx-preview--continue');
+    const where = make('p', 'lbx-where');
+    where.append(make('b', '', 'SC. ' + pad2(sceneNo)), make('span', '', d.scene ? d.scene.heading : 'INT. THE FIRST SCENE — DAY'));
+    const page = make('div', 'lbx-lines');
+    page.setAttribute('aria-label', d.lines.length ? 'The last lines you wrote' : 'No lines written yet');
+    if (d.lines.length) d.lines.forEach((b, i) => {
+      const line = make('p', 'lbx-line lbx-line--' + b.type);
+      // The red caret marks the exact place you stopped (else the end of the last line).
+      const at = b.caret >= 0 ? b.caret : i === d.lines.length - 1 ? b.text.length : -1;
+      const tidy = (t) => t.replace(/\s+/g, ' ');
+      if (at < 0) line.textContent = tidy(b.text).trim();
+      else {
+        line.append(document.createTextNode(tidy(b.text.slice(0, at)).trimStart()), make('i', 'lbx-caret'),
+          document.createTextNode(tidy(b.text.slice(at)).trimEnd()));
+      }
+      page.append(line);
+    });
+    else page.append(make('p', 'lbx-line lbx-line--empty', d.scene ? 'The scene is ready for its first action.' : 'Your first scene begins here.'));
+    // The reel: one frame per scene, as long as its screen time. Written frames
+    // are inked, the current scene is red, unwritten ones are hatched.
+    const reel = make('div', 'lbx-reel');
+    reel.setAttribute('aria-hidden', 'true');
+    const scenes = d.scenes.length ? d.scenes : [null];
+    scenes.forEach((sc, i) => {
+      const frame = make('i', 'lbx-reel-frame'
+        + (sc && d.written.includes(sc) ? ' is-written' : '') + (i === d.index || (!d.scene && i === 0) ? ' is-current' : ''));
+      let secs = 60;
+      try { if (sc) secs = d.api.timing(sc).seconds; } catch {}
+      frame.style.flexGrow = String(Math.max(.6, Math.min(secs / 30, 8)).toFixed(2));
+      reel.append(frame);
+    });
+    const progress = make('p', 'lbx-progress');
+    const bits = ['Scene ' + pad2(sceneNo) + ' of ' + pad2(Math.max(d.scenes.length, 1))];
+    if (d.sceneTime && d.sceneTime.source === 'pages') bits.push(d.api.formatEighths(d.sceneTime.eighths) + ' pg', d.api.formatDuration(d.sceneTime.seconds));
+    progress.textContent = bits.join(' · ');
+    body.append(where, page, reel, progress);
+    const foot = make('span', 'node-footer lbx-foot lbx-foot--continue');
+    const go = make('button', 'lbx-continue');
+    go.type = 'button';
+    go.dataset.lbxAction = 'continue';
+    go.append(make('span', '', label), icon('go', 'lbx-foot-arrow'));
+    const room = make('button', 'lbx-room', words(card.querySelector('.node-footer')) || 'Enter writing room');
+    room.type = 'button';
+    room.dataset.lbxAction = 'room';
+    foot.append(go, room);
+    parts.body = body;
+    parts.foot = foot;
+    parts.label = label;
+    return parts;
+  }
+
+  function shape(card, id, d = null) {
+    const parts = { head: null, title: null, meta: null, body: null, status: null, foot: null };
     const footText = words(card.querySelector('.node-footer'));
     parts.head = head(id, words(card.querySelector('.node-overline')));
 
@@ -135,7 +273,15 @@
       parts.foot = foot(footText || 'Open research');
     }
 
-    if (id === 'script') {
+    if (id === 'script' && d) {
+      parts.title = make('h2', 'lbx-title', words(card.querySelector('h2')));
+      parts.meta = make('p', 'lbx-meta', words(card.querySelector(':scope > p')));
+      const c = continueParts(card, d);
+      parts.body = c.body;
+      parts.status = statusNode(id, d);
+      parts.foot = c.foot;
+      card.dataset.continueLabel = c.label;
+    } else if (id === 'script') {
       parts.title = make('h2', 'lbx-title', words(card.querySelector('h2')));
       const meta = card.querySelector(':scope > p');
       parts.meta = make('p', 'lbx-meta', words(meta));
@@ -199,11 +345,19 @@
       parts.foot = foot(footText || 'Write your premise');
     }
 
+    if (d && id !== 'script') {
+      // The live status line sits on the foot's rule, above the action.
+      parts.status = statusNode(id, d);
+      const footPart = parts.foot;
+      delete parts.foot;
+      parts.foot = footPart;
+    }
     card.replaceChildren(...Object.values(parts).filter(Boolean));
     card.classList.add('lbx', 'lbx--' + id);
+    card.classList.toggle('lbx--live', !!d);
   }
 
-  function copySource(item, interactive = true) {
+  function copySource(item, interactive = true, d = null) {
     const original = sourceFor(item);
     if (!original) return null;
     const replica = original.cloneNode(true);
@@ -225,12 +379,19 @@
     } else if (replica.matches('button')) {
       replica.tabIndex = -1;
     }
-    try { shape(replica, item.id); }
+    try { shape(replica, item.id, isRack() ? d : null); }
     catch (error) { console.warn('Story Cylinder: card kept in native layout', item.id, error); }
+    replica.querySelectorAll('[data-lbx-action]').forEach((node) => { node.tabIndex = interactive ? 0 : -1; });
     return replica;
   }
 
   function launchNative(item, destination) {
+    // The continue card goes back to the exact spot through the bridge;
+    // everything else is the native React control.
+    if (item.id === 'script' && isRack() && destination !== 'room' && window.LightboxStudio) {
+      const d = liveData();
+      if (d && window.LightboxStudio.continueWriting(d.lines.length ? d.spot : (d.spot || null))) return true;
+    }
     const source = sourceFor(item);
     if (!source || !source.isConnected) return false;
     const nativeButton = item.id === 'world'
@@ -523,15 +684,22 @@
     setTimeout(complete, delay);
   }
 
+  // What a card shows from the bridge, as a string: a card is re-laid only when it changes.
+  function liveKey(id, d) {
+    if (!d) return '';
+    if (id !== 'script') return '|' + statusLine(id, d);
+    return '|' + statusLine(id, d) + '|' + d.index + '|' + JSON.stringify(d.lines.map((b) => b.text + '@' + b.caret)) + '|' + (d.sceneTime?.eighths || 0);
+  }
   function refresh(s, force = false) {
     if((opening&&!force)||!s.host.isConnected)return;
+    const d=isRack()?liveData():null;
     ITEMS.forEach((item,i)=>{
       const source=sourceFor(item);
       if(!source)return;
-      const html=source.innerHTML;
+      const html=source.innerHTML+liveKey(item.id,d);
       if(html===s.snapshots[i])return;
       s.snapshots[i]=html;
-      const replacement=copySource(item);
+      const replacement=copySource(item,true,d);
       const previous=s.cards[i].querySelector('.lb-cylinder-source');
       if(previous&&replacement)previous.replaceWith(replacement);
     });
@@ -645,6 +813,8 @@
     s.cards.forEach((card) => {
       card.classList.remove('is-near', 'is-far');
       card._focus = card._alpha = card._veil = card._raise = card._disabled = card._depth = undefined;
+      // The continue card holds real buttons, so it is a group, like World.
+      card.setAttribute('role', card.dataset.id === 'world' || (rack && card.dataset.id === 'script') ? 'group' : 'button');
     });
   }
   function setLayout(s, next) {
@@ -703,8 +873,9 @@
         + '<div class="lb-cylinder-veil" aria-hidden="true"></div></div>';
       card._liftEl = card.querySelector('.lb-cylinder-lift');
       card._veilEl = card.querySelector('.lb-cylinder-veil');
-      card.querySelector('.lb-cylinder-content').append(copySource(item));
-      s.snapshots[index] = sourceFor(item).innerHTML;
+      const d = isRack() ? liveData() : null;
+      card.querySelector('.lb-cylinder-content').append(copySource(item, true, d));
+      s.snapshots[index] = sourceFor(item).innerHTML + liveKey(item.id, d);
       s.rotor.append(card);
       s.cards.push(card);
       card.addEventListener('click', (event) => {
@@ -842,5 +1013,12 @@
     requestAnimationFrame(() => { watching=false; sync(); });
   });
   observer.observe(root,{childList:true,subtree:true,characterData:true,attributes:true,attributeFilter:['class']});
+  // The bridge announces project changes; refresh the live lines while the Atlas is up.
+  let liveQueued = false;
+  document.addEventListener('lightbox:project', () => {
+    if (!active || liveQueued || !isRack()) return;
+    liveQueued = true;
+    requestAnimationFrame(() => { liveQueued = false; if (active) refresh(active); });
+  });
   sync();
 })();

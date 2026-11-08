@@ -122,3 +122,90 @@
   .lb-cylinder-v9.is-rack .lb-cylinder-lift{transition:opacity .2s linear!important}
 }
 @keyframes lbx-rack-fade{from{opacity:.35}to{opacity:1}}
+
+/* --- Live status line (every card on the light table) ------------------------ */
+.studio.atlas-shell .lb-cylinder-v9 .lbx .lbx-status{
+  display:flex!important;align-items:center;gap:7px;flex:0 0 auto!important;
+  margin:0 0 10px!important;padding:0!important;min-width:0;
+  font:500 9px/1.3 "DM Mono",monospace!important;letter-spacing:.12em!important;text-transform:uppercase;
+  color:var(--lbx-ink-2)!important;
+}
+.studio.atlas-shell .lb-cylinder-v9 .lbx .lbx-status>span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.studio.atlas-shell .lb-cylinder-v9 .lbx .lbx-status-dot{
+  flex:0 0 auto;width:5px;height:5px;border-radius:50%;background:var(--lbx-red);
+  box-shadow:0 0 0 3px var(--lbx-red-wash)
+}
+.studio.atlas-shell .lb-cylinder-v9 .lbx--live .lbx-preview{margin-bottom:10px!important}
+
+/* --- The continue card --------------------------------------------------------- */
+.studio.atlas-shell .lb-cylinder-v9 .lbx--live.lbx--script .lbx-title{--lbx-title:clamp(28px,2.2vw,32px);margin-top:14px!important}
+.studio.atlas-shell .lb-cylinder-v9 .lbx .lbx-preview--continue{gap:8px;margin-top:12px!important;overflow:hidden}
+.studio.atlas-shell .lb-cylinder-v9 .lbx .lbx-where{
+  display:flex;align-items:baseline;gap:8px;margin:0!important;min-width:0;
+  font:500 9.5px/1.3 "DM Mono",monospace!important;letter-spacing:.1em;text-transform:uppercase;color:var(--lbx-ink)!important
+}
+.studio.atlas-shell .lb-cylinder-v9 .lbx .lbx-where b{flex:0 0 auto;font:700 12px/1 "Big Shoulders Display","DM Mono",sans-serif;letter-spacing:.04em;color:var(--lbx-red-ink)}
+.studio.atlas-shell .lb-cylinder-v9 .lbx .lbx-where span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* The page: Courier, laid out like the screenplay, faded in at the top as if it
+   continues above. The mask is static. */
+.studio.atlas-shell .lb-cylinder-v9 .lbx .lbx-lines{
+  flex:1 1 auto;min-height:56px;display:flex;flex-direction:column;justify-content:flex-end;overflow:hidden;
+  padding:10px 14px 11px;border:1px solid var(--lbx-rule);border-radius:3px;background:#fff;
+  box-shadow:0 1px 0 rgba(28,27,25,.04),2px 2px 0 -1px #fff,2px 2px 0 0 var(--lbx-rule);
+  font:400 11px/1.42 "Courier Prime","Courier New",monospace;color:var(--lbx-ink);
+  -webkit-mask-image:linear-gradient(180deg,transparent 0,#000 22px);mask-image:linear-gradient(180deg,transparent 0,#000 22px)
+}
+.studio.atlas-shell .lb-cylinder-v9 .lbx .lbx-line{margin:0;padding:0;overflow-wrap:anywhere;display:block;flex:0 0 auto}
+.studio.atlas-shell .lb-cylinder-v9 .lbx .lbx-line+.lbx-line{margin-top:5px}
+.studio.atlas-shell .lb-cylinder-v9 .lbx .lbx-line--character{padding-left:34%;text-transform:uppercase}
+.studio.atlas-shell .lb-cylinder-v9 .lbx .lbx-line--character+.lbx-line,
+.studio.atlas-shell .lb-cylinder-v9 .lbx .lbx-line--parenthetical+.lbx-line{margin-top:0}
+.studio.atlas-shell .lb-cylinder-v9 .lbx .lbx-line--dialogue{padding:0 10% 0 17%}
+.studio.atlas-shell .lb-cylinder-v9 .lbx .lbx-line--parenthetical{padding-left:26%}
+.studio.atlas-shell .lb-cylinder-v9 .lbx .lbx-line--transition{text-align:right;text-transform:uppercase}
+.studio.atlas-shell .lb-cylinder-v9 .lbx .lbx-line--empty{color:var(--lbx-ink-3);font-style:italic}
+/* Where you stopped: a static red caret (no blinking) */
+.studio.atlas-shell .lb-cylinder-v9 .lbx .lbx-caret{
+  display:inline-block;width:2px;height:1.1em;margin-left:2px;vertical-align:-.2em;background:var(--lbx-red)
+}
+/* The reel: one frame per scene, as long as its screen time */
+.studio.atlas-shell .lb-cylinder-v9 .lbx .lbx-reel{display:flex;gap:2px;height:7px;flex:0 0 auto}
+.studio.atlas-shell .lb-cylinder-v9 .lbx .lbx-reel-frame{
+  flex:1 1 0;min-width:4px;border-radius:1px;
+  background:repeating-linear-gradient(135deg,var(--lbx-rule-2) 0 1.5px,transparent 1.5px 4px);
+  box-shadow:inset 0 0 0 1px var(--lbx-rule-2)
+}
+.studio.atlas-shell .lb-cylinder-v9 .lbx .lbx-reel-frame.is-written{background:rgba(28,27,25,.62);box-shadow:none}
+.studio.atlas-shell .lb-cylinder-v9 .lbx .lbx-reel-frame.is-current{background:var(--lbx-red);box-shadow:none}
+.studio.atlas-shell .lb-cylinder-v9 .lbx .lbx-progress{
+  margin:0!important;flex:0 0 auto;
+  font:500 9px/1.3 "DM Mono",monospace!important;letter-spacing:.12em;text-transform:uppercase;color:var(--lbx-ink-3)!important
+}
+/* One clear way back in, and a quiet way to the room itself */
+.studio.atlas-shell .lb-cylinder-v9 .lbx .lbx-foot--continue{gap:12px!important}
+.studio.atlas-shell .lb-cylinder-v9 .lbx .lbx-continue{
+  display:inline-flex;align-items:center;gap:10px;height:34px;padding:0 14px 0 16px;margin:0;
+  border:0;border-radius:999px;background:var(--lbx-red);color:#fff;cursor:pointer;
+  font:600 12.5px/1 "DM Sans","Segoe UI",sans-serif;letter-spacing:0;white-space:nowrap;
+  box-shadow:0 1px 0 rgba(28,27,25,.12),0 6px 14px -8px rgba(212,48,31,.7);
+  transition:background-color .2s
+}
+.studio.atlas-shell .lb-cylinder-v9 .lbx .lbx-continue .lbx-foot-arrow{color:#fff}
+.studio.atlas-shell .lb-cylinder-v9 .lbx .lbx-continue:hover{background:var(--lbx-red-ink)}
+.studio.atlas-shell .lb-cylinder-v9 .lbx .lbx-continue:hover .lbx-foot-arrow{transform:translate3d(3px,0,0)}
+.studio.atlas-shell .lb-cylinder-v9 .lbx .lbx-continue:focus-visible{outline:2px solid var(--lbx-ink);outline-offset:3px}
+.studio.atlas-shell .lb-cylinder-v9 .lbx .lbx-room{
+  margin:0;padding:6px 0;border:0;background:none;cursor:pointer;white-space:nowrap;
+  font:500 11.5px/1 "DM Sans","Segoe UI",sans-serif;color:var(--lbx-ink-3);
+  text-decoration:underline;text-decoration-color:transparent;text-underline-offset:3px;transition:color .2s,text-decoration-color .2s
+}
+.studio.atlas-shell .lb-cylinder-v9 .lbx .lbx-room:hover{color:var(--lbx-red-ink);text-decoration-color:currentColor}
+.studio.atlas-shell .lb-cylinder-v9 .lbx .lbx-room:focus-visible{outline:2px solid var(--lbx-red);outline-offset:2px;color:var(--lbx-red-ink)}
+.lb-cylinder-v9.is-compact .lbx--live.lbx--script .lbx-title{display:none!important}
+.lb-cylinder-v9.is-compact .lbx--live .lbx-status{margin-bottom:8px!important}
+/* The native card's own rules centre its children; the continue card is left-set. */
+.studio.atlas-shell .lb-cylinder-v9 .lbx .lbx-preview--continue{align-items:stretch!important;text-align:left!important}
+.studio.atlas-shell .lb-cylinder-v9 .lbx .lbx-preview--continue>*{width:auto!important;max-width:none!important;align-self:stretch!important;text-align:left!important;padding-left:0;padding-right:0}
+.studio.atlas-shell .lb-cylinder-v9 .lbx .lbx-preview--continue>.lbx-lines{padding:10px 14px 11px!important}
+.studio.atlas-shell .lb-cylinder-v9 .lbx .lbx-lines>.lbx-line{text-align:left!important}
+.studio.atlas-shell .lb-cylinder-v9 .lbx .lbx-lines>.lbx-line--transition{text-align:right!important}

@@ -45,10 +45,11 @@
   --lt-marker-wash:rgba(212,48,31,.075);
   --lt-marker-line:rgba(212,48,31,.38);
   /* Film edge: frame numbers and edge codes */
-  --lt-edge:#E2692B;
-  --lt-edge-ink:#A4451A;
-  --lt-edge-wash:rgba(226,105,43,.09);
-  --lt-edge-line:rgba(226,105,43,.4);
+  /* One accent only: everything that was 'film edge' now uses the grease-pencil red */
+  --lt-edge:var(--lt-marker);
+  --lt-edge-ink:var(--lt-marker-ink);
+  --lt-edge-wash:var(--lt-marker-wash);
+  --lt-edge-line:var(--lt-marker-line);
   /* Depth: slides lie flat; light comes from below */
   --lt-lift:0 1px 1px rgba(28,27,25,.06),0 10px 22px -14px rgba(28,27,25,.38);
   --lt-lift-hi:0 1px 2px rgba(28,27,25,.08),0 18px 34px -16px rgba(28,27,25,.42);
@@ -405,16 +406,6 @@ dialog.dialog::after{right:34px;transform:rotate(3deg)}
   border-radius:3px!important;box-shadow:var(--lt-lift)!important;
 }
 .studio.atlas-shell.lb-cylinder-atlas .pitch-launch:hover{border-color:var(--lt-ink)!important}
-/* Edge print down both sides of the table (wide screens only) */
-@media (min-width:1100px){
-  .studio.atlas-shell.lb-cylinder-atlas .story-atlas::before,
-  .studio.atlas-shell.lb-cylinder-atlas .story-atlas::after{
-    position:absolute;top:150px;pointer-events:none;writing-mode:vertical-rl;
-    font:500 10px/1 var(--lt-mono);letter-spacing:.42em;color:var(--lt-edge);opacity:.85;white-space:nowrap;
-  }
-  .studio.atlas-shell.lb-cylinder-atlas .story-atlas::before{content:"LIGHTBOX 5219  ▸ 01  ▸ 02  ▸ 03  ▸ 04  ▸ 05";left:18px}
-  .studio.atlas-shell.lb-cylinder-atlas .story-atlas::after{content:"STORY ATLAS  ◈  TABLE 01  ◈  35MM";right:18px;transform:rotate(180deg)}
-}
 .lb-cylinder-v9 .lb-cylinder-controls>button{
   background:var(--lt-mount)!important;color:var(--lt-ink)!important;border:1px solid var(--lt-rule-strong)!important;
   box-shadow:var(--lt-lift)!important;
@@ -487,7 +478,7 @@ dialog :is(.script-page-preview,.script-page-excerpt){
     radial-gradient(ellipse 80% 70% at 40% 45%,#FFFFFF 0%,#F4F2EC 55%,#E6E3DA 100%)!important;
 }
 .lb-opener__line--page .lb-opener__word{color:var(--lt-marker)!important}
-.lb-opener__edition,.lb-opener__technical{color:var(--lt-edge-ink)!important}
+.lb-opener__edition,.lb-opener__technical{color:var(--lt-ink-3)!important}
 /* The backlight flickers on, like a fluorescent tube under opal glass */
 .lb-opener::after{
   content:"";position:absolute;inset:0;pointer-events:none;z-index:5;background:#141416;
@@ -513,7 +504,7 @@ dialog :is(.script-page-preview,.script-page-excerpt){
 .studio.atlas-shell .theme-swatches>i:nth-child(1){background:#EFEDE7!important;box-shadow:inset 0 0 0 1px rgba(28,27,25,.15)}
 .studio.atlas-shell .theme-swatches>i:nth-child(2){background:#18181A!important}
 .studio.atlas-shell .theme-swatches>i:nth-child(3){background:#D4301F!important}
-.studio.atlas-shell .theme-swatches>i:nth-child(4){background:#E2692B!important}
+.studio.atlas-shell .theme-swatches>i:nth-child(4){background:#FFFFFF!important;box-shadow:inset 0 0 0 1px rgba(28,27,25,.15)}
 
 /* ==========================================================================
    Materials
@@ -562,8 +553,7 @@ dialog :is(.script-page-preview,.script-page-excerpt){
 .studio.atlas-shell .beat-card::before{background-blend-mode:normal}
 
 /* The chassis: graphite powder-coat, brushed along its length.
-   Halation: where the lit table meets the dark frame, light bleeds into the
-   dark side as a faint red-orange glow, as it does on film. */
+   */
 .studio.atlas-shell .compact-header{
   background-image:
     repeating-linear-gradient(90deg,rgba(238,236,231,.42) 0 1px,transparent 1px 64px),
@@ -573,7 +563,7 @@ dialog :is(.script-page-preview,.script-page-excerpt){
   background-position:0 100%,0 100%,0 0!important;
   background-repeat:no-repeat,no-repeat,repeat!important;
   background-blend-mode:normal,normal,soft-light!important;
-  box-shadow:inset 0 -1px 0 rgba(255,176,128,.16),inset 0 -12px 14px -12px rgba(232,104,52,.42)!important;
+  box-shadow:none!important;
 }
 .studio.atlas-shell .creative-dock{
   background-image:
@@ -583,7 +573,7 @@ dialog :is(.script-page-preview,.script-page-excerpt){
   background-position:0 0,0 0!important;
   background-repeat:no-repeat,repeat!important;
   background-blend-mode:normal,soft-light!important;
-  box-shadow:inset 0 1px 0 rgba(255,176,128,.16),inset 0 12px 14px -12px rgba(232,104,52,.42),0 -10px 30px -18px rgba(28,27,25,.6)!important;
+  box-shadow:0 -10px 30px -18px rgba(28,27,25,.6)!important;
 }
 .studio.atlas-shell :is(.dock-bubble,.workspace-launcher,.toast-message),
 .studio.atlas-shell :is(.lb-native-choice a,.lb-widgets-link),
@@ -592,9 +582,9 @@ dialog :is(.script-page-preview,.script-page-excerpt){
   background-image:var(--lt-tex-chassis)!important;background-size:512px 512px!important;
   background-repeat:repeat!important;background-blend-mode:soft-light!important;
 }
-/* A dialog is a bright sheet over a dimmed room: it halates too */
+/* A dialog is a sheet lifted off the table */
 .studio.atlas-shell dialog.dialog,dialog.dialog{
-  box-shadow:0 2px 4px rgba(28,27,25,.08),0 40px 80px -30px rgba(28,27,25,.55),0 0 70px -16px rgba(255,150,96,.22)!important;
+  box-shadow:0 2px 4px rgba(28,27,25,.08),0 40px 80px -30px rgba(28,27,25,.55)!important;
 }
 
 /* Masking tape: crepe paper with torn ends */

@@ -1,0 +1,124 @@
+/* ==========================================================================
+   Lightbox / The Atlas as a light table (rack focus)
+
+   story-cylinder-v9.js sets .is-rack on .lb-cylinder-v9 (default) or
+   .is-classic (the original cylinder, untouched by this file).
+
+   The room is dim; the card in focus is the light source. Its backlight is
+   one opacity-driven layer (.lb-cylinder-lift) and one static spill on the
+   table (.lb-cylinder-aura). Neighbours sit smaller under a warm-grey veil
+   (opacity) with a small static blur that switches by class and never
+   tweens. Per frame, only transform and opacity change.
+   Loaded last.
+   ========================================================================== */
+
+.lb-cylinder-v9.is-rack{
+  --lbx-glow:255,226,176;          /* the lamp: warm tungsten through opal */
+  --lbx-dim:44,38,31;              /* the room around it */
+}
+
+/* --- The room ----------------------------------------------------------------- */
+/* Dim the sheet towards its edges; the middle of the table stays bright.
+   A static gradient: it never animates. */
+.studio.atlas-shell.lb-cylinder-atlas .story-atlas.lbx-rack::before{
+  content:"";position:absolute;inset:0;z-index:-2;pointer-events:none;
+  background:
+    radial-gradient(ellipse 62% 58% at 50% 58%,rgba(var(--lbx-dim,44,38,31),0) 0%,rgba(44,38,31,0) 42%,rgba(44,38,31,.09) 72%,rgba(44,38,31,.19) 100%);
+}
+.lb-cylinder-v9.is-rack .lb-cylinder-body{display:none!important}
+.lb-cylinder-v9.is-rack .lb-cylinder-stage{perspective:none!important}
+.lb-cylinder-v9.is-rack .lb-cylinder-rotor{transform-style:flat!important}
+.lb-cylinder-v9.is-rack .lb-cylinder-card{transform-style:flat!important}
+
+/* The spill: light from the card in focus falling on the table around it */
+.lb-cylinder-v9.is-rack .lb-cylinder-aura{
+  inset:0!important;
+  background:
+    radial-gradient(ellipse calc(var(--lb-card-width) * 1.15) calc(var(--lb-card-height) * .78) at 50% 50%,
+      rgba(var(--lbx-glow),.42) 0%,rgba(var(--lbx-glow),.20) 45%,rgba(var(--lbx-glow),0) 100%),
+    radial-gradient(ellipse calc(var(--lb-card-width) * .9) 34px at 50% calc(50% + var(--lb-card-height) * .5 + 6px),
+      rgba(var(--lbx-glow),.55) 0%,rgba(var(--lbx-glow),0) 100%)!important;
+}
+
+/* Contact shadow without a blur filter: one gradient, no filter on any card */
+.lb-cylinder-v9.is-rack .lb-cylinder-card::before{
+  filter:none!important;transform:none!important;opacity:.7;
+  left:8%!important;right:8%!important;bottom:-16px!important;height:26px!important;
+  background:radial-gradient(ellipse 50% 50%,rgba(28,27,25,.16) 0%,rgba(28,27,25,.06) 55%,transparent 100%)!important;
+}
+.lb-cylinder-v9.is-rack .lb-cylinder-card.is-active::before{opacity:1}
+
+/* --- The card in focus: backlit ---------------------------------------------- */
+.lb-cylinder-v9.is-rack .lb-cylinder-lift{
+  inset:-1px!important;border-radius:var(--lbx-radius)!important;
+  box-shadow:
+    0 0 0 1px rgba(var(--lbx-glow),.55),
+    0 0 26px 4px rgba(var(--lbx-glow),.62),
+    0 0 70px 18px rgba(var(--lbx-glow),.34),
+    0 26px 40px -22px rgba(28,27,25,.30)!important;
+  transition:opacity .24s var(--lbx-ease)!important;
+}
+.lb-cylinder-v9.is-rack .lb-cylinder-lift::after{display:none!important}
+/* Light coming through the stock: a faint warm bloom in the middle of the sheet */
+.studio.atlas-shell .lb-cylinder-v9.is-rack .lb-cylinder-card.is-active .lb-cylinder-sheen{
+  background:
+    linear-gradient(180deg,rgba(255,255,255,.7) 0,rgba(255,255,255,0) 1.5px),
+    radial-gradient(ellipse 80% 60% at 50% 46%,rgba(255,240,214,.22) 0%,rgba(255,240,214,0) 100%)!important;
+}
+.studio.atlas-shell .lb-cylinder-v9.is-rack .lb-cylinder-card.is-active .lb-cylinder-plaque{
+  border-color:rgba(var(--lbx-glow),.9)!important;
+}
+
+/* --- Neighbours: smaller, dimmer, a little out of focus ---------------------- */
+.lb-cylinder-v9.is-rack .lb-cylinder-veil{
+  background:#3B352E!important;               /* the dim room: lowers light and mutes the reds */
+  transition:opacity .24s var(--lbx-ease);
+}
+.lb-cylinder-v9.is-rack.is-dragging .lb-cylinder-veil,
+.lb-cylinder-v9.is-rack.is-dragging .lb-cylinder-lift{transition:none!important}
+/* Static blur: two elements at most (the neighbours), never animated */
+.lb-cylinder-v9.is-rack .lb-cylinder-card.is-near .lb-cylinder-content{filter:blur(1.5px)}
+.lb-cylinder-v9.is-rack .lb-cylinder-card.is-far .lb-cylinder-content{filter:saturate(.7)}
+.lb-cylinder-v9.is-rack .lb-cylinder-card:not(.is-active){cursor:pointer}
+@media (hover:hover){
+  /* Hovering a neighbour brings its light up and pulls it into focus */
+  .lb-cylinder-v9.is-rack:not(.is-dragging) .lb-cylinder-card.is-near:hover .lb-cylinder-veil{opacity:.06!important}
+  .lb-cylinder-v9.is-rack:not(.is-dragging) .lb-cylinder-card.is-near:hover .lb-cylinder-lift{opacity:.5!important}
+  .lb-cylinder-v9.is-rack:not(.is-dragging) .lb-cylinder-card.is-near:hover .lb-cylinder-content{filter:none}
+  .lb-cylinder-v9.is-rack:not(.is-dragging) .lb-cylinder-card.is-far:hover .lb-cylinder-veil{opacity:.3!important}
+}
+/* Keyboard focus never relies on blur: a red outline, and the card is lit */
+.lb-cylinder-v9.is-rack .lb-cylinder-card:focus-visible .lb-cylinder-veil{opacity:0!important}
+.lb-cylinder-v9.is-rack .lb-cylinder-card:focus-visible .lb-cylinder-content{filter:none}
+.lb-cylinder-v9.is-rack .lb-cylinder-card:focus-visible .lb-cylinder-lift{opacity:.6!important}
+
+/* --- Classic view toggle ------------------------------------------------------ */
+.lb-cylinder-v9 .lbx-layout-toggle{
+  position:absolute;left:calc(50% + 218px);bottom:18px;z-index:5;
+  display:inline-flex;align-items:center;gap:8px;min-height:32px;padding:0 12px 0 10px;
+  border:1px solid rgba(28,27,25,.14);border-radius:999px;background:rgba(255,253,250,.86);
+  color:#4B4842;font:500 10px/1 "DM Mono",monospace;letter-spacing:.12em;text-transform:uppercase;
+  cursor:pointer;transition:border-color .2s,color .2s,background-color .2s
+}
+.lb-cylinder-v9 .lbx-layout-toggle:hover{border-color:rgba(212,48,31,.5);color:#B3261A}
+.lb-cylinder-v9 .lbx-layout-toggle:focus-visible{outline:2px solid #D4301F;outline-offset:3px}
+.lb-cylinder-v9 .lbx-layout-toggle[aria-pressed="true"]{border-color:#D4301F;color:#B3261A;background:#FFFDFA}
+/* A tiny drum: three staves, the middle one lit when the classic view is on */
+.lb-cylinder-v9 .lbx-layout-glyph{
+  width:16px;height:11px;border-radius:2px;flex:0 0 auto;
+  background:
+    linear-gradient(90deg,currentColor 0 3px,transparent 3px 6.5px,currentColor 6.5px 9.5px,transparent 9.5px 13px,currentColor 13px 16px);
+  opacity:.55;transform:perspective(30px) rotateY(-14deg)
+}
+.lb-cylinder-v9 .lbx-layout-toggle[aria-pressed="true"] .lbx-layout-glyph{opacity:1}
+@media (max-width:700px){
+  .lb-cylinder-v9 .lbx-layout-toggle{left:auto;right:12px;top:-2px;bottom:auto;min-height:28px;padding:0 10px 0 8px;font-size:9px}
+}
+
+/* --- Reduced motion: no slides, a simple fade -------------------------------- */
+@media (prefers-reduced-motion:reduce){
+  .lb-cylinder-v9.is-rack .lb-cylinder-rotor.is-fading{animation:lbx-rack-fade .2s ease-out}
+  .lb-cylinder-v9.is-rack .lb-cylinder-veil,
+  .lb-cylinder-v9.is-rack .lb-cylinder-lift{transition:opacity .2s linear!important}
+}
+@keyframes lbx-rack-fade{from{opacity:.35}to{opacity:1}}

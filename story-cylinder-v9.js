@@ -1,6 +1,8 @@
-/* Lightbox Studio Story Cylinder IX
- * One intact replica per React card, one stationary subtle orbital guide,
- * and five hardware accelerated transforms. No segmented card seams.
+/* Lightbox Studio Atlas — the light table (rack focus), with the
+ * Story Cylinder IX kept as the "Classic view".
+ * One intact replica per React card and five hardware-accelerated transforms.
+ * Rack focus (default): the centred card is the light source; neighbours sit
+ * smaller and dimmer on the table. Classic: the original 3D cylinder.
  * This module never writes project data or replaces a native workspace.
  */
 (() => {
@@ -24,6 +26,13 @@
   let opening = false;
   let returnButton = null;
   let hasEnteredAtlas = false;
+
+  /* Layout: 'rack' (light table, default) or 'classic' (the cylinder).
+   * A per-browser preference, never project data. */
+  const LAYOUT_KEY = 'lightbox.atlas.layout';
+  let layout = 'rack';
+  try { if (localStorage.getItem(LAYOUT_KEY) === 'classic') layout = 'classic'; } catch {}
+  const isRack = () => layout === 'rack';
 
   const sourceFor = (item) => root.querySelector('.story-atlas .atlas-map ' + item.className);
   const nearest = (value, index) => index + Math.round((value - index) / N) * N;
@@ -307,10 +316,12 @@
     const w=s.view.clientWidth||innerWidth;
     s.width=w;s.height=s.view.clientHeight||520;
     s.mobile=w<=700;
-    s.cardWidth=s.mobile?clamp(w*.705,224,282):clamp(w*.218,260,312);
+    const rack=isRack();
+    s.cardWidth=s.mobile?clamp(w*(rack?.78:.705),224,rack?318:282):clamp(w*(rack?.235:.218),260,rack?340:312);
     const desiredHeight=s.mobile?clamp(w*1.065,362,420):clamp(w*.279,352,399);
     s.cardHeight=s.mobile?desiredHeight:Math.min(desiredHeight,
       innerHeight<735?300:clamp(innerHeight*.435,332,392));
+    if(rack)s.cardHeight=Math.min(s.cardHeight+(s.mobile?0:14),s.height-34);
     s.radius=s.mobile?Math.max(s.cardWidth*1.43,w*.91):clamp(w*.393,470,605);
     s.pitch=2*Math.asin(clamp((s.cardWidth+26)/(2*s.radius),0,.49))*180/Math.PI*.96;
     s.centerY=s.height*(s.mobile?.514:.472);
@@ -318,7 +329,80 @@
     s.host.style.setProperty('--lb-card-height',s.cardHeight+'px');
     s.host.classList.toggle('is-compact',s.cardHeight<346);
     s.host.classList.toggle('is-phone',s.mobile);
-    drawShell(s);paint(s);
+    if(rack){
+      // The light table draws nothing on the canvas: the light is CSS.
+      if(s.canvas.width){s.canvas.width=0;s.canvas.height=0;}
+      rackGeometry(s);
+    } else drawShell(s);
+    paint(s);
+  }
+
+  /* ---- Rack focus ----------------------------------------------------------
+   * Three resting slots either side of centre: 0 (in focus, full size, lit),
+   * 1 (neighbour: smaller, dimmer, a little out of focus), 2 (far, faint).
+   * A card between slots interpolates x, scale, lift and light linearly, so
+   * dragging is continuous. Only transform and opacity change per frame; the
+   * out-of-focus blur is a static class that switches, never tweens.
+   */
+  function rackGeometry(s) {
+    const W=s.cardWidth, gap=s.mobile?12:30;
+    const s1=s.mobile?.86:.82, s2=s.mobile?.74:.66;
+    const x1=W/2+gap+W*s1/2;
+    const x2=x1+W*s1/2+gap*.55+W*s2/2;
+    s.rack=[
+      {x:0,scale:1,y:s.mobile?-4:-8,alpha:1,veil:0,light:1},
+      {x:x1,scale:s1,y:s.mobile?4:10,alpha:1,veil:s.mobile?.30:.22,light:0},
+      {x:x2,scale:s2,y:s.mobile?8:18,alpha:s.mobile?0:.7,veil:.4,light:0},
+      {x:x2+W*s2*.6,scale:s2*.9,y:s.mobile?8:20,alpha:0,veil:.45,light:0}
+    ];
+  }
+  function rackSlot(s, d) {
+    const r=s.rack, i=Math.min(Math.floor(d),r.length-2), t=clamp(d-i,0,1), a=r[i], b=r[i+1];
+    const mix=(k)=>a[k]+(b[k]-a[k])*t;
+    return {x:mix('x'),scale:mix('scale'),y:mix('y'),alpha:mix('alpha'),veil:mix('veil'),light:mix('light')};
+  }
+  function paintRack(s) {
+    const activeIndex = wrapped(Math.round(s.target));
+    for (let i = 0; i < N; i++) {
+      const card = s.cards[i];
+      const rel = relativeToCenter(i, s.value);
+      const d = Math.abs(rel);
+      const slot = rackSlot(s, Math.min(d, 2.5));
+      // Fade out as a card reaches the wrap point, so it never jumps sides in view.
+      const alpha = d > 2.2 ? slot.alpha * clamp((2.5 - d) / .3, 0, 1) : slot.alpha;
+      const x = Math.sign(rel) * slot.x;
+      card.style.transform = 'translate3d(-50%,-50%,0) translate3d(' + x.toFixed(2) + 'px,'
+        + slot.y.toFixed(2) + 'px,0) scale(' + slot.scale.toFixed(4) + ')';
+      const alphaKey = Math.round(alpha * 1000);
+      if (card._alpha !== alphaKey) { card.style.opacity = (alphaKey / 1000).toFixed(3); card._alpha = alphaKey; }
+      const veilKey = Math.round(slot.veil * 1000);
+      if (card._veil !== veilKey) { card._veilEl.style.opacity = (veilKey / 1000).toFixed(3); card._veil = veilKey; }
+      const raise = Math.round(slot.light * 1000);
+      if (card._raise !== raise) { card._liftEl.style.opacity = (raise / 1000).toFixed(3); card._raise = raise; }
+      // Focus state follows the resting slot the card is heading for.
+      const restingRel = relativeToCenter(i, s.down?.moved ? Math.round(s.value) : s.target);
+      const restD = Math.round(Math.abs(restingRel));
+      const focus = restD === 0 ? 'active' : restD === 1 ? 'near' : 'far';
+      if (card._focus !== focus) {
+        card.classList.toggle('is-near', focus === 'near');
+        card.classList.toggle('is-far', focus === 'far');
+        card._focus = focus;
+      }
+      const disabled = alpha < .05;
+      if (card._disabled !== disabled) {
+        card.style.pointerEvents = disabled ? 'none' : 'auto';
+        card.setAttribute('aria-hidden', String(disabled));
+        card._disabled = disabled;
+      }
+      const depth = 100 + Math.round((2.6 - d) * 12);
+      if (card._depth !== depth) { card.style.zIndex = String(depth); card._depth = depth; }
+      const selected = i === activeIndex;
+      if (card._selected !== selected) {
+        card.classList.toggle('is-active', selected);
+        card.setAttribute('aria-current', String(selected));
+        card._selected = selected;
+      }
+    }
   }
 
   function relativeToCenter(index, position) {
@@ -326,6 +410,7 @@
   }
   function paint(s) {
     if (!s.host.isConnected) return;
+    if (isRack()) { paintRack(s); return; }
     const radius = s.radius, rad = Math.PI / 180;
     const activeIndex = wrapped(Math.round(s.target));
     for (let i = 0; i < N; i++) {
@@ -402,9 +487,16 @@
     s.frame = requestAnimationFrame(frame);
   }
   function aim(s, value) {
+    const changed = Math.round(value) !== Math.round(s.target);
     s.target = value;
     selectedPosition = value;
     updateControls(s);
+    // Reduced motion: no slide; the table simply fades to the new card.
+    if (changed && prefersReduced.matches && isRack() && !s.down) {
+      s.rotor.classList.remove('is-fading');
+      void s.rotor.offsetWidth;
+      s.rotor.classList.add('is-fading');
+    }
     animate(s);
   }
   function navigate(s, direction) {
@@ -431,8 +523,8 @@
     setTimeout(complete, delay);
   }
 
-  function refresh(s) {
-    if(opening||!s.host.isConnected)return;
+  function refresh(s, force = false) {
+    if((opening&&!force)||!s.host.isConnected)return;
     ITEMS.forEach((item,i)=>{
       const source=sourceFor(item);
       if(!source)return;
@@ -540,6 +632,31 @@
     s.floor = floor;
   }
 
+  function applyLayout(s) {
+    const rack = isRack();
+    s.host.classList.toggle('is-rack', rack);
+    s.host.classList.toggle('is-classic', !rack);
+    s.host.closest('.story-atlas')?.classList.toggle('lbx-rack', rack);
+    s.toggle.setAttribute('aria-pressed', String(!rack));
+    s.view.setAttribute('aria-label', rack
+      ? 'Story Atlas light table. Use left and right arrows or drag horizontally to bring a card into focus.'
+      : 'Story Cylinder. Use left and right arrows or drag horizontally to rotate.');
+    s.host.setAttribute('aria-label', rack ? 'Story Atlas' : 'Story Cylinder');
+    s.cards.forEach((card) => {
+      card.classList.remove('is-near', 'is-far');
+      card._focus = card._alpha = card._veil = card._raise = card._disabled = card._depth = undefined;
+    });
+  }
+  function setLayout(s, next) {
+    if (next === layout) return;
+    layout = next;
+    try { localStorage.setItem(LAYOUT_KEY, next); } catch {}
+    applyLayout(s);
+    s.snapshots = [];
+    refresh(s, true);
+    resize(s);
+  }
+
   function mount(atlas) {
     const viewport = atlas.querySelector('.atlas-viewport');
     if (!viewport || viewport.querySelector('.lb-cylinder-v9') || ITEMS.some((item) => !sourceFor(item))) return;
@@ -556,6 +673,8 @@
       + '<span class="lb-cylinder-control-label"><span class="lb-cylinder-control-title">THE SCREENPLAY</span><span class="lb-cylinder-dots" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span>'
       + '<small class="lb-cylinder-counter">03 / 05</small></span>'
       + '<button class="lb-cylinder-next" type="button" aria-label="Next card">' + ICON.next + '</button></nav>'
+      + '<button class="lbx-layout-toggle" type="button" aria-pressed="false" title="Switch between the light table and the classic cylinder">'
+      + '<span class="lbx-layout-glyph" aria-hidden="true"></span><span>Classic view</span></button>'
       + '<span class="lb-cylinder-live sr-only" aria-live="polite"></span>';
     viewport.append(host);
     const s = {
@@ -573,6 +692,7 @@
       const card = document.createElement('div');
       card.className = 'lb-cylinder-card lb-cylinder-' + item.id;
       card.dataset.index = String(index);
+      card.dataset.id = item.id;
       card.tabIndex = 0;
       card.setAttribute('role', item.id === 'world' ? 'group' : 'button');
       card.setAttribute('aria-label', item.title);
@@ -590,15 +710,17 @@
       card.addEventListener('click', (event) => {
         event.preventDefault(); event.stopPropagation();
         if (performance.now() < s.suppressClick || s.down?.moved) return;
-        const action = event.target.closest('[data-world-entry]');
-        openCard(s, index, action?.dataset.worldEntry);
+        // Rack focus: a neighbour comes into focus first; the lit card opens.
+        if (isRack() && wrapped(Math.round(s.target)) !== index) { aim(s, nearest(s.target, index)); return; }
+        const action = event.target.closest('[data-world-entry],[data-lbx-action]');
+        openCard(s, index, action?.dataset.worldEntry || action?.dataset.lbxAction);
       });
       card.addEventListener('keydown', (event) => {
         if (event.key !== 'Enter' && event.key !== ' ') return;
-        if (event.target !== card && !event.target.closest('[data-world-entry]')) return;
+        if (event.target !== card && !event.target.closest('[data-world-entry],[data-lbx-action]')) return;
         event.preventDefault();
-        const action = event.target.closest('[data-world-entry]');
-        openCard(s, index, action?.dataset.worldEntry);
+        const action = event.target.closest('[data-world-entry],[data-lbx-action]');
+        openCard(s, index, action?.dataset.worldEntry || action?.dataset.lbxAction);
       });
       // Keyboard focus brings its card to the front; pointer focus does not,
       // so a press that starts a drag never yanks the drum.
@@ -607,6 +729,9 @@
         if (wrapped(Math.round(s.target)) !== index) aim(s, nearest(s.target, index));
       });
     });
+    s.toggle = host.querySelector('.lbx-layout-toggle');
+    s.toggle.addEventListener('click', () => setLayout(s, isRack() ? 'classic' : 'rack'));
+    applyLayout(s);
     host.querySelector('.lb-cylinder-prev').addEventListener('click', () => navigate(s,-1));
     host.querySelector('.lb-cylinder-next').addEventListener('click', () => navigate(s,1));
     s.view.addEventListener('keydown', (event) => {

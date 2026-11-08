@@ -14,6 +14,8 @@ contrast, unchanged.
   mount   white card stock of a slide mount: fine tooth and a few fibres.
   chassis graphite powder-coat with a faint brushed grain along its length.
   tape    paper masking tape: crepe crinkles across the strip, warm beige.
+  card    cotton card stock for the Atlas cards: visible fibres, soft
+          mottling and tooth, near-white for multiply.
 
 Run from the repository root:  python3 tools/make-light-table-textures.py
 """
@@ -102,6 +104,12 @@ def main():
     brushed = band(n, 1, 160, 42, aniso=(10.0, 1.0))   # long in x, varying in y
     chassis = 128 + 10.0 * speckle + 6.0 * brushed + 4.0 * band(n, 3, 12, 43)
     save_grey(chassis, "chassis.webp", f"{n}px")
+
+    # Atlas card stock: more character than the slide mount, still near-white.
+    c = 512
+    card = (252.5 + 1.1 * band(c, 2, 10, 61) + 1.4 * band(c, 60, 200, 62)
+            + 5.0 * np.minimum(fibres(c, 600, 63, (10, 34)), 0) + 1.2 * np.maximum(fibres(c, 400, 64, (6, 18)), 0))
+    save_grey(card, "card.webp", f"{c}px")
 
     # Masking tape: crepe crinkles across the strip, baked in colour with alpha.
     tw, th = 256, 64

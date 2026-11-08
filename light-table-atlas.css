@@ -136,3 +136,101 @@
   border:0!important;border-top:1px solid #E3DFD6!important;color:#B3261A!important;
 }
 .studio.atlas-shell .lb-android-footer a{color:#1C1B19!important}
+
+/* ==========================================================================
+   Each card's own element
+   One design, five jobs. Every card keeps the same structure and the same
+   red-and-white palette, but carries one signature element drawn from what it
+   does, in its own shade of red, on real card stock. The shades run from dark
+   to light around the drum: oxblood, brick, signal red, scarlet, blush.
+   ========================================================================== */
+.studio.atlas-shell .lb-cylinder-v9 .lb-cylinder-card{
+  --za-shade:#D4301F;
+  --za-paper:url("./assets/textures/card.webp");
+}
+.studio.atlas-shell .lb-cylinder-v9 .lb-cylinder-world{--za-shade:#7E1A14}
+.studio.atlas-shell .lb-cylinder-v9 .lb-cylinder-research{--za-shade:#A3241A}
+.studio.atlas-shell .lb-cylinder-v9 .lb-cylinder-script{--za-shade:#D4301F}
+.studio.atlas-shell .lb-cylinder-v9 .lb-cylinder-visual{--za-shade:#E5483A}
+.studio.atlas-shell .lb-cylinder-v9 .lb-cylinder-foundation{--za-shade:#EE9A91}
+
+/* Real card stock, and the card's shade as a coloured top edge */
+.studio.atlas-shell .lb-cylinder-v9 .lb-cylinder-source{
+  isolation:isolate;
+  background-color:#FFFDFB!important;
+  background-image:var(--za-paper)!important;background-size:512px 512px!important;background-repeat:repeat!important;
+  background-blend-mode:multiply!important;
+  box-shadow:inset 0 4px 0 var(--za-shade)!important;
+}
+/* Decorative layers sit between the paper and the words */
+.studio.atlas-shell .lb-cylinder-v9 .lb-cylinder-source::before,
+.studio.atlas-shell .lb-cylinder-v9 .lb-cylinder-source::after{
+  content:"";position:absolute;pointer-events:none;z-index:-1;
+}
+
+/* 01A World: a red survey map of the places, with a pin */
+.studio.atlas-shell .lb-cylinder-v9 .lb-cylinder-world .atlas-world::before{
+  top:36%;right:-10px;width:66%;height:30%;
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 220 210' fill='none' stroke='%237E1A14' stroke-width='1.1'%3E%3Cpath d='M150 30c40 10 62 52 48 90s-64 46-98 30-52-56-30-90 50-38 80-30z' opacity='.30'/%3E%3Cpath d='M146 52c26 6 40 34 30 58s-42 30-64 20-34-36-20-58 34-26 54-20z' opacity='.26'/%3E%3Cpath d='M141 72c13 3 20 17 15 29s-21 15-32 10-17-18-10-29 17-13 27-10z' opacity='.24'/%3E%3Cpath d='M10 176c40-26 82-8 112-20s70-44 110-26' opacity='.16'/%3E%3Cpath d='M10 196c40-24 86-4 116-16s68-40 108-22' opacity='.13'/%3E%3Cpath d='M30 40h14m-7-7v14' opacity='.4'/%3E%3Cpath d='M58 120c16-6 30-2 44 6s28 6 40-4' stroke-dasharray='3 4' opacity='.45'/%3E%3C/svg%3E") center/contain no-repeat;
+}
+.studio.atlas-shell .lb-cylinder-v9 .lb-cylinder-world .atlas-world::after{
+  top:calc(36% + 30% * .26);right:calc(66% * .24 - 10px);width:15px;height:21px;
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 28'%3E%3Cpath d='M10 1C5 1 1.5 4.7 1.5 9.6 1.5 16 10 27 10 27s8.5-11 8.5-17.4C18.5 4.7 15 1 10 1z' fill='%23D4301F'/%3E%3Ccircle cx='10' cy='9.6' r='3.4' fill='%23FFFDFB'/%3E%3C/svg%3E") center/contain no-repeat;
+  filter:drop-shadow(0 2px 2px rgba(126,26,20,.35));
+}
+
+/* 02A Field notes: red-ruled ledger paper with a margin, and a paperclip */
+.studio.atlas-shell .lb-cylinder-v9 .lb-cylinder-research .atlas-research::before{
+  inset:62px 0 0 0;
+  background:
+    linear-gradient(90deg,transparent 14px,rgba(163,36,26,.45) 14px 15px,transparent 15px 18px,rgba(163,36,26,.45) 18px 19px,transparent 19px),
+    repeating-linear-gradient(180deg,transparent 0 21px,rgba(163,36,26,.12) 21px 22px);
+}
+.studio.atlas-shell .lb-cylinder-v9 .atlas-research .research-stack>span:first-child::after{
+  content:"";position:absolute;top:-9px;right:16px;width:12px;height:32px;pointer-events:none;
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 32' fill='none' stroke='%23A3241A' stroke-width='1.6' stroke-linecap='round'%3E%3Cpath d='M3.5 9v15a2.5 2.5 0 0 0 5 0V5.5a4 4 0 0 0-8 0V25a5 5 0 0 0 10 0V10'/%3E%3C/svg%3E") center/contain no-repeat;
+}
+.studio.atlas-shell .lb-cylinder-v9 .atlas-research .research-stack>span{background:rgba(255,253,251,.94)!important}
+
+/* 03A Screenplay: a bound script, a stack of pages held by two brads */
+.studio.atlas-shell .lb-cylinder-v9 .atlas-script .script-page-preview{
+  position:relative!important;
+  box-shadow:5px 5px 0 -1px #FBEFEC,5px 5px 0 0 #EBCFC9,10px 10px 0 -1px #F7E2DE,10px 10px 0 0 #E2B8B0,0 18px 26px -16px rgba(126,26,20,.45)!important;
+}
+.studio.atlas-shell .lb-cylinder-v9 .atlas-script .script-page-preview::before{
+  content:"";position:absolute;left:9px;top:22%;width:7px;height:56%;pointer-events:none;
+  background:
+    radial-gradient(circle at 50% 3.5px,#B3261A 2.4px,#7E1A14 3.2px,transparent 3.6px) 0 0/7px 7px no-repeat,
+    radial-gradient(circle at 50% 3.5px,#B3261A 2.4px,#7E1A14 3.2px,transparent 3.6px) 0 100%/7px 7px no-repeat;
+}
+.studio.atlas-shell .lb-cylinder-v9 .atlas-script .script-page-preview em{position:relative}
+.studio.atlas-shell .lb-cylinder-v9 .atlas-script .script-page-preview em::after{
+  content:"";position:absolute;inset:-7px -11px;pointer-events:none;
+  background:var(--lt-circle) center/100% 100% no-repeat;
+}
+
+/* 04A Visual language: a strip of red chips and a halftone field */
+.studio.atlas-shell .lb-cylinder-v9 .lb-cylinder-visual .atlas-visual::before{
+  right:0;bottom:0;width:78%;height:58%;
+  background:radial-gradient(circle,rgba(229,72,58,.42) 1.15px,transparent 1.6px) 0 0/7px 7px;
+  -webkit-mask-image:radial-gradient(ellipse 100% 100% at 100% 100%,#000 0%,rgba(0,0,0,.6) 35%,transparent 72%);
+  mask-image:radial-gradient(ellipse 100% 100% at 100% 100%,#000 0%,rgba(0,0,0,.6) 35%,transparent 72%);
+}
+.studio.atlas-shell .lb-cylinder-v9 .lb-cylinder-visual .atlas-visual::after{
+  left:clamp(16px,1.45vw,22px);right:clamp(16px,1.45vw,22px);bottom:62px;height:20px;
+  background:linear-gradient(90deg,#5E120D 0 16.66%,#7E1A14 16.66% 33.33%,#B3261A 33.33% 50%,#D4301F 50% 66.66%,#E5483A 66.66% 83.33%,#F2B3AB 83.33%);
+  border-radius:3px;box-shadow:inset 0 0 0 1px rgba(0,0,0,.06),0 6px 12px -8px rgba(126,26,20,.6);
+}
+
+/* 05A Foundation: the spark, a soft red sunburst and a four-point star */
+.studio.atlas-shell .lb-cylinder-v9 .lb-cylinder-foundation .atlas-foundation::before{
+  top:0;right:0;width:100%;height:78%;
+  background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 330' preserveAspectRatio='xMaxYMin slice' fill='none' stroke='%23D4301F' stroke-width='1' stroke-linecap='round'%3E%3Cpath d='M300 0L288 330M300 0L264 247M300 0L218 320M300 0L212 234M300 0L151 295M300 0L164 210M300 0L91 256M300 0L122 176M300 0L41 205M300 0L88 133M300 0L3 145M300 0L65 85M300 0L-21 78M300 0L52 32M300 0L-30 7' opacity='.13'/%3E%3C/svg%3E") top right/100% 100% no-repeat,
+    radial-gradient(ellipse 70% 55% at 100% 0%,rgba(238,154,145,.55) 0%,rgba(247,216,212,.35) 40%,transparent 75%);
+}
+.studio.atlas-shell .lb-cylinder-v9 .lb-cylinder-foundation .atlas-foundation::after{
+  top:56px;right:26px;width:30px;height:30px;
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3E%3Cpath d='M15 0c1.2 9 4.8 12.6 15 15-10.2 2.4-13.8 6-15 15-1.2-9-4.8-12.6-15-15 10.2-2.4 13.8-6 15-15z' fill='%23D4301F'/%3E%3C/svg%3E") center/contain no-repeat;
+  filter:drop-shadow(0 0 6px rgba(212,48,31,.35));
+}

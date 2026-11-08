@@ -49,6 +49,16 @@ Instrument Serif (titles), DM Sans (interface), DM Mono (edge print and labels),
 - rows with red numbers that take a red wash and a red edge on hover
 - a red action at the foot
 
+Each card also has its own signature element, drawn from its job, in its own shade of red on cotton card stock (`assets/textures/card.webp`). Its shade shows as a coloured top edge, and the shades run dark to light around the drum:
+
+| Card | Shade | Element |
+|---|---|---|
+| 01A World | Oxblood `#7E1A14` | A red survey map: contour lines, a dotted route and a map pin |
+| 02A Field notes | Brick `#A3241A` | Red-ruled ledger paper with a double margin line; a red paperclip on the notes |
+| 03A Screenplay | Signal red `#D4301F` | A bound script: a stack of pages held by two brads; the scene count circled in grease pencil |
+| 04A Visual language | Scarlet `#E5483A` | A strip of six red colour chips and a halftone dot field |
+| 05A Foundation | Blush `#EE9A91` | The spark: a soft red sunburst and a four-point star |
+
 The palette is white, ink and grease-pencil red only. The former film-edge orange now resolves to the same red everywhere.
 
 Only the cylinder's look changed. Its geometry, motion, canvas and script (`story-cylinder-v9.*`) are untouched, and `tests/story-cylinder-qa.mjs` passes 8/8.

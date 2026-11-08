@@ -20,8 +20,8 @@
     if (summary) {
       const title = summary.querySelector('strong');
       const description = summary.querySelector('p');
-      if (title && title.textContent !== 'Acid Paper') title.textContent = 'Acid Paper';
-      const copy = 'Tactile paper, matte charcoal, and acid-lime accents. A quiet page for your writing.';
+      if (title && title.textContent !== 'Projection Room') title.textContent = 'Projection Room';
+      const copy = 'A dark studio lit by one amber light. Your screenplay page stays paper.';
       if (description && description.textContent !== copy) description.textContent = copy;
     }
     enhanceExport();

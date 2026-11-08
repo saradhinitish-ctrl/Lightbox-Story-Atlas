@@ -66107,8 +66107,8 @@ ${prefix}
                 /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("i", {})
               ] }),
               /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("div", { children: [
-                /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("strong", { children: "Paper Studio" }),
-                /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("p", { children: "Warm paper, plum ink, and vermilion details from your 15-month plan." })
+                /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("strong", { children: "Projection Room" }),
+                /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("p", { children: "A dark studio lit by one amber light. Your screenplay page stays paper." })
               ] })
             ] }),
             /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)("label", { className: "checkbox-label", children: [

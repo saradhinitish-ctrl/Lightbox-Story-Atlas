@@ -63526,67 +63526,558 @@ ${formatDuration(t.seconds)}${t.source === "pages" ? "" : " (" + (t.source === "
   }
 
   // components/development-sheet.tsx
+  var LbxReact = __toESM(require_react(), 1);
   var import_jsx_runtime17 = __toESM(require_jsx_runtime(), 1);
-  var prompts = [["seed", "The seed", "An image, a question, a situation, a feeling\u2014whatever started this idea."], ["premise", "Premise", "What is the central situation or possibility?"], ["logline", "Logline", "An optional one-sentence description of the story. It can change."], ["world", "The world", "How does this world work? Its everyday life, history, culture, systems, or invented rules."], ["theme", "What you want to explore", "Questions, themes, contradictions, or a personal reason to make this."], ["conflict", "Pressure & possibilities", "What disrupts this world? What could happen? Explore without committing."], ["tone", "Tone & experience", "How should it feel to watch? Form, genre, atmosphere, or experiments."], ["questions", "Unknowns & alternatives", "Unanswered questions, competing ideas, and things to investigate."]];
+  var lbxWordCount = (s) => (s.trim().match(/\S+/g) || []).length;
+  var fieldSizing = typeof CSS !== "undefined" && !!CSS.supports?.("field-sizing", "content");
+  function LbxText({ value, onChange, className = "", label, placeholder, onKeyDown, inputRef, minRows = 2, id }) {
+    const own = LbxReact.useRef(null);
+    LbxReact.useLayoutEffect(() => {
+      const el = own.current;
+      if (!el || fieldSizing) return;
+      el.style.height = "auto";
+      el.style.height = el.scrollHeight + "px";
+    }, [value]);
+    const setRef = (el) => {
+      own.current = el;
+      if (typeof inputRef === "function") inputRef(el);
+      else if (inputRef) inputRef.current = el;
+    };
+    return /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("textarea", { id, ref: setRef, className: "lbx-text " + className, rows: minRows, "aria-label": label, placeholder, value, spellCheck: true, onChange: (e) => onChange(e.target.value), onKeyDown });
+  }
+  var reduceMotion = () => typeof matchMedia !== "undefined" && matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var TAKES = [
+    { key: "seed", label: "The seed", short: "Seed", q: "What image won\u2019t leave you alone?", hint: "Not the plot yet. The picture, the overheard line, the feeling that started all of this. Describe it as a single shot.", placeholder: "Describe the first frame you saw.", notes: ["Why this image \u2014 and why does it belong to you?", "What is just outside the frame?", "If this were the last shot of the film instead of the first, what would it mean?"] },
+    { key: "world", label: "The world", short: "World", q: "Where are we, and what counts as normal here?", hint: "The place, the era, the rules everyone obeys without noticing. What would surprise a stranger on their first day?", placeholder: "Set the scene and its unwritten rules.", notes: ["What does everyone here believe that isn\u2019t true?", "Who holds the power here, and who pays for it?", "What does an ordinary morning sound like?"] },
+    { key: "conflict", label: "The trouble", short: "Trouble", q: "What breaks the ordinary day?", hint: "The arrival, the loss, the discovery, the decision. The moment after which nothing can go back to how it was.", placeholder: "Name the crack in the day.", notes: ["Who is hurt first if nobody acts?", "Why does it happen now \u2014 not a year ago, not a year from now?", "What is the worst possible way this could go?"] },
+    { key: "premise", label: "The premise", short: "Premise", q: "Who wants what, and what stands in the way?", hint: "Put a person inside the trouble. Give them a goal we can watch them chase, and a price if they fail.", placeholder: "Write the premise in a sentence or two.", notes: ["Is the goal something a camera can watch them chase?", "What does winning cost them \u2014 even if they win?", "Give the obstacle a face. Who is it?"], refs: ["seed", "conflict"] },
+    { key: "theme", label: "Why you", short: "Why you", q: "What are you trying to find out by telling this?", hint: "Not the moral. The question you can\u2019t answer yet \u2014 about people, or about yourself. The film is how you\u2019ll go looking for it.", placeholder: "Write the question underneath the story.", notes: ["What would you argue if you had to take the other side?", "Which character is closest to you \u2014 and which one frightens you?", "What would you be embarrassed to admit this film is about?"] },
+    { key: "tone", label: "The feeling", short: "Feeling", q: "How should it feel to sit in the dark with this?", hint: "Genre, pace, texture, temperature. Name the films, songs or photographs it lives beside \u2014 and what it must never feel like.", placeholder: "Describe the feeling in the room.", notes: ["What should the audience feel in the final ten seconds?", "Where should they laugh?", "What is the one rule of style you won\u2019t break?"] },
+    { key: "logline", label: "One breath", short: "Logline", q: "Now say the whole film in one breath.", hint: "One sentence someone could repeat to a friend. Thirty-five words or fewer. You can rewrite it every day.", placeholder: "One sentence. The whole film.", notes: ["Cut every adjective. Does it still work?", "Is the central question in there?", "Read it aloud. Where did you run out of breath?"], refs: ["premise"] },
+    { key: "questions", label: "The unknown", short: "Unknown", q: "What don\u2019t you know yet?", hint: "The open questions, the versions you\u2019re torn between, the facts you still need. Unknowns are where research begins.", placeholder: "List what you still have to find out.", notes: ["Which unknown, if you answered it, would change everything else?", "What are you putting off deciding?", "What do you need to see with your own eyes?"] }
+  ];
+  var ONE_BREATH = 35;
+  var lbsPad = (i) => String(i + 1).padStart(2, "0");
+  var lastTake = /* @__PURE__ */ new Map();
   function DevelopmentSheet({ n, patch, children: children3 }) {
-    return /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("div", { className: "planning-sheet development-sheet", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("header", { children: [
-        /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("span", { className: "planning-symbol", children: /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(Lightbulb, { size: 28, strokeWidth: 1.3 }) }),
-        /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("div", { children: [
-          /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("div", { className: "eyebrow", children: "STORY DEVELOPMENT" }),
-          /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("h2", { children: n.title }),
-          /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("p", { children: "Explore the idea in your own order. Every prompt is optional." })
+    const value = (k) => n.fields["development." + k] || "";
+    const answered = TAKES.map((t2) => !!value(t2.key).trim());
+    const done = answered.filter(Boolean).length;
+    const firstOpen = answered.indexOf(false);
+    const [take, setTake] = LbxReact.useState(() => lastTake.get(n.id) ?? (firstOpen < 0 ? 0 : firstOpen));
+    const [view, setView] = LbxReact.useState(() => done === TAKES.length && !lastTake.has(n.id) ? "sheet" : "reel");
+    const [dir, setDir] = LbxReact.useState(1);
+    const [note, setNote] = LbxReact.useState(0);
+    const field = LbxReact.useRef(null);
+    const strip = LbxReact.useRef(null), stage = LbxReact.useRef(null);
+    const wantFocus = LbxReact.useRef(false);
+    const t = TAKES[take], text = value(t.key), words = lbxWordCount(text);
+    LbxReact.useEffect(() => {
+      lastTake.set(n.id, take);
+      setNote(0);
+      const s = strip.current, f = s?.querySelector('[aria-current="step"]');
+      if (s && f && s.scrollWidth > s.clientWidth) s.scrollTo({ left: f.offsetLeft - (s.clientWidth - f.offsetWidth) / 2, behavior: reduceMotion() ? "auto" : "smooth" });
+      const st = stage.current;
+      if (wantFocus.current && st && st.getBoundingClientRect().top < 0) st.scrollIntoView({ block: "start", behavior: reduceMotion() ? "auto" : "smooth" });
+      if (wantFocus.current && field.current) {
+        wantFocus.current = false;
+        const el = field.current;
+        el.focus({ preventScroll: true });
+        el.setSelectionRange(el.value.length, el.value.length);
+      }
+    }, [take, n.id, view]);
+    function go(i, focus2 = true) {
+      const next = Math.max(0, Math.min(TAKES.length - 1, i));
+      if (next === take && view === "reel") return;
+      setDir(next >= take ? 1 : -1);
+      wantFocus.current = focus2;
+      setView("reel");
+      setTake(next);
+    }
+    function write(v) {
+      patch(n.id, { fields: { ...n.fields, ["development." + t.key]: v } });
+    }
+    function keys3(e) {
+      if ((e.metaKey || e.ctrlKey) && e.key === "Enter") {
+        e.preventDefault();
+        if (e.shiftKey) go(take - 1);
+        else if (take === TAKES.length - 1) {
+          setView("sheet");
+        } else go(take + 1);
+      }
+    }
+    function stripKeys(e) {
+      if (!["ArrowLeft", "ArrowRight", "Home", "End"].includes(e.key)) return;
+      e.preventDefault();
+      const i = e.key === "Home" ? 0 : e.key === "End" ? TAKES.length - 1 : take + (e.key === "ArrowRight" ? 1 : -1);
+      go(i, false);
+      requestAnimationFrame(() => strip.current?.querySelector('[aria-current="step"]')?.focus());
+    }
+    const showNote = words >= 6;
+    const breath = t.key === "logline" && words > 0;
+    return /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("div", { className: "lbs", "data-view": view, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("header", { className: "lbs-head", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("div", { className: "lbs-titles", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("div", { className: "lbs-eyebrow", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("span", { className: "lbs-dot", "aria-hidden": "true" }),
+            "STORY FOUNDATION ",
+            /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("span", { "aria-hidden": "true", children: "/" }),
+            " THE SPARK"
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("h2", { className: "lbs-title", children: [
+            "The spark",
+            /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("span", { "aria-hidden": "true", children: "." })
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("p", { className: "lbs-lede", children: "Eight questions, one at a time. Answer in any order; the strip fills in as you go." })
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("div", { className: "lbs-slate", "aria-hidden": "true", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("span", { className: "lbs-slate-bar" }, view + take),
+          /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("dl", { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("div", { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("dt", { children: "ROLL" }),
+              /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("dd", { children: "A" })
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("div", { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("dt", { children: "SC." }),
+              /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("dd", { children: view === "sheet" ? "\u2014" : lbsPad(take) })
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("div", { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("dt", { children: "TK." }),
+              /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("dd", { children: "01" })
+            ] })
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("span", { className: "lbs-slate-count", children: [
+            done,
+            "/",
+            TAKES.length,
+            " EXPOSED"
+          ] })
         ] })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("div", { className: "development-intro", children: "Start with a spark. Shape the details as your story grows." }),
-      /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("div", { className: "planning-field-grid", children: prompts.map(([key2, label, placeholder]) => /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("label", { className: "planning-field", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("span", { children: label }),
-        /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("textarea", { rows: 4, "aria-label": label, value: n.fields["development." + key2] || "", placeholder, onChange: (e) => patch(n.id, { fields: { ...n.fields, ["development." + key2]: e.target.value } }) })
-      ] }, key2)) }),
-      /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("section", { className: "planning-free-notes", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("div", { className: "section-label", children: "FREE EXPLORATION \xB7 WRITE ANYTHING" }),
+      /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("div", { className: "lbs-bar", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("div", { className: "lbs-strip", ref: strip, role: "toolbar", "aria-label": "The spark\u2019s eight questions", onKeyDown: stripKeys, children: TAKES.map((x, i) => /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("button", { type: "button", className: "lbs-frame" + (answered[i] ? " is-exposed" : ""), "aria-current": view === "reel" && i === take ? "step" : void 0, tabIndex: (view === "reel" ? i === take : i === 0) ? 0 : -1, onClick: () => go(i), title: x.label + (answered[i] ? " \u2014 written" : " \u2014 not yet written"), children: [
+          /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("b", { children: [
+            lbsPad(i),
+            "A"
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("span", { children: x.short }),
+          /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("i", { "aria-hidden": "true" })
+        ] }, x.key)) }),
+        /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("div", { className: "lbs-views", role: "group", "aria-label": "View", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("button", { type: "button", "aria-pressed": view === "reel", onClick: () => {
+            wantFocus.current = true;
+            setView("reel");
+          }, children: "Take by take" }),
+          /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("button", { type: "button", "aria-pressed": view === "sheet", onClick: () => setView("sheet"), children: "Contact sheet" })
+        ] })
+      ] }),
+      view === "reel" ? /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("section", { className: "lbs-stage", ref: stage, "aria-label": t.label, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("div", { className: "lbs-take", "data-dir": dir > 0 ? "next" : "prev", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("p", { className: "lbs-slug", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("b", { children: [
+              "SC. ",
+              lbsPad(take)
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("span", { "aria-hidden": "true", children: " \u2014 " }),
+            t.label.toUpperCase()
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("label", { className: "lbs-q", htmlFor: "lbs-" + n.id, children: t.q }),
+          /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("p", { className: "lbs-hint", children: t.hint }),
+          t.key === "premise" && /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("p", { className: "lbs-guide", "aria-label": "A shape to try: When something happens, someone must do something, or else it costs them.", children: [
+            "When ",
+            /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("i", { children: "something happens" }),
+            ", a ",
+            /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("i", { children: "someone" }),
+            " must ",
+            /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("i", { children: "do something" }),
+            ", or else ",
+            /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("i", { children: "it costs them" }),
+            "."
+          ] }),
+          t.refs && t.refs.some((k) => value(k).trim()) && /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("div", { className: "lbs-refs", "aria-label": "Your earlier answers", children: t.refs.filter((k) => value(k).trim()).map((k) => {
+            const r = TAKES.find((x) => x.key === k);
+            return /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("button", { type: "button", className: "lbs-ref", onClick: () => go(TAKES.indexOf(r)), children: [
+              /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("small", { children: [
+                "ON THE TABLE \xB7 ",
+                r.label.toUpperCase()
+              ] }),
+              /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("span", { children: value(k) })
+            ] }, k);
+          }) }),
+          /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("div", { className: "lbs-page", children: /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(LbxText, { id: "lbs-" + n.id, inputRef: field, className: "lbs-answer", label: t.label, placeholder: t.placeholder, value: text, onChange: write, onKeyDown: keys3, minRows: 3 }) }),
+          /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("div", { className: "lbs-under", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("span", { className: "lbs-count" + (breath && words <= ONE_BREATH ? " is-breath" : "") + (breath && words > ONE_BREATH ? " is-long" : ""), "aria-live": "polite", children: [
+              words ? words + (words === 1 ? " word" : " words") : "Not written yet",
+              breath && (words <= ONE_BREATH ? " \xB7 one breath" : " \xB7 " + (words - ONE_BREATH) + " over one breath")
+            ] }),
+            showNote && /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("button", { type: "button", className: "lbs-another", onClick: () => setNote((x) => (x + 1) % t.notes.length), children: "Another note" })
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("p", { className: "lbs-note" + (showNote ? " is-on" : ""), "aria-live": "polite", children: showNote && /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)(import_jsx_runtime17.Fragment, { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("small", { children: "DIRECTOR\u2019S NOTE" }),
+            t.notes[note]
+          ] }) })
+        ] }, t.key),
+        /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("footer", { className: "lbs-nav", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("button", { type: "button", className: "lbs-step", onClick: () => go(take - 1), disabled: take === 0, children: [
+            /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("span", { "aria-hidden": "true", children: "\u2190" }),
+            " ",
+            take > 0 ? TAKES[take - 1].label : "Previous"
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("span", { className: "lbs-keys", "aria-hidden": "true", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("kbd", { children: "\u2318" }),
+            /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("kbd", { children: "\u21B5" }),
+            " next take"
+          ] }),
+          take < TAKES.length - 1 ? /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("button", { type: "button", className: "lbs-step is-next", onClick: () => go(take + 1), children: [
+            TAKES[take + 1].label,
+            " ",
+            /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("span", { "aria-hidden": "true", children: "\u2192" })
+          ] }) : /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("button", { type: "button", className: "lbs-step is-next", onClick: () => setView("sheet"), children: [
+            "See the contact sheet ",
+            /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("span", { "aria-hidden": "true", children: "\u2192" })
+          ] })
+        ] })
+      ] }) : /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("section", { className: "lbs-sheet", "aria-label": "Contact sheet", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("p", { className: "lbs-sheet-cap", children: done === TAKES.length ? "Every frame exposed. Circle the ones you\u2019d print." : done ? `${done} of ${TAKES.length} frames exposed. Choose a frame to keep shooting.` : "Nothing exposed yet. Choose any frame to begin." }),
+        /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("ol", { className: "lbs-sheet-grid", children: TAKES.map((x, i) => /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("li", { children: /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("button", { type: "button", className: "lbs-print" + (answered[i] ? " is-exposed" : ""), onClick: () => go(i), children: [
+          /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("span", { className: "lbs-print-head", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("b", { children: [
+              lbsPad(i),
+              "A"
+            ] }),
+            x.label.toUpperCase()
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("span", { className: "lbs-print-body", children: value(x.key).trim() || x.q }),
+          /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("span", { className: "lbs-print-foot", children: answered[i] ? lbxWordCount(value(x.key)) + " words" : "Not shot yet" })
+        ] }) }, x.key)) })
+      ] }),
+      /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("section", { className: "lbs-margins", "aria-label": "The margins", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("div", { className: "lbs-margins-head", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("span", { children: "THE MARGINS" }),
+          /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("p", { children: "Everything that doesn\u2019t fit a question: fragments, scenes you can already see, lines of dialogue." })
+        ] }),
         children3
       ] })
     ] });
   }
 
   // components/planning-sheet.tsx
+  var LbxR = __toESM(require_react(), 1);
   var import_jsx_runtime18 = __toESM(require_jsx_runtime(), 1);
+  var ROOMS = {
+    character: { eyebrow: "The casting session", untitled: "Untitled character", namePrompt: "Who is this?", lede: "Nine questions, from the face we see first to the person on the last page. Answer them in any order.", loose: "Scenes they belong in, lines of theirs you\u2019ve overheard, contradictions worth keeping.", acts: [
+      { no: "I", title: "The surface", line: "What we notice first.", qs: [
+        { key: "role", tag: "The role", q: "Who are they in this story, in a single line?", placeholder: "The one who\u2026", notes: ["What would a stranger assume about them in the first five seconds?", "Are they driving the story, or being driven by it?"] },
+        { key: "want", tag: "The want", q: "What do they want so badly they\u2019d embarrass themselves to get it?", placeholder: "Something we can watch them chase.", notes: ["And what do they actually need \u2014 that they can\u2019t see yet?", "What will they do in the first ten pages to get it?"] },
+        { key: "voice", tag: "The voice", q: "How do they talk when they\u2019re lying?", placeholder: "Rhythm, the words they lean on, what they never say.", notes: ["Write one line only they would say.", "What do they do with their hands when they\u2019re cornered?"] }
+      ] },
+      { no: "II", title: "The pressure", line: "What pushes back.", qs: [
+        { key: "obstacle", tag: "The wall", q: "What stands between them and what they want \u2014 outside them, and inside?", placeholder: "The people, the rules, the habits in their way.", notes: ["Which is harder for them to beat: the wall outside or the one inside?", "Who benefits if they fail?"] },
+        { key: "relationships", tag: "The orbit", q: "Who can hurt them most, and who would they protect at any cost?", placeholder: "The people who bend their choices.", notes: ["Who do they lie to? Who sees through it?", "Which relationship changes the most by the end?"] },
+        { key: "secret", tag: "The secret", q: "What do they know that nobody else does?", placeholder: "The thing they\u2019d never say aloud.", notes: ["Who would be most damaged if it came out?", "Does the audience learn it before the other characters, or after?"] }
+      ] },
+      { no: "III", title: "The depth", line: "What the story has to earn.", qs: [
+        { key: "fear", tag: "The fear", q: "What are they most afraid someone will find out?", placeholder: "The thing they protect at their own expense.", notes: ["Where did that fear come from?", "Which scene forces them to face it?"] },
+        { key: "background", tag: "The before", q: "What happened before page one that still runs their life?", placeholder: "The event they haven\u2019t finished living through.", notes: ["Who was there when it happened?", "What object, place or song still carries it?"] },
+        { key: "change", tag: "The turn", q: "Who are they on the last page?", placeholder: "The person the story leaves behind.", notes: ["What do they lose to become that person?", "Where do we first see the change begin?"] }
+      ] }
+    ] },
+    location: { eyebrow: "The location recce", untitled: "Untitled location", namePrompt: "Name this place", lede: "Walk in with the camera before anyone else does. Look, listen, then work out what this place does to people.", loose: "Scenes set here, a sketch of the layout, what you noticed on a visit.", acts: [
+      { no: "I", title: "The first look", line: "Walk in with the camera.", qs: [
+        { key: "context", tag: "Where & when", q: "Where exactly are we, and at what hour do we find it?", placeholder: "The place, the season, the time of day.", notes: ["Why this hour and not another?", "How far is it from where your characters feel safe?"] },
+        { key: "appearance", tag: "The wide shot", q: "What does the camera see first?", placeholder: "Scale, light, colour, the shape of the space.", notes: ["Now the detail only someone who lives here would notice.", "What is broken here, and what has been repaired?"] },
+        { key: "atmosphere", tag: "Room tone", q: "Close your eyes. What do you hear, smell, and feel on your skin?", placeholder: "Sound, air, temperature, what never stops moving.", notes: ["What sound would make someone here look up?", "What is the light doing to people\u2019s faces?"] }
+      ] },
+      { no: "II", title: "The story here", line: "What the place does.", qs: [
+        { key: "purpose", tag: "What it does to people", q: "How does this place change the people who enter it?", placeholder: "Who belongs, who is watched, who wants to leave.", notes: ["Who belongs here, and who is trespassing?", "Which scene could only happen here?"] },
+        { key: "history", tag: "What it remembers", q: "What happened here before the story began?", placeholder: "The history in the walls.", notes: ["Who still carries that history?", "What trace of it can the camera find?"] },
+        { key: "continuity", tag: "Over time", q: "How does it change across the story?", placeholder: "Light, season, damage, who is allowed in.", notes: ["What does it look like the last time we see it?", "What has the story taken from this place?"] }
+      ] },
+      { no: "III", title: "The recce", line: "Getting the shot.", qs: [
+        { key: "practical", tag: "On the day", q: "What will the crew need to know?", placeholder: "Access, power, noise, permits, where the camera can stand.", notes: ["Where is the sun at the hour you need?", "What could you build instead of finding?"] },
+        { key: "references", tag: "References", q: "Which real places, photographs or films is it drawn from?", placeholder: "Addresses, links, titles, photographers.", notes: ["What would you photograph on a scouting trip?", "Which reference is closest \u2014 and what must be different?"] }
+      ] }
+    ] },
+    prop: { eyebrow: "The evidence tag", untitled: "Untitled prop", namePrompt: "Name this object", lede: "Pick it up. Turn it over. Every object on screen is evidence of someone.", loose: "Where it appears, measurements, sketches, things to ask the props team.", acts: [
+      { no: "I", title: "The object", line: "Hold it in your hand.", qs: [
+        { key: "appearance", tag: "Describe it", q: "What would your hand notice first?", placeholder: "Size, weight, material, wear, markings.", notes: ["What is the one detail that makes it this object and no other?", "What does it sound like when it\u2019s put down?"] },
+        { key: "ownership", tag: "Whose it is", q: "Who owns it, who wants it, and who should never touch it?", placeholder: "Owner, keeper, thief.", notes: ["Does it change hands? When?", "Who would steal it \u2014 and why?"] },
+        { key: "history", tag: "Where it\u2019s been", q: "How did it get here, and what has it survived?", placeholder: "Its life before the story, and what it means to its owner.", notes: ["What does it mean to the person who holds it?", "What would be lost if it broke?"] }
+      ] },
+      { no: "II", title: "The charge", line: "What it does to the story.", qs: [
+        { key: "purpose", tag: "What it changes", q: "What becomes possible \u2014 or impossible \u2014 because it exists?", placeholder: "Its job in the plot.", notes: ["What happens if it disappears halfway through?", "Is it a promise, a threat, or a clue?"] },
+        { key: "moment", tag: "Its moment", q: "Describe the shot where it matters most.", placeholder: "Frame size, light, whose hand, what we hear.", notes: ["Where do we see it first, before it matters?", "What should the audience notice that the characters don\u2019t?"] }
+      ] },
+      { no: "III", title: "The props table", line: "Keeping it true.", qs: [
+        { key: "continuity", tag: "Continuity", q: "Where is it in each scene, and how does its condition change?", placeholder: "Scene by scene: where it is, what state it\u2019s in.", notes: ["When is it damaged, and is that on screen?", "Who is holding it at the end?"] },
+        { key: "practical", tag: "Props department", q: "What will the props team need to make it work?", placeholder: "Sourcing, duplicates, handling, safety.", notes: ["How many do you need if a take goes wrong?", "Does an actor need to use it, or only carry it?"] },
+        { key: "references", tag: "References", q: "What is it modelled on?", placeholder: "Real objects, museum pieces, photographs, links.", notes: ["Where could you see the real thing?", "What would make it unmistakably from this world?"] }
+      ] }
+    ] }
+  };
+  var lbwPad = (i) => String(i + 1).padStart(2, "0");
+  var lbwLine = (s) => s.trim().split(/\n/)[0].replace(/\s+/g, " ");
+  var lbwHour = (s) => (s.match(/\b(pre-dawn|dawn|sunrise|morning|noon|midday|afternoon|day|dusk|sunset|twilight|evening|night|midnight|magic hour)\b/i)?.[1] || "day").toUpperCase();
   function PlanningSheet({ n, patch, children: children3, images }) {
-    const character = n.kind === "character", prop = n.kind === "prop";
-    const fields = character ? [["role", "Role in the story", ""], ["want", "What they want", "Their immediate goal, larger desire, or both."], ["obstacle", "What holds them back", "External obstacles, inner resistance, or contradictions."], ["relationships", "Relationships", "The people who shape their choices."], ["voice", "Voice & behaviour", "How this person speaks, acts, and responds."]] : prop ? [["purpose", "Story purpose", "What does this object make possible or change?"], ["appearance", "Appearance & details", "Shape, material, wear, markings, or scale."], ["ownership", "Ownership & handling", "Who owns, carries, finds, or uses it?"], ["continuity", "Continuity", "Where is it, and how does its condition change?"], ["practical", "Production notes", "Sourcing, duplicates, handling, or practical requirements."]] : [["context", "Place & time", ""], ["appearance", "What we see", "Physical details that matter to the scene."], ["atmosphere", "What we hear and feel", "Sound, light, activity, and atmosphere."], ["purpose", "What happens here", "How this place affects the story."], ["practical", "Practical details", "Access, space, props, or production notes."]];
-    const additional = character ? [["background", "Background"], ["fear", "Fear & vulnerability"], ["change", "How they change"]] : prop ? [["history", "History & meaning"], ["references", "References & research"]] : [["continuity", "Continuity"], ["references", "References & research"]];
-    function input(key2, label, placeholder = "", short = false) {
-      return /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("label", { className: "planning-field " + (short ? "short" : ""), children: [
-        /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("span", { children: label }),
-        short ? /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("input", { "aria-label": label, value: n.fields["profile." + key2] || "", onChange: (e) => patch(n.id, { fields: { ...n.fields, ["profile." + key2]: e.target.value } }), placeholder: "Write what matters to your story\u2026" }) : /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("textarea", { "aria-label": label, rows: 3, value: n.fields["profile." + key2] || "", onChange: (e) => patch(n.id, { fields: { ...n.fields, ["profile." + key2]: e.target.value } }), placeholder: placeholder || "Your notes\u2026" })
-      ] }, key2);
+    const kind = n.kind === "character" || n.kind === "location" || n.kind === "prop" ? n.kind : "character";
+    const room = ROOMS[kind];
+    const all = room.acts.flatMap((a) => a.qs);
+    const value = (k) => n.fields["profile." + k] || "";
+    const answered = all.filter((q) => value(q.key).trim()).length;
+    const [active, setActive] = LbxR.useState("");
+    const [notes, setNotes] = LbxR.useState({});
+    const fields = LbxR.useRef({});
+    const untitled = !n.title.trim() || n.title === room.untitled || /^Untitled (character|location|prop|object|document)$/i.test(n.title);
+    function write(k, v) {
+      patch(n.id, { fields: { ...n.fields, ["profile." + k]: v } });
     }
-    return /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "planning-sheet " + (character ? "character-sheet" : prop ? "prop-sheet" : "location-sheet"), children: [
-      /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("header", { children: [
-        /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("span", { className: "planning-symbol", children: character ? /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(UserRound, { size: 28, strokeWidth: 1.3 }) : prop ? /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(Package, { size: 28, strokeWidth: 1.3 }) : /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(MapPin, { size: 28, strokeWidth: 1.3 }) }),
-        /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { children: [
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { className: "eyebrow", children: character ? "CHARACTER PROFILE" : prop ? "PROP PROFILE" : "LOCATION PROFILE" }),
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("h2", { children: n.title }),
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("p", { children: [
-            "A place to develop this ",
-            character ? "person" : prop ? "object" : "setting",
-            ". Use the fields that help you."
+    function jump(k) {
+      const el = fields.current[k];
+      if (!el) return;
+      const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+      el.closest(".lbw-q")?.scrollIntoView({ block: "center", behavior: reduce ? "auto" : "smooth" });
+      el.focus({ preventScroll: true });
+      el.setSelectionRange(el.value.length, el.value.length);
+    }
+    function keys3(k) {
+      return (e) => {
+        if (!((e.metaKey || e.ctrlKey) && e.key === "Enter")) return;
+        e.preventDefault();
+        const i = all.findIndex((q) => q.key === k);
+        const next = all[i + (e.shiftKey ? -1 : 1)];
+        if (next) jump(next.key);
+      };
+    }
+    const caption = kind === "character" ? lbwLine(value("role")) || "" : kind === "location" ? "" : lbwLine(value("ownership")) || "";
+    let number = 0;
+    return /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "lbw lbw--" + kind, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("header", { className: "lbw-head", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "lbw-eyebrow", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("span", { className: "lbw-dot", "aria-hidden": "true" }),
+          "WORLD BUILDING ",
+          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("span", { "aria-hidden": "true", children: "/" }),
+          " ",
+          room.eyebrow.toUpperCase()
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(
+          "input",
+          {
+            className: "lbw-name",
+            "aria-label": kind === "prop" ? "Object name" : kind === "location" ? "Location name" : "Character name",
+            placeholder: room.namePrompt,
+            value: untitled ? "" : n.title,
+            onChange: (e) => patch(n.id, { title: e.target.value || room.untitled }),
+            spellCheck: false
+          }
+        ),
+        kind === "location" ? /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("p", { className: "lbw-slug", "aria-label": "As a scene heading", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("small", { children: "AS A SCENE HEADING" }),
+          /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("span", { children: [
+            "INT./EXT. ",
+            (untitled ? "THIS PLACE" : n.title).toUpperCase(),
+            " \u2014 ",
+            lbwHour(value("context"))
+          ] })
+        ] }) : /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("p", { className: "lbw-caption", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("small", { children: kind === "character" ? "CAST AS" : "BELONGS TO" }),
+          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("span", { className: caption ? "" : "is-empty", children: caption || (kind === "character" ? "Answer \u201CThe role\u201D to cast them." : "Answer \u201CWhose it is\u201D to tag it.") })
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("p", { className: "lbw-lede", children: room.lede }),
+        /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "lbw-meter", "aria-label": answered + " of " + all.length + " questions answered", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("span", { className: "lbw-meter-pips", "aria-hidden": "true", children: all.map((q) => /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("i", { className: value(q.key).trim() ? "is-on" : "" }, q.key)) }),
+          /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("span", { className: "lbw-meter-text", children: [
+            answered,
+            "/",
+            all.length,
+            " ANSWERED"
           ] })
         ] })
       ] }),
-      images,
-      /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { className: "planning-field-grid", children: fields.map(([key2, label, placeholder], i) => input(key2, label, placeholder, i === 0)) }),
-      /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("details", { className: "planning-extra", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("summary", { children: [
-          "Additional details",
-          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(ChevronDown, { size: 14 })
+      /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "lbw-body", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("aside", { className: "lbw-side", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { className: "lbw-cover", children: images }),
+          /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("nav", { className: "lbw-index", "aria-label": "Questions", children: [
+            room.acts.map((a) => /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "lbw-index-act", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("small", { children: [
+                "ACT ",
+                a.no,
+                " \xB7 ",
+                a.title.toUpperCase()
+              ] }),
+              /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("ol", { children: a.qs.map((q) => {
+                const i = all.indexOf(q);
+                return /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("li", { children: /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("button", { type: "button", className: (value(q.key).trim() ? "is-done " : "") + (active === q.key ? "is-active" : ""), onClick: () => jump(q.key), children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("b", { children: lbwPad(i) }),
+                  /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("span", { children: q.tag }),
+                  /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("i", { "aria-hidden": "true" }),
+                  /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("em", { className: "lbw-sr", children: value(q.key).trim() ? " \u2014 answered" : " \u2014 not answered" })
+                ] }) }, q.key);
+              }) })
+            ] }, a.no)),
+            /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("p", { className: "lbw-keys", "aria-hidden": "true", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("kbd", { children: "\u2318" }),
+              /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("kbd", { children: "\u21B5" }),
+              " next question"
+            ] })
+          ] })
         ] }),
-        /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { children: additional.map(([key2, label]) => input(key2, label)) })
+        /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "lbw-main", children: [
+          room.acts.map((a) => /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("section", { className: "lbw-act", "aria-label": "Act " + a.no + ": " + a.title, children: [
+            /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("header", { className: "lbw-act-head", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("span", { children: [
+                "ACT ",
+                a.no
+              ] }),
+              /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("h3", { children: a.title }),
+              /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("p", { children: a.line })
+            ] }),
+            a.qs.map((q) => {
+              const i = number++;
+              const text = value(q.key), w = lbxWordCount(text), note = notes[q.key] || 0, show = w >= 6, id = "lbw-" + n.id + "-" + q.key;
+              return /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "lbw-q" + (text.trim() ? " is-done" : "") + (active === q.key ? " is-active" : ""), onFocus: () => setActive(q.key), children: [
+                /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "lbw-q-tag", children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("b", { children: lbwPad(i) }),
+                  /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("span", { children: q.tag.toUpperCase() }),
+                  text.trim() && /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("i", { className: "lbw-tick", "aria-hidden": "true" })
+                ] }),
+                /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("label", { className: "lbw-q-text", htmlFor: id, children: q.q }),
+                /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(
+                  LbxText,
+                  {
+                    id,
+                    className: "lbw-answer",
+                    label: q.tag,
+                    placeholder: q.placeholder,
+                    value: text,
+                    minRows: kind === "character" && q.key === "role" ? 1 : 2,
+                    inputRef: (el) => {
+                      fields.current[q.key] = el;
+                    },
+                    onChange: (v) => write(q.key, v),
+                    onKeyDown: keys3(q.key)
+                  }
+                ),
+                /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "lbw-q-foot", children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("p", { className: "lbw-note" + (show ? " is-on" : ""), "aria-live": "polite", children: show && q.notes[note % q.notes.length] }),
+                  show && q.notes.length > 1 && /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("button", { type: "button", className: "lbw-another", onClick: () => setNotes((s) => ({ ...s, [q.key]: note + 1 })), children: "Another note" })
+                ] })
+              ] }, q.key);
+            })
+          ] }, a.no)),
+          /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("section", { className: "lbw-free", "aria-label": "Free notes", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "lbw-free-head", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("span", { children: "LOOSE PAGES" }),
+              /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("p", { children: room.loose })
+            ] }),
+            children3
+          ] })
+        ] })
+      ] })
+    ] });
+  }
+  var NOTE_KINDS = [
+    { key: "question", label: "Question", title: "What do you need to find out?", body: "Write down what you already suspect, and where you could look." },
+    { key: "fact", label: "Fact", title: "State the fact in one line.", body: "The detail, the number, the date. Note how sure you are." },
+    { key: "quote", label: "Quote", title: "Who said it, and where?", body: "Copy the words exactly. Then who said them, to whom, and when." },
+    { key: "place", label: "Place", title: "Name the place.", body: "What you saw, heard and smelled there. How people moved through it." },
+    { key: "person", label: "Person", title: "Who is this?", body: "Who they are, what they know, how they talk, how to reach them." },
+    { key: "image", label: "Image", title: "Caption the image.", body: "Paste or describe the image. What in it belongs in the film?" },
+    { key: "lead", label: "Lead", title: "Where does this lead?", body: "Who or what to follow next, and what you hope to find." }
+  ];
+  var NOTE_STATUS = [{ key: "open", label: "Open thread" }, { key: "followed", label: "Followed up" }, { key: "dead", label: "Dead end" }];
+  var lbnDate = (iso) => {
+    const d = new Date(iso);
+    if (isNaN(+d)) return "";
+    return String(d.getDate()).padStart(2, "0") + " " + d.toLocaleString("en-GB", { month: "short" }).toUpperCase() + " " + d.getFullYear() + " \xB7 " + String(d.getHours()).padStart(2, "0") + ":" + String(d.getMinutes()).padStart(2, "0");
+  };
+  function FieldNoteSheet({ n, patch, children: children3 }) {
+    const get2 = (k) => n.fields["research." + k] || "";
+    const set = (k, v) => patch(n.id, { fields: { ...n.fields, ["research." + k]: v } });
+    const kind = NOTE_KINDS.find((k) => k.key === get2("kind"));
+    const status = get2("status") || "open";
+    const untitled = !n.title.trim() || /^Untitled (note|document|scene)$/i.test(n.title);
+    const page = LbxR.useRef(null);
+    const go = (sel) => {
+      const el = page.current?.querySelector(sel);
+      el?.focus();
+    };
+    const enterTo = (sel) => (e) => {
+      if (e.key === "Enter" && !e.shiftKey && !e.nativeEvent.isComposing) {
+        e.preventDefault();
+        go(sel);
+      }
+    };
+    const nextOnCmd = (sel) => (e) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === "Enter") {
+        e.preventDefault();
+        go(sel);
+      }
+    };
+    const logged = lbnDate(n.created);
+    return /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "lbn", "data-kind": kind?.key || "none", "data-status": status, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("header", { className: "lbn-head", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "lbn-eyebrow", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("span", { className: "lbn-dot", "aria-hidden": "true" }),
+          "RESEARCH & EXPLORATION ",
+          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("span", { "aria-hidden": "true", children: "/" }),
+          " FIELD NOTES"
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "lbn-log", "aria-label": "Note " + (n.order + 1) + (logged ? ", logged " + logged : ""), children: [
+          /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("b", { children: [
+            "N\xBA ",
+            String(n.order + 1).padStart(2, "0")
+          ] }),
+          logged && /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("span", { children: [
+            "LOGGED ",
+            logged
+          ] })
+        ] })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("section", { className: "planning-free-notes", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { className: "section-label", children: "FREE NOTES" }),
-        children3
+      /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("article", { className: "lbn-page", ref: page, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("span", { className: "lbn-holes", "aria-hidden": "true" }),
+        /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("div", { className: "lbn-kinds", role: "group", "aria-label": "What kind of note is this?", children: NOTE_KINDS.map((k) => /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("button", { type: "button", "aria-pressed": kind?.key === k.key, onClick: () => set("kind", kind?.key === k.key ? "" : k.key), children: k.label }, k.key)) }),
+        kind && /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("span", { className: "lbn-stamp", "aria-hidden": "true", children: kind.label }, kind.key),
+        /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(
+          LbxText,
+          {
+            className: "lbn-title",
+            label: "Note title",
+            placeholder: kind?.title || "What did you find?",
+            value: untitled ? "" : n.title,
+            minRows: 1,
+            onChange: (v) => patch(n.id, { title: v.replace(/\s*\n\s*/g, " ") || "Untitled note" }),
+            onKeyDown: enterTo(".lbn-source")
+          }
+        ),
+        /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "lbn-source-row", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("span", { "aria-hidden": "true", children: "SOURCE" }),
+          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(LbxText, { className: "lbn-source", label: "Source", placeholder: "Book and page, a link, a conversation, or your own eyes.", value: get2("source"), minRows: 1, onChange: (v) => set("source", v.replace(/\s*\n\s*/g, " ")), onKeyDown: enterTo(".lbn-body .rich-editor") })
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("section", { className: "lbn-body", "aria-label": "The note", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "lbn-body-head", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("span", { children: "THE NOTE" }),
+            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("p", { children: kind?.body || "Get it down while it\u2019s fresh: exact words, numbers, what surprised you." })
+          ] }),
+          children3
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "lbn-q", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("label", { htmlFor: "lbn-why-" + n.id, children: [
+            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("span", { children: "WHY IT MATTERS" }),
+            "How could this change a scene, a character, or the ending?"
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(LbxText, { id: "lbn-why-" + n.id, className: "lbn-answer lbn-why", label: "Why it matters", placeholder: "Name the scene or the person it touches.", value: get2("why"), onChange: (v) => set("why", v), onKeyDown: nextOnCmd(".lbn-next") })
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("div", { className: "lbn-q", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("label", { htmlFor: "lbn-next-" + n.id, children: [
+            /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("span", { children: "THE NEXT QUESTION" }),
+            "What does this make you want to find out next?"
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)(LbxText, { id: "lbn-next-" + n.id, className: "lbn-answer lbn-next", label: "The next question", placeholder: "Follow the thread one step further.", value: get2("next"), onChange: (v) => set("next", v) })
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("footer", { className: "lbn-status", role: "group", "aria-label": "Where this thread stands", children: NOTE_STATUS.map((s) => /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("button", { type: "button", "data-status": s.key, "aria-pressed": status === s.key, onClick: () => set("status", s.key), children: [
+          /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("i", { "aria-hidden": "true" }),
+          s.label
+        ] }, s.key)) })
       ] })
     ] });
   }
@@ -65093,7 +65584,7 @@ ${formatDuration(t.seconds)}${t.source === "pages" ? "" : " (" + (t.source === "
       const prose = /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(RichEditor, { n, project, patch, register: (el, n2) => {
         if (el) activeEditor.current = { el, id: n2.id };
       }, onSelection: selection, zoom: prefs.zoom, font: prefs.font, page: false, dialogueFocus: false }, n.id + "-" + n.kind);
-      return saveDocument(n, n.fields["development.kind"] === "foundation" ? /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(DevelopmentSheet, { n, patch, children: prose }) : isProfileKind(n.kind) ? /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(PlanningSheet, { n, patch, images: /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(ProfileImages, { n, mutate: (fn, removed) => updateProfileImages(n.id, fn, removed) }, n.id), children: prose }) : prose);
+      return saveDocument(n, n.fields["development.kind"] === "foundation" ? /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(DevelopmentSheet, { n, patch, children: prose }) : isProfileKind(n.kind) ? /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(PlanningSheet, { n, patch, images: /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(ProfileImages, { n, mutate: (fn, removed) => updateProfileImages(n.id, fn, removed) }, n.id), children: prose }) : n.kind === "text" && sectionForNode(project, n.id)?.role === "research" ? /* @__PURE__ */ (0, import_jsx_runtime19.jsx)(FieldNoteSheet, { n, patch, children: prose }) : prose);
     }
     const totalWords = project ? compileNodes(project).reduce((s, n) => s + wordCount(n.html), 0) : 0;
     const saveLabel = { loading: "Opening workspace\u2026", saved: "All changes saved locally", saving: "Saving\u2026", pending: "Unsaved changes", offline: "Offline \xB7 device copy", error: "Save needs attention", conflict: "Another session changed this workspace" }[status];

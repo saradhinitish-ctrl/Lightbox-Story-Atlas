@@ -63526,25 +63526,236 @@ ${formatDuration(t.seconds)}${t.source === "pages" ? "" : " (" + (t.source === "
   }
 
   // components/development-sheet.tsx
+  var LbxReact = __toESM(require_react(), 1);
   var import_jsx_runtime17 = __toESM(require_jsx_runtime(), 1);
-  var prompts = [["seed", "The seed", "An image, a question, a situation, a feeling\u2014whatever started this idea."], ["premise", "Premise", "What is the central situation or possibility?"], ["logline", "Logline", "An optional one-sentence description of the story. It can change."], ["world", "The world", "How does this world work? Its everyday life, history, culture, systems, or invented rules."], ["theme", "What you want to explore", "Questions, themes, contradictions, or a personal reason to make this."], ["conflict", "Pressure & possibilities", "What disrupts this world? What could happen? Explore without committing."], ["tone", "Tone & experience", "How should it feel to watch? Form, genre, atmosphere, or experiments."], ["questions", "Unknowns & alternatives", "Unanswered questions, competing ideas, and things to investigate."]];
+  var lbxWordCount = (s) => (s.trim().match(/\S+/g) || []).length;
+  var fieldSizing = typeof CSS !== "undefined" && !!CSS.supports?.("field-sizing", "content");
+  function LbxText({ value, onChange, className = "", label, placeholder, onKeyDown, inputRef, minRows = 2, id }) {
+    const own = LbxReact.useRef(null);
+    LbxReact.useLayoutEffect(() => {
+      const el = own.current;
+      if (!el || fieldSizing) return;
+      el.style.height = "auto";
+      el.style.height = el.scrollHeight + "px";
+    }, [value]);
+    const setRef = (el) => {
+      own.current = el;
+      if (typeof inputRef === "function") inputRef(el);
+      else if (inputRef) inputRef.current = el;
+    };
+    return /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("textarea", { id, ref: setRef, className: "lbx-text " + className, rows: minRows, "aria-label": label, placeholder, value, spellCheck: true, onChange: (e) => onChange(e.target.value), onKeyDown });
+  }
+  var reduceMotion = () => typeof matchMedia !== "undefined" && matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var TAKES = [
+    { key: "seed", label: "The seed", short: "Seed", q: "What image won\u2019t leave you alone?", hint: "Not the plot yet. The picture, the overheard line, the feeling that started all of this. Describe it as a single shot.", placeholder: "Describe the first frame you saw.", notes: ["Why this image \u2014 and why does it belong to you?", "What is just outside the frame?", "If this were the last shot of the film instead of the first, what would it mean?"] },
+    { key: "world", label: "The world", short: "World", q: "Where are we, and what counts as normal here?", hint: "The place, the era, the rules everyone obeys without noticing. What would surprise a stranger on their first day?", placeholder: "Set the scene and its unwritten rules.", notes: ["What does everyone here believe that isn\u2019t true?", "Who holds the power here, and who pays for it?", "What does an ordinary morning sound like?"] },
+    { key: "conflict", label: "The trouble", short: "Trouble", q: "What breaks the ordinary day?", hint: "The arrival, the loss, the discovery, the decision. The moment after which nothing can go back to how it was.", placeholder: "Name the crack in the day.", notes: ["Who is hurt first if nobody acts?", "Why does it happen now \u2014 not a year ago, not a year from now?", "What is the worst possible way this could go?"] },
+    { key: "premise", label: "The premise", short: "Premise", q: "Who wants what, and what stands in the way?", hint: "Put a person inside the trouble. Give them a goal we can watch them chase, and a price if they fail.", placeholder: "Write the premise in a sentence or two.", notes: ["Is the goal something a camera can watch them chase?", "What does winning cost them \u2014 even if they win?", "Give the obstacle a face. Who is it?"], refs: ["seed", "conflict"] },
+    { key: "theme", label: "Why you", short: "Why you", q: "What are you trying to find out by telling this?", hint: "Not the moral. The question you can\u2019t answer yet \u2014 about people, or about yourself. The film is how you\u2019ll go looking for it.", placeholder: "Write the question underneath the story.", notes: ["What would you argue if you had to take the other side?", "Which character is closest to you \u2014 and which one frightens you?", "What would you be embarrassed to admit this film is about?"] },
+    { key: "tone", label: "The feeling", short: "Feeling", q: "How should it feel to sit in the dark with this?", hint: "Genre, pace, texture, temperature. Name the films, songs or photographs it lives beside \u2014 and what it must never feel like.", placeholder: "Describe the feeling in the room.", notes: ["What should the audience feel in the final ten seconds?", "Where should they laugh?", "What is the one rule of style you won\u2019t break?"] },
+    { key: "logline", label: "One breath", short: "Logline", q: "Now say the whole film in one breath.", hint: "One sentence someone could repeat to a friend. Thirty-five words or fewer. You can rewrite it every day.", placeholder: "One sentence. The whole film.", notes: ["Cut every adjective. Does it still work?", "Is the central question in there?", "Read it aloud. Where did you run out of breath?"], refs: ["premise"] },
+    { key: "questions", label: "The unknown", short: "Unknown", q: "What don\u2019t you know yet?", hint: "The open questions, the versions you\u2019re torn between, the facts you still need. Unknowns are where research begins.", placeholder: "List what you still have to find out.", notes: ["Which unknown, if you answered it, would change everything else?", "What are you putting off deciding?", "What do you need to see with your own eyes?"] }
+  ];
+  var ONE_BREATH = 35;
+  var pad = (i) => String(i + 1).padStart(2, "0");
+  var lastTake = /* @__PURE__ */ new Map();
   function DevelopmentSheet({ n, patch, children: children3 }) {
-    return /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("div", { className: "planning-sheet development-sheet", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("header", { children: [
-        /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("span", { className: "planning-symbol", children: /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(Lightbulb, { size: 28, strokeWidth: 1.3 }) }),
-        /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("div", { children: [
-          /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("div", { className: "eyebrow", children: "STORY DEVELOPMENT" }),
-          /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("h2", { children: n.title }),
-          /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("p", { children: "Explore the idea in your own order. Every prompt is optional." })
+    const value = (k) => n.fields["development." + k] || "";
+    const answered = TAKES.map((t2) => !!value(t2.key).trim());
+    const done = answered.filter(Boolean).length;
+    const firstOpen = answered.indexOf(false);
+    const [take, setTake] = LbxReact.useState(() => lastTake.get(n.id) ?? (firstOpen < 0 ? 0 : firstOpen));
+    const [view, setView] = LbxReact.useState(() => done === TAKES.length && !lastTake.has(n.id) ? "sheet" : "reel");
+    const [dir, setDir] = LbxReact.useState(1);
+    const [note, setNote] = LbxReact.useState(0);
+    const field = LbxReact.useRef(null);
+    const strip = LbxReact.useRef(null), stage = LbxReact.useRef(null);
+    const wantFocus = LbxReact.useRef(false);
+    const t = TAKES[take], text = value(t.key), words = lbxWordCount(text);
+    LbxReact.useEffect(() => {
+      lastTake.set(n.id, take);
+      setNote(0);
+      const s = strip.current, f = s?.querySelector('[aria-current="step"]');
+      if (s && f && s.scrollWidth > s.clientWidth) s.scrollTo({ left: f.offsetLeft - (s.clientWidth - f.offsetWidth) / 2, behavior: reduceMotion() ? "auto" : "smooth" });
+      const st = stage.current;
+      if (wantFocus.current && st && st.getBoundingClientRect().top < 0) st.scrollIntoView({ block: "start", behavior: reduceMotion() ? "auto" : "smooth" });
+      if (wantFocus.current && field.current) {
+        wantFocus.current = false;
+        const el = field.current;
+        el.focus({ preventScroll: true });
+        el.setSelectionRange(el.value.length, el.value.length);
+      }
+    }, [take, n.id, view]);
+    function go(i, focus2 = true) {
+      const next = Math.max(0, Math.min(TAKES.length - 1, i));
+      if (next === take && view === "reel") return;
+      setDir(next >= take ? 1 : -1);
+      wantFocus.current = focus2;
+      setView("reel");
+      setTake(next);
+    }
+    function write(v) {
+      patch(n.id, { fields: { ...n.fields, ["development." + t.key]: v } });
+    }
+    function keys3(e) {
+      if ((e.metaKey || e.ctrlKey) && e.key === "Enter") {
+        e.preventDefault();
+        if (e.shiftKey) go(take - 1);
+        else if (take === TAKES.length - 1) {
+          setView("sheet");
+        } else go(take + 1);
+      }
+    }
+    function stripKeys(e) {
+      if (!["ArrowLeft", "ArrowRight", "Home", "End"].includes(e.key)) return;
+      e.preventDefault();
+      const i = e.key === "Home" ? 0 : e.key === "End" ? TAKES.length - 1 : take + (e.key === "ArrowRight" ? 1 : -1);
+      go(i, false);
+      requestAnimationFrame(() => strip.current?.querySelector('[aria-current="step"]')?.focus());
+    }
+    const showNote = words >= 6;
+    const breath = t.key === "logline" && words > 0;
+    return /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("div", { className: "lbs", "data-view": view, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("header", { className: "lbs-head", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("div", { className: "lbs-titles", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("div", { className: "lbs-eyebrow", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("span", { className: "lbs-dot", "aria-hidden": "true" }),
+            "STORY FOUNDATION ",
+            /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("span", { "aria-hidden": "true", children: "/" }),
+            " THE SPARK"
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("h2", { className: "lbs-title", children: [
+            "The spark",
+            /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("span", { "aria-hidden": "true", children: "." })
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("p", { className: "lbs-lede", children: "Eight questions, one at a time. Answer in any order; the strip fills in as you go." })
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("div", { className: "lbs-slate", "aria-hidden": "true", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("span", { className: "lbs-slate-bar" }, view + take),
+          /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("dl", { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("div", { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("dt", { children: "ROLL" }),
+              /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("dd", { children: "A" })
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("div", { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("dt", { children: "SC." }),
+              /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("dd", { children: view === "sheet" ? "\u2014" : pad(take) })
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("div", { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("dt", { children: "TK." }),
+              /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("dd", { children: "01" })
+            ] })
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("span", { className: "lbs-slate-count", children: [
+            done,
+            "/",
+            TAKES.length,
+            " EXPOSED"
+          ] })
         ] })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("div", { className: "development-intro", children: "Start with a spark. Shape the details as your story grows." }),
-      /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("div", { className: "planning-field-grid", children: prompts.map(([key2, label, placeholder]) => /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("label", { className: "planning-field", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("span", { children: label }),
-        /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("textarea", { rows: 4, "aria-label": label, value: n.fields["development." + key2] || "", placeholder, onChange: (e) => patch(n.id, { fields: { ...n.fields, ["development." + key2]: e.target.value } }) })
-      ] }, key2)) }),
-      /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("section", { className: "planning-free-notes", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("div", { className: "section-label", children: "FREE EXPLORATION \xB7 WRITE ANYTHING" }),
+      /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("div", { className: "lbs-bar", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("div", { className: "lbs-strip", ref: strip, role: "toolbar", "aria-label": "The spark\u2019s eight questions", onKeyDown: stripKeys, children: TAKES.map((x, i) => /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("button", { type: "button", className: "lbs-frame" + (answered[i] ? " is-exposed" : ""), "aria-current": view === "reel" && i === take ? "step" : void 0, tabIndex: (view === "reel" ? i === take : i === 0) ? 0 : -1, onClick: () => go(i), title: x.label + (answered[i] ? " \u2014 written" : " \u2014 not yet written"), children: [
+          /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("b", { children: [
+            pad(i),
+            "A"
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("span", { children: x.short }),
+          /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("i", { "aria-hidden": "true" })
+        ] }, x.key)) }),
+        /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("div", { className: "lbs-views", role: "group", "aria-label": "View", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("button", { type: "button", "aria-pressed": view === "reel", onClick: () => {
+            wantFocus.current = true;
+            setView("reel");
+          }, children: "Take by take" }),
+          /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("button", { type: "button", "aria-pressed": view === "sheet", onClick: () => setView("sheet"), children: "Contact sheet" })
+        ] })
+      ] }),
+      view === "reel" ? /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("section", { className: "lbs-stage", ref: stage, "aria-label": t.label, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("div", { className: "lbs-take", "data-dir": dir > 0 ? "next" : "prev", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("p", { className: "lbs-slug", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("b", { children: [
+              "SC. ",
+              pad(take)
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("span", { "aria-hidden": "true", children: " \u2014 " }),
+            t.label.toUpperCase()
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("label", { className: "lbs-q", htmlFor: "lbs-" + n.id, children: t.q }),
+          /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("p", { className: "lbs-hint", children: t.hint }),
+          t.key === "premise" && /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("p", { className: "lbs-guide", "aria-label": "A shape to try: When something happens, someone must do something, or else it costs them.", children: [
+            "When ",
+            /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("i", { children: "something happens" }),
+            ", a ",
+            /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("i", { children: "someone" }),
+            " must ",
+            /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("i", { children: "do something" }),
+            ", or else ",
+            /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("i", { children: "it costs them" }),
+            "."
+          ] }),
+          t.refs && t.refs.some((k) => value(k).trim()) && /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("div", { className: "lbs-refs", "aria-label": "Your earlier answers", children: t.refs.filter((k) => value(k).trim()).map((k) => {
+            const r = TAKES.find((x) => x.key === k);
+            return /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("button", { type: "button", className: "lbs-ref", onClick: () => go(TAKES.indexOf(r)), children: [
+              /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("small", { children: [
+                "ON THE TABLE \xB7 ",
+                r.label.toUpperCase()
+              ] }),
+              /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("span", { children: value(k) })
+            ] }, k);
+          }) }),
+          /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("div", { className: "lbs-page", children: /* @__PURE__ */ (0, import_jsx_runtime17.jsx)(LbxText, { id: "lbs-" + n.id, inputRef: field, className: "lbs-answer", label: t.label, placeholder: t.placeholder, value: text, onChange: write, onKeyDown: keys3, minRows: 3 }) }),
+          /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("div", { className: "lbs-under", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("span", { className: "lbs-count" + (breath && words <= ONE_BREATH ? " is-breath" : "") + (breath && words > ONE_BREATH ? " is-long" : ""), "aria-live": "polite", children: [
+              words ? words + (words === 1 ? " word" : " words") : "Not written yet",
+              breath && (words <= ONE_BREATH ? " \xB7 one breath" : " \xB7 " + (words - ONE_BREATH) + " over one breath")
+            ] }),
+            showNote && /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("button", { type: "button", className: "lbs-another", onClick: () => setNote((x) => (x + 1) % t.notes.length), children: "Another note" })
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("p", { className: "lbs-note" + (showNote ? " is-on" : ""), "aria-live": "polite", children: showNote && /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)(import_jsx_runtime17.Fragment, { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("small", { children: "DIRECTOR\u2019S NOTE" }),
+            t.notes[note]
+          ] }) })
+        ] }, t.key),
+        /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("footer", { className: "lbs-nav", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("button", { type: "button", className: "lbs-step", onClick: () => go(take - 1), disabled: take === 0, children: [
+            /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("span", { "aria-hidden": "true", children: "\u2190" }),
+            " ",
+            take > 0 ? TAKES[take - 1].label : "Previous"
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("span", { className: "lbs-keys", "aria-hidden": "true", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("kbd", { children: "\u2318" }),
+            /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("kbd", { children: "\u21B5" }),
+            " next take"
+          ] }),
+          take < TAKES.length - 1 ? /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("button", { type: "button", className: "lbs-step is-next", onClick: () => go(take + 1), children: [
+            TAKES[take + 1].label,
+            " ",
+            /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("span", { "aria-hidden": "true", children: "\u2192" })
+          ] }) : /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("button", { type: "button", className: "lbs-step is-next", onClick: () => setView("sheet"), children: [
+            "See the contact sheet ",
+            /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("span", { "aria-hidden": "true", children: "\u2192" })
+          ] })
+        ] })
+      ] }) : /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("section", { className: "lbs-sheet", "aria-label": "Contact sheet", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("p", { className: "lbs-sheet-cap", children: done === TAKES.length ? "Every frame exposed. Circle the ones you\u2019d print." : done ? `${done} of ${TAKES.length} frames exposed. Choose a frame to keep shooting.` : "Nothing exposed yet. Choose any frame to begin." }),
+        /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("ol", { className: "lbs-sheet-grid", children: TAKES.map((x, i) => /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("li", { children: /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("button", { type: "button", className: "lbs-print" + (answered[i] ? " is-exposed" : ""), onClick: () => go(i), children: [
+          /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("span", { className: "lbs-print-head", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("b", { children: [
+              pad(i),
+              "A"
+            ] }),
+            x.label.toUpperCase()
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("span", { className: "lbs-print-body", children: value(x.key).trim() || x.q }),
+          /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("span", { className: "lbs-print-foot", children: answered[i] ? lbxWordCount(value(x.key)) + " words" : "Not shot yet" })
+        ] }) }, x.key)) })
+      ] }),
+      /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("section", { className: "lbs-margins", "aria-label": "The margins", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime17.jsxs)("div", { className: "lbs-margins-head", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("span", { children: "THE MARGINS" }),
+          /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("p", { children: "Everything that doesn\u2019t fit a question: fragments, scenes you can already see, lines of dialogue." })
+        ] }),
         children3
       ] })
     ] });

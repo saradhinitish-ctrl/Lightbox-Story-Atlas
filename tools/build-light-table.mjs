@@ -60,7 +60,7 @@ function describe({r, g, b, a}) {
     if (hue < 0) hue += 360;
   }
   let family = 'neutral';
-  if (sat > .2 && d > .06) {
+  if (sat > .2 && d > .045) {
     if (hue >= 52 && hue < 160) family = 'lime';
     else if (hue >= 230 && hue < 335) family = 'violet';
   }

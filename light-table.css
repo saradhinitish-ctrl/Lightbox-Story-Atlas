@@ -1,0 +1,516 @@
+/* ==========================================================================
+   Lightbox / The Light Table
+   A lightbox is the lit table where film is laid out to be judged. The app is
+   that table: an opal surface lit from below, a graphite chassis around it,
+   your work laid on top as slides and vellum, frames numbered in film-edge
+   orange, choices circled in red grease pencil.
+
+   Loaded last. Colour, type and ornament only. Never touches the Story
+   Cylinder's geometry, canvas, script or cards (story-cylinder-v9.*), nor the
+   screenplay page's metrics or Courier face.
+   ========================================================================== */
+
+/* Big Shoulders Display: condensed industrial numerals for frame numbers,
+   after the edge print on motion-picture film. SIL OFL 1.1, self-hosted.
+   Instrument Serif, DM Sans and DM Mono are already bundled in styles.css. */
+@font-face{font-family:"Big Shoulders Display";font-style:normal;font-weight:100 900;font-display:swap;
+  src:url("./assets/fonts/big-shoulders-display-latin-wght-normal.woff2") format("woff2-variations"),
+      url("./assets/fonts/big-shoulders-display-latin-wght-normal.woff2") format("woff2")}
+
+/* --- Tokens ------------------------------------------------------------- */
+:root{
+  /* The table: opal diffuser, brightest where the lamp is */
+  --lt-glow:#FDFCF9;
+  --lt-table:#EFEDE7;
+  --lt-table-edge:#E4E1D8;
+  --lt-vellum:rgba(251,250,246,.9);
+  --lt-mount:#FFFFFF;
+  --lt-rule:#D9D5CB;
+  --lt-rule-strong:#B8B3A7;
+  /* Ink */
+  --lt-ink:#1C1B19;
+  --lt-ink-2:#4B4842;
+  --lt-ink-3:#67635B;
+  /* The chassis: the graphite frame around the lit surface */
+  --lt-chassis:#18181A;
+  --lt-chassis-2:#232326;
+  --lt-chassis-3:#2E2E32;
+  --lt-chassis-line:#38383D;
+  --lt-chassis-ink:#EEECE7;
+  --lt-chassis-muted:#A3A09A;
+  /* Grease pencil: the only loud colour, used to mark a choice */
+  --lt-marker:#D4301F;
+  --lt-marker-hi:#E3412E;
+  --lt-marker-ink:#B3261A;
+  --lt-marker-wash:rgba(212,48,31,.075);
+  --lt-marker-line:rgba(212,48,31,.38);
+  /* Film edge: frame numbers and edge codes */
+  --lt-edge:#E2692B;
+  --lt-edge-ink:#A4451A;
+  --lt-edge-wash:rgba(226,105,43,.09);
+  --lt-edge-line:rgba(226,105,43,.4);
+  /* Depth: slides lie flat; light comes from below */
+  --lt-lift:0 1px 1px rgba(28,27,25,.06),0 10px 22px -14px rgba(28,27,25,.38);
+  --lt-lift-hi:0 1px 2px rgba(28,27,25,.08),0 18px 34px -16px rgba(28,27,25,.42);
+  --lt-mount-window:inset 0 0 0 7px #fff,inset 0 0 0 8px rgba(28,27,25,.07);
+  --lt-ease:cubic-bezier(.2,.7,.2,1);
+  /* Type */
+  --lt-display:"Instrument Serif",Georgia,serif;
+  --lt-ui:"DM Sans","Segoe UI",sans-serif;
+  --lt-mono:"DM Mono",ui-monospace,monospace;
+  --lt-frame:"Big Shoulders Display","DM Mono",sans-serif;
+
+  /* Grease-pencil marks, drawn once as SVG. non-scaling-stroke keeps the
+     line weight constant however the mark is stretched. */
+  --lt-circle:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 48' preserveAspectRatio='none'%3E%3Cpath d='M15 31C9 14 50 5 86 7c27 2 33 18 19 29-16 10-71 10-89 2C6 33 11 19 32 12' fill='none' stroke='%23D4301F' stroke-width='2.4' stroke-linecap='round' vector-effect='non-scaling-stroke' opacity='.92'/%3E%3C/svg%3E");
+  --lt-underline:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 12' preserveAspectRatio='none'%3E%3Cpath d='M2 8C28 4 62 9 92 5c10-1 19-1 26-2' fill='none' stroke='%23D4301F' stroke-width='3' stroke-linecap='round' vector-effect='non-scaling-stroke' opacity='.9'/%3E%3C/svg%3E");
+  --lt-tick:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M4 13c3 2 5 5 6 7 2-6 6-12 11-16' fill='none' stroke='%23D4301F' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  /* Diffuser grain: the opal sheet is never perfectly flat */
+  --lt-grain:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .1 0 0 0 0 .1 0 0 0 0 .09 0 0 0 .05 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  --lt-surface:
+    var(--lt-grain),
+    linear-gradient(rgba(28,27,25,.035) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(28,27,25,.035) 1px,transparent 1px),
+    radial-gradient(ellipse 85% 75% at 50% 38%,var(--lt-glow) 0%,#F6F5F0 42%,var(--lt-table) 78%,var(--lt-table-edge) 100%);
+  --lt-surface-size:220px 220px,32px 32px,32px 32px,100% 100%;
+
+  /* Re-point the older design systems at the table */
+  --font-ui:var(--lt-ui);
+  --font-story:var(--lt-ui);
+  --font-data:var(--lt-mono);
+  --font-display:var(--lt-display);
+  --lb-canvas:var(--lt-table);
+  --lb-card:var(--lt-mount);
+  --lb-paper:var(--lt-mount);
+  --lb-ink:var(--lt-ink);
+  --lb-secondary:var(--lt-ink-2);
+  --lb-muted:var(--lt-ink-3);
+  --lb-rule:var(--lt-rule);
+  --lb-lime:var(--lt-marker);
+  --lb-green:var(--lt-marker-ink);
+  --lb-lavender:var(--lt-edge);
+  --lb-lilac:var(--lt-edge-wash);
+  --lb-danger:var(--lt-marker-ink);
+  --lb-shadow:var(--lt-lift);
+  --lb-paper-surface:linear-gradient(var(--lt-mount),var(--lt-mount));
+  --lb-stock-surface:linear-gradient(var(--lt-chassis-2),var(--lt-chassis));
+  --lb-sheet-shadow:var(--lt-lift);
+  --fire-canvas:var(--lt-table);
+  --fire-panel:var(--lt-mount);
+  --fire-raised:#F3F1EC;
+  --fire-well:var(--lt-mount);
+  --fire-wash:var(--lt-marker-wash);
+  --fire-ink:var(--lt-ink);
+  --fire-muted:var(--lt-ink-2);
+  --fire-dim:var(--lt-ink-3);
+  --fire-line:var(--lt-rule);
+  --fire-control:var(--lt-rule-strong);
+  --fire-accent:var(--lt-marker);
+  --fire-amber:var(--lt-marker);
+  --fire-on-accent:#fff;
+  --fire-success:#2E6B45;
+  --fire-progress:#4B4C9A;
+  --fire-danger:var(--lt-marker-ink);
+  --fire-shadow:rgba(28,27,25,.2);
+  --fire-shadow-soft:rgba(28,27,25,.08);
+  background:var(--lt-table);
+  color:var(--lt-ink);
+  color-scheme:light;
+}
+html,body{background:var(--lt-table)}
+
+.studio.atlas-shell,
+.studio.atlas-shell.dark[data-palette]{
+  --bg:transparent;
+  --side:#F8F7F3;
+  --surface:#F1EFE9;
+  --line:var(--lt-rule);
+  --text:var(--lt-ink);
+  --secondary:var(--lt-ink-2);
+  --muted:var(--lt-ink-3);
+  --accent:var(--lt-marker-ink);
+  --accent-soft:var(--lt-marker-wash);
+  --on-accent:#fff;
+  --paper:var(--lt-mount);
+  --editor:transparent;
+  --control-border:var(--lt-rule-strong);
+  --approved:#2E6B45;
+  --progress:#4B4C9A;
+  --blocked:var(--lt-marker-ink);
+  --draft:var(--lt-ink-3);
+  --tungsten:var(--lt-edge-ink);
+  background:var(--lt-surface)!important;
+  background-size:var(--lt-surface-size)!important;
+  color:var(--lt-ink);
+  font-family:var(--lt-ui);
+}
+/* Every view is laid directly on the table, so the lit surface shows through */
+.studio.atlas-shell :is(.main-editor,.editor-body,.workspace-layout,.director-tool-view,.visual-language,.planning-sheet,.collection-workspace,.beat-view,.breakdown-stage,.welcome,.story-atlas),
+.studio.atlas-shell.stage-active :is(.workspace-layout,.main-editor,.editor-body),
+.studio.atlas-shell.lb-cylinder-atlas,
+.studio.atlas-shell.lb-cylinder-atlas .story-atlas{
+  background:transparent!important;background-image:none!important;
+}
+.studio.atlas-shell.lb-cylinder-atlas{background:var(--lt-surface)!important;background-size:var(--lt-surface-size)!important}
+
+.studio.atlas-shell ::selection,.vl-reference-dialog ::selection{background:rgba(212,48,31,.16);color:var(--lt-ink)}
+.studio.atlas-shell :is(input,textarea,select):not(:where(.lb-cylinder-v9 *)){accent-color:var(--lt-marker);caret-color:var(--lt-marker)}
+.studio.atlas-shell :is(button,a,summary,select,input,textarea,[tabindex]):focus-visible{outline-color:var(--lt-marker)}
+
+/* --- Type ----------------------------------------------------------------- */
+.studio.atlas-shell :is(.director-tool-heading h1,.stage-heading h1,.planning-sheet header h2,.vl-header h1,.vl-board-heading h2,.pitch-title h1,.dialog h2,.dialog-heading h2):not(:where(.lb-cylinder-v9 *)){
+  font-family:var(--lt-display)!important;font-weight:400!important;letter-spacing:-.025em!important;color:var(--lt-ink)!important;
+}
+/* Small labels read like edge print on film */
+.studio.atlas-shell :is(.eyebrow,.atlas-eyebrow,.collection-eyebrow,.node-overline,.vl-eyebrow,.stage-section-heading,.document-section-label):not(:where(.lb-cylinder-v9 *,.atlas-heading *)){
+  font-family:var(--lt-mono)!important;letter-spacing:.16em!important;color:var(--lt-edge-ink)!important;
+}
+
+/* --- The chassis: header ---------------------------------------------------- */
+.studio.atlas-shell .compact-header,
+.studio.atlas-shell .compact-header .menubar{
+  background-color:var(--lt-chassis)!important;color:var(--lt-chassis-ink)!important;
+  border-color:var(--lt-chassis)!important;box-shadow:none!important;
+}
+/* A measuring rule runs along the bottom edge of the frame */
+.studio.atlas-shell .compact-header{
+  border-bottom:0!important;
+  background-image:
+    repeating-linear-gradient(90deg,rgba(238,236,231,.42) 0 1px,transparent 1px 64px),
+    repeating-linear-gradient(90deg,rgba(238,236,231,.2) 0 1px,transparent 1px 8px)!important;
+  background-size:100% 7px,100% 4px!important;
+  background-position:0 100%,0 100%!important;
+  background-repeat:no-repeat!important;
+}
+.studio.atlas-shell .compact-header .menubar{background-color:transparent!important}
+.studio.atlas-shell .app-wordmark>span{
+  font-family:var(--lt-display)!important;font-weight:400!important;font-size:25px!important;
+  letter-spacing:-.01em!important;color:var(--lt-chassis-ink)!important;
+}
+/* The Lit Spine mark: its signal bar takes the grease-pencil red */
+.studio.atlas-shell .app-wordmark img.studio-mark{filter:hue-rotate(-78deg) saturate(1.35);border-radius:6px;box-shadow:0 0 0 1px var(--lt-chassis-line)}
+.studio.atlas-shell :is(.header-world,.compact-header .header-world){color:var(--lt-chassis-ink)!important;border-color:var(--lt-chassis-line)!important}
+.studio.atlas-shell .header-world:hover{background:var(--lt-chassis-2)!important}
+.studio.atlas-shell .compact-header :is(.icon-button,.application-menu-trigger,.header-save){color:var(--lt-chassis-muted)!important}
+.studio.atlas-shell .compact-header :is(.icon-button,.application-menu-trigger,.header-save):hover{color:var(--lt-chassis-ink)!important;background:var(--lt-chassis-2)!important}
+.studio.atlas-shell .compact-header :is(.menubar>span,.menubar>i,.menu-divider){background-color:var(--lt-chassis-line)!important;border-color:var(--lt-chassis-line)!important}
+.studio.atlas-shell .command-trigger{
+  background:var(--lt-chassis-2)!important;border:1px solid var(--lt-chassis-line)!important;border-radius:999px!important;
+  color:var(--lt-chassis-muted)!important;
+}
+.studio.atlas-shell .command-trigger:hover{color:var(--lt-chassis-ink)!important;border-color:#55555C!important;background:var(--lt-chassis-3)!important}
+.studio.atlas-shell .command-trigger kbd{background:var(--lt-chassis-3)!important;color:var(--lt-chassis-muted)!important;border-color:var(--lt-chassis-line)!important;font-family:var(--lt-mono)}
+
+/* --- Buttons ------------------------------------------------------------------- */
+.studio.atlas-shell :is(.button.primary,.compile-button,.vl-button.is-primary):not(:where(.lb-cylinder-v9 *)),
+.studio.atlas-shell .compact-header .compile-button,
+.vl-reference-dialog .vl-button.is-primary{
+  background:var(--lt-marker)!important;color:#fff!important;border:1px solid var(--lt-marker-ink)!important;
+  border-radius:3px!important;font-weight:600!important;letter-spacing:.005em;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.22),0 6px 14px -8px rgba(212,48,31,.75)!important;
+  transition:background-color .16s var(--lt-ease),transform .16s var(--lt-ease),box-shadow .16s var(--lt-ease);
+}
+.studio.atlas-shell :is(.button.primary,.compile-button,.vl-button.is-primary):not(:where(.lb-cylinder-v9 *)):not(:disabled):hover,
+.studio.atlas-shell .compact-header .compile-button:not(:disabled):hover{
+  background:var(--lt-marker-hi)!important;color:#fff!important;transform:translateY(-1px);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.25),0 10px 20px -10px rgba(212,48,31,.85)!important;
+}
+.studio.atlas-shell :is(.button.primary,.compile-button,.vl-button.is-primary):not(:where(.lb-cylinder-v9 *)):not(:disabled):active{transform:none;box-shadow:none!important}
+.studio.atlas-shell .compact-header .compile-button:disabled{
+  background:var(--lt-chassis-2)!important;color:var(--lt-chassis-muted)!important;border-color:var(--lt-chassis-line)!important;box-shadow:none!important;opacity:1;
+}
+.studio.atlas-shell :is(.button.secondary,.vl-button,.install-app .button):not(:where(.lb-cylinder-v9 *)):not(.is-primary){
+  background:var(--lt-mount)!important;color:var(--lt-ink)!important;border:1px solid var(--lt-rule-strong)!important;
+  border-radius:3px!important;box-shadow:var(--lt-lift)!important;
+}
+.studio.atlas-shell :is(.button.secondary,.vl-button,.install-app .button):not(:where(.lb-cylinder-v9 *)):not(.is-primary):hover{border-color:var(--lt-ink)!important;color:var(--lt-ink)!important;background:var(--lt-mount)!important}
+
+/* --- Grease pencil: selected states ------------------------------------------------ */
+.studio.atlas-shell :is(
+  .command-results>button[data-active=true],
+  .library-sections .section-choice.selected,
+  .section-library .tree-row.selected,
+  .writing-tools .script-tool.active,
+  .visual-language :is(.vl-film-button,.vl-directory-button,.vl-scene-list button).is-active,
+  .workspace-sheet nav>button[aria-current=page],
+  .workspace-tabs>button.active,
+  .director-nav .workspace-tabs button.active
+):not(:where(.lb-cylinder-v9 *)){
+  background:var(--lt-marker-wash)!important;color:var(--lt-ink)!important;
+  border-color:var(--lt-marker-line)!important;box-shadow:inset 3px 0 0 var(--lt-marker)!important;
+}
+.studio.atlas-shell .command-results>button[data-active=true] small{color:var(--lt-ink-2)!important}
+.studio.atlas-shell :is(.atlas-scene-strip>button>span,.collection-add-card>span,.live-dot,.collection-eyebrow>span):not(:where(.lb-cylinder-v9 *)){
+  background:var(--lt-marker)!important;color:#fff!important;border-color:var(--lt-marker-ink)!important;box-shadow:none!important;
+}
+
+/* --- The chassis: creative dock ----------------------------------------------------- */
+.studio.atlas-shell .creative-dock{
+  background:var(--lt-chassis)!important;border-top:0!important;box-shadow:0 -10px 30px -18px rgba(28,27,25,.6)!important;
+  background-image:repeating-linear-gradient(90deg,rgba(238,236,231,.2) 0 1px,transparent 1px 8px)!important;
+  background-size:100% 4px!important;background-repeat:no-repeat!important;background-position:0 0!important;
+}
+.studio.atlas-shell .creative-dock>button{
+  position:relative;color:var(--lt-chassis-muted)!important;background:transparent!important;
+  border-radius:3px!important;box-shadow:none!important;transition:color .16s var(--lt-ease);
+}
+.studio.atlas-shell .creative-dock>button:hover{color:var(--lt-chassis-ink)!important;background:var(--lt-chassis-2)!important}
+/* The current workspace is circled, as you would circle a frame on a contact sheet */
+.studio.atlas-shell .creative-dock>button[aria-current=page]{color:#fff!important;background:transparent!important;box-shadow:none!important}
+.studio.atlas-shell .creative-dock>button[aria-current=page]::after{
+  content:"";position:absolute;inset:-3px -9px;pointer-events:none;
+  background:var(--lt-circle) center/100% 100% no-repeat;
+}
+.studio.atlas-shell .creative-dock>i{background:var(--lt-chassis-line)!important}
+.studio.atlas-shell :is(.dock-bubble,.workspace-launcher){
+  background:var(--lt-chassis)!important;color:var(--lt-chassis-ink)!important;
+  border:1px solid var(--lt-chassis-line)!important;border-radius:999px!important;
+  box-shadow:0 10px 24px -10px rgba(28,27,25,.65)!important;
+}
+.studio.atlas-shell :is(.dock-bubble,.workspace-launcher):hover{background:var(--lt-chassis-2)!important;transform:none}
+.studio.atlas-shell .workspace-launcher :is(span,b,strong,small){color:inherit!important}
+.studio.atlas-shell .workspace-launcher svg,.studio.atlas-shell .dock-bubble svg{color:var(--lt-marker-hi)!important}
+.studio.atlas-shell .workspace-sheet{background:var(--lt-vellum)!important;-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px)}
+.studio.atlas-shell :is(.director-nav,.workspace-nav){background:var(--lt-vellum)!important;border-color:var(--lt-rule)!important;-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
+
+/* --- Vellum strips: document headings and toolbars ------------------------------------ */
+.studio.atlas-shell :is(.document-heading,.formatbar,.writing-tools,.screenplay-toolbar){
+  background:var(--lt-vellum)!important;border-color:var(--lt-rule)!important;
+  -webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);
+}
+.studio.atlas-shell .document-identity input{background:transparent!important}
+
+/* --- Sheets laid on the table: dialogs ---------------------------------------------------- */
+.studio.atlas-shell dialog.dialog,dialog.dialog{
+  background:rgba(252,251,248,.97)!important;color:var(--lt-ink)!important;
+  border:1px solid rgba(28,27,25,.14)!important;border-radius:4px!important;
+  box-shadow:0 2px 4px rgba(28,27,25,.08),0 40px 80px -30px rgba(28,27,25,.55)!important;
+  overflow:visible;
+}
+dialog.dialog::backdrop{background:rgba(24,24,26,.42);-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px)}
+/* Two strips of tape hold the sheet down */
+dialog.dialog::before,dialog.dialog::after{
+  content:"";position:absolute;top:-11px;width:78px;height:22px;pointer-events:none;z-index:3;
+  background:linear-gradient(180deg,rgba(236,229,208,.86),rgba(226,218,195,.82));
+  box-shadow:0 1px 2px rgba(28,27,25,.12);
+  clip-path:polygon(3% 0,97% 4%,100% 32%,96% 60%,99% 100%,2% 96%,0 64%,4% 34%);
+}
+dialog.dialog::before{left:34px;transform:rotate(-4deg)}
+dialog.dialog::after{right:34px;transform:rotate(3deg)}
+.studio.atlas-shell :is(.dialog-heading,.dialog-actions){border-color:var(--lt-rule)!important;background:transparent!important}
+
+/* --- Floating menus and toasts ------------------------------------------------------------- */
+.studio.atlas-shell :is(.dropdown,.application-menu,.context-menu,[role=menu]):not(:where(.lb-cylinder-v9 *)){
+  background:rgba(252,251,248,.98)!important;border:1px solid rgba(28,27,25,.14)!important;border-radius:4px!important;
+  box-shadow:0 2px 4px rgba(28,27,25,.06),0 24px 48px -20px rgba(28,27,25,.45)!important;
+}
+.studio.atlas-shell .toast-message{
+  background:var(--lt-chassis)!important;color:var(--lt-chassis-ink)!important;border:1px solid var(--lt-chassis-line)!important;
+  border-radius:3px!important;box-shadow:0 14px 30px -14px rgba(28,27,25,.7)!important;
+}
+.studio.atlas-shell .toast-message :is(span,p,strong){color:inherit!important}
+.studio.atlas-shell .toast-message svg{color:var(--lt-marker-hi)!important}
+.studio.atlas-shell .toast-message button{color:var(--lt-chassis-muted)!important}
+.studio.atlas-shell .toast-message::after{background:var(--lt-marker)!important}
+
+/* --- Slides: cards become mounts on the lit table --------------------------------------------- */
+.studio.atlas-shell :is(.planning-field,.collection-card.index-card,.beat-card,.template-card,.vl-scene-board,.vl-moment,.world-card,.comment-card):not(:where(.lb-cylinder-v9 *)){
+  background:var(--lt-mount)!important;background-image:none!important;
+  border:1px solid rgba(28,27,25,.13)!important;border-radius:3px!important;
+  box-shadow:var(--lt-lift)!important;
+  transition:box-shadow .2s var(--lt-ease),transform .2s var(--lt-ease);
+}
+.studio.atlas-shell :is(.planning-field,.collection-card.index-card,.beat-card,.vl-scene-board):not(:where(.lb-cylinder-v9 *)):hover{box-shadow:var(--lt-lift-hi)!important}
+/* Story Foundation: each prompt is a numbered frame in a slide mount */
+.studio.atlas-shell .planning-field-grid{counter-reset:lt-frame}
+.studio.atlas-shell .planning-field-grid>.planning-field{
+  position:relative;counter-increment:lt-frame;
+  box-shadow:var(--lt-mount-window),var(--lt-lift)!important;
+}
+.studio.atlas-shell .planning-field-grid>.planning-field:hover{box-shadow:var(--lt-mount-window),var(--lt-lift-hi)!important}
+.studio.atlas-shell .planning-field-grid>.planning-field::after{
+  content:counter(lt-frame,decimal-leading-zero) "A";
+  position:absolute;top:13px;right:18px;pointer-events:none;
+  font:600 17px/1 var(--lt-frame);letter-spacing:.06em;color:var(--lt-edge);
+}
+.studio.atlas-shell .planning-field-grid>.planning-field:focus-within{border-color:var(--lt-marker-line)!important}
+.studio.atlas-shell .planning-field>span{color:var(--lt-ink-2)!important;font-family:var(--lt-mono)!important;letter-spacing:.14em!important}
+.studio.atlas-shell .planning-field>:is(input,textarea){background:transparent!important}
+.studio.atlas-shell .planning-symbol{
+  background:var(--lt-mount)!important;color:var(--lt-marker)!important;border:1.5px solid var(--lt-ink)!important;
+  border-radius:50%!important;box-shadow:var(--lt-lift)!important;
+}
+/* Beat timeline: every beat is a frame on a strip of film */
+.studio.atlas-shell .beat-card{position:relative;padding-top:24px!important;overflow:hidden}
+.studio.atlas-shell .beat-card::before{
+  content:"";position:absolute;left:0;right:0;top:0;height:12px;pointer-events:none;
+  background:
+    repeating-linear-gradient(90deg,transparent 0 5px,rgba(253,252,249,.92) 5px 11px,transparent 11px 18px) 0 50%/100% 5px no-repeat,
+    var(--lt-chassis-2);
+}
+/* Template choice: the chosen slide is ticked in grease pencil */
+.studio.atlas-shell .template-card.chosen{border-color:var(--lt-marker)!important;background:var(--lt-mount)!important;box-shadow:0 0 0 1px var(--lt-marker),var(--lt-lift)!important}
+.studio.atlas-shell .template-card.chosen svg{color:var(--lt-ink)!important}
+.studio.atlas-shell .template-card.chosen>svg:last-child,.studio.atlas-shell .template-card.chosen .template-check{color:var(--lt-marker)!important}
+
+/* --- First page ------------------------------------------------------------------------------- */
+.studio.atlas-shell .welcome{position:relative}
+.studio.atlas-shell .welcome>.eyebrow{font-family:var(--lt-mono)!important;color:var(--lt-edge-ink)!important;letter-spacing:.2em!important}
+.studio.atlas-shell .welcome>.eyebrow::before{background:var(--lt-marker)!important;border:0!important;box-shadow:0 0 0 3px rgba(212,48,31,.14)}
+.studio.atlas-shell .welcome>h1{color:var(--lt-ink)!important;font-family:var(--lt-display)!important}
+.studio.atlas-shell .welcome>h1 em{
+  color:var(--lt-ink)!important;
+  background:var(--lt-underline) 0 92%/100% .2em no-repeat!important;
+  padding-bottom:.06em!important;-webkit-box-decoration-break:clone;box-decoration-break:clone;
+}
+.studio.atlas-shell .welcome>p:not(.welcome-identity){color:var(--lt-ink-2)!important}
+.studio.atlas-shell .welcome>.button.primary{background:var(--lt-marker)!important;color:#fff!important;border-color:var(--lt-marker-ink)!important;border-radius:3px!important}
+.studio.atlas-shell .welcome>.button.primary:hover{background:var(--lt-marker-hi)!important}
+.studio.atlas-shell .welcome-secondary button{color:var(--lt-ink-2)!important;text-decoration-color:var(--lt-marker-line)!important}
+.studio.atlas-shell .welcome-secondary button:hover{color:var(--lt-ink)!important;text-decoration-color:var(--lt-marker)!important}
+
+/* The Android card: a slide taped to the table */
+.studio.atlas-shell .lb-native-choice{
+  position:relative;background:var(--lt-mount)!important;background-image:none!important;color:var(--lt-ink)!important;
+  border:1px solid rgba(28,27,25,.13)!important;border-radius:3px!important;box-shadow:var(--lt-mount-window),var(--lt-lift)!important;
+  padding:28px 30px!important;overflow:visible!important;
+}
+.studio.atlas-shell .lb-native-choice::before{
+  content:"";position:absolute;top:-11px;left:50%;width:92px;height:22px;transform:translateX(-50%) rotate(-2deg);pointer-events:none;
+  background:linear-gradient(180deg,rgba(236,229,208,.88),rgba(226,218,195,.84));box-shadow:0 1px 2px rgba(28,27,25,.12);
+  clip-path:polygon(3% 0,97% 4%,100% 32%,96% 60%,99% 100%,2% 96%,0 64%,4% 34%);
+}
+.studio.atlas-shell .lb-native-choice__tag{font-family:var(--lt-mono)!important;color:var(--lt-edge-ink)!important;letter-spacing:.18em!important;font-weight:500!important}
+.studio.atlas-shell :is(.lb-native-choice h3,.lb-native-choice__title){font-family:var(--lt-display)!important;font-weight:400!important;color:var(--lt-ink)!important}
+.studio.atlas-shell :is(.lb-native-choice__desc,.lb-native-choice__browser){color:var(--lt-ink-2)!important;font-family:var(--lt-ui)!important}
+.studio.atlas-shell .lb-native-choice__notice{color:var(--lt-ink-3)!important;font-family:var(--lt-ui)!important}
+.studio.atlas-shell .lb-native-choice a,.studio.atlas-shell .lb-widgets-link{
+  background:var(--lt-chassis)!important;color:var(--lt-chassis-ink)!important;border:1px solid var(--lt-chassis)!important;
+  border-radius:3px!important;box-shadow:0 8px 16px -10px rgba(28,27,25,.7)!important;font-family:var(--lt-mono)!important;letter-spacing:.06em!important;
+}
+.studio.atlas-shell .lb-native-choice a:hover,.studio.atlas-shell .lb-widgets-link:hover{background:var(--lt-chassis-3)!important}
+.studio.atlas-shell .lb-android-footer{border-top:1px solid var(--lt-rule)!important;color:var(--lt-edge-ink)!important;font-family:var(--lt-mono)!important;letter-spacing:.2em!important}
+.studio.atlas-shell .lb-android-footer a{background:transparent!important;box-shadow:none!important;border:0!important;color:var(--lt-ink)!important;font-family:var(--lt-mono)!important;text-decoration-color:var(--lt-marker)!important}
+
+/* --- The Atlas: the cylinder stands on the lit table --------------------------------------------
+   Cards, canvas and motion are the cylinder's own and untouched. Only the
+   table, the title and the frame controls around it belong to this theme. */
+.studio.atlas-shell.lb-cylinder-atlas .atlas-heading .atlas-eyebrow,
+.studio.atlas-shell.lb-cylinder-atlas .atlas-heading .atlas-eyebrow::before{color:var(--lt-edge-ink)!important}
+.studio.atlas-shell.lb-cylinder-atlas .atlas-heading .atlas-eyebrow::before{letter-spacing:.3em!important}
+.studio.atlas-shell.lb-cylinder-atlas .atlas-world-name>input{color:var(--lt-ink)!important}
+.studio.atlas-shell.lb-cylinder-atlas .atlas-heading p{color:var(--lt-ink-2)!important}
+.studio.atlas-shell.lb-cylinder-atlas .pitch-launch{
+  background:var(--lt-mount)!important;color:var(--lt-ink)!important;border:1px solid var(--lt-rule-strong)!important;
+  border-radius:3px!important;box-shadow:var(--lt-lift)!important;
+}
+.studio.atlas-shell.lb-cylinder-atlas .pitch-launch:hover{border-color:var(--lt-ink)!important}
+/* Edge print down both sides of the table (wide screens only) */
+@media (min-width:1100px){
+  .studio.atlas-shell.lb-cylinder-atlas .story-atlas::before,
+  .studio.atlas-shell.lb-cylinder-atlas .story-atlas::after{
+    position:absolute;top:150px;pointer-events:none;writing-mode:vertical-rl;
+    font:500 10px/1 var(--lt-mono);letter-spacing:.42em;color:var(--lt-edge);opacity:.85;white-space:nowrap;
+  }
+  .studio.atlas-shell.lb-cylinder-atlas .story-atlas::before{content:"LIGHTBOX 5219  ▸ 01  ▸ 02  ▸ 03  ▸ 04  ▸ 05";left:18px}
+  .studio.atlas-shell.lb-cylinder-atlas .story-atlas::after{content:"STORY ATLAS  ◈  TABLE 01  ◈  35MM";right:18px;transform:rotate(180deg)}
+}
+.lb-cylinder-v9 .lb-cylinder-controls>button{
+  background:var(--lt-mount)!important;color:var(--lt-ink)!important;border:1px solid var(--lt-rule-strong)!important;
+  box-shadow:var(--lt-lift)!important;
+}
+.lb-cylinder-v9 .lb-cylinder-controls>button:hover,
+.lb-cylinder-v9 .lb-cylinder-controls>button:focus-visible{background:var(--lt-mount)!important;border-color:var(--lt-marker)!important;color:var(--lt-marker)!important}
+.lb-cylinder-v9 .lb-cylinder-control-label{color:var(--lt-ink)!important}
+.lb-cylinder-v9 .lb-cylinder-dots i{background:var(--lt-rule-strong)!important}
+.lb-cylinder-v9 .lb-cylinder-dots i.is-current{background:var(--lt-marker)!important;box-shadow:0 0 0 3px rgba(212,48,31,.16)!important}
+.lb-cylinder-v9 .lb-cylinder-counter{color:var(--lt-edge-ink)!important;font-family:var(--lt-frame)!important;font-size:12px!important;font-weight:600!important;letter-spacing:.12em!important}
+.lb-cylinder-stage:focus-visible{outline-color:var(--lt-marker)!important}
+.lb-cylinder-back{
+  background:var(--lt-chassis)!important;color:var(--lt-chassis-ink)!important;border:1px solid var(--lt-chassis-line)!important;
+  box-shadow:0 10px 24px -10px rgba(28,27,25,.6)!important;
+}
+.lb-cylinder-back:hover{background:var(--lt-chassis-3)!important}
+
+/* --- The screenplay page: a sheet on the table ------------------------------------------------------ */
+.studio.atlas-shell :is(.script-page-scroll,.script-editor-shell){background:transparent!important;background-image:none!important}
+.studio.atlas-shell :is(.script-page-zoom,.script-page-preview,.script-page-excerpt),
+.modal-backdrop :is(.script-page-preview,.script-page-excerpt),
+dialog :is(.script-page-preview,.script-page-excerpt){
+  --lb-canvas:#fff;--lb-card:#faf9f5;--lb-paper:#fffefa;--lb-ink:#23241f;--lb-secondary:#55574e;
+  --lb-muted:#66685f;--lb-rule:#ddded5;--lb-lime:#d0f251;--lb-green:#315000;--lb-danger:#B4233D;
+  --font-ui:"DM Sans","Segoe UI",sans-serif;--font-story:"DM Sans","Segoe UI",sans-serif;
+  --font-data:"DM Mono",monospace;--font-display:"Instrument Serif",Georgia,serif;
+  --bg:#fff;--side:#faf9f5;--surface:#f7f7f2;--line:var(--lb-rule);--text:var(--lb-ink);
+  --secondary:var(--lb-secondary);--muted:var(--lb-muted);--accent:var(--lb-green);--accent-soft:#EAF2CF;
+  --on-accent:var(--lb-ink);--paper:var(--lb-paper);--control-border:#8A8D7E;
+  --editor:var(--lt-table-edge);
+}
+.studio.atlas-shell .script-page-zoom{color:#23241f;font-family:"DM Sans","Segoe UI",sans-serif}
+.studio.atlas-shell .script-page-zoom .screenplay-prosemirror{
+  box-shadow:0 1px 1px rgba(28,27,25,.06),0 24px 50px -28px rgba(28,27,25,.5)!important;
+}
+
+/* --- Story Cylinder pin ------------------------------------------------------------------------------
+   The cylinder's cards are clones of the Atlas cards and read the shared
+   design variables. Inside a card every variable is held at its original
+   value, so the cylinder renders exactly as it always has. Verified by a
+   computed-style diff of every card element.                              */
+.lb-cylinder-v9 .lb-cylinder-card{
+  --lb-canvas:#fff;--lb-card:#faf9f5;--lb-paper:#fffefa;--lb-ink:#23241f;--lb-secondary:#55574e;
+  --lb-muted:#66685f;--lb-rule:#ddded5;--lb-lime:#d0f251;--lb-lavender:#d5d8c3;--lb-lilac:#edf0e2;
+  --lb-green:#315000;--lb-danger:#B4233D;--lb-shadow:3px 3px 0 var(--lb-ink);
+  --lb-paper-surface:linear-gradient(#fffdf880,#fffdf880),var(--lb-fibre);
+  --lb-stock-surface:linear-gradient(#252720f5,#1d201af5),var(--lb-fibre);
+  --lb-sheet-shadow:0 2px 3px #25282008,0 12px 28px -12px #25282032;
+  --font-ui:"DM Sans","Segoe UI",sans-serif;--font-story:"DM Sans","Segoe UI",sans-serif;
+  --font-data:"DM Mono",monospace;--font-display:"Instrument Serif",Georgia,serif;
+  --fire-canvas:var(--lb-canvas);--fire-panel:var(--lb-card);--fire-raised:#E5E5DA;--fire-well:var(--lb-paper);
+  --fire-wash:#EAF2CF;--fire-ink:var(--lb-ink);--fire-muted:var(--lb-secondary);--fire-dim:var(--lb-muted);
+  --fire-line:var(--lb-rule);--fire-control:#8A8D7E;--fire-accent:var(--lb-green);--fire-amber:var(--lb-green);
+  --fire-on-accent:var(--lb-ink);--fire-success:#21613A;--fire-progress:#4B3E98;--fire-danger:var(--lb-danger);
+  --fire-edge:transparent;--fire-shadow:var(--lb-ink);--fire-shadow-soft:transparent;
+  --bg:#fff;--side:#faf9f5;--surface:#f7f7f2;--line:var(--lb-rule);--text:var(--lb-ink);
+  --secondary:var(--lb-secondary);--muted:var(--lb-muted);--accent:var(--lb-green);--accent-soft:#EAF2CF;
+  --on-accent:var(--lb-ink);--paper:var(--lb-paper);--editor:#e9eae3;--control-border:#8A8D7E;
+  --approved:#21613A;--progress:#4B3E98;--blocked:var(--lb-danger);--draft:var(--lb-muted);
+  --tungsten:var(--lb-green);--warning:#795100;--warning-bg:#FFF1BD;--warning-border:#AF7900;
+  font-family:"DM Sans","Segoe UI",sans-serif;
+}
+
+/* --- Opening titles: the table switches on ---------------------------------------------------------- */
+.lb-opener{
+  --op-paper:#F2F0EA;--op-ink:#18181A;--op-rule:#CBC6BB;--op-lime:#D4301F;
+  background:
+    linear-gradient(rgba(28,27,25,.04) 1px,transparent 1px) 0 0/32px 32px,
+    linear-gradient(90deg,rgba(28,27,25,.04) 1px,transparent 1px) 0 0/32px 32px,
+    radial-gradient(ellipse 80% 70% at 40% 45%,#FFFFFF 0%,#F4F2EC 55%,#E6E3DA 100%)!important;
+}
+.lb-opener__line--page .lb-opener__word{color:var(--lt-marker)!important}
+.lb-opener__edition,.lb-opener__technical{color:var(--lt-edge-ink)!important}
+/* The backlight flickers on, like a fluorescent tube under opal glass */
+.lb-opener::after{
+  content:"";position:absolute;inset:0;pointer-events:none;z-index:5;background:#141416;
+  animation:lt-lamp-on 1.1s steps(1,end) both;
+}
+@keyframes lt-lamp-on{
+  0%{opacity:1}12%{opacity:.35}18%{opacity:.92}30%{opacity:.18}38%{opacity:.6}52%{opacity:0}100%{opacity:0}
+}
+@media (prefers-reduced-motion:reduce){.lb-opener::after{animation:none;opacity:0}}
+
+/* --- Pre-React fallback ----------------------------------------------------------------------------------- */
+#static-intro{color:var(--lt-ink)!important}
+#static-intro a{color:var(--lt-marker-ink)}
+
+/* Export: the dialog's heading is the press plate, a strip of the chassis */
+.studio.atlas-shell .dialog:has(.compile-layout) .dialog-heading{background:var(--lt-chassis)!important;background-image:none!important}
+.studio.atlas-shell .dialog:has(.compile-layout) .dialog-heading h2{color:var(--lt-chassis-ink)!important}
+.studio.atlas-shell .dialog:has(.compile-layout) .dialog-heading p{color:var(--lt-chassis-muted)!important}
+.studio.atlas-shell .dialog:has(.compile-layout) .dialog-heading .icon-button{color:var(--lt-chassis-ink)!important}
+/* An empty scene cover is a blank slide waiting for a frame */
+.studio.atlas-shell .vl-scene-cover.is-empty{background-color:#F4F2ED!important;background-image:none!important}
+.lb-opener__identity span{color:var(--lt-ink-3)!important}
+.studio.atlas-shell .theme-swatches>i:nth-child(1){background:#EFEDE7!important;box-shadow:inset 0 0 0 1px rgba(28,27,25,.15)}
+.studio.atlas-shell .theme-swatches>i:nth-child(2){background:#18181A!important}
+.studio.atlas-shell .theme-swatches>i:nth-child(3){background:#D4301F!important}
+.studio.atlas-shell .theme-swatches>i:nth-child(4){background:#E2692B!important}

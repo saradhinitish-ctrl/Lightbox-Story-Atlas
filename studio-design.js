@@ -20,8 +20,8 @@
     if (summary) {
       const title = summary.querySelector('strong');
       const description = summary.querySelector('p');
-      if (title && title.textContent !== 'Projection Room') title.textContent = 'Projection Room';
-      const copy = 'A dark studio lit by one amber light. Your screenplay page stays paper.';
+      if (title && title.textContent !== 'Light Table') title.textContent = 'Light Table';
+      const copy = 'Your story laid out on a lit table: frames, film edges and grease-pencil marks.';
       if (description && description.textContent !== copy) description.textContent = copy;
     }
     enhanceExport();

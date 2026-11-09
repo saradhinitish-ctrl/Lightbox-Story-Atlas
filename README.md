@@ -1,6 +1,6 @@
-# Atlas light table
+# The Atlas: a darkroom
 
-The Atlas home screen is a light table: the centred card is lit, neighbours sit dimmer in rack focus, the Screenplay card shows where you stopped with **Continue Scene NN**, and every card has a live status line. Entering a room is a push-in (View Transitions). Field Notes gains a research board with red string; Visual Language frames gain sprocket holes and edge codes. The 3D cylinder remains as **Classic view**. See `docs/atlas-light-table.md`.
+The Atlas home screen is a darkroom under a red safelight. The five stages, 01 The Spark → 02 The World → 03 Research → 04 The Screenplay → 05 Visual Language, are prints pegged to one twine line across the room. Each print is developed as far as that stage's real work goes. The stage you worked on last is marked in grease pencil, and **Continue Scene NN** waits in the developer tray below the line. The room has air: gusts travel along the line, the thread and the prints respond physically, and the cursor moves the air. Clicking a print takes it off the line and opens its room. Reduced motion stills the air. See `docs/darkroom-atlas.md`; the browser checks are in `tests/darkroom-atlas-qa.mjs`. It replaces the light table and the Classic cylinder.
 
 # Acid Paper studio redesign
 

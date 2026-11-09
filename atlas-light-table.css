@@ -322,11 +322,12 @@
   -webkit-mask-image:linear-gradient(90deg,transparent,#000 9%,#000 91%,transparent);mask-image:linear-gradient(90deg,transparent,#000 9%,#000 91%,transparent);
 }
 .lbd-tray-wrap{
-  position:absolute;left:50%;top:0;bottom:12px;transform:translateX(-50%);
+  /* The tray and its action sit on the bench, below its front edge */
+  position:absolute;left:50%;top:calc(26% + 8px);bottom:10px;transform:translateX(-50%);
   display:flex;align-items:center;gap:clamp(16px,2.2vw,30px);width:max-content;max-width:calc(100% - 32px);pointer-events:auto;
   transition:opacity .4s ease;
 }
-.lbd-tray{position:relative;flex:0 0 auto;width:clamp(150px,15vw,214px);height:calc(var(--lbd-bench) * .64);perspective:420px;perspective-origin:50% 0}
+.lbd-tray{position:relative;flex:0 0 auto;width:clamp(150px,15vw,214px);height:calc(var(--lbd-bench) * .56);perspective:420px;perspective-origin:50% 0}
 .lbd-basin{
   position:absolute;inset:0;transform:rotateX(46deg);transform-origin:50% 100%;border-radius:7px;overflow:hidden;
   background:linear-gradient(#41201a,#1e0e0b);
@@ -353,29 +354,23 @@
     linear-gradient(rgba(74,12,6,.5),rgba(40,6,3,.58));
 }
 .lbd-tray-rim{position:absolute;inset:0;border-radius:7px;pointer-events:none;box-shadow:inset 0 0 0 1px rgba(255,140,110,.2)}
-.lbd-tray-info{display:flex;flex-direction:column;align-items:flex-start;gap:7px;min-width:0;max-width:360px}
-.lbd-tray-kicker{font:500 10px/1.3 var(--lbd-mono);letter-spacing:.18em;text-transform:uppercase;color:var(--lbd-red-text)}
+.lbd-tray-info{display:flex;flex-direction:column;align-items:flex-start;gap:10px;min-width:0;max-width:300px}
+/* One quiet line under the action: the scene you stopped in */
 .lbd-tray-slug{
-  display:flex;gap:9px;max-width:100%;font:500 11px/1.35 var(--lbd-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--lbd-text);
+  display:block;max-width:100%;padding-left:20px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;
+  font:500 10px/1.3 var(--lbd-mono);letter-spacing:.14em;text-transform:uppercase;color:var(--lbd-text-2);
 }
-.lbd-tray-slug b{flex:0 0 auto;font-weight:600;color:var(--lbd-red-text)}
-.lbd-tray-slug span{overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
 .lbd-continue{
-  display:inline-flex;align-items:center;gap:10px;min-height:42px;margin:2px 0 1px;padding:0 18px 0 20px;
+  display:inline-flex;align-items:center;gap:10px;min-height:44px;margin:0;padding:0 18px 0 20px;
   border:0!important;border-radius:999px!important;background:var(--lbd-red)!important;color:#fff!important;cursor:pointer;
   font:600 14px/1 var(--lbd-ui)!important;letter-spacing:.005em;
-  box-shadow:0 10px 22px -10px rgba(212,48,31,.85),inset 0 1px 0 rgba(255,255,255,.18)!important;
+  box-shadow:0 10px 24px -12px rgba(212,48,31,.9),inset 0 1px 0 rgba(255,255,255,.18)!important;
   transition:transform .25s cubic-bezier(.2,.7,.2,1),background-color .2s ease;
 }
 .lbd-continue svg{transition:transform .25s cubic-bezier(.2,.7,.2,1)}
 .lbd-continue:hover{background:#e13a28!important;transform:translateY(-1px)}
 .lbd-continue:hover svg{transform:translateX(2px)}
 .lbd-continue:focus-visible{outline:2px solid var(--lbd-text)!important;outline-offset:3px}
-.lbd-tray-meta{font:500 10px/1.3 var(--lbd-mono);letter-spacing:.1em;color:var(--lbd-text-2)}
-.lbd-edgeprint{
-  position:absolute;left:18px;bottom:9px;font:500 9px/1 var(--lbd-mono);letter-spacing:.24em;white-space:nowrap;
-  color:rgba(242,150,130,.5);pointer-events:none;
-}
 .lbd-hint{display:none}
 
 /* --- Taking a print off the line --------------------------------------------------- */
@@ -391,7 +386,6 @@
 
 /* --- Narrow screens: one line that scrolls along the wall --------------------------- */
 @media (max-width:979px){
-  .lbd-edgeprint{display:none}
   .lbd-darkroom.is-scroll .lbd-hint{
     display:block;position:absolute;right:16px;bottom:8px;font:500 9px/1 var(--lbd-mono);letter-spacing:.2em;
     text-transform:uppercase;color:rgba(242,150,130,.55);
@@ -399,13 +393,10 @@
 }
 @media (max-width:700px){
   .lbd-darkroom{margin-top:0}
-  .lbd-tray-wrap{gap:14px;bottom:22px}
+  .lbd-tray-wrap{gap:14px;bottom:24px}
   .lbd-tray{width:108px;height:calc(var(--lbd-bench) * .5)}
-  .lbd-tray-kicker{font-size:9px;letter-spacing:.14em}
-  .lbd-kick-2{display:none}
-  .lbd-tray-slug{font-size:10px}
+  .lbd-tray-slug{font-size:9px;padding-left:17px}
   .lbd-continue{min-height:40px;padding:0 15px 0 17px;font-size:13.5px!important}
-  .lbd-tray-meta{font-size:9px}
 }
 @media (max-width:380px){
   .lbd-tray{display:none}

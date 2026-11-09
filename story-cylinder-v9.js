@@ -428,11 +428,10 @@
       + '<div class="lbd-tray-wrap"><div class="lbd-tray" aria-hidden="true"><div class="lbd-basin">'
       + '<i class="lbd-liquid"></i><div class="lbd-tray-print"><div class="lbd-tray-page"></div></div><i class="lbd-tray-sheen"></i><i class="lbd-tray-rim"></i>'
       + '</div></div>'
-      + '<div class="lbd-tray-info"><span class="lbd-tray-kicker">Still in the developer<span class="lbd-kick-2"> · 04 The Screenplay</span></span>'
-      + '<span class="lbd-tray-slug"><b></b><span></span></span>'
-      + '<button class="lbd-continue" type="button"><span>Continue Scene 01</span>' + ARROW + '</button>'
-      + '<span class="lbd-tray-meta"></span></div></div>'
-      + '<span class="lbd-edgeprint" aria-hidden="true"></span><span class="lbd-hint" aria-hidden="true">Swipe along the line</span></div>'
+      // One action and one quiet line: the tray itself says "still in the developer".
+      + '<div class="lbd-tray-info"><button class="lbd-continue" type="button"><span>Continue Scene 01</span>' + ARROW + '</button>'
+      + '<span class="lbd-tray-slug"></span></div></div>'
+      + '<span class="lbd-hint" aria-hidden="true">Swipe along the line</span></div>'
       + '<span class="lbd-sr lbd-live" aria-live="polite"></span>';
     viewport.append(host);
 
@@ -441,8 +440,8 @@
       host, atlas, scroller: q('.lbd-scroller'), line: q('.lbd-line'), back: q('.lbd-back'), thread: q('.lbd-thread'), front: q('.lbd-front'), beam: q('.lbd-beam'),
       shadows: q('.lbd-shadows'), clips: q('.lbd-clips'), hooks: [q('.lbd-hook.is-left'), q('.lbd-hook.is-right')],
       tray: q('.lbd-tray'), trayPrint: q('.lbd-tray-print'), trayPage: q('.lbd-tray-page'), traySheen: q('.lbd-tray-sheen'),
-      trayInfo: q('.lbd-tray-info'), slugNo: q('.lbd-tray-slug b'), slugText: q('.lbd-tray-slug span'), cont: q('.lbd-continue'),
-      contLabel: q('.lbd-continue span'), trayMeta: q('.lbd-tray-meta'), edgeprint: q('.lbd-edgeprint'), live: q('.lbd-live'),
+      trayInfo: q('.lbd-tray-info'), slug: q('.lbd-tray-slug'), cont: q('.lbd-continue'),
+      contLabel: q('.lbd-continue span'), live: q('.lbd-live'),
       prints: [], ac: new AbortController(), raf: 0, last: 0, acc: 0, visible: true, onscreen: true,
       still: reduceMQ.matches, pulling: null, hover: -1, pointer: null, jank: 0, dataKey: '', current: 0, lv: [0, 0, 0, 0, 0],
       air: { t: 0, gusts: [], puffs: [], nextGust: 4.5, prevail: Math.random() < .5 ? -1 : 1, A0: 18, rnd: rng((Date.now() & 0xffff) + 7) },
@@ -564,19 +563,17 @@
     const sceneNo = d?.scene ? d.index + 1 : 1;
     const started = !!(d && d.lines.length);
     s.contLabel.textContent = (started ? 'Continue' : 'Start') + ' Scene ' + pad2(sceneNo);
-    s.slugNo.textContent = 'SC. ' + pad2(sceneNo);
-    s.slugText.textContent = d?.scene ? d.scene.heading : 'INT. THE FIRST SCENE — DAY';
+    const heading = d?.scene ? d.scene.heading : 'INT. THE FIRST SCENE — DAY';
     const meta = ['Scene ' + pad2(sceneNo) + ' of ' + pad2(Math.max(d?.scenes.length || 0, 1))];
     if (d?.sceneTime && d.sceneTime.source === 'pages') meta.push(d.api.formatEighths(d.sceneTime.eighths) + ' pg', d.api.formatDuration(d.sceneTime.seconds));
-    s.trayMeta.textContent = meta.join(' · ');
-    s.cont.setAttribute('aria-label', s.contLabel.textContent + ': ' + s.slugText.textContent + (started ? ', where you stopped writing' : ''));
+    s.slug.textContent = heading;
+    s.slug.title = heading + ' · ' + meta.join(' · ');
+    s.cont.setAttribute('aria-label', s.contLabel.textContent + ': ' + heading + ', ' + meta.join(', ') + (started ? '. Where you stopped writing.' : '.'));
     const page = [];
     if (started) d.lines.forEach((b) => { const l = make('span', 'lbd-tray-line lbd-tray-line--' + b.type, b.text); if (b.last) l.append(make('i', 'lbd-caret')); page.push(l); });
     else page.push(make('span', 'lbd-tray-line lbd-tray-line--empty', d?.scene ? 'The scene is ready for its first action.' : 'Your first scene begins here.'));
     s.trayPage.replaceChildren(...page);
     s.trayLevel = started ? clamp(.35 + lv[3] * .6, 0, .95) : .18;
-    const title = (d?.project.title || 'Untitled').toUpperCase();
-    s.edgeprint.textContent = title + '  ▸  ROLL A  ▸  SC. ' + pad2(sceneNo) + '  ▸  24 FPS  ▸  SAFELIGHT ON';
     if (s.W) layoutMarks(s);
     if (s.still) render(s, 0);
   }

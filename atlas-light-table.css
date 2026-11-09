@@ -1,254 +1,427 @@
 /* ==========================================================================
-   Lightbox / The Atlas as a light table (rack focus)
+   Lightbox / The Atlas as a darkroom
 
-   story-cylinder-v9.js sets .is-rack on .lb-cylinder-v9 (default) or
-   .is-classic (the original cylinder, untouched by this file).
-
-   The room is dim; the card in focus is the light source. Its backlight is
-   one opacity-driven layer (.lb-cylinder-lift) and one static spill on the
-   table (.lb-cylinder-aura). Neighbours sit smaller under a warm-grey veil
-   (opacity) with a small static blur that switches by class and never
-   tweens. Per frame, only transform and opacity change.
-   Loaded last.
+   story-cylinder-v9.js builds .lbd-darkroom inside the Atlas viewport and
+   marks the studio .lbd-studio while the Atlas is open. A darkroom under a
+   red safelight: five prints pegged to one twine line, a developer tray on
+   the bench below. Per frame the script changes only transform and opacity;
+   every blur and filter here is static. Loaded after the older Atlas styles.
+   (The file keeps its historical name; the light table it held is gone.)
    ========================================================================== */
 
-.lb-cylinder-v9.is-rack{
-  --lbx-glow:255,226,176;          /* the lamp: warm tungsten through opal */
-  --lbx-dim:44,38,31;              /* the room around it */
+.lbd-studio,.lbd-darkroom{
+  --lbd-wall:#0a0706;
+  --lbd-wall-2:#160c0a;
+  --lbd-text:#f1e5da;            /* paper white under the safelight */
+  --lbd-text-2:#c2ab9f;          /* 9.2:1 on the wall */
+  --lbd-red:#D4301F;             /* the one red: grease pencil, the action */
+  --lbd-red-text:#f2624f;        /* the same red, lifted for small text on the wall (5.9:1 or better) */
+  --lbd-ink:#21160f;             /* the print's darkest tone */
+  --lbd-serif:"Instrument Serif",Georgia,serif;
+  --lbd-ui:"DM Sans","Segoe UI",sans-serif;
+  --lbd-mono:"DM Mono",ui-monospace,monospace;
+  --lbd-frame:"Big Shoulders Display","DM Mono",sans-serif;
+  --lbd-courier:"Courier Prime","Courier New",monospace;
 }
 
-/* --- The room ----------------------------------------------------------------- */
-/* Dim the sheet towards its edges; the middle of the table stays bright.
-   A static gradient: it never animates. */
-.studio.atlas-shell.lb-cylinder-atlas .story-atlas.lbx-rack::before{
-  content:"";position:absolute;inset:0;z-index:-2;pointer-events:none;
+/* --- The room around the line: the whole Atlas goes dark ------------------- */
+.studio.atlas-shell.lb-cylinder-atlas.lbd-studio{
+  background-color:var(--lbd-wall)!important;
+  background-image:radial-gradient(ellipse 90% 70% at 30% 18%,#1d0f0c 0%,#120a08 48%,#0a0706 100%)!important;
+  background-size:100% 100%!important;background-blend-mode:normal!important;color:var(--lbd-text);
+}
+.studio.atlas-shell.lb-cylinder-atlas.lbd-studio .story-atlas.lbd-atlas{background:transparent!important;color:var(--lbd-text)!important}
+.studio.atlas-shell.lbd-studio .story-atlas.lbd-atlas .atlas-heading .atlas-eyebrow,
+.studio.atlas-shell.lbd-studio .story-atlas.lbd-atlas .atlas-heading .atlas-eyebrow::before{color:var(--lbd-red-text)!important}
+.studio.atlas-shell.lbd-studio .story-atlas.lbd-atlas .atlas-heading .atlas-eyebrow::before{content:"◆  STORY ATLAS";letter-spacing:.3em!important}
+.studio.atlas-shell.lbd-studio .story-atlas.lbd-atlas .atlas-world-name>input{color:var(--lbd-text)!important;caret-color:var(--lbd-red-text)!important}
+.studio.atlas-shell.lbd-studio .story-atlas.lbd-atlas .atlas-world-name>input::placeholder{color:var(--lbd-text-2)!important}
+.studio.atlas-shell.lbd-studio .story-atlas.lbd-atlas .atlas-heading p{color:var(--lbd-text-2)!important}
+.studio.atlas-shell.lbd-studio .story-atlas.lbd-atlas .pitch-launch{
+  background:rgba(28,16,13,.85)!important;color:var(--lbd-text)!important;
+  border:1px solid rgba(241,229,218,.22)!important;box-shadow:0 10px 24px -14px #000!important;
+}
+.studio.atlas-shell.lbd-studio .story-atlas.lbd-atlas .pitch-launch:hover{border-color:rgba(241,229,218,.55)!important}
+.studio.atlas-shell.lbd-studio .story-atlas.lbd-atlas .pitch-launch>svg:last-child{color:var(--lbd-text-2)!important}
+.studio.atlas-shell.lbd-studio .story-atlas.lbd-atlas .atlas-heading{transition:opacity .45s ease}
+.studio.atlas-shell.lbd-studio .story-atlas.lbd-atlas.is-pulling .atlas-heading{opacity:.22}
+.studio.atlas-shell.lbd-studio ::selection{background:rgba(242,98,79,.32);color:#fff}
+
+/* --- The darkroom ----------------------------------------------------------- */
+.lbd-darkroom{
+  position:relative;isolation:isolate;width:100%;height:560px;margin:2px 0 0;
+  color:var(--lbd-text);user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent;
+}
+.lbd-darkroom *{box-sizing:border-box}
+.lbd-defs{position:absolute;width:0;height:0;overflow:hidden}
+.lbd-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap}
+
+/* The wall: matte black paint, a warm cast where the safelight falls */
+.lbd-wall{position:absolute;inset:0;z-index:0;pointer-events:none}
+.lbd-beam{position:absolute;left:0;top:0}
+/* The safelight: a housing hung on its cord, the filter glowing */
+.lbd-lamp{
+  position:absolute;z-index:1;top:-6px;left:calc(10% - 32px);width:64px;height:24px;border-radius:5px 5px 8px 8px;pointer-events:none;
+  background:linear-gradient(#2e1915,#140908);
+  box-shadow:0 10px 20px rgba(0,0,0,.7),inset 0 1px 0 rgba(255,140,120,.12),inset 0 -1px 0 rgba(255,120,100,.1);
+}
+.lbd-lamp::before{
+  content:"";position:absolute;left:50%;bottom:100%;width:1.5px;height:min(210px,30vh);margin-left:-.75px;
+  background:linear-gradient(rgba(58,30,24,0),#3a1e18 60%);
+}
+.lbd-darkroom.is-scroll .lbd-lamp{left:calc(16% - 34px)}
+.lbd-lamp-filter{
+  position:absolute;left:8px;right:8px;bottom:4px;height:8px;border-radius:2px;
+  background:linear-gradient(#ff6b4b,#c4200f);
+  box-shadow:0 0 12px 3px rgba(255,62,34,.6),0 0 60px 20px rgba(255,40,20,.16);
+}
+
+/* The line and everything on it */
+.lbd-scroller{position:absolute;inset:0;z-index:2;overflow:visible}
+.lbd-darkroom.is-scroll .lbd-scroller{
+  overflow-x:auto;overflow-y:hidden;overscroll-behavior-x:contain;scrollbar-width:none;
+  scroll-snap-type:x proximity;-webkit-overflow-scrolling:touch;
+}
+.lbd-darkroom.is-scroll .lbd-scroller::-webkit-scrollbar{display:none}
+.lbd-line{position:relative;height:100%;min-width:100%}
+.lbd-line.is-pointing{cursor:default}
+.lbd-back,.lbd-front,.lbd-thread{position:absolute;left:0;top:0;pointer-events:none}
+.lbd-back{z-index:1}
+.lbd-thread{z-index:3}
+.lbd-front{z-index:12}
+.lbd-snaps{position:absolute;inset:0;pointer-events:none}
+.lbd-snaps i{position:absolute;top:0;width:1px;height:1px;scroll-snap-align:center}
+.lbd-shadows,.lbd-clips{position:absolute;inset:0;pointer-events:none}
+.lbd-shadows{z-index:2}
+.lbd-clips{z-index:11}
+
+/* Shadows on the wall, down and right of the lamp; soft when a print lifts.
+   Painted once as box-shadows, so moving them costs nothing but a transform. */
+.lbd-shadow{position:absolute;left:0;top:0;will-change:transform,opacity;pointer-events:none}
+.lbd-shadow::before{content:"";position:absolute;border-radius:3px}
+.lbd-shadow.is-tight::before{inset:5px;background:rgba(0,0,0,.72);box-shadow:0 0 9px 5px rgba(0,0,0,.72)}
+.lbd-shadow.is-soft{opacity:0}
+.lbd-shadow.is-soft::before{inset:16px;background:rgba(0,0,0,.6);box-shadow:0 0 34px 18px rgba(0,0,0,.6)}
+
+/* Wall hooks: the line is tied off on brass screw eyes */
+.lbd-hook{
+  position:absolute;left:0;top:0;z-index:4;width:12px;height:12px;border-radius:50%;pointer-events:none;
+  background:radial-gradient(circle at 36% 30%,#f4cdbb 0,#a0614f 34%,#40201a 72%,#1c0d0a 100%);
+  box-shadow:2px 4px 5px rgba(0,0,0,.65),inset 0 0 0 2.5px rgba(10,4,3,.55);
+}
+
+/* The pegs: wood under red light, a steel spring, the line through the groove */
+.lbd-clip{position:absolute;left:0;top:0;width:var(--lbd-peg-w);height:var(--lbd-peg-h);will-change:transform}
+.lbd-clip svg{display:block;width:100%;height:100%;overflow:visible}
+
+/* --- A print ------------------------------------------------------------------------ */
+.lbd-print{
+  position:absolute;left:0;top:0;z-index:10;will-change:transform;pointer-events:none;
+  backface-visibility:hidden;-webkit-backface-visibility:hidden;
+}
+.lbd-print.is-hover{z-index:11}
+.lbd-print.is-pulled{z-index:30}
+.lbd-lift{position:relative;width:100%;height:100%}
+.lbd-paper{position:absolute;inset:0;container-type:inline-size}
+.lbd-stock{
+  position:absolute;inset:0;overflow:hidden;
+  /* Fibre-based paper, warmed by the safelight: a tint over the stock, no blend modes */
+  background-color:#e7d8ca;
+  background-image:
+    linear-gradient(168deg,rgba(255,236,222,.20) 0%,rgba(214,164,140,.20) 55%,rgba(120,62,44,.26) 100%),
+    url("assets/materials/paper-fibres.webp");
+  background-size:100% 100%,260px 260px;
+}
+.lbd-stock::after{
+  content:"";position:absolute;inset:0;z-index:1;pointer-events:none;
+  background-image:var(--lbd-grain);background-size:96px 96px;opacity:.12;
+}
+.lbd-window{position:absolute;overflow:hidden;background:#f0e5d9;box-shadow:inset 0 0 0 .5px rgba(70,28,16,.22)}
+.lbd-emul{position:absolute;inset:0;opacity:0;will-change:opacity}
+/* The latent image: soft and flat, as the first tones come up in the developer */
+.lbd-emul.is-latent{filter:blur(1.6px) contrast(.42) brightness(1.65)}
+.lbd-fog{
+  position:absolute;inset:0;pointer-events:none;opacity:.3;will-change:opacity;
   background:
-    radial-gradient(ellipse 62% 58% at 50% 58%,rgba(var(--lbx-dim,44,38,31),0) 0%,rgba(44,38,31,0) 42%,rgba(44,38,31,.09) 72%,rgba(44,38,31,.19) 100%);
+    radial-gradient(ellipse 58% 46% at 28% 36%,rgba(150,86,64,.34),transparent 72%),
+    radial-gradient(ellipse 52% 60% at 76% 72%,rgba(120,66,50,.28),transparent 72%);
 }
-.lb-cylinder-v9.is-rack .lb-cylinder-body{display:none!important}
-.lb-cylinder-v9.is-rack .lb-cylinder-stage{perspective:none!important}
-.lb-cylinder-v9.is-rack .lb-cylinder-rotor{transform-style:flat!important}
-.lb-cylinder-v9.is-rack .lb-cylinder-card{transform-style:flat!important}
+.lbd-grain{position:absolute;inset:0;pointer-events:none;background-image:var(--lbd-grain);background-size:80px 80px;opacity:.2}
+/* The safelight on the paper, strongest where the beam falls */
+.lbd-light{
+  position:absolute;inset:0;z-index:1;pointer-events:none;opacity:.5;
+  background:linear-gradient(152deg,rgba(255,92,64,.20) 0%,rgba(255,70,50,.05) 46%,rgba(40,0,0,.14) 100%);
+}
+/* A gloss that slides across the surface as the print turns */
+.lbd-sheen{
+  position:absolute;top:0;bottom:0;left:-60%;width:220%;pointer-events:none;will-change:transform;opacity:.35;
+  background:linear-gradient(104deg,transparent 38%,rgba(255,236,226,.15) 46.5%,rgba(255,240,232,.05) 52%,transparent 60%);
+}
+.lbd-face{
+  position:absolute;inset:0;z-index:2;display:block;width:100%;height:100%;margin:0;padding:0;
+  border:0!important;border-radius:0;background:transparent!important;cursor:pointer;pointer-events:auto;outline:none!important;
+  box-shadow:none!important;
+}
+.lbd-focus{
+  position:absolute;inset:-6px;z-index:5;border:2px solid var(--lbd-red-text);border-radius:3px;
+  opacity:0;pointer-events:none;transition:opacity .2s ease;
+}
+.lbd-print.is-focus .lbd-focus{opacity:1}
 
-/* The spill: light from the card in focus falling on the table around it */
-.lb-cylinder-v9.is-rack .lb-cylinder-aura{
-  inset:0!important;
+/* The border: frame number, stage, status, in pencil and stamp */
+.lbd-cap{
+  position:absolute;left:var(--lbd-b);right:var(--lbd-b);bottom:0;height:var(--lbd-bb);z-index:1;
+  display:flex;flex-direction:column;justify-content:center;gap:max(3px,1.3cqw);color:#2a1a15;pointer-events:none;
+}
+.lbd-print--world .lbd-cap{justify-content:flex-start;padding-top:max(6px,2.6cqw)}
+.lbd-cap-head{display:flex;align-items:baseline;gap:max(6px,2.6cqw);min-width:0}
+.lbd-cap-no{position:relative;font:600 max(13px,6.2cqw)/1 var(--lbd-frame);letter-spacing:.02em;color:#2a1a15}
+.lbd-cap-name{font:500 max(9px,3.5cqw)/1 var(--lbd-mono);letter-spacing:.18em;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lbd-cap-status{font:italic 400 max(11.5px,4.6cqw)/1.1 var(--lbd-serif);color:#5b3e35;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lbd-tabs{
+  position:absolute;left:var(--lbd-b);right:var(--lbd-b);bottom:max(3px,1.4cqw);z-index:3;display:flex;gap:max(4px,1.6cqw);
+}
+.lbd-tab{
+  flex:1 1 0;min-width:0;display:flex;align-items:baseline;justify-content:space-between;gap:4px;margin:0;
+  padding:max(4px,1.3cqw) 2px max(3px,1cqw);border:0;border-top:1px solid rgba(42,26,21,.28);border-radius:0;
+  background:transparent;color:#4a3029;cursor:pointer;pointer-events:auto;
+  font:500 max(9px,3cqw)/1 var(--lbd-mono);letter-spacing:.08em;text-transform:uppercase;
+  transition:color .2s ease,border-color .2s ease;
+}
+.lbd-tab b{font:600 max(12px,4.4cqw)/1 var(--lbd-frame);color:#2a1a15}
+.lbd-tab:hover{color:#2a1a15;border-top-color:var(--lbd-red)}
+.lbd-tab:focus-visible{outline:2px solid var(--lbd-red);outline-offset:2px}
+
+/* The editor's select: a box drawn round the frame, the frame number circled */
+.lbd-mark{position:absolute;inset:0;z-index:4;width:100%;height:100%;overflow:visible;pointer-events:none}
+.lbd-mark path{fill:none;stroke:var(--lbd-red);stroke-linecap:round;stroke-linejoin:round}
+.lbd-mark-a{stroke-width:2.6;opacity:.92}
+.lbd-mark-b{stroke-width:1.1;opacity:.45}
+.lbd-print.is-current .lbd-cap-no::after{
+  content:"";position:absolute;left:-.42em;right:-.42em;top:-.36em;bottom:-.3em;pointer-events:none;
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 60 40' preserveAspectRatio='none'%3E%3Cg fill='none' stroke='%23D4301F' stroke-linecap='round'%3E%3Cpath d='M12 30C3 20 16 4 34 4c18 0 25 12 18 23-8 10-34 11-43 3C3 25 6 13 20 7' stroke-width='2.4' stroke-dasharray='40 1.8 30 1.4 900 0' vector-effect='non-scaling-stroke' opacity='.9'/%3E%3Cpath d='M14 29C6 20 18 6 34 6c15 0 21 10 16 20' stroke-width='1' vector-effect='non-scaling-stroke' opacity='.45'/%3E%3C/g%3E%3C/svg%3E") center/100% 100% no-repeat;
+}
+
+/* --- The pictures: what each stage looks like as a photograph -------------------- */
+.lbd-img{position:absolute;inset:0;overflow:hidden;color:var(--lbd-ink)}
+.lbd-img-tag{font:500 max(7px,2.9cqw)/1 var(--lbd-mono);letter-spacing:.16em;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+/* 01 The Spark: one light in the dark, and the premise under it */
+.lbd-img--spark{
+  display:flex;flex-direction:column;justify-content:flex-end;padding:8cqw 7cqw 7cqw;color:#f4eadf;
+  background:radial-gradient(ellipse 82% 62% at 30% 28%,#3e2c25 0%,#1c120f 46%,#0c0706 100%);
+}
+.lbd-img--spark .lbd-img-tag{position:absolute;left:7cqw;top:6cqw;opacity:.7}
+.lbd-spark-glow{
+  position:absolute;left:12%;top:12%;width:36cqw;height:36cqw;border-radius:50%;
+  background:radial-gradient(circle,rgba(255,251,244,.96) 0%,rgba(255,232,212,.5) 13%,rgba(255,206,178,.14) 38%,transparent 68%);
+}
+.lbd-spark-star{
+  position:absolute;left:calc(12% + 14cqw);top:calc(12% + 14cqw);width:8cqw;height:8cqw;background:#fffaf2;
+  clip-path:polygon(50% 0,58% 42%,100% 50%,58% 58%,50% 100%,42% 58%,0 50%,42% 42%);
+}
+.lbd-spark-text{
+  position:relative;margin:0;font:italic 400 max(11px,7.6cqw)/1.08 var(--lbd-serif);letter-spacing:-.01em;
+  display:-webkit-box;-webkit-line-clamp:5;-webkit-box-orient:vertical;overflow:hidden;text-wrap:pretty;
+}
+.lbd-spark-blanks{position:relative;display:flex;flex-direction:column;gap:2.6cqw}
+.lbd-spark-blanks span{display:flex;align-items:flex-end;gap:2.4cqw}
+.lbd-spark-blanks b{font:italic 400 max(10px,6.6cqw)/1 var(--lbd-serif)}
+.lbd-spark-blanks i{flex:1;height:1px;margin-bottom:1cqw;border-bottom:1px dashed rgba(244,234,223,.55)}
+
+/* 02 The World: a contact sheet of the people, places and objects */
+.lbd-img--world{
+  display:grid;grid-template-rows:repeat(3,1fr);gap:2.6cqw;padding:7cqw 4cqw 8cqw;background:#120c0a;
+}
+.lbd-img--world::before,.lbd-img--world::after{
+  content:"";position:absolute;left:0;right:0;height:1.8cqw;
+  background:repeating-linear-gradient(90deg,transparent 0 1.6cqw,rgba(244,232,222,.3) 1.6cqw 3.6cqw,transparent 3.6cqw 5.4cqw);
+}
+.lbd-img--world::before{top:2.2cqw}
+.lbd-img--world::after{bottom:4.4cqw}
+.lbd-sheet-row{display:grid;grid-template-columns:7cqw repeat(3,minmax(0,1fr));gap:2cqw;min-height:0}
+.lbd-sheet-label{
+  writing-mode:vertical-rl;transform:rotate(180deg);text-align:center;
+  font:500 max(6px,2.5cqw)/1 var(--lbd-mono);letter-spacing:.16em;color:rgba(244,232,222,.6);
+}
+.lbd-sheet-frame{
+  position:relative;min-width:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  border-radius:1cqw;overflow:hidden;color:#f6ede4;
+  background:radial-gradient(ellipse at 42% 32%,#97847a 0%,#5a463e 45%,#2a1f1b 100%);
+}
+.lbd-sheet-frame b{font:400 max(12px,9.5cqw)/1 var(--lbd-serif)}
+.lbd-sheet-frame small{
+  max-width:92%;margin-top:.8cqw;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;
+  font:500 max(6px,2.4cqw)/1.1 var(--lbd-mono);letter-spacing:.05em;text-transform:uppercase;
+}
+.lbd-sheet-frame.is-empty{background:#221815;box-shadow:inset 0 0 0 .5px rgba(244,232,222,.16)}
+.lbd-sheet-edge{
+  position:absolute;left:11cqw;bottom:1.2cqw;font:500 max(6px,2.4cqw)/1 var(--lbd-mono);letter-spacing:.2em;color:rgba(244,196,176,.55);
+}
+
+/* 03 Research: index cards pinned to cork, a string between them */
+.lbd-img--research{background:radial-gradient(ellipse at 50% 38%,#4d3c33 0%,#2e221d 55%,#1a120f 100%)}
+.lbd-img--research::before{content:"";position:absolute;inset:0;background-image:var(--lbd-grain);background-size:42px 42px;opacity:.6}
+.lbd-card{
+  position:absolute;width:50%;height:33%;display:flex;flex-direction:column;gap:1.6cqw;padding:4cqw 3.2cqw 2.4cqw;
+  background:#f2e9de;color:var(--lbd-ink);box-shadow:0 1.2cqw 2.4cqw rgba(0,0,0,.5);
+}
+.lbd-card--1{left:6%;top:7%;transform:rotate(-3deg)}
+.lbd-card--2{left:44%;top:33%;transform:rotate(2.4deg)}
+.lbd-card--3{left:14%;top:58%;transform:rotate(-1.6deg)}
+.lbd-card b{
+  font:400 max(9px,4.4cqw)/1.04 var(--lbd-serif);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
+}
+.lbd-card-lines{flex:1;min-height:0;background:repeating-linear-gradient(transparent 0 2.5cqw,rgba(140,64,52,.3) 2.5cqw calc(2.5cqw + 1px))}
+.lbd-card.is-blank{background:#e9ded2}
+.lbd-card-pin{
+  position:absolute;left:50%;top:-1.2cqw;width:3cqw;height:3cqw;margin-left:-1.5cqw;border-radius:50%;
+  background:radial-gradient(circle at 35% 30%,#fff 0,#9a908c 38%,#2c2422 100%);box-shadow:0 .6cqw .9cqw rgba(0,0,0,.55);
+}
+.lbd-card-string{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+.lbd-card-string path{fill:none;stroke:#3d100a;stroke-width:1.3;vector-effect:non-scaling-stroke}
+
+/* 04 The Screenplay: page one, on the desk */
+.lbd-img--script{background:linear-gradient(158deg,#2e221d 0%,#140d0b 100%)}
+.lbd-page{
+  position:absolute;left:11%;right:11%;top:8%;bottom:-8%;display:flex;flex-direction:column;gap:1.3cqw;overflow:hidden;
+  padding:7cqw 5.6cqw;background:#f5ede3;color:var(--lbd-ink);transform:rotate(-1.4deg);box-shadow:0 1.6cqw 3.4cqw rgba(0,0,0,.6);
+  font:400 max(6px,3.1cqw)/1.42 var(--lbd-courier);
+}
+.lbd-page-no{position:absolute;right:5cqw;top:3.4cqw;font-weight:400}
+.lbd-page-slug{font-weight:700;text-transform:uppercase}
+.lbd-page-line{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.lbd-page-line--character{padding-left:30%;text-transform:uppercase}
+.lbd-page-line--dialogue{padding:0 12% 0 16%}
+.lbd-page-line--parenthetical{padding-left:22%}
+.lbd-page-line--transition{text-align:right;text-transform:uppercase}
+.lbd-page-rule{height:1.5cqw;border-radius:1px;background:rgba(70,34,28,.14)}
+.lbd-page-rule:nth-child(4){width:92%}.lbd-page-rule:nth-child(5){width:70%}.lbd-page-rule:nth-child(6){width:84%}.lbd-page-rule:nth-child(7){width:46%}
+
+/* 05 Visual Language: the frames, and the colour script under them */
+.lbd-img--visual{display:flex;flex-direction:column;gap:2.6cqw;padding:5cqw 5cqw 4.4cqw;background:#100a09;color:rgba(244,232,222,.62)}
+.lbd-vframes{flex:1;min-height:0;display:grid;grid-template-rows:1fr 1fr;gap:2.4cqw}
+.lbd-vframes.is-quad{grid-template-columns:1fr 1fr}
+.lbd-vframe{position:relative;min-height:0;overflow:hidden;display:flex;align-items:center;justify-content:center;border-radius:.8cqw;background:#2b201c}
+.lbd-vframe:not(:has(img))::before,.lbd-vframe:not(:has(img))::after{content:"";position:absolute;left:0;right:0;height:14%;background:#0b0706}
+.lbd-vframe:not(:has(img))::before{top:0}
+.lbd-vframe:not(:has(img))::after{bottom:0}
+.lbd-vframe img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:saturate(.72) sepia(.14)}
+.lbd-vframe small{font:500 max(6px,2.8cqw)/1 var(--lbd-mono);letter-spacing:.16em}
+.lbd-cscript{display:flex;gap:1cqw;height:7cqw;flex:0 0 auto}
+.lbd-cscript i{flex:1;border-radius:.6cqw}
+.lbd-cscript.is-empty i{background:#3a2d28;box-shadow:inset 0 0 0 .5px rgba(244,232,222,.1)}
+.lbd-cscript.is-empty i:nth-child(2n){background:#2e2420}
+
+/* --- The bench and the developer tray --------------------------------------------- */
+.lbd-bench{position:absolute;left:0;right:0;bottom:0;z-index:15;height:var(--lbd-bench);pointer-events:none}
+.lbd-bench-top{
+  position:absolute;left:0;right:0;top:26%;bottom:0;
+  background:linear-gradient(#1c0f0c 0%,#0f0807 38%,#0a0605 100%);
+  box-shadow:0 -1px 0 rgba(255,112,90,.16),0 -16px 30px -12px rgba(0,0,0,.75);
+  -webkit-mask-image:linear-gradient(90deg,transparent,#000 9%,#000 91%,transparent);mask-image:linear-gradient(90deg,transparent,#000 9%,#000 91%,transparent);
+}
+.lbd-tray-wrap{
+  position:absolute;left:50%;top:0;bottom:12px;transform:translateX(-50%);
+  display:flex;align-items:center;gap:clamp(16px,2.2vw,30px);width:max-content;max-width:calc(100% - 32px);pointer-events:auto;
+  transition:opacity .4s ease;
+}
+.lbd-tray{position:relative;flex:0 0 auto;width:clamp(150px,15vw,214px);height:calc(var(--lbd-bench) * .64);perspective:420px;perspective-origin:50% 0}
+.lbd-basin{
+  position:absolute;inset:0;transform:rotateX(46deg);transform-origin:50% 100%;border-radius:7px;overflow:hidden;
+  background:linear-gradient(#41201a,#1e0e0b);
+  box-shadow:inset 0 0 0 2px #4d251d,inset 0 8px 12px rgba(0,0,0,.65),0 22px 20px -10px rgba(0,0,0,.85);
+}
+.lbd-liquid{position:absolute;inset:6px;border-radius:4px;background:linear-gradient(180deg,#2c0e09,#150605)}
+.lbd-tray-print{
+  position:absolute;left:17%;right:17%;top:13%;bottom:11%;overflow:hidden;will-change:transform;
+  background:#dcc8b8;box-shadow:0 2px 7px rgba(0,0,0,.55);
+}
+.lbd-tray-page{
+  position:absolute;inset:11% 9%;display:flex;flex-direction:column;gap:3px;opacity:.3;
+  font:400 7.5px/1.3 var(--lbd-courier);color:var(--lbd-ink);
+}
+.lbd-tray-line{display:block;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.lbd-tray-line--character{padding-left:30%}
+.lbd-tray-line--dialogue{padding-left:14%}
+.lbd-tray-line--empty{white-space:normal}
+.lbd-caret{display:inline-block;width:1.5px;height:1.05em;margin-left:1px;vertical-align:-.15em;background:var(--lbd-red)}
+.lbd-tray-sheen{
+  position:absolute;inset:-10% -45%;will-change:transform;pointer-events:none;
   background:
-    radial-gradient(ellipse calc(var(--lb-card-width) * 1.15) calc(var(--lb-card-height) * .78) at 50% 50%,
-      rgba(var(--lbx-glow),.42) 0%,rgba(var(--lbx-glow),.20) 45%,rgba(var(--lbx-glow),0) 100%),
-    radial-gradient(ellipse calc(var(--lb-card-width) * .9) 34px at 50% calc(50% + var(--lb-card-height) * .5 + 6px),
-      rgba(var(--lbx-glow),.55) 0%,rgba(var(--lbx-glow),0) 100%)!important;
+    linear-gradient(100deg,transparent 34%,rgba(255,150,120,.17) 44%,rgba(255,206,186,.07) 50%,transparent 60%),
+    linear-gradient(rgba(74,12,6,.5),rgba(40,6,3,.58));
 }
+.lbd-tray-rim{position:absolute;inset:0;border-radius:7px;pointer-events:none;box-shadow:inset 0 0 0 1px rgba(255,140,110,.2)}
+.lbd-tray-info{display:flex;flex-direction:column;align-items:flex-start;gap:7px;min-width:0;max-width:360px}
+.lbd-tray-kicker{font:500 10px/1.3 var(--lbd-mono);letter-spacing:.18em;text-transform:uppercase;color:var(--lbd-red-text)}
+.lbd-tray-slug{
+  display:flex;gap:9px;max-width:100%;font:500 11px/1.35 var(--lbd-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--lbd-text);
+}
+.lbd-tray-slug b{flex:0 0 auto;font-weight:600;color:var(--lbd-red-text)}
+.lbd-tray-slug span{overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.lbd-continue{
+  display:inline-flex;align-items:center;gap:10px;min-height:42px;margin:2px 0 1px;padding:0 18px 0 20px;
+  border:0!important;border-radius:999px!important;background:var(--lbd-red)!important;color:#fff!important;cursor:pointer;
+  font:600 14px/1 var(--lbd-ui)!important;letter-spacing:.005em;
+  box-shadow:0 10px 22px -10px rgba(212,48,31,.85),inset 0 1px 0 rgba(255,255,255,.18)!important;
+  transition:transform .25s cubic-bezier(.2,.7,.2,1),background-color .2s ease;
+}
+.lbd-continue svg{transition:transform .25s cubic-bezier(.2,.7,.2,1)}
+.lbd-continue:hover{background:#e13a28!important;transform:translateY(-1px)}
+.lbd-continue:hover svg{transform:translateX(2px)}
+.lbd-continue:focus-visible{outline:2px solid var(--lbd-text)!important;outline-offset:3px}
+.lbd-tray-meta{font:500 10px/1.3 var(--lbd-mono);letter-spacing:.1em;color:var(--lbd-text-2)}
+.lbd-edgeprint{
+  position:absolute;left:18px;bottom:9px;font:500 9px/1 var(--lbd-mono);letter-spacing:.24em;white-space:nowrap;
+  color:rgba(242,150,130,.5);pointer-events:none;
+}
+.lbd-hint{display:none}
 
-/* Contact shadow without a blur filter: one gradient, no filter on any card */
-.lb-cylinder-v9.is-rack .lb-cylinder-card::before{
-  filter:none!important;transform:none!important;opacity:.7;
-  left:8%!important;right:8%!important;bottom:-16px!important;height:26px!important;
-  background:radial-gradient(ellipse 50% 50%,rgba(28,27,25,.16) 0%,rgba(28,27,25,.06) 55%,transparent 100%)!important;
+/* --- Taking a print off the line --------------------------------------------------- */
+.lbd-veil{
+  position:absolute;inset:0;z-index:20;opacity:0;pointer-events:none;transition:opacity .5s ease;
+  background:radial-gradient(ellipse 72% 78% at 50% 50%,#060403 0%,rgba(6,4,3,.9) 62%,rgba(6,4,3,0) 100%);
 }
-.lb-cylinder-v9.is-rack .lb-cylinder-card.is-active::before{opacity:1}
+.lbd-darkroom.is-pulling .lbd-veil{opacity:.8}
+/* The line rises over the bench while a print is taken off it */
+.lbd-darkroom.is-pulling .lbd-scroller{z-index:21}
+.lbd-darkroom.is-pouring .lbd-tray-print{transition:transform .38s cubic-bezier(.3,.6,.2,1)}
+.lbd-darkroom.is-pouring .lbd-tray-wrap{opacity:.85}
 
-/* --- The card in focus: backlit ---------------------------------------------- */
-.lb-cylinder-v9.is-rack .lb-cylinder-lift{
-  inset:-1px!important;border-radius:var(--lbx-radius)!important;
-  box-shadow:
-    0 0 0 1px rgba(var(--lbx-glow),.55),
-    0 0 26px 4px rgba(var(--lbx-glow),.62),
-    0 0 70px 18px rgba(var(--lbx-glow),.34),
-    0 26px 40px -22px rgba(28,27,25,.30)!important;
-  transition:opacity .24s var(--lbx-ease)!important;
+/* --- Narrow screens: one line that scrolls along the wall --------------------------- */
+@media (max-width:979px){
+  .lbd-edgeprint{display:none}
+  .lbd-darkroom.is-scroll .lbd-hint{
+    display:block;position:absolute;right:16px;bottom:8px;font:500 9px/1 var(--lbd-mono);letter-spacing:.2em;
+    text-transform:uppercase;color:rgba(242,150,130,.55);
+  }
 }
-.lb-cylinder-v9.is-rack .lb-cylinder-lift::after{display:none!important}
-/* Light coming through the stock: a faint warm bloom in the middle of the sheet */
-.studio.atlas-shell .lb-cylinder-v9.is-rack .lb-cylinder-card.is-active .lb-cylinder-sheen{
-  background:
-    linear-gradient(180deg,rgba(255,255,255,.7) 0,rgba(255,255,255,0) 1.5px),
-    radial-gradient(ellipse 80% 60% at 50% 46%,rgba(255,240,214,.22) 0%,rgba(255,240,214,0) 100%)!important;
-}
-.studio.atlas-shell .lb-cylinder-v9.is-rack .lb-cylinder-card.is-active .lb-cylinder-plaque{
-  border-color:rgba(var(--lbx-glow),.9)!important;
-}
-
-/* --- Neighbours: smaller, dimmer, a little out of focus ---------------------- */
-.lb-cylinder-v9.is-rack .lb-cylinder-veil{
-  background:#3B352E!important;               /* the dim room: lowers light and mutes the reds */
-  transition:opacity .24s var(--lbx-ease);
-}
-.lb-cylinder-v9.is-rack.is-dragging .lb-cylinder-veil,
-.lb-cylinder-v9.is-rack.is-dragging .lb-cylinder-lift{transition:none!important}
-/* Static blur: two elements at most (the neighbours), never animated */
-.lb-cylinder-v9.is-rack .lb-cylinder-card.is-near .lb-cylinder-content{filter:blur(1.5px)}
-.lb-cylinder-v9.is-rack .lb-cylinder-card.is-far .lb-cylinder-content{filter:saturate(.7)}
-.lb-cylinder-v9.is-rack .lb-cylinder-card:not(.is-active){cursor:pointer}
-@media (hover:hover){
-  /* Hovering a neighbour brings its light up and pulls it into focus */
-  .lb-cylinder-v9.is-rack:not(.is-dragging) .lb-cylinder-card.is-near:hover .lb-cylinder-veil{opacity:.06!important}
-  .lb-cylinder-v9.is-rack:not(.is-dragging) .lb-cylinder-card.is-near:hover .lb-cylinder-lift{opacity:.5!important}
-  .lb-cylinder-v9.is-rack:not(.is-dragging) .lb-cylinder-card.is-near:hover .lb-cylinder-content{filter:none}
-  .lb-cylinder-v9.is-rack:not(.is-dragging) .lb-cylinder-card.is-far:hover .lb-cylinder-veil{opacity:.3!important}
-}
-/* Keyboard focus never relies on blur: a red outline, and the card is lit */
-.lb-cylinder-v9.is-rack .lb-cylinder-card:focus-visible .lb-cylinder-veil{opacity:0!important}
-.lb-cylinder-v9.is-rack .lb-cylinder-card:focus-visible .lb-cylinder-content{filter:none}
-.lb-cylinder-v9.is-rack .lb-cylinder-card:focus-visible .lb-cylinder-lift{opacity:.6!important}
-
-/* --- Classic view toggle ------------------------------------------------------ */
-.lb-cylinder-v9 .lbx-layout-toggle{
-  position:absolute;left:calc(50% + 218px);bottom:18px;z-index:5;
-  display:inline-flex;align-items:center;gap:8px;min-height:32px;padding:0 12px 0 10px;
-  border:1px solid rgba(28,27,25,.14);border-radius:999px;background:rgba(255,253,250,.86);
-  color:#4B4842;font:500 10px/1 "DM Mono",monospace;letter-spacing:.12em;text-transform:uppercase;
-  cursor:pointer;transition:border-color .2s,color .2s,background-color .2s
-}
-.lb-cylinder-v9 .lbx-layout-toggle:hover{border-color:rgba(212,48,31,.5);color:#B3261A}
-.lb-cylinder-v9 .lbx-layout-toggle:focus-visible{outline:2px solid #D4301F;outline-offset:3px}
-.lb-cylinder-v9 .lbx-layout-toggle[aria-pressed="true"]{border-color:#D4301F;color:#B3261A;background:#FFFDFA}
-/* A tiny drum: three staves, the middle one lit when the classic view is on */
-.lb-cylinder-v9 .lbx-layout-glyph{
-  width:16px;height:11px;border-radius:2px;flex:0 0 auto;
-  background:
-    linear-gradient(90deg,currentColor 0 3px,transparent 3px 6.5px,currentColor 6.5px 9.5px,transparent 9.5px 13px,currentColor 13px 16px);
-  opacity:.55;transform:perspective(30px) rotateY(-14deg)
-}
-.lb-cylinder-v9 .lbx-layout-toggle[aria-pressed="true"] .lbx-layout-glyph{opacity:1}
 @media (max-width:700px){
-  .lb-cylinder-v9 .lbx-layout-toggle{left:auto;right:12px;top:-2px;bottom:auto;min-height:28px;padding:0 10px 0 8px;font-size:9px}
+  .lbd-darkroom{margin-top:0}
+  .lbd-tray-wrap{gap:14px;bottom:22px}
+  .lbd-tray{width:108px;height:calc(var(--lbd-bench) * .5)}
+  .lbd-tray-kicker{font-size:9px;letter-spacing:.14em}
+  .lbd-kick-2{display:none}
+  .lbd-tray-slug{font-size:10px}
+  .lbd-continue{min-height:40px;padding:0 15px 0 17px;font-size:13.5px!important}
+  .lbd-tray-meta{font-size:9px}
+}
+@media (max-width:380px){
+  .lbd-tray{display:none}
 }
 
-/* --- Reduced motion: no slides, a simple fade -------------------------------- */
+/* --- Reduced motion: the air is still; hover keeps a gentle lift ------------------- */
+.lbd-darkroom.is-still .lbd-lift{transition:transform .35s cubic-bezier(.2,.7,.2,1)}
+.lbd-darkroom.is-still .lbd-print.is-hover .lbd-lift{transform:translate3d(0,-4px,0) scale(1.02)}
+.lbd-darkroom.is-still .lbd-emul{transition:opacity .5s ease}
+.lbd-darkroom.is-still .lbd-shadow{transition:opacity .35s ease}
+.lbd-darkroom.is-still .lbd-veil{transition:opacity .15s ease}
 @media (prefers-reduced-motion:reduce){
-  /* styles.css turns every animation off for reduced motion; this one fade is the
-     intended replacement for movement, so it is reinstated explicitly. */
-  .lb-cylinder-v9.is-rack .lb-cylinder-rotor.is-fading{animation:lbx-rack-fade .2s ease-out!important}
-  .lb-cylinder-v9.is-rack .lb-cylinder-veil,
-  .lb-cylinder-v9.is-rack .lb-cylinder-lift{transition:opacity .2s linear!important}
+  .studio.atlas-shell .lbd-darkroom.is-still .lbd-lift{transition:transform .35s cubic-bezier(.2,.7,.2,1)!important}
+  .studio.atlas-shell .lbd-darkroom.is-still .lbd-emul{transition:opacity .5s ease!important}
+  .studio.atlas-shell .lbd-darkroom.is-still .lbd-shadow{transition:opacity .35s ease!important}
+  .studio.atlas-shell .lbd-darkroom.is-still .lbd-veil{transition:opacity .15s ease!important}
+  .studio.atlas-shell .lbd-darkroom .lbd-continue,.studio.atlas-shell .lbd-darkroom .lbd-continue svg{transition:none!important;transform:none!important}
+  .studio.atlas-shell.lbd-studio .story-atlas.lbd-atlas .atlas-heading{transition:opacity .15s ease!important}
 }
-@keyframes lbx-rack-fade{from{opacity:.35}to{opacity:1}}
-
-/* --- Live status line (every card on the light table) ------------------------ */
-.studio.atlas-shell .lb-cylinder-v9 .lbx .lbx-status{
-  display:flex!important;align-items:center;gap:7px;flex:0 0 auto!important;
-  margin:0 0 10px!important;padding:0!important;min-width:0;
-  font:500 9px/1.3 "DM Mono",monospace!important;letter-spacing:.12em!important;text-transform:uppercase;
-  color:var(--lbx-ink-2)!important;
-}
-.studio.atlas-shell .lb-cylinder-v9 .lbx .lbx-status>span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.studio.atlas-shell .lb-cylinder-v9 .lbx .lbx-status-dot{
-  flex:0 0 auto;width:5px;height:5px;border-radius:50%;background:var(--lbx-red);
-  box-shadow:0 0 0 3px var(--lbx-red-wash)
-}
-.studio.atlas-shell .lb-cylinder-v9 .lbx--live .lbx-preview{margin-bottom:10px!important}
-
-/* --- The continue card --------------------------------------------------------- */
-.studio.atlas-shell .lb-cylinder-v9 .lbx--live.lbx--script .lbx-title{--lbx-title:clamp(28px,2.2vw,32px);margin-top:14px!important}
-.studio.atlas-shell .lb-cylinder-v9 .lbx .lbx-preview--continue{gap:8px;margin-top:12px!important;overflow:hidden}
-.studio.atlas-shell .lb-cylinder-v9 .lbx .lbx-where{
-  display:flex;align-items:baseline;gap:8px;margin:0!important;min-width:0;
-  font:500 9.5px/1.3 "DM Mono",monospace!important;letter-spacing:.1em;text-transform:uppercase;color:var(--lbx-ink)!important
-}
-.studio.atlas-shell .lb-cylinder-v9 .lbx .lbx-where b{flex:0 0 auto;font:700 12px/1 "Big Shoulders Display","DM Mono",sans-serif;letter-spacing:.04em;color:var(--lbx-red-ink)}
-.studio.atlas-shell .lb-cylinder-v9 .lbx .lbx-where span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-/* The page: Courier, laid out like the screenplay, faded in at the top as if it
-   continues above. The mask is static. */
-.studio.atlas-shell .lb-cylinder-v9 .lbx .lbx-lines{
-  flex:1 1 auto;min-height:56px;display:flex;flex-direction:column;justify-content:flex-end;overflow:hidden;
-  padding:10px 14px 11px;border:1px solid var(--lbx-rule);border-radius:3px;background:#fff;
-  box-shadow:0 1px 0 rgba(28,27,25,.04),2px 2px 0 -1px #fff,2px 2px 0 0 var(--lbx-rule);
-  font:400 11px/1.42 "Courier Prime","Courier New",monospace;color:var(--lbx-ink);
-  -webkit-mask-image:linear-gradient(180deg,transparent 0,#000 22px);mask-image:linear-gradient(180deg,transparent 0,#000 22px)
-}
-.studio.atlas-shell .lb-cylinder-v9 .lbx .lbx-line{margin:0;padding:0;overflow-wrap:anywhere;display:block;flex:0 0 auto}
-.studio.atlas-shell .lb-cylinder-v9 .lbx .lbx-line+.lbx-line{margin-top:5px}
-.studio.atlas-shell .lb-cylinder-v9 .lbx .lbx-line--character{padding-left:34%;text-transform:uppercase}
-.studio.atlas-shell .lb-cylinder-v9 .lbx .lbx-line--character+.lbx-line,
-.studio.atlas-shell .lb-cylinder-v9 .lbx .lbx-line--parenthetical+.lbx-line{margin-top:0}
-.studio.atlas-shell .lb-cylinder-v9 .lbx .lbx-line--dialogue{padding:0 10% 0 17%}
-.studio.atlas-shell .lb-cylinder-v9 .lbx .lbx-line--parenthetical{padding-left:26%}
-.studio.atlas-shell .lb-cylinder-v9 .lbx .lbx-line--transition{text-align:right;text-transform:uppercase}
-.studio.atlas-shell .lb-cylinder-v9 .lbx .lbx-line--empty{color:var(--lbx-ink-3);font-style:italic}
-/* Where you stopped: a static red caret (no blinking) */
-.studio.atlas-shell .lb-cylinder-v9 .lbx .lbx-caret{
-  display:inline-block;width:2px;height:1.1em;margin-left:2px;vertical-align:-.2em;background:var(--lbx-red)
-}
-/* The reel: one frame per scene, as long as its screen time */
-.studio.atlas-shell .lb-cylinder-v9 .lbx .lbx-reel{display:flex;gap:2px;height:7px;flex:0 0 auto}
-.studio.atlas-shell .lb-cylinder-v9 .lbx .lbx-reel-frame{
-  flex:1 1 0;min-width:4px;border-radius:1px;
-  background:repeating-linear-gradient(135deg,var(--lbx-rule-2) 0 1.5px,transparent 1.5px 4px);
-  box-shadow:inset 0 0 0 1px var(--lbx-rule-2)
-}
-.studio.atlas-shell .lb-cylinder-v9 .lbx .lbx-reel-frame.is-written{background:rgba(28,27,25,.62);box-shadow:none}
-.studio.atlas-shell .lb-cylinder-v9 .lbx .lbx-reel-frame.is-current{background:var(--lbx-red);box-shadow:none}
-.studio.atlas-shell .lb-cylinder-v9 .lbx .lbx-progress{
-  margin:0!important;flex:0 0 auto;
-  font:500 9px/1.3 "DM Mono",monospace!important;letter-spacing:.12em;text-transform:uppercase;color:var(--lbx-ink-3)!important
-}
-/* One clear way back in, and a quiet way to the room itself */
-.studio.atlas-shell .lb-cylinder-v9 .lbx .lbx-foot--continue{gap:12px!important}
-.studio.atlas-shell .lb-cylinder-v9 .lbx .lbx-continue{
-  display:inline-flex;align-items:center;gap:10px;height:34px;padding:0 14px 0 16px;margin:0;
-  border:0;border-radius:999px;background:var(--lbx-red);color:#fff;cursor:pointer;
-  font:600 12.5px/1 "DM Sans","Segoe UI",sans-serif;letter-spacing:0;white-space:nowrap;
-  box-shadow:0 1px 0 rgba(28,27,25,.12),0 6px 14px -8px rgba(212,48,31,.7);
-  transition:background-color .2s
-}
-.studio.atlas-shell .lb-cylinder-v9 .lbx .lbx-continue .lbx-foot-arrow{color:#fff}
-.studio.atlas-shell .lb-cylinder-v9 .lbx .lbx-continue:hover{background:var(--lbx-red-ink)}
-.studio.atlas-shell .lb-cylinder-v9 .lbx .lbx-continue:hover .lbx-foot-arrow{transform:translate3d(3px,0,0)}
-.studio.atlas-shell .lb-cylinder-v9 .lbx .lbx-continue:focus-visible{outline:2px solid var(--lbx-ink);outline-offset:3px}
-.studio.atlas-shell .lb-cylinder-v9 .lbx .lbx-room{
-  margin:0;padding:6px 0;border:0;background:none;cursor:pointer;white-space:nowrap;
-  font:500 11.5px/1 "DM Sans","Segoe UI",sans-serif;color:var(--lbx-ink-3);
-  text-decoration:underline;text-decoration-color:transparent;text-underline-offset:3px;transition:color .2s,text-decoration-color .2s
-}
-.studio.atlas-shell .lb-cylinder-v9 .lbx .lbx-room:hover{color:var(--lbx-red-ink);text-decoration-color:currentColor}
-.studio.atlas-shell .lb-cylinder-v9 .lbx .lbx-room:focus-visible{outline:2px solid var(--lbx-red);outline-offset:2px;color:var(--lbx-red-ink)}
-.lb-cylinder-v9.is-compact .lbx--live.lbx--script .lbx-title{display:none!important}
-.lb-cylinder-v9.is-compact .lbx--live .lbx-status{margin-bottom:8px!important}
-/* The native card's own rules centre its children; the continue card is left-set. */
-.studio.atlas-shell .lb-cylinder-v9 .lbx .lbx-preview--continue{align-items:stretch!important;text-align:left!important}
-.studio.atlas-shell .lb-cylinder-v9 .lbx .lbx-preview--continue>*{width:auto!important;max-width:none!important;align-self:stretch!important;text-align:left!important;padding-left:0;padding-right:0}
-.studio.atlas-shell .lb-cylinder-v9 .lbx .lbx-preview--continue>.lbx-lines{padding:10px 14px 11px!important}
-.studio.atlas-shell .lb-cylinder-v9 .lbx .lbx-lines>.lbx-line{text-align:left!important}
-.studio.atlas-shell .lb-cylinder-v9 .lbx .lbx-lines>.lbx-line--transition{text-align:right!important}
-
-/* --- Push-in: the lit card becomes the room ---------------------------------- */
-/* The room's <main> takes the name only after the old view is captured
-   (html.lbx-push-target is set inside the transition's update callback). */
-html.lbx-push-target .studio .main-editor{view-transition-name:lbx-push}
-::view-transition-group(lbx-push){
-  animation-duration:.56s;animation-timing-function:cubic-bezier(.25,.75,.15,1);
-  overflow:clip;border-radius:12px
-}
-/* Both pictures fill the moving frame; the card hands over to the room early
-   so it reads as one surface pushing in, not two layers swapping. */
-::view-transition-old(lbx-push),
-::view-transition-new(lbx-push){height:100%;width:100%;object-fit:cover;object-position:50% 0}
-::view-transition-old(lbx-push){animation:lbx-push-out .32s cubic-bezier(.4,0,.6,1) both}
-::view-transition-new(lbx-push){animation:lbx-push-in .32s cubic-bezier(.3,.6,.3,1) .04s both}
-@keyframes lbx-push-out{to{opacity:0}}
-@keyframes lbx-push-in{from{opacity:0}}
-/* The dark chrome stays put: it is the same in both views, so it is its own
-   layer during the push (one element, only while the push runs). */
-html:is(.lbx-push-active,.lbx-push-fade) .studio .app-header{view-transition-name:lbx-chrome}
-::view-transition-group(lbx-chrome){animation:none;z-index:2}
-::view-transition-old(lbx-chrome){animation:none;opacity:0}
-::view-transition-new(lbx-chrome){animation:none}
-/* The rest of the table gives way behind the push */
-html.lbx-push-active::view-transition-old(root){animation:lbx-push-out .34s ease both}
-html.lbx-push-active::view-transition-new(root){animation:lbx-push-in .34s ease both}
-/* Reduced motion: no growth, a short cross-fade of the whole view */
-html.lbx-push-fade::view-transition-old(root){animation:lbx-push-out .18s linear both}
-html.lbx-push-fade::view-transition-new(root){animation:lbx-push-in .18s linear both}
-
-/* --- Room for the status line ---------------------------------------------------- */
-/* Previews clip cleanly instead of running under the status line */
-.studio.atlas-shell .lb-cylinder-v9 .lbx--live .lbx-preview{overflow:hidden!important}
-/* The premise keeps whole lines: three on the table, two on short screens */
-.studio.atlas-shell .lb-cylinder-v9 .lbx--live.lbx--foundation .spark-note>p{flex:0 0 auto;-webkit-line-clamp:3}
-.lb-cylinder-v9.is-compact .lbx--live.lbx--foundation .spark-note>p{-webkit-line-clamp:2}
-.lb-cylinder-v9.is-compact .lbx--live.lbx--foundation .spark-note>small{margin-bottom:6px!important}
-.lb-cylinder-v9.is-compact .lbx--live .lbx-preview{margin:10px 0 8px!important}
-.lb-cylinder-v9.is-compact .lbx--live.lbx--world .world-index>button{height:27px!important;min-height:0!important}
-.lb-cylinder-v9.is-compact .lbx--live.lbx--world .lbx-map{display:none}
-.lb-cylinder-v9.is-compact .lbx--live.lbx--visual .lbx-chips-label{display:none}

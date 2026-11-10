@@ -269,11 +269,160 @@ html.fk .studio.phone-layout .collection-workspace .collection-create { min-heig
 html.fk .studio.phone-layout .button:active,
 html.fk .studio.phone-layout .lbd-darkroom .lbd-continue:active { transform: scale(.975); }
 
+/* ---- 10 Material: the darkroom carries into the rooms ---------------------------------------------
+   The Atlas is a darkroom; its rooms were flat paper. Here each room opens under the same
+   red safelight (a dark title card with grain), and its cards hang below like prints on a line:
+   card stock, a wooden peg, a little tilt, a settle as they arrive. */
+html.fk { --fk-noise: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1  0 0 0 0 .86  0 0 0 0 .8  0 0 0 .13 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  --fk-fibre: url("./assets/materials/paper-fibres.webp");
+  --fk-room: radial-gradient(130% 95% at 8% -18%, rgba(212, 48, 31, .5), rgba(212, 48, 31, 0) 58%), radial-gradient(80% 70% at 108% 118%, rgba(140, 26, 16, .42), rgba(140, 26, 16, 0) 62%), var(--fk-noise), linear-gradient(180deg, #1A0E0C, #0B0706);
+  --fk-wall-ink: #F1E5DA; --fk-wall-muted: #C2AB9F;
+  --fk-print: 0 1px 1px rgba(28, 27, 25, .1), 0 14px 22px -14px rgba(28, 27, 25, .5), 0 34px 44px -34px rgba(60, 20, 12, .5); }
+@keyframes fk-hang { 0% { opacity: 0; transform: translate3d(0, -14px, 0) rotate(2.6deg); } 45% { opacity: 1; transform: translate3d(0, 0, 0) rotate(-1.1deg); } 72% { transform: rotate(.5deg); } 100% { opacity: 1; transform: rotate(var(--fk-tilt, 0deg)); } }
+@keyframes fk-lamp { 0%, 100% { opacity: .82; } 50% { opacity: 1; } }
+@keyframes fk-float { 0%, 100% { transform: translate3d(0, 0, 0) rotate(var(--r, 0deg)); } 50% { transform: translate3d(0, -5px, 0) rotate(calc(var(--r, 0deg) + 1.5deg)); } }
+@keyframes fk-breathe { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.07); } }
+
+/* Paper has fibres: every sheet */
+html.fk .fk-sheet,
+html.fk .studio dialog.dialog,
+html.fk .studio.phone-layout aside.binder,
+html.fk.fk-has-bar .studio.phone-layout .application-menu-popover { background-color: var(--fk-paper) !important; background-image: var(--fk-fibre) !important; background-size: 340px auto !important; background-blend-mode: multiply; }
+
+/* The dark title card shared by the world's sections and Visual language */
+html.fk .studio.phone-layout .collection-workspace,
+html.fk .studio.phone-layout .visual-language { padding-top: 0 !important; overflow-x: clip; }
+html.fk .studio.phone-layout .collection-workspace > .collection-heading,
+html.fk .studio.phone-layout .visual-language > .vl-header { position: relative !important; display: block !important; width: 100vw !important; max-width: none !important; margin: 0 0 0 calc(50% - 50vw) !important; padding: 30px var(--fk-gutter) 30px !important; border: 0 !important; background: var(--fk-room) !important; background-size: auto, auto, 180px 180px, auto !important; color: var(--fk-wall-ink) !important; overflow: hidden; }
+/* the safelight itself */
+html.fk .studio.phone-layout .collection-workspace > .collection-heading::before,
+html.fk .studio.phone-layout .visual-language > .vl-header::before { content: "" !important; position: absolute !important; inset: auto !important; top: 0 !important; left: 26px !important; width: 46px !important; height: 9px !important; border-radius: 0 0 4px 4px !important; background: linear-gradient(180deg, #FF6A4D, #E0321F) !important; box-shadow: 0 0 18px 4px rgba(255, 80, 50, .65), 0 0 60px 18px rgba(212, 48, 31, .4) !important; opacity: 1; transform: none !important; animation: fk-lamp 5.5s ease-in-out infinite; }
+html.fk .studio.phone-layout .collection-workspace > .collection-heading::after,
+html.fk .studio.phone-layout .visual-language > .vl-header::after { content: "" !important; position: absolute !important; inset: auto 0 0 0 !important; width: auto !important; height: 34px !important; background: linear-gradient(180deg, rgba(11, 7, 6, 0), rgba(11, 7, 6, .8)) !important; border: 0 !important; transform: none !important; opacity: 1 !important; pointer-events: none; }
+html.fk .studio.phone-layout .collection-heading > *, html.fk .studio.phone-layout .vl-header > * { position: relative; z-index: 1; }
+html.fk .studio.phone-layout .collection-heading .collection-eyebrow,
+html.fk .studio.phone-layout .vl-header .vl-eyebrow { margin: 14px 0 12px !important; color: var(--fk-red-on-dark) !important; font-family: var(--fk-mono) !important; font-size: 10px !important; letter-spacing: .22em !important; }
+html.fk .studio.phone-layout .collection-heading .collection-eyebrow * { color: inherit !important; }
+html.fk .studio.phone-layout .collection-heading .collection-name,
+html.fk .studio.phone-layout .collection-heading .collection-name input,
+html.fk .studio.phone-layout .vl-header h1 { color: var(--fk-wall-ink) !important; -webkit-text-fill-color: var(--fk-wall-ink); font-family: var(--fk-display) !important; font-size: 52px !important; font-weight: 400 !important; line-height: 1 !important; letter-spacing: -.03em !important; background: none !important; text-shadow: 0 0 40px rgba(212, 48, 31, .45); }
+html.fk .studio.phone-layout .collection-heading .collection-name { display: flex !important; align-items: center !important; min-height: 60px !important; }
+html.fk .studio.phone-layout .collection-heading .collection-name input { height: 60px !important; padding: 0 !important; border: 0 !important; }
+html.fk .studio.phone-layout .collection-heading .collection-name svg { color: var(--fk-wall-muted) !important; }
+html.fk .studio.phone-layout .vl-header h1 { margin: 0 !important; }
+html.fk .studio.phone-layout .vl-header h1 span { color: var(--fk-red-on-dark) !important; -webkit-text-fill-color: var(--fk-red-on-dark); }
+html.fk .studio.phone-layout .collection-heading p { margin: 10px 0 0 !important; max-width: 30ch; color: var(--fk-wall-muted) !important; font-size: 15.5px !important; line-height: 1.45 !important; }
+html.fk .studio.phone-layout .collection-heading .collection-create { margin-top: 22px !important; min-height: 52px !important; padding: 0 22px !important; border: 0 !important; border-radius: 26px !important; background: var(--fk-red) !important; color: #fff !important; font-size: 15.5px !important; box-shadow: inset 0 1px 0 rgba(255, 255, 255, .25), 0 10px 26px -8px rgba(212, 48, 31, .85), 0 0 0 1px rgba(255, 120, 90, .25) !important; }
+html.fk .studio.phone-layout .vl-header .vl-save { margin-top: 20px !important; padding: 0 !important; border: 0 !important; display: flex !important; align-items: center !important; justify-content: space-between !important; }
+html.fk .studio.phone-layout .vl-header .vl-save > span { color: var(--fk-wall-muted) !important; font-family: var(--fk-mono) !important; font-size: 10.5px !important; letter-spacing: .08em !important; }
+html.fk .studio.phone-layout .vl-header .vl-save .vl-button { min-height: 44px !important; border: 1px solid rgba(241, 229, 218, .28) !important; border-radius: 22px !important; background: rgba(241, 229, 218, .07) !important; color: var(--fk-wall-ink) !important; box-shadow: none !important; }
+
+/* The strip above Visuals and Sequence joins the slate */
+html.fk .studio.phone-layout .director-nav { background: #150C0A !important; border: 0 !important; border-bottom: 1px solid rgba(241, 229, 218, .08) !important; box-shadow: none !important; }
+html.fk .studio.phone-layout .director-nav::before, html.fk .studio.phone-layout .director-nav::after { display: none !important; }
+html.fk .studio.phone-layout .director-nav .workspace-context,
+html.fk .studio.phone-layout .director-nav .draft-version-bar { background: none !important; border: 0 !important; box-shadow: none !important; }
+html.fk .studio.phone-layout .director-nav select { background-color: rgba(241, 229, 218, .08) !important; border: 1px solid rgba(241, 229, 218, .18) !important; color: var(--fk-wall-ink) !important; }
+html.fk .studio.phone-layout .director-nav select option { color: var(--fk-ink); }
+html.fk .studio.phone-layout .director-nav .workspace-context > .menu-host > .icon-button,
+html.fk .studio.phone-layout .director-nav .draft-version-bar > .icon-button { color: var(--fk-wall-ink) !important; border: 0 !important; background: none !important; box-shadow: none !important; border-radius: 50% !important; }
+
+/* Visual language: the board picker sits on a film edge under the title card */
+html.fk .studio.phone-layout .visual-language > .vl-mobile-board { position: relative; display: block !important; width: 100vw !important; max-width: none !important; margin: 0 0 26px calc(50% - 50vw) !important; padding: 16px var(--fk-gutter) 30px !important; border: 0 !important; background-color: #0B0706 !important;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='26' height='14'%3E%3Crect x='7' y='2' width='12' height='8' rx='2' fill='%23EFEDE7'/%3E%3C/svg%3E") !important; background-repeat: repeat-x !important; background-position: 0 100% !important; background-size: 26px 14px !important; }
+html.fk .studio.phone-layout .vl-mobile-board .vl-eyebrow { display: block; margin: 0 0 8px !important; color: var(--fk-wall-muted) !important; font-size: 10px !important; letter-spacing: .22em !important; }
+html.fk .studio.phone-layout .vl-mobile-board select { width: 100% !important; min-height: 52px !important; padding: 0 16px !important; border: 1px solid rgba(241, 229, 218, .2) !important; border-radius: var(--fk-r-m) !important; background-color: rgba(241, 229, 218, .07) !important; color: var(--fk-wall-ink) !important; font-size: 17px !important; }
+html.fk .studio.phone-layout .vl-mobile-board select option { color: var(--fk-ink); }
+
+html.fk .studio.phone-layout .vl-board-heading h2 { font-size: 30px !important; line-height: 1.02 !important; letter-spacing: -.025em !important; overflow-wrap: anywhere; }
+html.fk .studio.phone-layout .vl-scene-controls { gap: 10px !important; }
+html.fk .studio.phone-layout .vl-scene-controls button { min-height: 48px !important; min-width: 48px !important; border-radius: 24px !important; border: 1px solid var(--fk-rule-strong) !important; background-color: var(--fk-mount) !important; box-shadow: 0 6px 14px -10px rgba(28, 27, 25, .5) !important; }
+/* cards made of card */
+html.fk .studio.phone-layout .vl-direction,
+html.fk .studio.phone-layout .vl-empty-board,
+html.fk .studio.phone-layout .vl-no-scenes,
+html.fk .studio.phone-layout .vl-scene-directory > * { border-radius: 6px !important; background-color: #FDFBF6 !important; background-image: var(--fk-fibre) !important; background-size: 300px auto !important; background-blend-mode: multiply; box-shadow: var(--fk-print) !important; }
+html.fk .studio.phone-layout .vl-direction { position: relative; --fk-tilt: -.35deg; transform: rotate(var(--fk-tilt)); animation: fk-hang .8s var(--fk-ease) backwards; }
+html.fk .studio.phone-layout .vl-direction::after { content: ""; position: absolute; top: -11px; left: 50%; width: 92px; height: 24px; margin-left: -46px; background: url("./assets/textures/tape.webp") center / cover, #E4D9B8; opacity: .92; transform: rotate(-2deg); box-shadow: 0 2px 4px rgba(28, 27, 25, .18); }
+html.fk .studio.phone-layout .vl-direction textarea { font-family: var(--fk-display) !important; font-size: 25px !important; line-height: 1.22 !important; letter-spacing: -.01em !important; }
+html.fk .studio.phone-layout .vl-scene-context { margin-top: 26px !important; gap: 8px !important; }
+html.fk .studio.phone-layout .vl-scene-context button { min-height: 44px !important; padding: 0 14px !important; border: 1px solid var(--fk-rule-strong) !important; border-radius: 22px !important; background: rgba(255, 255, 255, .6) !important; font-size: 13.5px !important; }
+html.fk .studio.phone-layout .vl-add .vl-button { min-height: 52px !important; border-radius: 26px !important; }
+html.fk .studio.phone-layout .vl-add .vl-button.is-primary { box-shadow: inset 0 1px 0 rgba(255, 255, 255, .25), 0 10px 22px -10px rgba(212, 48, 31, .85) !important; border: 0 !important; }
+html.fk .studio.phone-layout .lb-canvas-toggle { min-height: 44px !important; border-radius: 22px !important; border: 1px dashed var(--fk-rule-strong) !important; font-family: var(--fk-mono) !important; font-size: 10.5px !important; letter-spacing: .16em !important; text-transform: uppercase !important; color: var(--fk-ink-2) !important; }
+/* filters: one row of pills that slides */
+html.fk .studio.phone-layout .vl-group-filters { display: flex !important; flex-wrap: nowrap !important; gap: 8px !important; width: 100vw !important; margin-left: calc(50% - 50vw) !important; padding: 4px var(--fk-gutter) 12px !important; border: 0 !important; overflow-x: auto !important; scroll-snap-type: x proximity; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+html.fk .studio.phone-layout .vl-group-filters::-webkit-scrollbar { display: none; }
+html.fk .studio.phone-layout .vl-group-filters button { flex: none !important; min-height: 44px !important; padding: 0 16px !important; border: 1px solid var(--fk-rule-strong) !important; border-radius: 22px !important; background: rgba(255, 255, 255, .7) !important; font-size: 14px !important; white-space: nowrap !important; scroll-snap-align: start; }
+html.fk .studio.phone-layout .vl-group-filters button:is(.is-active, [aria-pressed="true"], [aria-current]) { background: var(--fk-ink) !important; border-color: var(--fk-ink) !important; color: var(--fk-paper) !important; }
+/* the empty board is a lit table with frames drifting on it */
+html.fk .studio.phone-layout .vl-empty-board { padding-top: 46px !important; padding-bottom: 40px !important; background-image: radial-gradient(70% 50% at 50% 22%, #FFFFFF, rgba(255, 255, 255, 0) 75%), var(--fk-fibre) !important; background-size: auto, 300px auto !important; }
+html.fk .studio.phone-layout .vl-empty-composition { transform: scale(1.35); margin-bottom: 34px !important; }
+html.fk .studio.phone-layout .vl-empty-composition i { box-shadow: 0 8px 14px -8px rgba(28, 27, 25, .55), inset 0 0 0 4px #fff, inset 0 0 0 5px rgba(28, 27, 25, .1) !important; animation: fk-float 6s ease-in-out infinite; }
+html.fk .studio.phone-layout .vl-empty-composition i:nth-child(1) { --r: -7deg; background: linear-gradient(160deg, #3A2622, #1A0E0C) !important; }
+html.fk .studio.phone-layout .vl-empty-composition i:nth-child(2) { --r: 5deg; animation-delay: -2s; background: linear-gradient(160deg, #E2573F, #8E1D12) !important; }
+html.fk .studio.phone-layout .vl-empty-composition i:nth-child(3) { --r: -2deg; animation-delay: -4s; background: linear-gradient(160deg, #EBD9BF, #C9AE8B) !important; }
+html.fk .studio.phone-layout .vl-empty-board h3 { font-family: var(--fk-display) !important; font-size: 34px !important; font-weight: 400 !important; line-height: 1.04 !important; letter-spacing: -.025em !important; color: var(--fk-ink) !important; }
+html.fk .studio.phone-layout .vl-empty-board .vl-button { min-height: 52px !important; padding: 0 22px !important; border-radius: 26px !important; border: 0 !important; background: var(--fk-ink) !important; color: var(--fk-paper) !important; }
+html.fk .studio.phone-layout .vl-no-scenes h3 { font-family: var(--fk-display) !important; font-size: 32px !important; font-weight: 400 !important; line-height: 1.05 !important; letter-spacing: -.025em !important; }
+
+/* The world's sections: tools on the wall, prints on the line */
+html.fk .studio.phone-layout .collection-toolbar { margin: 0 !important; padding: 18px 0 8px !important; border: 0 !important; display: flex !important; align-items: center !important; justify-content: space-between !important; gap: 10px !important; flex-wrap: wrap; }
+html.fk .studio.phone-layout .collection-toolbar::before, html.fk .studio.phone-layout .collection-toolbar::after { display: none !important; }
+html.fk .studio.phone-layout .collection-toolbar > div:first-child { flex: 0 0 100%; font-family: var(--fk-mono) !important; font-size: 10.5px !important; letter-spacing: .18em !important; text-transform: uppercase !important; color: var(--fk-ink-3) !important; }
+html.fk .studio.phone-layout .collection-toolbar > div:last-child { display: flex !important; flex: 1 1 100%; flex-wrap: nowrap !important; gap: 6px !important; }
+html.fk .studio.phone-layout .collection-toolbar select,
+html.fk .studio.phone-layout .collection-toolbar button { min-height: 44px !important; border: 1px solid var(--fk-rule-strong) !important; border-radius: 22px !important; background-color: rgba(255, 255, 255, .7) !important; padding-left: 14px !important; font-size: 13.5px !important; }
+html.fk .studio.phone-layout .collection-toolbar button { padding-right: 14px !important; }
+html.fk .studio.phone-layout .collection-toolbar select { flex: 1 1 auto; min-width: 0 !important; width: auto !important; font-size: 16px !important; }
+html.fk .studio.phone-layout .collection-toolbar button { flex: none; }
+html.fk .studio.phone-layout .collection-grid { display: grid !important; grid-template-columns: minmax(0, 1fr) !important; gap: 46px !important; padding: 34px 6px 40px !important; }
+html.fk .studio.phone-layout .collection-grid > .collection-card { position: relative !important; width: auto !important; margin: 0 !important; border: 0 !important; border-radius: 4px !important; background-color: #FDFBF6 !important; background-image: var(--fk-fibre) !important; background-size: 300px auto !important; background-blend-mode: multiply; box-shadow: var(--fk-print) !important; overflow: visible !important; transform-origin: 50% -14px; transform: rotate(var(--fk-tilt, 0deg)); animation: fk-hang .9s var(--fk-ease) backwards; }
+html.fk .studio.phone-layout .collection-grid > .collection-card:nth-child(odd) { --fk-tilt: -.7deg; }
+html.fk .studio.phone-layout .collection-grid > .collection-card:nth-child(even) { --fk-tilt: .6deg; animation-delay: .09s; }
+html.fk .studio.phone-layout .collection-grid > .collection-card:nth-child(3) { animation-delay: .18s; }
+html.fk .studio.phone-layout .collection-grid > .collection-card:nth-child(n+4) { animation-delay: .26s; }
+/* the line, and the peg that holds the print to it */
+html.fk .studio.phone-layout .collection-grid > .collection-card::before { content: "" !important; position: absolute !important; inset: auto !important; top: -15px !important; left: -60px !important; right: -60px !important; width: auto !important; height: 2px !important; border: 0 !important; border-radius: 0 !important; background: linear-gradient(180deg, #8F7A5E, #5C4B37) !important; box-shadow: 0 1px 2px rgba(28, 27, 25, .28) !important; transform: rotate(calc(var(--fk-tilt, 0deg) * -1)) !important; opacity: 1 !important; }
+html.fk .studio.phone-layout .collection-grid > .collection-card::after { content: "" !important; position: absolute !important; inset: auto !important; top: -27px !important; left: 50% !important; width: 13px !important; height: 40px !important; margin-left: -6.5px !important; border: 0 !important; border-radius: 3px 3px 2px 2px !important; background: linear-gradient(90deg, rgba(0, 0, 0, .18), rgba(0, 0, 0, 0) 30%, rgba(255, 255, 255, .22) 60%, rgba(0, 0, 0, .2)), linear-gradient(180deg, #C89A68 0, #B58454 44%, #6E6A66 44%, #6E6A66 50%, #A9794B 50%, #8C6038) !important; box-shadow: 0 3px 5px rgba(28, 27, 25, .35) !important; transform: none !important; opacity: 1 !important; }
+html.fk .studio.phone-layout .collection-card .collection-card-top { padding-top: 26px !important; }
+html.fk .studio.phone-layout .collection-card .collection-card-icon { border-radius: 50% !important; border-color: var(--fk-rule-strong) !important; background: #fff !important; }
+html.fk .studio.phone-layout .collection-card .collection-card-kind { font-family: var(--fk-mono) !important; font-size: 10px !important; letter-spacing: .22em !important; color: var(--fk-red-ink) !important; }
+html.fk .studio.phone-layout .collection-card .collection-card-number { font-family: var(--fk-frame) !important; font-size: 22px !important; font-weight: 700 !important; letter-spacing: .04em !important; color: var(--fk-red) !important; }
+html.fk .studio.phone-layout .collection-card .index-card-head input { font-family: var(--fk-display) !important; font-size: 34px !important; font-weight: 400 !important; letter-spacing: -.025em !important; height: 48px !important; color: var(--fk-ink) !important; }
+html.fk .studio.phone-layout .collection-card > textarea { font-size: 16px !important; line-height: 28px !important; background-image: repeating-linear-gradient(180deg, transparent 0 27px, rgba(28, 27, 25, .1) 27px 28px) !important; background-attachment: local !important; }
+html.fk .studio.phone-layout .collection-card .collection-card-meta { font-family: var(--fk-mono) !important; font-size: 10.5px !important; letter-spacing: .1em !important; text-transform: uppercase !important; }
+html.fk .studio.phone-layout .collection-card .collection-card-meta * { font: inherit !important; letter-spacing: inherit !important; }
+html.fk .studio.phone-layout .collection-card .collection-open { min-height: 48px !important; font-size: 15.5px !important; font-weight: 600 !important; }
+/* the empty place on the line: blank paper waiting */
+html.fk .studio.phone-layout .collection-grid > .collection-add-card { position: relative; min-height: 220px !important; border: 1.5px dashed rgba(28, 27, 25, .28) !important; border-radius: 4px !important; background: repeating-linear-gradient(135deg, rgba(28, 27, 25, .035) 0 10px, rgba(28, 27, 25, 0) 10px 20px), rgba(255, 255, 255, .45) !important; box-shadow: none !important; }
+html.fk .studio.phone-layout .collection-add-card > span { width: 56px !important; height: 56px !important; border-radius: 50% !important; box-shadow: 0 10px 22px -8px rgba(212, 48, 31, .8), 0 0 0 8px rgba(212, 48, 31, .1) !important; animation: fk-breathe 3.4s ease-in-out infinite; }
+html.fk .studio.phone-layout .collection-add-card strong { font-family: var(--fk-display) !important; font-size: 26px !important; font-weight: 400 !important; letter-spacing: -.02em !important; }
+
+/* The world library sheet */
+html.fk .studio.phone-layout aside.binder .library-sections { display: grid !important; grid-template-columns: 1fr 1fr !important; gap: 8px !important; padding: 6px var(--fk-gutter) 16px !important; border: 0 !important; }
+html.fk .studio.phone-layout aside.binder .library-sections .section-choice { position: relative; display: grid !important; grid-template-columns: auto minmax(0, 1fr) auto !important; align-items: center !important; gap: 8px !important; min-height: 60px !important; padding: 0 12px 0 12px !important; border: 1px solid var(--fk-rule) !important; border-radius: var(--fk-r-m) !important; background: rgba(255, 255, 255, .78) !important; box-shadow: 0 1px 1px rgba(28, 27, 25, .05), 0 10px 18px -16px rgba(28, 27, 25, .5) !important; transition: transform var(--fk-fast) ease, border-color var(--fk-fast) ease; }
+html.fk .studio.phone-layout aside.binder .library-sections .section-choice:active { transform: scale(.97); }
+html.fk .studio.phone-layout aside.binder .library-sections .section-choice .tree-title { font-family: var(--fk-ui) !important; font-size: 14px !important; letter-spacing: -.01em !important; font-weight: 500 !important; color: var(--fk-ink) !important; }
+html.fk .studio.phone-layout aside.binder .library-sections .section-choice small { font-family: var(--fk-mono) !important; font-size: 13px !important; font-weight: 500 !important; color: var(--fk-ink-3) !important; }
+html.fk .studio.phone-layout aside.binder .library-sections .section-choice svg { color: var(--fk-ink-2) !important; }
+html.fk .studio.phone-layout aside.binder .library-sections .section-choice.selected { border-color: var(--fk-red) !important; background: linear-gradient(0deg, var(--fk-red-wash), var(--fk-red-wash)), #fff !important; box-shadow: inset 0 0 0 1px var(--fk-red), 0 10px 18px -14px rgba(212, 48, 31, .6) !important; }
+html.fk .studio.phone-layout aside.binder .library-sections .section-choice.selected :is(small, svg) { color: var(--fk-red) !important; }
+html.fk .studio.phone-layout aside.binder .library-list-heading { padding: 14px 12px 8px var(--fk-gutter) !important; border-top: 1px solid var(--fk-rule) !important; }
+html.fk .studio.phone-layout aside.binder .library-list-heading > div:first-child > span { font-family: var(--fk-display) !important; font-size: 27px !important; font-weight: 400 !important; letter-spacing: -.02em !important; line-height: 1.1 !important; color: var(--fk-ink) !important; }
+html.fk .studio.phone-layout aside.binder .library-list-heading small { font-family: var(--fk-mono) !important; font-size: 10px !important; letter-spacing: .18em !important; text-transform: uppercase !important; color: var(--fk-ink-3) !important; }
+html.fk .studio.phone-layout aside.binder .binder-content { padding: 0 calc(var(--fk-gutter) - 8px) !important; }
+html.fk .studio.phone-layout aside.binder .binder-content .tree-row { min-height: 58px !important; padding-left: 6px !important; border: 0 !important; border-bottom: 1px solid var(--fk-rule) !important; border-radius: 0 !important; background: none !important; }
+html.fk .studio.phone-layout aside.binder .binder-content .tree-row:is(.selected, .active) { background: linear-gradient(90deg, var(--fk-red-wash), rgba(212, 48, 31, 0)) !important; box-shadow: inset 3px 0 0 var(--fk-red) !important; }
+html.fk .studio.phone-layout aside.binder .binder-content .tree-select .tree-title { font-size: 16.5px !important; color: var(--fk-ink) !important; }
+html.fk .studio.phone-layout aside.binder .binder-content .node-icon { display: grid !important; place-items: center !important; width: 34px !important; height: 34px !important; margin-right: 6px !important; border: 1px solid var(--fk-rule) !important; border-radius: 9px !important; background: #fff !important; }
+html.fk .studio.phone-layout aside.binder .binder-content .tree-delete { width: 44px !important; height: 44px !important; opacity: .7; }
+
 /* ---- 9 Motion preferences ---------------------------------------------------------------------- */
 @media (prefers-reduced-motion: reduce) {
   html.fk .fk-bar, html.fk .fk-bar *, html.fk .fk-sheet, html.fk .fk-sheet *, html.fk .fk-veil,
   html.fk .studio dialog.dialog, html.fk .studio .binder, html.fk .studio .application-menu-popover,
-  html.fk .studio .editor-body > * { transition-duration: .01ms !important; animation: none !important; }
+  html.fk .studio .editor-body > *, html.fk .studio .editor-body *, html.fk .studio .binder * { transition-duration: .01ms !important; animation: none !important; }
 }
 
 }

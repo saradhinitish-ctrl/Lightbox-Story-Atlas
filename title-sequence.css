@@ -1,0 +1,80 @@
+/* The title sequence: Lightbox on a phone opens like film running through a gate.
+   A strip of 35mm travels up the screen, three frames pass in the dark (the page, the world,
+   the frame), the fourth registers, the lamp strikes behind it and the title is marked in
+   grease pencil. Then we push in through the lit frame to the app.
+   Phone widths only (title-sequence.js builds it there and nowhere else). Transform and
+   opacity only. Reduced motion: no sequence at all. */
+@media (max-width: 767px) {
+  #lb-opener { display: none !important; }
+  .ts { --ts-band: 30px; --ts-gap: 12px; --ts-fh: min(60vh, 138vw); --ts-fh: min(60dvh, 138vw); --ts-step: calc(var(--ts-fh) + var(--ts-gap));
+    --ts-dark: #0A0706; --ts-base: #1A1311; --ts-paper: #F4EFE6; --ts-ink: #1C1B19; --ts-red: #D4301F; --ts-red-hi: #F2624F; --ts-edge: #D08A3C;
+    position: fixed; inset: 0; z-index: 2147483000; overflow: hidden; background: var(--ts-dark); color: #F1E5DA; contain: strict; isolation: isolate;
+    font-family: "DM Sans", "Segoe UI", system-ui, sans-serif; -webkit-font-smoothing: antialiased; -webkit-tap-highlight-color: transparent; -webkit-user-select: none; user-select: none; touch-action: none; }
+  .ts, .ts * { box-sizing: border-box; }
+  /* The room: one red safelight, and the lamp's spill once it strikes */
+  .ts-room { position: absolute; inset: 0; background: radial-gradient(90% 46% at 50% -6%, rgba(212, 48, 31, .5), rgba(212, 48, 31, 0) 70%), radial-gradient(70% 40% at 50% 108%, rgba(120, 22, 14, .5), rgba(120, 22, 14, 0) 70%); opacity: 0; }
+  .ts-spill { position: absolute; left: -20%; right: -20%; top: 50%; height: 120vw; margin-top: -60vw; background: radial-gradient(closest-side, rgba(255, 236, 214, .5), rgba(255, 190, 150, .16) 45%, rgba(255, 190, 150, 0) 72%); opacity: 0; }
+  /* The gate and the strip */
+  .ts-gate { position: absolute; inset: 0; transform-origin: 50% 50%; will-change: transform; }
+  .ts-film { position: absolute; left: 0; right: 0; top: 50%; height: calc(6 * var(--ts-fh) + 5 * var(--ts-gap)); margin-top: calc(-4 * var(--ts-step) - var(--ts-fh) / 2); display: grid; grid-auto-rows: var(--ts-fh); row-gap: var(--ts-gap); padding: 0 var(--ts-band);
+    background-color: var(--ts-base);
+    background-image:
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='30' height='44'%3E%3Crect x='8' y='10' width='14' height='22' rx='3.5' fill='%23050303'/%3E%3Crect x='8.5' y='10.5' width='13' height='21' rx='3' fill='none' stroke='%23382a25' stroke-width='1'/%3E%3C/svg%3E"),
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='30' height='44'%3E%3Crect x='8' y='10' width='14' height='22' rx='3.5' fill='%23050303'/%3E%3Crect x='8.5' y='10.5' width='13' height='21' rx='3' fill='none' stroke='%23382a25' stroke-width='1'/%3E%3C/svg%3E"),
+      linear-gradient(90deg, rgba(255, 255, 255, .05), rgba(255, 255, 255, 0) 12%, rgba(255, 255, 255, 0) 88%, rgba(255, 255, 255, .05));
+    background-position: 0 0, 100% 0, 0 0; background-repeat: repeat-y, repeat-y, no-repeat; background-size: 30px 44px, 30px 44px, 100% 100%;
+    will-change: transform; transform: translate3d(0, calc(3.4 * var(--ts-step)), 0); }
+  .ts-frame { position: relative; overflow: hidden; border-radius: 3px; background: radial-gradient(120% 80% at 30% 10%, rgba(212, 48, 31, .2), rgba(212, 48, 31, 0) 60%), #0E0A09; box-shadow: inset 0 0 0 1px rgba(241, 229, 218, .06), inset 0 0 60px rgba(0, 0, 0, .7); display: grid; place-items: center; }
+  .ts-frame b { position: absolute; left: 14px; top: 11px; font-family: "Big Shoulders Display", "DM Mono", sans-serif; font-size: 17px; font-weight: 700; letter-spacing: .08em; color: var(--ts-red-hi); opacity: .9; }
+  .ts-frame i { position: absolute; right: 12px; bottom: 12px; font-family: "DM Mono", ui-monospace, monospace; font-style: normal; font-size: 9px; letter-spacing: .22em; color: var(--ts-edge); opacity: .75; }
+  .ts-word { font-family: "Instrument Serif", Georgia, serif; font-style: italic; font-size: min(19vw, 96px); line-height: .92; letter-spacing: -.035em; text-align: center; color: rgba(241, 229, 218, .42); text-shadow: 0 0 34px rgba(212, 48, 31, .35); }
+  .ts-word small { display: block; margin-bottom: .5em; font-family: "DM Mono", ui-monospace, monospace; font-style: normal; font-size: 10px; letter-spacing: .3em; text-transform: uppercase; color: rgba(241, 229, 218, .34); text-shadow: none; }
+  /* The title frame: dark until the lamp strikes */
+  .ts-frame--title { background: #0E0A09; }
+  .ts-lit { position: absolute; inset: 0; display: grid; align-content: center; justify-items: center; gap: 0; padding: 0 18px; text-align: center; color: var(--ts-ink); opacity: 0;
+    background: radial-gradient(85% 60% at 50% 46%, #FFFFFF, rgba(255, 255, 255, 0) 72%), var(--ts-paper); box-shadow: inset 0 0 0 1px rgba(28, 27, 25, .12), inset 0 0 70px rgba(120, 90, 60, .2); }
+  .ts-lit::after { content: ""; position: absolute; inset: 0; pointer-events: none; opacity: .5; mix-blend-mode: multiply;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .35  0 0 0 0 .3  0 0 0 0 .25  0 0 0 .22 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
+  .ts-eyebrow, .ts-sub { position: relative; z-index: 1; margin: 0; font-family: "DM Mono", ui-monospace, monospace; font-size: 10px; font-weight: 500; letter-spacing: .26em; text-transform: uppercase; opacity: 0; }
+  .ts-eyebrow { color: #B3261A; margin-bottom: 20px; }
+  .ts-sub { color: #4B4842; margin-top: 26px; line-height: 1.9; }
+  .ts-title { position: relative; z-index: 1; margin: 0; font-family: "Instrument Serif", Georgia, serif; font-weight: 400; font-size: min(22.5vw, 112px); line-height: .9; letter-spacing: -.045em; color: var(--ts-ink); }
+  .ts-title span { color: var(--ts-red); }
+  .ts-circle { position: absolute; left: -9%; top: -22%; width: 118%; height: 150%; overflow: visible; pointer-events: none; }
+  .ts-circle path { fill: none; stroke: var(--ts-red); stroke-width: 2.4; stroke-linecap: round; stroke-dasharray: 1; stroke-dashoffset: 1; vector-effect: non-scaling-stroke; opacity: .92; }
+  .ts-circle path + path { stroke-width: 1.3; opacity: .5; }
+  .ts-edge { position: absolute; z-index: 1; left: 14px; right: 14px; bottom: 12px; display: flex; justify-content: space-between; font-family: "DM Mono", ui-monospace, monospace; font-size: 9px; letter-spacing: .2em; color: #67635B; opacity: 0; }
+  .ts-edge b { position: static; font: inherit; color: #B3261A; opacity: 1; }
+  /* Grain over everything, and the way out */
+  .ts-grain { position: absolute; inset: -40px; pointer-events: none; opacity: .5; mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 .2 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
+  .ts-vignette { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(120% 75% at 50% 50%, rgba(0, 0, 0, 0) 55%, rgba(0, 0, 0, .7)); }
+  .ts-skip { position: absolute; z-index: 3; left: 50%; bottom: max(14px, env(safe-area-inset-bottom)); min-width: 120px; height: 44px; margin-left: -60px; padding: 0 16px; border: 0; background: none; color: rgba(241, 229, 218, .62); font-family: "DM Mono", ui-monospace, monospace; font-size: 10px; letter-spacing: .26em; text-transform: uppercase; cursor: pointer; opacity: 0; }
+  .ts-skip:focus-visible { outline: 2px solid var(--ts-red-hi); outline-offset: 2px; }
+
+  /* ---- The run ---- */
+  .ts.is-playing .ts-room { animation: ts-fade .9s .05s ease-out both; }
+  .ts.is-playing .ts-film { animation: ts-run 1.75s .12s cubic-bezier(.17, .84, .22, 1.02) both; }
+  .ts.is-playing .ts-grain { animation: ts-grain .5s steps(4) infinite; }
+  .ts.is-playing .ts-lit { animation: ts-strike .7s 1.72s linear both; }
+  .ts.is-playing .ts-spill { animation: ts-strike .7s 1.72s linear both; }
+  .ts.is-playing .ts-eyebrow { animation: ts-up .5s 2.02s cubic-bezier(.2, .8, .2, 1) both; }
+  .ts.is-playing .ts-circle path { animation: ts-draw .62s 2.1s cubic-bezier(.5, .1, .2, 1) both; }
+  .ts.is-playing .ts-circle path + path { animation-delay: 2.26s; animation-duration: .5s; }
+  .ts.is-playing .ts-sub { animation: ts-up .5s 2.3s cubic-bezier(.2, .8, .2, 1) both; }
+  .ts.is-playing .ts-edge { animation: ts-fade .5s 2.4s ease-out both; }
+  .ts.is-playing .ts-skip { animation: ts-fade .4s .5s ease-out both; }
+  .ts.is-leaving { pointer-events: none; animation: ts-out .34s .24s ease-in both; }
+  .ts.is-leaving .ts-gate { animation: ts-push .58s cubic-bezier(.6, 0, .85, .3) both; }
+  .ts.is-leaving .ts-skip { animation: none; opacity: 0; }
+  .ts.is-skipped { pointer-events: none; animation: ts-out .2s ease-out both; }
+  @keyframes ts-run { from { transform: translate3d(0, calc(3.4 * var(--ts-step)), 0); } to { transform: translate3d(0, 0, 0); } }
+  @keyframes ts-strike { 0% { opacity: 0; } 9% { opacity: .9; } 17% { opacity: .18; } 30% { opacity: 1; } 38% { opacity: .62; } 50% { opacity: 1; } 100% { opacity: 1; } }
+  @keyframes ts-up { from { opacity: 0; transform: translate3d(0, 9px, 0); } to { opacity: 1; transform: none; } }
+  @keyframes ts-fade { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes ts-draw { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
+  @keyframes ts-grain { 0% { transform: translate3d(0, 0, 0); } 25% { transform: translate3d(-18px, 12px, 0); } 50% { transform: translate3d(14px, -20px, 0); } 75% { transform: translate3d(-8px, -10px, 0); } 100% { transform: translate3d(0, 0, 0); } }
+  @keyframes ts-push { from { transform: scale(1); } to { transform: scale(3.4); } }
+  @keyframes ts-out { from { opacity: 1; } to { opacity: 0; } }
+}
+@media (prefers-reduced-motion: reduce) { .ts { display: none !important; } }

@@ -232,6 +232,79 @@ for (const width of [360, 390, 430]) {
   await context.close();
 }
 
+// ---- The title sequence: phones only ------------------------------------------------------------
+{
+  const context = await browser.newContext({viewport: {width: 390, height: 800}, hasTouch: true, isMobile: true});
+  const page = await context.newPage();
+  await check('title sequence: plays on a phone, replaces the old opening, then leaves', async () => {
+    await page.goto(BASE, {waitUntil: 'commit'});
+    await page.locator('#lb-title.is-playing').waitFor({timeout: 8000});
+    assert.equal(await page.locator('#lb-opener').count(), 0);
+    assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth));
+    await page.waitForTimeout(2600);
+    assert.ok(Number(await page.locator('.ts-lit').evaluate((el) => getComputedStyle(el).opacity)) > .9, 'the lamp has struck');
+    await page.screenshot({path: resolve(dir, 'field-kit-390-title-sequence.png')});
+    await page.locator('#lb-title').waitFor({state: 'detached', timeout: 4000});
+  });
+  await check('title sequence: a tap skips it', async () => {
+    await page.reload({waitUntil: 'commit'});
+    await page.locator('#lb-title.is-playing').waitFor({timeout: 8000});
+    await page.locator('#lb-title').tap({position: {x: 100, y: 300}});
+    await page.locator('#lb-title').waitFor({state: 'detached', timeout: 1500});
+  });
+  await context.close();
+  const still = await browser.newContext({viewport: {width: 390, height: 800}, hasTouch: true, isMobile: true, reducedMotion: 'reduce'});
+  const quiet = await still.newPage();
+  await check('title sequence: none with reduced motion', async () => {
+    await quiet.goto(BASE); await quiet.waitForTimeout(600);
+    assert.equal(await quiet.locator('#lb-title').count(), 0);
+    assert.equal(await quiet.locator('#lb-opener').count(), 0);
+  });
+  await still.close();
+  const desk = await browser.newContext({viewport: {width: 1440, height: 900}});
+  const wide = await desk.newPage();
+  await check('title sequence: desktop keeps the original opening', async () => {
+    await wide.goto(BASE, {waitUntil: 'commit'});
+    await wide.locator('#lb-opener.is-playing').waitFor({timeout: 8000});
+    assert.equal(await wide.locator('#lb-title').count(), 0);
+  });
+  await desk.close();
+}
+
+// ---- The print in hand, and rooms with material ---------------------------------------------------
+{
+  const context = await browser.newContext({viewport: {width: 390, height: 800}, hasTouch: true, isMobile: true});
+  const page = await context.newPage();
+  page.setDefaultTimeout(5000);
+  await open(page);
+  await check('atlas on a phone: the centred print is in hand, and following prints develop as you swipe', async () => {
+    await page.waitForTimeout(1200);
+    assert.equal(await page.locator('.lbd-darkroom .is-hover').count(), 1, 'one print is in hand without any touch');
+    const first = await page.evaluate(() => [...document.querySelectorAll('.lbd-darkroom *')].findIndex((el) => el.classList.contains('is-hover')));
+    await page.evaluate(() => { const line = [...document.querySelectorAll('.lbd-darkroom *')].find((el) => el.scrollWidth > el.clientWidth + 50 && getComputedStyle(el).overflowX !== 'visible'); line.scrollBy({left: 900, behavior: 'instant'}); });
+    await page.waitForTimeout(900);
+    const second = await page.evaluate(() => [...document.querySelectorAll('.lbd-darkroom *')].findIndex((el) => el.classList.contains('is-hover')));
+    assert.equal(await page.locator('.lbd-darkroom .is-hover').count(), 1);
+    assert.notEqual(first, second, 'a different print after the swipe');
+  });
+  await check('rooms open under the safelight', async () => {
+    await page.locator('.fk-stop[data-fk="kit"]').click(); await page.waitForTimeout(450);
+    await page.locator('[data-fk-act="characters"]').click(); await page.locator('.collection-heading').waitFor(); await page.waitForTimeout(1200);
+    const head = await page.locator('.collection-heading').boundingBox();
+    assert.ok(head.x === 0 && head.width === 390, 'the title card runs edge to edge');
+    assert.match(await page.locator('.collection-heading').evaluate((el) => getComputedStyle(el).backgroundImage), /radial-gradient/);
+    assert.equal(await page.locator('.collection-name input').evaluate((el) => getComputedStyle(el).color), 'rgb(241, 229, 218)');
+    const body = await page.locator('.editor-body').evaluate((el) => el.scrollWidth - el.clientWidth);
+    assert.ok(body <= 1, 'no sideways scroll');
+    await page.screenshot({path: resolve(dir, 'field-kit-390-10-room-material.png')});
+    await page.locator('.fk-stop[data-fk="visuals"]').click(); await page.locator('.vl-header').waitFor(); await page.waitForTimeout(900);
+    assert.match(await page.locator('.vl-header').evaluate((el) => getComputedStyle(el).backgroundImage), /radial-gradient/);
+    assert.ok(await page.locator('.editor-body').evaluate((el) => el.scrollWidth - el.clientWidth) <= 1);
+    await page.screenshot({path: resolve(dir, 'field-kit-390-11-visuals-material.png')});
+  });
+  await context.close();
+}
+
 // ---- Reduced motion ---------------------------------------------------------------------------------
 {
   const context = await browser.newContext({viewport: {width: 390, height: 800}, hasTouch: true, isMobile: true, reducedMotion: 'reduce'});
@@ -251,7 +324,7 @@ for (const width of [360, 390, 430]) {
 async function desktopStyles(withKit) {
   const context = await browser.newContext({viewport: {width: 1440, height: 900}});
   const page = await context.newPage();
-  if (!withKit) await page.route(/field-kit\.(css|js)/, (route) => route.abort());
+  if (!withKit) await page.route(/(field-kit|title-sequence)\.(css|js)/, (route) => route.abort());
   await open(page);
   const snapshot = async () => page.evaluate(() => {
     const rows = [];

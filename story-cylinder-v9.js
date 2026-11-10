@@ -42,6 +42,7 @@
   const FOUNDATION_TAKES = ['seed', 'world', 'conflict', 'premise', 'theme', 'tone', 'logline', 'questions'];
 
   const reduceMQ = matchMedia('(prefers-reduced-motion: reduce)');
+  const phoneMQ = matchMedia('(max-width: 767px)');
   const clamp = (n, lo, hi) => Math.max(lo, Math.min(hi, n));
   const lerp = (a, b, t) => a + (b - a) * t;
   const pad2 = (n) => String(n).padStart(2, '0');
@@ -490,7 +491,8 @@
     const onReduce = () => { s.still = reduceMQ.matches; host.classList.toggle('is-still', s.still); relayout(s, true); wake(s); };
     reduceMQ.addEventListener?.('change', onReduce, sig);
     addEventListener('resize', () => relayout(s), sig);
-    s.scroller.addEventListener('scroll', () => { if (s.still) render(s, 0); }, { passive: true, signal: s.ac.signal });
+    s.scroller.addEventListener('scroll', () => { nearest(s); if (s.still) render(s, 0); }, { passive: true, signal: s.ac.signal });
+    phoneMQ.addEventListener?.('change', () => nearest(s), sig);
     s.viewX = 0;
     s.resizeObserver = new ResizeObserver(() => relayout(s));
     s.resizeObserver.observe(s.host);
@@ -507,6 +509,7 @@
     relayout(s, true);
     // On narrow screens the line scrolls: open on the print you are working on.
     if (s.scroll) s.scroller.scrollLeft = clamp(s.clipX[s.current] - s.W / 2, 0, s.lineW - s.W);
+    nearest(s);
     wake(s);
   }
 
@@ -937,9 +940,25 @@
     }
     wake(s);
   }
+  /* A phone has no hover. There, the print hanging at the centre of the wall is the one in
+   * hand: it lifts and develops as you swipe along the line, and the others keep a half-developed
+   * image instead of blank paper. Wider screens never set `near` or `phone`. */
+  function nearest(s) {
+    const phone = !!s.scroll && phoneMQ.matches;
+    let hit = -1;
+    if (phone && s.clipX) {
+      const centre = s.scroller.scrollLeft + s.W / 2;
+      let best = Infinity;
+      s.clipX.forEach((x, i) => { const d = Math.abs(x - centre); if (d < best) { best = d; hit = i; } });
+    }
+    let changed = s.phone !== phone;
+    s.phone = phone;
+    s.prints.forEach((p, i) => { const near = i === hit; if (!!p.near !== near) { p.near = near; changed = true; } });
+    if (changed) { setHover(s); wake(s); }
+  }
   function setHover(s) {
     let hover = -1;
-    s.prints.forEach((p, i) => { const on = p.ptr || p.focus; if (on && (hover < 0 || p.ptr)) hover = i; });
+    s.prints.forEach((p, i) => { const on = p.ptr || p.focus || p.near; if (on && (hover < 0 || p.ptr)) hover = i; });
     s.prints.forEach((p, i) => {
       const on = i === hover;
       if (p.on !== on) { p.on = on; p.el.classList.toggle('is-hover', on); }
@@ -999,13 +1018,13 @@
     s.prints.forEach((p) => {
       const on = p.on && !s.pulling;
       const tl = on ? 1 : 0;
-      const tx = on ? (p.keyboard && !p.ptr ? 0 : p.hx) : 0;
-      const ty = on ? (p.keyboard && !p.ptr ? -.25 : p.hy) : 0;
+      const tx = on ? ((p.keyboard || p.near) && !p.ptr ? 0 : p.hx) : 0;
+      const ty = on ? ((p.keyboard || p.near) && !p.ptr ? -.25 : p.hy) : 0;
       const step = (x, v, target, w, z) => { const a = w * w * (target - x) - 2 * z * w * v; v += a * dt; return [x + v * dt, v]; };
       [p.lift, p.liftV] = step(p.lift, p.liftV, tl, 7.5, .48);
       [p.tx, p.txV] = step(p.tx, p.txV, tx, 8, .38);
       [p.ty, p.tyV] = step(p.ty, p.tyV, ty, 8, .38);
-      const target = on || s.pulling?.i === p.i ? 1 : 0;
+      const target = on || s.pulling?.i === p.i ? 1 : (s.phone ? .5 : 0);
       p.boost += (target - p.boost) * (1 - Math.exp(-dt / (target > p.boost ? .9 : 2.2)));
     });
     s.trayBoost += ((s.trayHover ? 1 : 0) - s.trayBoost) * (1 - Math.exp(-dt / (s.trayHover ? .8 : 2)));
@@ -1192,7 +1211,7 @@
       setStyle(p, p.clip, 'ct', 'transform', ct);
       // Development: a latent image first, then density and sharpness.
       const L = Math.max(p.level, .035);
-      const D = still ? (p.on ? L + (1 - L) * .9 : L) : L + (1 - L) * .92 * p.boost;
+      const D = still ? (p.on ? L + (1 - L) * .9 : (s.phone ? L + (1 - L) * .45 : L)) : L + (1 - L) * .92 * p.boost;
       const sharp = Math.pow(clamp((D - .06) / .8, 0, 1), .9);
       const latent = clamp(D * 2.2, 0, 1) * (1 - sharp) * .85;
       setStyle(p, p.sharp, 'so', 'opacity', String(Math.round(sharp * 200) / 200));

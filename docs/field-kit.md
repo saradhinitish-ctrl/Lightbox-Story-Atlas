@@ -13,6 +13,15 @@ It applies at 767px and narrower (the line the app itself uses for its phone lay
 | **The top slate** | The world's name, set as a title (tap to switch worlds), with search and save. The library and menu buttons moved into the kit. On the first-run screen, where there is no bar, the menu button stays. |
 | **The keyboard** | While you type, the bar slides away so the page keeps its room, and sheets sit on top of the keyboard. |
 
+## The title sequence
+On a phone the app opens like film running through a gate. A strip of 35mm travels up the screen; three frames pass in the dark (the page, a world, the frame); the fourth registers, the lamp strikes behind it, and "Lightbox." is circled in grease pencil. Then the view pushes in through the lit frame to the app. About 3.4 seconds; a tap anywhere skips it; none with reduced motion. Wider screens keep the original opening. Files: `title-sequence.css`, `title-sequence.js` (loaded synchronously before the app so it paints first).
+
+## The print in hand
+A phone has no hover, so prints on the Atlas line used to stay undeveloped until tapped. Now the print hanging at the centre of the screen lifts and develops as you swipe along the line, and the others keep a half-developed image. This is a small, phone-only branch in `story-cylinder-v9.js` (`nearest()`); wider screens never enter it.
+
+## Material
+The rooms carry the darkroom with them. The world's sections (Characters, Locations, Objects, Research) and Visual language open under a dark title card with the red safelight and grain. Below it, cards are prints on a line: card stock with paper fibres, a wooden peg, a slight tilt, and a settle as they arrive. Sheets (kit, dialogs, library, menu) are fibred paper. The library's sections are tiles with counts. Tokens: `--fk-room`, `--fk-noise`, `--fk-fibre`, `--fk-print`, `--fk-wall-ink`, `--fk-wall-muted`.
+
 ## Tokens
 All custom properties are defined on `html.fk` in `field-kit.css`.
 
@@ -54,6 +63,6 @@ Two phone bugs in the previous layout are fixed along the way: the screenplay "m
 ```sh
 PLAYWRIGHT_MODULE=<path to playwright/index.mjs> node tests/field-kit-qa.mjs
 ```
-74 checks. On desktop (1440px) every element of the writing room computes to the same box and style with and without the two files.
+80 checks. On desktop (1440px) every element of the writing room computes to the same box and style with and without the two files.
 
 Not covered by these checks: real iOS and Android keyboards (the keyboard logic uses `visualViewport`, which headless Chromium does not exercise), the Android app's WebView, and screen readers.

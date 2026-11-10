@@ -1,3 +1,7 @@
+# Field Kit: Lightbox on a phone
+
+At 767px and narrower, Lightbox has its own phone design: a graphite bar docked under the thumb (Atlas, Develop, the red Write key, Visuals, Kit), and paper sheets that rise from the bottom for everything else, from the other rooms to export, settings and the studio menu. Desktop is unchanged. See `docs/field-kit.md`; the browser checks are in `tests/field-kit-qa.mjs`.
+
 # The Atlas: a darkroom
 
 The Atlas home screen is a darkroom under a red safelight. The five stages, 01 The Spark → 02 The World → 03 Research → 04 The Screenplay → 05 Visual Language, are prints pegged to one twine line across the room. Each print is developed as far as that stage's real work goes. The stage you worked on last is marked in grease pencil, and **Continue Scene NN** waits in the developer tray below the line. The room has air: gusts travel along the line, the thread and the prints respond physically, and the cursor moves the air. Clicking a print takes it off the line and opens its room. Reduced motion stills the air. See `docs/darkroom-atlas.md`; the browser checks are in `tests/darkroom-atlas-qa.mjs`. It replaces the light table and the Classic cylinder.

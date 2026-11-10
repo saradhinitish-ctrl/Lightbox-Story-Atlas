@@ -1,0 +1,279 @@
+/* Field Kit: the phone experience of Lightbox Studio. Loaded last.
+   Every rule lives inside the phone media query AND under html.fk (set by field-kit.js),
+   so the desktop is untouched and, without the script, the previous phone layout still works.
+   See docs/field-kit.md.
+
+   1 Tokens   2 Touch and type   3 Shell   4 The bar   5 Sheets   6 The kit
+   7 App dialogs, menu, library   8 Rooms   9 Motion preferences */
+
+@media (max-width: 767px) {
+
+/* ---- 1 Tokens ------------------------------------------------------------------------------- */
+html.fk {
+  --fk-chassis: #18181A;
+  --fk-chassis-2: #232326;
+  --fk-chassis-line: #38383D;
+  --fk-chassis-ink: #EEECE7;
+  --fk-chassis-muted: #A9A6A0;
+  --fk-paper: #FAF9F5;
+  --fk-table: #EFEDE7;
+  --fk-mount: #FFFFFF;
+  --fk-ink: #1C1B19;
+  --fk-ink-2: #4B4842;
+  --fk-ink-3: #67635B;
+  --fk-rule: #D9D5CB;
+  --fk-rule-strong: #B8B3A7;
+  --fk-red: #D4301F;
+  --fk-red-ink: #B3261A;
+  --fk-red-on-dark: #F2624F;
+  --fk-red-wash: rgba(212, 48, 31, .075);
+
+  --fk-display: "Instrument Serif", Georgia, serif;
+  --fk-ui: "DM Sans", "Segoe UI", system-ui, sans-serif;
+  --fk-mono: "DM Mono", ui-monospace, monospace;
+  --fk-frame: "Big Shoulders Display", "DM Mono", sans-serif;
+
+  --fk-gutter: 20px;
+  --fk-r-s: 8px;
+  --fk-r-m: 14px;
+  --fk-r-l: 24px;
+  --fk-hit: 48px;
+
+  --fk-safe-t: env(safe-area-inset-top, 0px);
+  --fk-safe-b: env(safe-area-inset-bottom, 0px);
+  --fk-bar: 64px;
+  --fk-band: 0px;
+  --fk-top: 52px;
+
+  --fk-ease: cubic-bezier(.2, .8, .2, 1);
+  --fk-spring: cubic-bezier(.2, .9, .25, 1.04);
+  --fk-fast: 140ms;
+  --fk-med: 300ms;
+  --fk-slow: 460ms;
+  --fk-lift: 0 -1px 0 rgba(28, 27, 25, .06), 0 -18px 44px -18px rgba(28, 27, 25, .45);
+}
+@supports (transition-timing-function: linear(0, 1)) {
+  html.fk { --fk-spring: linear(0, .29 6%, .61 13%, .83 21%, .955 29%, 1.012 37%, 1.027 45%, 1.02 55%, 1.006 70%, 1); }
+}
+html.fk.fk-has-bar { --fk-band: calc(var(--fk-bar) + var(--fk-safe-b)); }
+html.fk.fk-has-bar.fk-typing { --fk-band: 0px; }
+
+/* ---- 2 Touch and type ----------------------------------------------------------------------- */
+html.fk, html.fk body { overscroll-behavior: none; background: var(--fk-chassis) !important; }
+html.fk { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+html.fk * { -webkit-tap-highlight-color: transparent; }
+html.fk .studio button, html.fk .studio [role="button"], html.fk .studio summary, html.fk .fk-bar, html.fk .fk-sheet { touch-action: manipulation; }
+html.fk .studio button, html.fk .fk-bar, html.fk .fk-sheet__head, html.fk .fk-sheet__grab { -webkit-user-select: none; user-select: none; }
+/* 16px fields where the app sets them smaller: no zoom-on-focus on iOS */
+html.fk .studio dialog.dialog :is(input:not([type="checkbox"]):not([type="radio"]), select, textarea),
+html.fk .studio .binder-search input,
+html.fk .studio .breakdown-picker :is(input, select),
+html.fk .studio .director-nav select,
+html.fk .studio .collection-toolbar select,
+html.fk .studio .vl-mobile-board select,
+html.fk .studio .btl :is(input:not([type="checkbox"]):not([type="radio"]):not([type="range"]), select, textarea),
+html.fk .studio .visual-language :is(input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="color"]), select, textarea),
+html.fk .studio .inspector :is(input:not([type="checkbox"]):not([type="radio"]), select, textarea),
+html.fk .studio .format-tools select,
+html.fk .studio .script-format-exception select { font-size: 16px !important; }
+html.fk .studio :focus-visible, html.fk .fk-bar :focus-visible, html.fk .fk-sheet :focus-visible { outline: 2px solid var(--fk-red) !important; outline-offset: 2px !important; }
+
+/* ---- 3 Shell --------------------------------------------------------------------------------- */
+html.fk .studio.phone-layout { height: calc(100dvh - var(--fk-band)) !important; min-height: 0 !important; transition: none; }
+/* The old floating pills: the bar does their work now */
+html.fk.fk-has-bar .mobile-workspace-switcher .workspace-launcher,
+html.fk .lb-cylinder-back { display: none !important; }
+
+/* Top slate: the world's name, set like a title; search and save to the right */
+html.fk .studio.phone-layout .app-header { padding-top: var(--fk-safe-t) !important; height: auto !important; min-height: 0 !important; }
+html.fk .studio.phone-layout .app-header .menubar { display: flex !important; align-items: center !important; gap: 2px !important; height: var(--fk-top) !important; min-height: var(--fk-top) !important; padding: 0 6px 0 var(--fk-gutter) !important; }
+html.fk .studio.phone-layout .app-header .header-brand { display: none !important; }
+html.fk .studio.phone-layout .app-header .header-world { order: 1; flex: 1 1 auto !important; min-width: 0 !important; height: var(--fk-hit) !important; justify-content: flex-start !important; gap: 7px !important; padding: 0 !important; margin: 0 !important; border: 0 !important; background: none !important; box-shadow: none !important; text-align: left !important; }
+html.fk .studio.phone-layout .app-header .header-world span { font-family: var(--fk-display) !important; font-size: 23px !important; font-weight: 400 !important; letter-spacing: -.012em !important; line-height: 1.25 !important; height: auto !important; color: var(--fk-chassis-ink) !important; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+html.fk .studio.phone-layout .app-header .header-world svg { flex: none; opacity: .6; margin-top: 3px; }
+html.fk .studio.phone-layout .app-header .header-actions { order: 2; display: flex !important; align-items: center !important; gap: 0 !important; flex: none !important; width: auto !important; }
+html.fk .studio.phone-layout .app-header .header-actions > button { width: var(--fk-hit) !important; min-width: var(--fk-hit) !important; height: var(--fk-hit) !important; border: 0 !important; border-radius: 50% !important; background: none !important; box-shadow: none !important; color: var(--fk-chassis-ink) !important; transition: background-color var(--fk-fast) ease, transform var(--fk-fast) ease; }
+html.fk .studio.phone-layout .app-header .header-actions > button:active,
+html.fk .studio.phone-layout .app-header .header-world:active { transform: scale(.96); }
+html.fk .studio.phone-layout .app-header .header-actions > button:active { background: rgba(238, 236, 231, .1) !important; }
+html.fk .studio.phone-layout .app-header .app-menu-host { order: 3; }
+html.fk .studio.phone-layout .app-header .application-menu-trigger { width: var(--fk-hit) !important; height: var(--fk-hit) !important; border: 0 !important; background: none !important; }
+/* With the bar on screen the menu is opened from the kit */
+html.fk.fk-has-bar .studio.phone-layout .app-header .app-menu-host { width: 0 !important; min-width: 0 !important; }
+html.fk.fk-has-bar .studio.phone-layout .app-header .application-menu-trigger { position: absolute !important; width: 1px !important; height: 1px !important; min-width: 0 !important; padding: 0 !important; overflow: hidden !important; clip-path: inset(50%) !important; opacity: 0 !important; pointer-events: none !important; }
+
+/* Surfaces the kit presses on your behalf never flash */
+html.fk.fk-quiet .studio dialog.dialog,
+html.fk.fk-quiet .studio .dialog-backdrop,
+html.fk.fk-quiet .studio .modal-backdrop,
+html.fk.fk-quiet .studio .binder,
+html.fk.fk-quiet .studio .phone-panel-backdrop { visibility: hidden !important; animation: none !important; transition: none !important; }
+
+/* ---- 4 The bar ------------------------------------------------------------------------------- */
+html.fk .fk-bar { position: fixed; z-index: 46; left: 0; right: 0; bottom: 0; display: none; grid-template-columns: repeat(5, minmax(0, 1fr)); align-items: stretch; height: calc(var(--fk-bar) + var(--fk-safe-b)); padding: 0 6px var(--fk-safe-b); background: var(--fk-chassis); background-image: linear-gradient(180deg, rgba(255, 255, 255, .045), rgba(255, 255, 255, 0) 38%); border-top: 1px solid var(--fk-chassis-line); box-shadow: 0 -10px 28px -12px rgba(0, 0, 0, .55); color: var(--fk-chassis-muted); transition: transform var(--fk-med) var(--fk-ease), visibility 0s; }
+html.fk.fk-has-bar .fk-bar { display: grid; }
+html.fk.fk-typing .fk-bar { transform: translate3d(0, 105%, 0); visibility: hidden; transition: transform var(--fk-med) var(--fk-ease), visibility 0s var(--fk-med); }
+html.fk .fk-stop { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px; min-width: 0; height: var(--fk-bar); padding: 0; border: 0; background: none; color: inherit; font: inherit; cursor: pointer; }
+html.fk .fk-stop__icon { display: grid; place-items: center; width: 44px; height: 26px; border-radius: 13px; transition: transform var(--fk-med) var(--fk-spring), color var(--fk-fast) ease, background-color var(--fk-fast) ease; }
+html.fk .fk-stop__icon svg { width: 23px; height: 23px; }
+html.fk .fk-stop__label { font-family: var(--fk-mono); font-size: 9.5px; font-weight: 500; letter-spacing: .16em; text-transform: uppercase; line-height: 1; transition: color var(--fk-fast) ease; }
+html.fk .fk-stop:active .fk-stop__icon { transform: scale(.88); }
+html.fk .fk-stop[aria-current="page"], html.fk .fk-stop.is-here, html.fk .fk-stop[aria-expanded="true"] { color: var(--fk-chassis-ink); }
+/* Write is the red key */
+html.fk .fk-stop--write .fk-stop__icon { width: 52px; height: 32px; margin-top: -2px; border-radius: 10px; background: var(--fk-red); color: #fff; box-shadow: inset 0 1px 0 rgba(255, 255, 255, .22), inset 0 -2px 0 rgba(0, 0, 0, .18), 0 6px 14px -6px rgba(212, 48, 31, .8); }
+html.fk .fk-stop--write .fk-stop__icon svg { width: 20px; height: 20px; stroke-width: 1.8; }
+html.fk .fk-stop--write { gap: 4px; color: var(--fk-chassis-ink); }
+html.fk .fk-stop--write:active .fk-stop__icon { transform: translateY(1px) scale(.95); box-shadow: inset 0 1px 0 rgba(255, 255, 255, .1), inset 0 -1px 0 rgba(0, 0, 0, .2), 0 2px 6px -3px rgba(212, 48, 31, .8); }
+/* The grease-pencil mark that slides between stops */
+html.fk .fk-mark { position: absolute; left: -13px; top: 0; width: 26px; height: 3px; border-radius: 0 0 3px 3px; background: var(--fk-red-on-dark); opacity: 0; pointer-events: none; transition: transform var(--fk-slow) var(--fk-spring), opacity var(--fk-med) ease; will-change: transform; }
+html.fk .fk-mark.is-set { opacity: 1; }
+
+/* ---- 5 Sheets -------------------------------------------------------------------------------- */
+html.fk .fk-veil { position: fixed; z-index: 44; inset: 0; background: rgba(12, 11, 10, .5); opacity: 0; visibility: hidden; transition: opacity var(--fk-med) ease, visibility 0s var(--fk-med); }
+html.fk .fk-veil.is-open { opacity: 1; visibility: visible; transition: opacity var(--fk-med) ease, visibility 0s; }
+html.fk .fk-sheet { position: fixed; z-index: 45; left: 0; right: 0; bottom: 0; display: flex; flex-direction: column; max-height: calc(100dvh - var(--fk-safe-t) - 44px); padding-bottom: var(--fk-band); border-radius: var(--fk-r-l) var(--fk-r-l) 0 0; background: var(--fk-paper); color: var(--fk-ink); box-shadow: var(--fk-lift); transform: translate3d(0, 105%, 0); visibility: hidden; transition: transform var(--fk-med) var(--fk-ease), visibility 0s var(--fk-med); outline: 0; }
+html.fk .fk-sheet.is-open { transform: none; visibility: visible; transition: transform var(--fk-slow) var(--fk-spring), visibility 0s; }
+html.fk .fk-sheet.is-dragging, html.fk .studio .is-dragging { transition: none !important; animation: none !important; }
+html.fk .fk-sheet.is-leaving, html.fk .studio .is-leaving { transition: transform 170ms ease-in !important; }
+html.fk .fk-sheet__grab { flex: none; display: grid; place-items: center; height: 22px; touch-action: none; cursor: grab; }
+html.fk .fk-sheet__grab i { width: 38px; height: 4px; border-radius: 2px; background: var(--fk-rule-strong); }
+html.fk .fk-sheet__head { flex: none; display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; padding: 2px 12px 14px var(--fk-gutter); touch-action: none; }
+html.fk .fk-sheet__head h2 { margin: 0; font-family: var(--fk-display); font-size: 38px; font-weight: 400; line-height: 1; letter-spacing: -.025em; color: var(--fk-ink); }
+html.fk .fk-sheet__head h2 span { color: var(--fk-red); }
+html.fk .fk-eyebrow, html.fk .fk-label { margin: 0 0 8px; font-family: var(--fk-mono); font-size: 10px; font-weight: 500; letter-spacing: .2em; text-transform: uppercase; color: var(--fk-red-ink); }
+html.fk .fk-close { display: grid; place-items: center; width: var(--fk-hit); height: var(--fk-hit); border: 0; border-radius: 50%; background: none; color: var(--fk-ink-2); cursor: pointer; transition: background-color var(--fk-fast) ease, transform var(--fk-fast) ease; }
+html.fk .fk-close:active { background: rgba(28, 27, 25, .08); transform: scale(.94); }
+html.fk .fk-close svg { width: 20px; height: 20px; }
+html.fk .fk-sheet__body { flex: 1 1 auto; min-height: 0; overflow-y: auto; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; padding: 4px var(--fk-gutter) 22px; border-top: 1px solid var(--fk-rule); }
+
+/* ---- 6 The kit -------------------------------------------------------------------------------- */
+html.fk .fk-label { margin: 18px 0 10px; color: var(--fk-ink-3); }
+html.fk .fk-rooms { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+html.fk .fk-room { position: relative; display: grid; grid-template-columns: 1fr; align-content: start; gap: 2px; min-height: 104px; padding: 12px 14px 14px; border: 1px solid var(--fk-rule); border-radius: var(--fk-r-m); background: var(--fk-mount); color: var(--fk-ink); font: inherit; text-align: left; cursor: pointer; box-shadow: 0 1px 1px rgba(28, 27, 25, .05), 0 10px 20px -16px rgba(28, 27, 25, .4); transition: transform var(--fk-fast) ease, border-color var(--fk-fast) ease; }
+html.fk .fk-room b { font-family: var(--fk-frame); font-size: 15px; font-weight: 700; letter-spacing: .06em; color: var(--fk-red); margin-bottom: 8px; }
+html.fk .fk-room b::after { content: "A"; }
+html.fk .fk-room strong { font-family: var(--fk-display); font-size: 25px; font-weight: 400; line-height: 1.05; letter-spacing: -.02em; }
+html.fk .fk-room small { font-family: var(--fk-ui); font-size: 12.5px; line-height: 1.35; color: var(--fk-ink-3); }
+html.fk .fk-room:active, html.fk .fk-chip:active { transform: scale(.975); box-shadow: 0 1px 1px rgba(28, 27, 25, .06); }
+html.fk .fk-room[aria-current="page"], html.fk .fk-chip[aria-current="page"] { border-color: var(--fk-red); box-shadow: inset 0 0 0 1px var(--fk-red); background: linear-gradient(0deg, var(--fk-red-wash), var(--fk-red-wash)), var(--fk-mount); }
+html.fk .fk-world { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+html.fk .fk-chip { display: grid; gap: 6px; min-height: 68px; padding: 10px 12px; border: 1px solid var(--fk-rule); border-radius: var(--fk-r-m); background: var(--fk-mount); color: var(--fk-ink); font: inherit; text-align: left; cursor: pointer; transition: transform var(--fk-fast) ease, border-color var(--fk-fast) ease; }
+html.fk .fk-chip strong { font-family: var(--fk-ui); font-size: 13.5px; font-weight: 600; letter-spacing: -.005em; overflow: hidden; text-overflow: ellipsis; }
+html.fk .fk-chip small { font-family: var(--fk-frame); font-size: 20px; font-weight: 600; line-height: 1; color: var(--fk-ink-3); }
+html.fk .fk-tools { border-top: 1px solid var(--fk-rule); }
+html.fk .fk-tool { display: flex; align-items: center; justify-content: space-between; gap: 14px; width: 100%; min-height: 60px; padding: 9px 2px; border: 0; border-bottom: 1px solid var(--fk-rule); background: none; color: var(--fk-ink); font: inherit; text-align: left; cursor: pointer; transition: background-color var(--fk-fast) ease; }
+html.fk .fk-tool:last-child { border-bottom: 0; }
+html.fk .fk-tool span { display: grid; gap: 2px; min-width: 0; }
+html.fk .fk-tool strong { font-family: var(--fk-ui); font-size: 15.5px; font-weight: 500; letter-spacing: -.005em; }
+html.fk .fk-tool small { font-family: var(--fk-ui); font-size: 12.5px; color: var(--fk-ink-3); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+html.fk .fk-tool svg { flex: none; width: 18px; height: 18px; color: var(--fk-ink-3); transition: transform var(--fk-med) var(--fk-spring), color var(--fk-fast) ease; }
+html.fk .fk-tool:active { background: var(--fk-red-wash); }
+html.fk .fk-tool:active svg { transform: translateX(4px); color: var(--fk-red-ink); }
+
+/* ---- 7 App dialogs, menus and the library: all sheets ------------------------------------------ */
+@keyframes fk-rise { from { transform: translate3d(0, 104%, 0); } to { transform: none; } }
+@keyframes fk-enter { from { opacity: 0; transform: translate3d(0, 10px, 0); } to { opacity: 1; transform: none; } }
+
+/* Dialogs (worlds, go anywhere, export, settings, new world and the rest) */
+html.fk .studio dialog.dialog { position: fixed !important; z-index: 60 !important; inset: auto 0 0 0 !important; display: flex !important; flex-direction: column !important; width: 100% !important; max-width: none !important; height: auto !important; min-height: 0 !important; max-height: calc(100dvh - var(--fk-safe-t) - 36px) !important; margin: 0 !important; padding: 0 0 var(--fk-safe-b) !important; border: 0 !important; border-radius: var(--fk-r-l) var(--fk-r-l) 0 0 !important; overflow: hidden !important; background: var(--fk-paper) !important; box-shadow: 0 0 0 100vmax rgba(12, 11, 10, .5), var(--fk-lift) !important; transform-origin: 50% 100%; animation: fk-rise var(--fk-slow) var(--fk-spring) backwards; transition: transform var(--fk-med) var(--fk-spring); }
+html.fk.fk-typing .studio dialog.dialog { bottom: var(--fk-kb, 0px) !important; max-height: calc(100dvh - var(--fk-kb, 0px) - var(--fk-safe-t) - 8px) !important; }
+/* The tape strips become the grab handle */
+html.fk .studio dialog.dialog::before { content: "" !important; position: absolute !important; z-index: 5 !important; top: 9px !important; left: 50% !important; right: auto !important; width: 38px !important; height: 4px !important; margin: 0 0 0 -19px !important; border: 0 !important; border-radius: 2px !important; background: var(--fk-rule-strong) !important; box-shadow: none !important; transform: none !important; opacity: .9 !important; pointer-events: none; }
+html.fk .studio dialog.dialog::after { display: none !important; }
+html.fk .studio dialog.dialog .dialog-heading { position: relative !important; flex: none !important; align-items: flex-start !important; gap: 8px !important; padding: 30px 8px 14px var(--fk-gutter) !important; border-bottom: 1px solid var(--fk-rule) !important; touch-action: none; }
+html.fk .studio dialog.dialog .dialog-heading h2 { margin: 0 0 6px !important; font-family: var(--fk-display) !important; font-size: 32px !important; font-weight: 400 !important; line-height: 1.04 !important; letter-spacing: -.022em !important; }
+html.fk .studio dialog.dialog .dialog-heading p { margin: 0 !important; font-size: 14.5px !important; line-height: 1.45 !important; }
+html.fk .studio dialog.dialog .dialog-heading .icon-button { flex: none !important; width: var(--fk-hit) !important; height: var(--fk-hit) !important; margin-top: -8px !important; border: 0 !important; border-radius: 50% !important; background: none !important; box-shadow: none !important; }
+html.fk .studio dialog.dialog .dialog-body { flex: 1 1 auto !important; min-height: 0 !important; max-height: none !important; overflow-y: auto !important; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; padding: 16px var(--fk-gutter) 24px !important; }
+html.fk .studio dialog.dialog .dialog-actions,
+html.fk .studio dialog.dialog .dialog-footer { flex: none !important; padding: 12px var(--fk-gutter) 14px !important; }
+html.fk .studio dialog.dialog :is(input:not([type="checkbox"]):not([type="radio"]), select) { min-height: var(--fk-hit) !important; }
+html.fk .studio dialog.dialog .button { min-height: var(--fk-hit) !important; }
+
+/* The studio menu, opened from the kit */
+html.fk.fk-has-bar .studio.phone-layout .application-menu-popover { position: fixed !important; z-index: 80 !important; inset: auto 0 var(--fk-band) 0 !important; width: auto !important; max-width: none !important; max-height: calc(100dvh - var(--fk-band) - var(--fk-safe-t) - 60px) !important; margin: 0 !important; padding: 30px 12px 14px !important; overflow-y: auto !important; overscroll-behavior: contain; border: 0 !important; border-radius: var(--fk-r-l) var(--fk-r-l) 0 0 !important; background: var(--fk-paper) !important; box-shadow: 0 0 0 100vmax rgba(12, 11, 10, .5), var(--fk-lift) !important; animation: fk-rise var(--fk-slow) var(--fk-spring) backwards; }
+html.fk.fk-has-bar .studio.phone-layout .application-menu-popover::before { content: ""; position: absolute; top: 9px; left: 50%; width: 38px; height: 4px; margin-left: -19px; border-radius: 2px; background: var(--fk-rule-strong); }
+html.fk .studio.phone-layout .application-menu-popover .popover-label { padding: 0 8px 10px !important; font-family: var(--fk-mono) !important; font-size: 10px !important; letter-spacing: .2em !important; color: var(--fk-red-ink) !important; }
+html.fk .studio.phone-layout .application-menu-popover .application-menu-grid { display: grid !important; grid-template-columns: 1fr 1fr !important; gap: 0 8px !important; }
+html.fk .studio.phone-layout .application-menu-popover .application-menu-grid > button,
+html.fk .studio.phone-layout .application-menu-popover .dropdown > button,
+html.fk .studio.phone-layout .application-menu-popover .menu-back { min-height: 52px !important; padding: 0 10px !important; border-radius: var(--fk-r-s) !important; font-family: var(--fk-ui) !important; font-size: 16px !important; color: var(--fk-ink) !important; }
+html.fk .studio.phone-layout .application-menu-popover .application-menu-grid > button { border-bottom: 1px solid var(--fk-rule) !important; border-radius: 0 !important; }
+html.fk .studio.phone-layout .application-menu-popover .menu-back { font-family: var(--fk-display) !important; font-size: 26px !important; letter-spacing: -.02em !important; gap: 8px !important; margin-bottom: 4px !important; }
+html.fk .studio.phone-layout .application-menu-popover .dropdown { position: static !important; width: auto !important; max-height: none !important; padding: 0 !important; border: 0 !important; box-shadow: none !important; background: none !important; }
+html.fk .studio.phone-layout .application-menu-popover .dropdown > button { width: 100% !important; border-bottom: 1px solid var(--fk-rule) !important; border-radius: 0 !important; }
+html.fk .studio.phone-layout .application-menu-popover .dropdown > button:last-child { border-bottom: 0 !important; }
+html.fk .studio.phone-layout .application-menu-popover kbd { display: none !important; }
+html.fk .studio.phone-layout .application-menu-popover button:active { background: var(--fk-red-wash) !important; }
+
+/* A blurred strip would trap its own menu inside it (fixed children anchor to it), so these are solid */
+html.fk .studio.phone-layout .document-heading,
+html.fk .studio.phone-layout .screenplay-toolbar,
+html.fk .studio.phone-layout .director-nav,
+html.fk .studio.phone-layout .formatbar { -webkit-backdrop-filter: none !important; backdrop-filter: none !important; }
+html.fk .studio.phone-layout .document-heading { background-color: var(--fk-paper) !important; }
+html.fk .studio.phone-layout .screenplay-toolbar { background-color: #F3F1EB !important; }
+/* Small menus (document actions, document types, screenplay tools) rise above the bar */
+html.fk .studio.phone-layout:has(.workspace-layout .menu-host > .dropdown, .script-more-popover, .binder) .workspace-layout { z-index: 40 !important; }
+html.fk .studio.phone-layout .workspace-layout .menu-host > .dropdown,
+html.fk .studio.phone-layout .script-more-popover { position: fixed !important; z-index: 70 !important; inset: auto 0 var(--fk-band) 0 !important; top: auto !important; width: auto !important; min-width: 0 !important; max-width: none !important; max-height: min(72dvh, calc(100dvh - var(--fk-band) - var(--fk-safe-t) - 60px)) !important; margin: 0 !important; padding: 30px 12px 12px !important; overflow-y: auto !important; overscroll-behavior: contain; border: 0 !important; border-radius: var(--fk-r-l) var(--fk-r-l) 0 0 !important; background: var(--fk-paper) !important; background-image: linear-gradient(var(--fk-rule-strong), var(--fk-rule-strong)) !important; background-size: 38px 4px !important; background-position: 50% 9px !important; background-repeat: no-repeat !important; box-shadow: 0 0 0 100vmax rgba(12, 11, 10, .46), var(--fk-lift) !important; transform: none !important; animation: fk-rise var(--fk-med) var(--fk-ease) backwards; }
+html.fk.fk-typing .studio.phone-layout .workspace-layout .menu-host > .dropdown,
+html.fk.fk-typing .studio.phone-layout .script-more-popover { bottom: var(--fk-kb, 0px) !important; max-height: calc(100dvh - var(--fk-kb, 0px) - var(--fk-safe-t) - 60px) !important; }
+html.fk .studio.phone-layout .workspace-layout .menu-host > .dropdown > button,
+html.fk .studio.phone-layout .script-more-popover > button { display: flex !important; align-items: center !important; gap: 12px !important; width: 100% !important; min-height: 52px !important; padding: 0 10px !important; border: 0 !important; border-bottom: 1px solid var(--fk-rule) !important; border-radius: 0 !important; background: none !important; font-family: var(--fk-ui) !important; font-size: 16px !important; text-align: left !important; white-space: normal !important; color: var(--fk-ink) !important; }
+html.fk .studio.phone-layout .workspace-layout .menu-host > .dropdown > button:last-child { border-bottom: 0 !important; }
+html.fk .studio.phone-layout .workspace-layout .menu-host > .dropdown > button:active,
+html.fk .studio.phone-layout .script-more-popover > button:active { background: var(--fk-red-wash) !important; }
+html.fk .studio.phone-layout .workspace-layout .menu-host > .dropdown > button:disabled,
+html.fk .studio.phone-layout .script-more-popover > button:disabled { color: var(--fk-ink-3) !important; opacity: .55 !important; }
+html.fk .studio.phone-layout .script-more-popover .script-mobile-emphasis { display: grid !important; grid-template-columns: repeat(3, 1fr) !important; gap: 8px !important; padding: 0 0 10px !important; }
+html.fk .studio.phone-layout .script-more-popover .script-mobile-emphasis .script-tool { width: auto !important; height: var(--fk-hit) !important; border: 1px solid var(--fk-rule) !important; border-radius: var(--fk-r-s) !important; background: var(--fk-mount) !important; }
+html.fk .studio.phone-layout .script-more-popover .script-format-exception { background: none !important; border: 0 !important; display: grid !important; gap: 8px !important; padding: 14px 10px 6px !important; font-family: var(--fk-mono) !important; font-size: 10px !important; letter-spacing: .16em !important; text-transform: uppercase !important; color: var(--fk-ink-3) !important; }
+html.fk .studio.phone-layout .script-more-popover .script-format-exception select { width: 100% !important; min-height: var(--fk-hit) !important; font-family: var(--fk-ui) !important; letter-spacing: 0 !important; text-transform: none !important; }
+
+/* The world library: a tall sheet */
+html.fk .studio.phone-layout .phone-panel-backdrop { z-index: 50 !important; background: rgba(12, 11, 10, .5) !important; border: 0 !important; }
+html.fk .studio.phone-layout aside.binder { position: fixed !important; z-index: 51 !important; inset: calc(var(--fk-safe-t) + 14px) 0 0 0 !important; width: 100% !important; max-width: none !important; height: auto !important; padding-bottom: var(--fk-safe-b) !important; border: 0 !important; border-radius: var(--fk-r-l) var(--fk-r-l) 0 0 !important; overflow: hidden !important; background: var(--fk-paper) !important; box-shadow: var(--fk-lift) !important; animation: fk-rise var(--fk-slow) var(--fk-spring) backwards; transition: transform var(--fk-med) var(--fk-spring); }
+html.fk .studio.phone-layout aside.binder .phone-panel-heading { position: relative !important; flex: none !important; min-height: 0 !important; padding: 26px 8px 8px var(--fk-gutter) !important; border: 0 !important; background: none !important; touch-action: none; }
+html.fk .studio.phone-layout aside.binder .phone-panel-heading::before { content: ""; position: absolute; top: 9px; left: 50%; width: 38px; height: 4px; margin-left: -19px; border-radius: 2px; background: var(--fk-rule-strong); }
+html.fk .studio.phone-layout aside.binder .phone-panel-heading strong { font-family: var(--fk-display) !important; font-size: 32px !important; font-weight: 400 !important; letter-spacing: -.022em !important; line-height: 1.1 !important; color: var(--fk-ink) !important; }
+html.fk .studio.phone-layout aside.binder .phone-panel-heading .icon-button { width: var(--fk-hit) !important; height: var(--fk-hit) !important; border: 0 !important; border-radius: 50% !important; background: none !important; box-shadow: none !important; }
+html.fk .studio.phone-layout aside.binder .binder-search { margin: 4px var(--fk-gutter) 10px !important; min-height: var(--fk-hit) !important; border-radius: var(--fk-r-s) !important; }
+html.fk .studio.phone-layout aside.binder .library-sections { padding-left: calc(var(--fk-gutter) - 6px) !important; padding-right: calc(var(--fk-gutter) - 6px) !important; }
+html.fk .studio.phone-layout aside.binder .library-sections .section-choice { min-height: var(--fk-hit) !important; border-radius: var(--fk-r-s) !important; }
+html.fk .studio.phone-layout aside.binder .binder-content .tree-row { min-height: 52px !important; }
+
+/* ---- 8 Rooms ------------------------------------------------------------------------------------ */
+/* Arriving in a room */
+html.fk .studio.phone-layout .editor-body > :not(.story-atlas) { animation: fk-enter 340ms var(--fk-ease) backwards; }
+html.fk .studio.phone-layout .editor-body { overscroll-behavior-y: contain; -webkit-overflow-scrolling: touch; scroll-padding-bottom: 24px; }
+
+/* The document strip: its name set as a title, quiet round tools */
+html.fk .studio.phone-layout .document-heading { min-height: 56px !important; padding: 4px 6px 4px var(--fk-gutter) !important; align-items: center !important; }
+html.fk .studio.phone-layout .document-heading .document-identity input { font-family: var(--fk-display) !important; font-size: 24px !important; font-weight: 400 !important; letter-spacing: -.015em !important; height: var(--fk-hit) !important; padding-left: 0 !important; }
+html.fk .studio.phone-layout .document-heading .document-context-actions { gap: 0 !important; }
+html.fk .studio.phone-layout .document-heading .document-context-actions :is(.icon-button, .document-delete) { width: var(--fk-hit) !important; height: var(--fk-hit) !important; border: 0 !important; border-radius: 50% !important; background: none !important; box-shadow: none !important; }
+html.fk .studio.phone-layout .document-heading .document-context-actions :is(.icon-button, .document-delete):active { background: rgba(28, 27, 25, .08) !important; transform: scale(.94); }
+
+/* Draft strip above Visuals and Sequence */
+html.fk .studio.phone-layout .director-nav { padding: 4px 6px 4px var(--fk-gutter) !important; min-height: 56px !important; }
+html.fk .studio.phone-layout .director-nav .workspace-context { padding: 0 !important; width: 100% !important; }
+html.fk .studio.phone-layout .director-nav select { min-height: 44px !important; border-radius: var(--fk-r-s) !important; }
+
+/* A section of the world opens under a proper title */
+html.fk .studio.phone-layout .collection-workspace .collection-name,
+html.fk .studio.phone-layout .collection-workspace .collection-name input { font-family: var(--fk-display) !important; font-size: 38px !important; font-weight: 400 !important; line-height: 1.05 !important; letter-spacing: -.025em !important; color: var(--fk-ink) !important; }
+html.fk .studio.phone-layout .collection-workspace .collection-create { min-height: var(--fk-hit) !important; }
+
+/* Press feedback on the app's own buttons */
+html.fk .studio.phone-layout .button:active,
+html.fk .studio.phone-layout .lbd-darkroom .lbd-continue:active { transform: scale(.975); }
+
+/* ---- 9 Motion preferences ---------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  html.fk .fk-bar, html.fk .fk-bar *, html.fk .fk-sheet, html.fk .fk-sheet *, html.fk .fk-veil,
+  html.fk .studio dialog.dialog, html.fk .studio .binder, html.fk .studio .application-menu-popover,
+  html.fk .studio .editor-body > * { transition-duration: .01ms !important; animation: none !important; }
+}
+
+}

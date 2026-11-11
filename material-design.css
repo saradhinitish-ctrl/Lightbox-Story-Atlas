@@ -241,8 +241,8 @@
   .studio.atlas-shell .dialog[open] {border-color:CanvasText;box-shadow:none;}
 }
 
-/* Swap the bundled legacy mark for the Lit Spine symbol across studio surfaces. */
-.studio .studio-mark {content:url('./app-icons/lit-spine-96.png');}
+/* Swap the bundled legacy mark for the Viewfinder symbol across studio surfaces. */
+.studio .studio-mark {content:url('./app-icons/viewfinder-mark.svg');}
 
 /* Keep full-page scene tools on their own canvas instead of exposing the Atlas. */
 .studio.atlas-shell.stage-active :is(.workspace-layout,.main-editor,.editor-body) {

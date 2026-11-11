@@ -42,14 +42,14 @@ export const metadata: Metadata = {
   verification: { google: "O3bisUWxuO7h3-av5hKtNY4EnKVh_MdZ2UQ9zRUk2WE" },
   alternates: { canonical: "/" },
   robots: { index:true, follow:true },
-  openGraph: { type:"website", siteName:"Lightbox", title:"Lightbox — A workspace for filmmakers", description:"Develop the story. Write the screenplay. Find the visual language.", url:"/", images:[{url:"/brand/lit-spine-512.png",width:1254,height:1254,alt:"Lightbox logo"}] },
-  twitter: { card:"summary", title:"Lightbox — A workspace for filmmakers", description:"A home for your ideas, screenplay, visual language, and scenes.", images:["/brand/lit-spine-512.png"] },
+  openGraph: { type:"website", siteName:"Lightbox", title:"Lightbox — A workspace for filmmakers", description:"Develop the story. Write the screenplay. Find the visual language.", url:"/", images:[{url:"/brand/viewfinder-512.png",width:512,height:512,alt:"Lightbox logo"}] },
+  twitter: { card:"summary", title:"Lightbox — A workspace for filmmakers", description:"A home for your ideas, screenplay, visual language, and scenes.", images:["/brand/viewfinder-512.png"] },
   manifest: "/manifest.webmanifest?version=lightbox-origin-v2",
   appleWebApp: { capable: true, title: "Lightbox", statusBarStyle: "default" },
   icons: {
-    icon: [{ url: "/brand/lit-spine-192.png", type: "image/png", sizes: "192x192" }, { url: "/favicon.ico?brand=lit-spine-v1", sizes: "any" }],
-    apple: "/brand/lit-spine-180.png",
-    shortcut: "/brand/lit-spine-192.png",
+    icon: [{ url: "/brand/viewfinder-192.png", type: "image/png", sizes: "192x192" }, { url: "/favicon.ico?brand=viewfinder-v1", sizes: "any" }],
+    apple: "/brand/viewfinder-180.png",
+    shortcut: "/brand/viewfinder-192.png",
   },
 };
 

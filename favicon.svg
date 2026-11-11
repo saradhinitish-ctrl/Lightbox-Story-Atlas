@@ -1,4 +1,9 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512" role="img" aria-label="Lightbox Studio Lit Spine logo">
-  <rect width="512" height="512" rx="94" fill="#181916"/>
-  <path d="M367 105h18v302h-18z" fill="#C6FF00"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512" role="img" aria-label="Lightbox viewfinder logo">
+  <rect width="512" height="512" rx="102" fill="#18181A"/>
+  <path d="M256 256V118A138 138 0 0 1 375.51 325.00Z" fill="#D4301F"/>
+  <g fill="none" stroke="#EFEDE6">
+    <circle cx="256" cy="256" r="168" stroke-width="30"/>
+    <circle cx="256" cy="256" r="140" stroke-width="13"/>
+    <path d="M60 256H452M256 60V452" stroke-width="13"/>
+  </g>
 </svg>

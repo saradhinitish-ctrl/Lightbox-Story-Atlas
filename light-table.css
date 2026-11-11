@@ -188,8 +188,8 @@ html,body{background:var(--lt-table)}
   font-family:var(--lt-display)!important;font-weight:400!important;font-size:25px!important;
   letter-spacing:-.01em!important;color:var(--lt-chassis-ink)!important;
 }
-/* The Lit Spine mark: its signal bar takes the grease-pencil red */
-.studio.atlas-shell .app-wordmark img.studio-mark{filter:hue-rotate(-78deg) saturate(1.35);border-radius:6px;box-shadow:0 0 0 1px var(--lt-chassis-line)}
+/* The Chosen Frame mark: already drawn in the grease-pencil red, so no recolouring */
+.studio.atlas-shell .app-wordmark img.studio-mark{filter:none;border-radius:7px;box-shadow:0 0 0 1px var(--lt-chassis-line)}
 .studio.atlas-shell :is(.header-world,.compact-header .header-world){color:var(--lt-chassis-ink)!important;border-color:var(--lt-chassis-line)!important}
 .studio.atlas-shell .header-world:hover{background:var(--lt-chassis-2)!important}
 .studio.atlas-shell .compact-header :is(.icon-button,.application-menu-trigger,.header-save){color:var(--lt-chassis-muted)!important}

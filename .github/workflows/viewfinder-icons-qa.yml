@@ -1,4 +1,4 @@
-name: Lit Spine Website Icon QA
+name: Viewfinder Website Icon QA
 on:
   push:
     branches:
@@ -7,18 +7,20 @@ on:
       - 'favicon.svg'
       - 'favicon.ico'
       - 'apple-touch-icon.png'
-      - 'app-icons/lit-spine-*.png'
+      - 'app-icons/viewfinder*'
       - 'manifest.webmanifest'
+      - 'material-design.css'
+      - 'light-table.css'
       - '*.html'
-      - 'tests/lit-spine-qa.mjs'
-      - '.github/workflows/lit-spine-icons-qa.yml'
+      - 'tests/viewfinder-icons-qa.mjs'
+      - '.github/workflows/viewfinder-icons-qa.yml'
   pull_request:
     branches: [main]
   workflow_dispatch:
 permissions:
   contents: read
 jobs:
-  verify-lit-spine-icons:
+  verify-viewfinder-icons:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -26,4 +28,4 @@ jobs:
         with:
           node-version: '22'
       - name: Verify website favicons and installation icons
-        run: node tests/lit-spine-qa.mjs
+        run: node tests/viewfinder-icons-qa.mjs

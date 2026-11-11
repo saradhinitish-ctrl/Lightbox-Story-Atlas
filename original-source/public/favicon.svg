@@ -1,5 +1,9 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
-  <rect width="64" height="64" rx="16" fill="#faf3e7"/>
-  <path d="M34 17H18v29h29V30" stroke="#ae4d37" stroke-width="3.5" stroke-linecap="square" stroke-linejoin="miter"/>
-  <path d="M28 25 47 16v19l-19 9z" fill="#e7a078"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512" role="img" aria-label="Lightbox viewfinder logo">
+  <rect width="512" height="512" rx="102" fill="#18181A"/>
+  <path d="M256 256V118A138 138 0 0 1 375.51 325.00Z" fill="#D4301F"/>
+  <g fill="none" stroke="#EFEDE6">
+    <circle cx="256" cy="256" r="168" stroke-width="30"/>
+    <circle cx="256" cy="256" r="140" stroke-width="13"/>
+    <path d="M60 256H452M256 60V452" stroke-width="13"/>
+  </g>
 </svg>

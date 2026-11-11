@@ -33,7 +33,7 @@ function load(file){file=path.resolve(file);if(cache.has(file))return cache.get(
     assert.equal(access.checkArchiveAccess(request(archiveOwner),archiveOwner),null,p);
     assert.equal(access.checkArchiveAccess(request(archiveOwner),undefined).status,404,p);
   }
-  for(const p of ['/','/studio','/join','/brand/lit-spine-192.png','/api/workspace'])assert.equal(access.isPrivateArchivePath(p),false,p);
+  for(const p of ['/','/studio','/join','/brand/viewfinder-192.png','/api/workspace'])assert.equal(access.isPrivateArchivePath(p),false,p);
   const {servePrivateArchive}=load('lib/private-archive.ts');
   const archiveRequest=user=>new Request('https://lightbox.test/legacy/session-vault.json',{headers:user?{'oai-authenticated-user-id':user}:{}});
   assert.equal(servePrivateArchive(archiveRequest(),'/legacy/session-vault.json').status,404);

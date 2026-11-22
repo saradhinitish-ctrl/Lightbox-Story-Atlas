@@ -5,6 +5,7 @@ import {readFile} from 'node:fs/promises';
 import {resolve, extname, sep} from 'node:path';
 import process from 'node:process';
 import assert from 'node:assert/strict';
+import {openApp} from './fixtures.mjs';
 
 const {chromium} = await import(process.env.PLAYWRIGHT_MODULE || 'playwright');
 const root = process.cwd();
@@ -125,6 +126,41 @@ for (const [label, width, height, mobile] of [['phone 320', 320, 640, true], ['p
   }
   await context.close();
 }
+
+
+// ---- The Android download ---------------------------------------------------------------------------
+const ANDROID = 'Mozilla/5.0 (Linux; Android 14; Pixel 8) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Mobile Safari/537.36';
+const NATIVE = 'Mozilla/5.0 (Linux; Android 14; Pixel 8 Build/AP1A; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/130.0.0.0 Mobile Safari/537.36';
+await check('android: every public page links the same APK, and the file is really served', async () => {
+  const context = await browser.newContext({acceptDownloads: true}); const page = await context.newPage();
+  const hrefs = new Set();
+  for (const name of PAGES) { await page.goto(`${BASE}/${name}.html`); for (const h of await page.locator('a[data-apk]').evaluateAll((els) => els.map((e) => e.getAttribute('href') + '|' + e.getAttribute('download')))) hrefs.add(h); assert.ok(await page.locator('a[data-apk]').count() >= 2, name + ' has the nav and footer links'); }
+  assert.deepEqual([...hrefs], ['/android-downloads/lightbox-studio-1.0.7.apk|Lightbox-Studio-1.0.7.apk']);
+  const res = await page.request.get(BASE + '/android-downloads/lightbox-studio-1.0.7.apk');
+  assert.equal(res.status(), 200); const body = await res.body(); assert.ok(body.length > 1_000_000, 'size ' + body.length); assert.equal(body.subarray(0, 2).toString(), 'PK', 'a zip, which is what an APK is');
+  await page.goto(BASE + '/about.html'); const dl = page.waitForEvent('download'); await page.locator('.hero-copy .btn--dark').click();
+  assert.equal((await dl).suggestedFilename(), 'Lightbox-Studio-1.0.7.apk');
+  await context.close();
+});
+await check('android: about.html has a download in the hero, a section with install steps, and the nav', async () => {
+  const context = await browser.newContext({viewport: {width: 390, height: 844}, isMobile: true, hasTouch: true}); const page = await context.newPage();
+  await page.goto(BASE + '/about.html');
+  assert.equal(await page.locator('.hero-copy .btn--dark').isVisible(), true);
+  assert.equal(await page.locator('#android .get-steps li').count(), 3);
+  for (const el of await page.locator('a[data-apk]:visible').all()) { const r = await el.boundingBox(); assert.ok(r.height >= 44 - .5, 'tap target ' + r.height); }
+  await context.close();
+});
+await check('android: inside the installed app the download controls are gone', async () => {
+  const context = await browser.newContext({userAgent: NATIVE, isMobile: true}); const page = await context.newPage();
+  await page.goto(BASE + '/about.html');
+  assert.equal(await page.evaluate(() => [...document.querySelectorAll('[data-apk]')].filter((e) => e.offsetParent).length), 0);
+  await context.close();
+});
+await check('android: the phone kit offers the app to Android browsers only (not desktops, not the app itself)', async () => {
+  const rows = async (ua) => { const context = await browser.newContext({userAgent: ua, viewport: {width: 390, height: 844}, isMobile: true, hasTouch: true}); const page = await context.newPage(); await openApp(page, BASE); await page.locator('.fk-stop[data-fk="kit"]').click(); await page.locator('.fk-sheet.is-open').waitFor(); const n = await page.locator('[data-fk-act]').count(); const has = await page.locator('[data-fk-act="android"]').count(); await context.close(); return {n, has}; };
+  assert.deepEqual(await rows(ANDROID), {n: 14, has: 1});
+  assert.deepEqual(await rows(NATIVE), {n: 13, has: 0});
+});
 
 await browser.close();
 server.close();

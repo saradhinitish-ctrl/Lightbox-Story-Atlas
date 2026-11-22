@@ -142,7 +142,11 @@
     { id: 'worlds', title: 'Switch or start a world', detail: 'Your projects', run: () => press('.studio .header-world') },
     { id: 'export', title: 'Export screenplay', detail: 'PDF, Fountain, Final Draft', run: () => command('Export screenplay') },
     { id: 'settings', title: 'Settings', detail: 'Title, writing environment, backups', run: () => command('Workspace settings') },
-    { id: 'menu', title: 'Studio menu', detail: 'File, Edit, View, Documents and the rest', run: () => press('.studio .application-menu-trigger') }
+    { id: 'menu', title: 'Studio menu', detail: 'File, Edit, View, Documents and the rest', run: () => press('.studio .application-menu-trigger') },
+    // Offered only to Android visitors in a browser; the installed app already is the app.
+    ...(/Android/i.test(navigator.userAgent) && !document.documentElement.classList.contains('lb-native-shell')
+      ? [{ id: 'android', title: 'Get the Android app', detail: 'Lightbox 1.0.7 with home-screen widgets', run: () => { const a = document.createElement('a'); a.href = '/android-downloads/lightbox-studio-1.0.7.apk'; a.download = 'Lightbox-Studio-1.0.7.apk'; document.body.append(a); a.click(); a.remove(); } }]
+      : [])
   ];
   const ACTIONS = Object.fromEntries([...ROOMS, ...WORLD, ...TOOLS].map((a) => [a.id, a]));
   function buildKit() {

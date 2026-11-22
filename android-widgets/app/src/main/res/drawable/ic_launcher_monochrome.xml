@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The same mark in one colour, for Android 13+ themed icons (the system tints it). -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+ android:width="108dp" android:height="108dp"
+ android:viewportWidth="620" android:viewportHeight="620">
+ <group android:translateX="54" android:translateY="54">
+  <path android:fillColor="#000000" android:pathData="M256,256V118A138,138 0 0,1 375.51,325Z"/>
+  <path android:fillColor="#00000000" android:strokeColor="#000000" android:strokeWidth="30"
+   android:pathData="M88,256a168,168 0 1,0 336,0a168,168 0 1,0 -336,0"/>
+  <path android:fillColor="#00000000" android:strokeColor="#000000" android:strokeWidth="13"
+   android:pathData="M116,256a140,140 0 1,0 280,0a140,140 0 1,0 -280,0"/>
+  <path android:fillColor="#00000000" android:strokeColor="#000000" android:strokeWidth="13"
+   android:pathData="M60,256H452M256,60V452"/>
+ </group>
+</vector>

@@ -1,6 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- The Lightbox viewfinder mark (the website's logo), drawn to sit inside the adaptive-icon safe zone:
+     the 512-unit mark is placed in a 620-unit viewport, so its ring reaches about 32dp from the centre of the 108dp canvas. -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
  android:width="108dp" android:height="108dp"
- android:viewportWidth="108" android:viewportHeight="108">
- <path android:fillColor="#C6FF00" android:pathData="M74,20h4v68h-4z"/>
+ android:viewportWidth="620" android:viewportHeight="620">
+ <group android:translateX="54" android:translateY="54">
+  <path android:fillColor="#D4301F" android:pathData="M256,256V118A138,138 0 0,1 375.51,325Z"/>
+  <path android:fillColor="#00000000" android:strokeColor="#EFEDE6" android:strokeWidth="30"
+   android:pathData="M88,256a168,168 0 1,0 336,0a168,168 0 1,0 -336,0"/>
+  <path android:fillColor="#00000000" android:strokeColor="#EFEDE6" android:strokeWidth="13"
+   android:pathData="M116,256a140,140 0 1,0 280,0a140,140 0 1,0 -280,0"/>
+  <path android:fillColor="#00000000" android:strokeColor="#EFEDE6" android:strokeWidth="13"
+   android:pathData="M60,256H452M256,60V452"/>
+ </group>
 </vector>

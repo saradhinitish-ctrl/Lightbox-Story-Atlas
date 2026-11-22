@@ -44,7 +44,7 @@ dependencies {
 def syncAssets = tasks.register('prepareSyncAssets', Copy) {
     from(rootProject.file('..')) {
         include 'story-sync.js', 'index.html', 'script.js', 'opening.*', 'studio-design.*',
-                'lightbox.css', 'lightbox-app.css', 'first-page.css',
+                'lightbox.css', 'lightbox-app.css',
                 'install-app.css',
                 'manifest.webmanifest', 'app-icons/*.png'
     }

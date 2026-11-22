@@ -54,20 +54,11 @@
   background-color:#faf9f5; background-image:var(--lb-paper-surface);background-size:auto,384px;
   border:1px solid #d7d8cd;border-radius:5px;box-shadow:var(--lb-sheet-shadow);
 }
-.studio.atlas-shell .planning-field:first-child {
-  background-image:linear-gradient(#fffdf866,#fffdf866),var(--lb-crease);background-size:cover;
-}
-.studio.atlas-shell .planning-field>span {font:500 11px/1.6 var(--font-data);letter-spacing:.07em;text-transform:uppercase;color:#55574e;}
 .studio.atlas-shell :is(.planning-field,.collection-card):focus-within {
   border-color:#7a853f;box-shadow:inset 3px 0 0 #8ba33b,var(--lb-sheet-shadow);
 }
 .studio.atlas-shell .collection-card.index-card:hover {background-color:#fffefa;box-shadow:0 2px 4px #25282012,0 18px 36px -18px #25282050;border-color:#a2a78e;}
 .studio.atlas-shell .collection-card-icon {background:#edf0e2;border-color:#c0c8a5;border-radius:4px;}
-.studio.atlas-shell .beat-card {border-top:3px solid #c6d69a;}
-.studio.atlas-shell .beat-number>span {background:#edf0e2;border:0;border-radius:3px;}
-.studio.atlas-shell .beat-card .beat-title {font-size:30px;}
-.studio.atlas-shell .beat-card>textarea {background:#fffdf9;border-color:#c5c8b8;}
-.studio.atlas-shell .beat-insights {background-image:var(--lb-paper-surface);background-size:auto,384px;background-color:#f6f6ef;border:1px solid #d7d8cd;box-shadow:var(--lb-sheet-shadow);}
 .studio.atlas-shell .script-page-scroll {background:#e9eae3;background-image:linear-gradient(#e9eae3e8,#e9eae3e8),var(--lb-fibre);background-size:auto,384px;}
 .studio.atlas-shell .screenplay-prosemirror {background:#fffefa;box-shadow:0 0 0 1px #d7d8ce,0 8px 28px #25282016;}
 .studio.atlas-shell :is(.compact-document-heading,.formatbar,.writing-tools,.document-save-bar,.editor-footer) {background:#fafbf7;border-color:#e1e3d9;}
@@ -109,7 +100,6 @@
 .studio.atlas-shell .visual-language .vl-reference-category {background:#edf0e2;border-color:#d9decb;color:#4b553a;}
 .studio.atlas-shell .visual-language .vl-script-excerpt {background:#f3f4ed;border-color:#d7dacb;}
 .studio.atlas-shell .visual-language .vl-group-filters>button:is(.is-active,[aria-pressed=true]) {background:#edf3d8;border-color:#c4d498;}
-.studio.atlas-shell .visual-language[data-reference-canvas=dark] .vl-board-grid {background-color:#252720;background-image:var(--lb-stock-surface);background-size:auto,384px;border:1px solid #30352a;}
 
 /* Export is a print desk; the actual exported screenplay stays clean. */
 .studio.atlas-shell .dialog,.vl-reference-dialog {
@@ -192,7 +182,6 @@
 .studio.atlas-shell .toast-message {inset:auto auto calc(76px + env(safe-area-inset-bottom)) 50%;}
 /* Respect the established cylinder geometry and animation; only its paper inserts change. */
 .studio.atlas-shell.lb-cylinder-atlas,.studio.atlas-shell.lb-cylinder-atlas .story-atlas {background-color:#fff!important;}
-.lb-cylinder-v9 .spark-note,.lb-cylinder-v9 .script-page-preview {background-image:var(--lb-paper-surface)!important;background-size:auto,320px!important;}
 
 @media (max-width:767px) {
   .studio.atlas-shell :is(.vl-header h1,.director-tool-heading h1,.stage-heading h1) {font-size:39px;}
@@ -278,7 +267,6 @@
 .studio.atlas-shell .breakdown-stage .breakdown-reference>p {font-size:13px;line-height:1.6;color:var(--lb-secondary);overflow-wrap:anywhere;}
 .studio.atlas-shell .breakdown-stage .breakdown-assets>button {background:#fffefa;border-color:#d7d8cd;border-radius:4px;min-height:54px;}
 .studio.atlas-shell .breakdown-stage .breakdown-assets>p {font-size:13px;line-height:1.7;color:var(--lb-secondary);}
-.studio.atlas-shell :is(.breakdown-stage,.pitch-stage) .lb-cylinder-v9 {display:none!important;}
 @media(max-width:900px) {
   .studio.atlas-shell .breakdown-stage .breakdown-columns {grid-template-columns:minmax(0,1fr);}
   .studio.atlas-shell .breakdown-stage .breakdown-frames {position:static;}

@@ -232,24 +232,12 @@ body { margin:0; background:var(--lb-canvas); color:var(--lb-ink); }
 .studio.atlas-shell .planning-sheet header h2 { font-size:clamp(30px,3.5vw,44px); line-height:1.15; margin:6px 0 10px; }
 .studio.atlas-shell .planning-sheet header h2 { font-family:var(--font-display); font-weight:400; font-size:clamp(36px,3.8vw,50px); letter-spacing:-.025em; }
 .studio.atlas-shell .planning-sheet header p { color:var(--lb-secondary); font-size:14px; line-height:1.65; }
-.studio.atlas-shell .planning-symbol { background:var(--lb-lime); color:var(--lb-ink); border:1.5px solid var(--lb-ink); border-radius:3px; width:50px; height:54px; box-shadow:2px 2px 0 var(--lb-ink); }
-.studio.atlas-shell .planning-field-grid { gap:20px; }
-.studio.atlas-shell .planning-field { padding:22px; background:var(--lb-card); border:1px solid #8A8D7E; border-radius:4px; box-shadow:none; }
-.studio.atlas-shell .planning-field>span { display:block; color:var(--lb-ink); font:600 13px/1.5 var(--font-ui); letter-spacing:0; margin-bottom:14px; }
-.studio.atlas-shell .planning-field>:is(input,textarea) { color:var(--lb-ink); background:transparent; font-family:var(--font-ui); font-size:16px; line-height:1.75; border:0; outline:none; box-shadow:none; padding:0; caret-color:var(--lb-ink); }
-.studio.atlas-shell .planning-field>textarea { min-height:132px; }
-.studio.atlas-shell .planning-field>:is(input,textarea)::placeholder { font-size:14px; color:var(--lb-muted); opacity:1; }
 .studio.atlas-shell :is(.planning-field,.collection-card):focus-within { border-color:var(--lb-ink); box-shadow:inset 3px 0 0 var(--lb-ink); transform:none; }
 .studio.atlas-shell :is(.planning-field,.collection-card):has(:is(input,textarea):focus-visible) { border-color:var(--lb-ink); box-shadow:inset 3px 0 0 var(--lb-ink); }
 .studio.atlas-shell :is(.planning-field,.collection-card) :is(input,textarea):focus-visible { outline:none; box-shadow:none; }
-.studio.atlas-shell .development-intro { background:transparent; border:0; padding:0; margin-bottom:24px; color:var(--lb-secondary); font-size:14px; line-height:1.75; }
-.studio.atlas-shell .planning-free-notes { background:var(--lb-paper); border:1px solid #8A8D7E; border-radius:4px; padding:24px; }
-.studio.atlas-shell .planning-free-notes>.section-label { color:var(--lb-secondary); font-size:10px; letter-spacing:.1em; }
-.studio.atlas-shell .planning-extra { margin-top:26px; border-color:var(--lb-rule); }
 .studio.atlas-shell .profile-image-drop { background:var(--lb-card); border:1px dashed #828576; border-radius:4px; color:var(--lb-secondary); }
 .studio.atlas-shell .profile-image-drop>svg { color:var(--lb-green); }
 .studio.atlas-shell .profile-image-drop:hover { background:#EAF2CF; border-color:var(--lb-ink); }
-.studio.atlas-shell :is(.profile-images-label,.profile-images-heading,.profile-images-help) { color:var(--lb-secondary); }
 
 /* Library cards share one geometry, including their empty / add states. */
 .studio.atlas-shell .collection-workspace.corkboard { max-width:1440px; padding:40px clamp(24px,4vw,64px) 100px; }
@@ -338,28 +326,12 @@ body { margin:0; background:var(--lb-canvas); color:var(--lb-ink); }
 .studio.atlas-shell .visual-language .vl-add-menu button:hover { background:#EAF2CF; }
 .studio.atlas-shell .visual-language .lb-canvas-toggle { display:inline-flex; align-items:center; justify-content:center; gap:7px; min-height:36px; padding:8px 12px; background:transparent; border:1px solid #8A8D7E; border-radius:3px; color:var(--lb-secondary); font-size:12px; white-space:nowrap; }
 .studio.atlas-shell .visual-language .lb-canvas-toggle[aria-pressed=true] { background:var(--lb-ink); border-color:var(--lb-ink); color:var(--lb-paper); }
-.studio.atlas-shell .visual-language[data-reference-canvas=dark] .vl-board-grid { background:#202020; padding:20px; border:1px solid var(--lb-ink); gap:22px; }
-.studio.atlas-shell .visual-language[data-reference-canvas=dark] .vl-media-preview { background:#303030; }
 
 /* Sequence and breakdown use the same card language, with room for real data. */
-.studio.atlas-shell .beat-view,.studio.atlas-shell .breakdown-stage { max-width:1600px; padding:36px clamp(24px,3vw,48px) 110px; }
+.studio.atlas-shell .breakdown-stage { max-width:1600px; padding:36px clamp(24px,3vw,48px) 110px; }
 .studio.atlas-shell :is(.director-tool-heading,.stage-heading) { padding-bottom:26px; margin-bottom:26px; border-bottom:2px solid var(--lb-ink); gap:20px; }
 .studio.atlas-shell :is(.director-tool-heading h1,.stage-heading h1) { font-size:clamp(32px,3.5vw,48px); line-height:1.15; }
-.studio.atlas-shell .beat-workspace { gap:28px; }
 .studio.atlas-shell .beat-timeline { gap:22px; padding:4px 6px 14px 0; }
-.studio.atlas-shell .beat-card { background:var(--lb-card); border:1.5px solid var(--lb-ink); border-radius:4px; box-shadow:3px 3px 0 var(--lb-ink); padding:22px; }
-.studio.atlas-shell .beat-number>span { color:var(--lb-ink); background:var(--lb-lilac); border:1px solid var(--lb-ink); padding:3px 6px; border-radius:2px; }
-.studio.atlas-shell .beat-card .beat-title { font-family:var(--font-ui); font-size:24px; font-weight:700; letter-spacing:-.035em; color:var(--lb-ink); }
-.studio.atlas-shell .beat-card>textarea { color:var(--lb-ink); background:var(--lb-paper); border-color:#8A8D7E; border-radius:3px; padding:14px; font-size:15px; line-height:1.7; }
-.studio.atlas-shell .beat-fields { gap:16px; }
-.studio.atlas-shell .beat-card :is(label,select,input) { color:var(--lb-secondary); border-color:#8A8D7E; border-radius:3px; }
-.studio.atlas-shell .beat-card :is(input,select) { color:var(--lb-ink); background:var(--lb-paper); }
-.studio.atlas-shell .beat-card input[type=range] { accent-color:#4B3E98; }
-.studio.atlas-shell .beat-insights { background:#E8E8DE; border:1px solid #8A8D7E; border-radius:4px; box-shadow:none; padding:24px; }
-.studio.atlas-shell .beat-insights :is(h2,h3) { font-family:var(--font-ui); color:var(--lb-ink); font-weight:700; }
-.studio.atlas-shell :is(.beat-add-card,.beat-arc-beginning) { background:transparent; color:var(--lb-secondary); border-color:#8A8D7E; border-radius:4px; box-shadow:none; }
-.studio.atlas-shell .beat-add-card:hover { background:#EAF2CF; color:var(--lb-ink); border-color:var(--lb-ink); }
-.studio.atlas-shell .beat-plan-facts { border-color:var(--lb-rule); }
 .studio.atlas-shell :is(.breakdown-script,.breakdown-frames) { border:1px solid #8A8D7E; border-radius:4px; background:var(--lb-card); box-shadow:none; padding:26px; }
 .studio.atlas-shell .breakdown-script { background:var(--lb-paper); }
 .studio.atlas-shell .breakdown-picker :is(label,select) { background:var(--lb-card); border-color:#8A8D7E; border-radius:3px; color:var(--lb-ink); }
@@ -473,13 +445,6 @@ body { margin:0; background:var(--lb-canvas); color:var(--lb-ink); }
   .studio.atlas-shell .planning-sheet { padding:26px 20px 100px!important; }
   .studio.atlas-shell .planning-sheet>header { gap:15px; margin-bottom:24px; padding-bottom:24px; }
   .studio.atlas-shell .planning-sheet header h2 { font-size:32px; }
-  .studio.atlas-shell .planning-symbol { width:42px; height:46px; flex:0 0 42px; border-radius:3px; }
-  .studio.atlas-shell .planning-field-grid { gap:16px!important; }
-  .studio.atlas-shell .planning-field { padding:20px!important; border-radius:4px!important; }
-  .studio.atlas-shell .planning-field>span { font-size:13px; margin-bottom:12px; }
-  .studio.atlas-shell .planning-field>textarea { min-height:120px; font-size:16px!important; }
-  .studio.atlas-shell .planning-field>textarea::placeholder { font-size:14px; }
-  .studio.atlas-shell .planning-free-notes { padding:20px!important; }
   .studio.atlas-shell .collection-workspace.corkboard { padding:28px 20px 100px; }
   .studio.atlas-shell .collection-heading { gap:18px; }
   .studio.atlas-shell .collection-create { min-height:44px; }
@@ -498,11 +463,8 @@ body { margin:0; background:var(--lb-canvas); color:var(--lb-ink); }
   .studio.atlas-shell .visual-language .vl-add>button { min-height:44px; }
   .studio.atlas-shell .visual-language .lb-canvas-toggle { min-height:44px; }
   .studio.atlas-shell .visual-language .vl-board-grid { gap:20px!important; }
-  .studio.atlas-shell .visual-language[data-reference-canvas=dark] .vl-board-grid { padding:14px; }
-  .studio.atlas-shell .beat-view,.studio.atlas-shell .breakdown-stage { padding:26px 20px 100px!important; }
+  .studio.atlas-shell .breakdown-stage { padding:26px 20px 100px!important; }
   .studio.atlas-shell .beat-timeline { gap:20px; padding-right:3px; }
-  .studio.atlas-shell .beat-card { padding:20px; border-radius:4px; }
-  .studio.atlas-shell .beat-insights { padding:22px; border-radius:4px; }
   .studio.atlas-shell .breakdown-columns { gap:20px; }
   .studio.atlas-shell .breakdown-stage :is(.breakdown-script,.breakdown-frames) { padding:20px; border-radius:4px; }
   .studio.atlas-shell .welcome { padding:45px 22px 90px; }

@@ -51,12 +51,6 @@
 .studio.atlas-shell .visual-language .vl-add-menu button:hover:not(:where(.lb-cylinder-v9 *, .script-page-zoom *, .script-page-preview *, .script-page-excerpt *)) {
     background: var(--lt-marker-wash)
 }
-.studio.atlas-shell .beat-card input[type=range]:not(:where(.lb-cylinder-v9 *, .script-page-zoom *, .script-page-preview *, .script-page-excerpt *)) {
-    accent-color: var(--lt-edge-ink)
-}
-.studio.atlas-shell .beat-add-card:hover:not(:where(.lb-cylinder-v9 *, .script-page-zoom *, .script-page-preview *, .script-page-excerpt *)) {
-    background: var(--lt-marker-wash)
-}
 .studio.atlas-shell .breakdown-assets>button:hover:not(:where(.lb-cylinder-v9 *, .script-page-zoom *, .script-page-preview *, .script-page-excerpt *)) {
     background: var(--lt-marker-wash)
 }
@@ -110,12 +104,6 @@
 .studio.atlas-shell .collection-card-icon:not(:where(.lb-cylinder-v9 *, .script-page-zoom *, .script-page-preview *, .script-page-excerpt *)) {
     background: var(--lt-marker-wash);
     border-color: var(--lt-marker)
-}
-.studio.atlas-shell .beat-card:not(:where(.lb-cylinder-v9 *, .script-page-zoom *, .script-page-preview *, .script-page-excerpt *)) {
-    border-top: 3px solid var(--lt-marker)
-}
-.studio.atlas-shell .beat-number>span:not(:where(.lb-cylinder-v9 *, .script-page-zoom *, .script-page-preview *, .script-page-excerpt *)) {
-    background: var(--lt-marker-wash)
 }
 .studio.atlas-shell .visual-language :is(.vl-film-button,.vl-directory-button,.vl-scene-list button).is-active:not(:where(.lb-cylinder-v9 *, .script-page-zoom *, .script-page-preview *, .script-page-excerpt *)) {
     background: var(--lt-marker-wash);

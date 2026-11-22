@@ -323,36 +323,11 @@ dialog.dialog::after{right:34px;transform:rotate(3deg)}
 }
 .studio.atlas-shell :is(.planning-field,.collection-card.index-card,.beat-card,.vl-scene-board):not(:where(.lb-cylinder-v9 *)):hover{box-shadow:var(--lt-lift-hi)!important}
 /* Story Foundation: each prompt is a numbered frame in a slide mount */
-.studio.atlas-shell .planning-field-grid{counter-reset:lt-frame}
-.studio.atlas-shell .planning-field-grid>.planning-field{
-  position:relative;counter-increment:lt-frame;
-  box-shadow:var(--lt-mount-window),var(--lt-lift)!important;
-}
-.studio.atlas-shell .planning-field-grid>.planning-field:hover{box-shadow:var(--lt-mount-window),var(--lt-lift-hi)!important}
-.studio.atlas-shell .planning-field-grid>.planning-field::after{
-  content:counter(lt-frame,decimal-leading-zero) "A";
-  position:absolute;top:13px;right:18px;pointer-events:none;
-  font:600 17px/1 var(--lt-frame);letter-spacing:.06em;color:var(--lt-edge);
-}
-.studio.atlas-shell .planning-field-grid>.planning-field:focus-within{border-color:var(--lt-marker-line)!important}
-.studio.atlas-shell .planning-field>span{color:var(--lt-ink-2)!important;font-family:var(--lt-mono)!important;letter-spacing:.14em!important}
-.studio.atlas-shell .planning-field>:is(input,textarea){background:transparent!important}
-.studio.atlas-shell .planning-symbol{
-  background:var(--lt-mount)!important;color:var(--lt-marker)!important;border:1.5px solid var(--lt-ink)!important;
-  border-radius:50%!important;box-shadow:var(--lt-lift)!important;
-}
 /* Beat timeline: every beat is a frame on a strip of film */
-.studio.atlas-shell .beat-card{position:relative;padding-top:24px!important;overflow:hidden}
-.studio.atlas-shell .beat-card::before{
-  content:"";position:absolute;left:0;right:0;top:0;height:12px;pointer-events:none;
-  background:
-    repeating-linear-gradient(90deg,transparent 0 5px,rgba(253,252,249,.92) 5px 11px,transparent 11px 18px) 0 50%/100% 5px no-repeat,
-    var(--lt-chassis-2);
-}
 /* Template choice: the chosen slide is ticked in grease pencil */
 .studio.atlas-shell .template-card.chosen{border-color:var(--lt-marker)!important;background:var(--lt-mount)!important;box-shadow:0 0 0 1px var(--lt-marker),var(--lt-lift)!important}
 .studio.atlas-shell .template-card.chosen svg{color:var(--lt-ink)!important}
-.studio.atlas-shell .template-card.chosen>svg:last-child,.studio.atlas-shell .template-card.chosen .template-check{color:var(--lt-marker)!important}
+.studio.atlas-shell .template-card.chosen>svg:last-child{color:var(--lt-marker)!important}
 
 /* --- First page ------------------------------------------------------------------------------- */
 .studio.atlas-shell .welcome{position:relative}
@@ -406,17 +381,6 @@ dialog.dialog::after{right:34px;transform:rotate(3deg)}
   border-radius:3px!important;box-shadow:var(--lt-lift)!important;
 }
 .studio.atlas-shell.lb-cylinder-atlas .pitch-launch:hover{border-color:var(--lt-ink)!important}
-.lb-cylinder-v9 .lb-cylinder-controls>button{
-  background:var(--lt-mount)!important;color:var(--lt-ink)!important;border:1px solid var(--lt-rule-strong)!important;
-  box-shadow:var(--lt-lift)!important;
-}
-.lb-cylinder-v9 .lb-cylinder-controls>button:hover,
-.lb-cylinder-v9 .lb-cylinder-controls>button:focus-visible{background:var(--lt-mount)!important;border-color:var(--lt-marker)!important;color:var(--lt-marker)!important}
-.lb-cylinder-v9 .lb-cylinder-control-label{color:var(--lt-ink)!important}
-.lb-cylinder-v9 .lb-cylinder-dots i{background:var(--lt-rule-strong)!important}
-.lb-cylinder-v9 .lb-cylinder-dots i.is-current{background:var(--lt-marker)!important;box-shadow:0 0 0 3px rgba(212,48,31,.16)!important}
-.lb-cylinder-v9 .lb-cylinder-counter{color:var(--lt-edge-ink)!important;font-family:var(--lt-frame)!important;font-size:12px!important;font-weight:600!important;letter-spacing:.12em!important}
-.lb-cylinder-stage:focus-visible{outline-color:var(--lt-marker)!important}
 .lb-cylinder-back{
   background:var(--lt-chassis)!important;color:var(--lt-chassis-ink)!important;border:1px solid var(--lt-chassis-line)!important;
   box-shadow:0 10px 24px -10px rgba(28,27,25,.6)!important;
@@ -426,7 +390,6 @@ dialog.dialog::after{right:34px;transform:rotate(3deg)}
 /* --- The screenplay page: a sheet on the table ------------------------------------------------------ */
 .studio.atlas-shell :is(.script-page-scroll,.script-editor-shell){background:transparent!important;background-image:none!important}
 .studio.atlas-shell :is(.script-page-zoom,.script-page-preview,.script-page-excerpt),
-.modal-backdrop :is(.script-page-preview,.script-page-excerpt),
 dialog :is(.script-page-preview,.script-page-excerpt){
   --lb-canvas:#fff;--lb-card:#faf9f5;--lb-paper:#fffefa;--lb-ink:#23241f;--lb-secondary:#55574e;
   --lb-muted:#66685f;--lb-rule:#ddded5;--lb-lime:#d0f251;--lb-green:#315000;--lb-danger:#B4233D;
@@ -447,27 +410,6 @@ dialog :is(.script-page-preview,.script-page-excerpt){
    design variables. Inside a card every variable is held at its original
    value, so the cylinder renders exactly as it always has. Verified by a
    computed-style diff of every card element.                              */
-.lb-cylinder-v9 .lb-cylinder-card{
-  --lb-canvas:#fff;--lb-card:#faf9f5;--lb-paper:#fffefa;--lb-ink:#23241f;--lb-secondary:#55574e;
-  --lb-muted:#66685f;--lb-rule:#ddded5;--lb-lime:#d0f251;--lb-lavender:#d5d8c3;--lb-lilac:#edf0e2;
-  --lb-green:#315000;--lb-danger:#B4233D;--lb-shadow:3px 3px 0 var(--lb-ink);
-  --lb-paper-surface:linear-gradient(#fffdf880,#fffdf880),var(--lb-fibre);
-  --lb-stock-surface:linear-gradient(#252720f5,#1d201af5),var(--lb-fibre);
-  --lb-sheet-shadow:0 2px 3px #25282008,0 12px 28px -12px #25282032;
-  --font-ui:"DM Sans","Segoe UI",sans-serif;--font-story:"DM Sans","Segoe UI",sans-serif;
-  --font-data:"DM Mono",monospace;--font-display:"Instrument Serif",Georgia,serif;
-  --fire-canvas:var(--lb-canvas);--fire-panel:var(--lb-card);--fire-raised:#E5E5DA;--fire-well:var(--lb-paper);
-  --fire-wash:#EAF2CF;--fire-ink:var(--lb-ink);--fire-muted:var(--lb-secondary);--fire-dim:var(--lb-muted);
-  --fire-line:var(--lb-rule);--fire-control:#8A8D7E;--fire-accent:var(--lb-green);--fire-amber:var(--lb-green);
-  --fire-on-accent:var(--lb-ink);--fire-success:#21613A;--fire-progress:#4B3E98;--fire-danger:var(--lb-danger);
-  --fire-edge:transparent;--fire-shadow:var(--lb-ink);--fire-shadow-soft:transparent;
-  --bg:#fff;--side:#faf9f5;--surface:#f7f7f2;--line:var(--lb-rule);--text:var(--lb-ink);
-  --secondary:var(--lb-secondary);--muted:var(--lb-muted);--accent:var(--lb-green);--accent-soft:#EAF2CF;
-  --on-accent:var(--lb-ink);--paper:var(--lb-paper);--editor:#e9eae3;--control-border:#8A8D7E;
-  --approved:#21613A;--progress:#4B3E98;--blocked:var(--lb-danger);--draft:var(--lb-muted);
-  --tungsten:var(--lb-green);--warning:#795100;--warning-bg:#FFF1BD;--warning-border:#AF7900;
-  font-family:"DM Sans","Segoe UI",sans-serif;
-}
 
 /* --- Opening titles: the table switches on ---------------------------------------------------------- */
 .lb-opener{
@@ -550,7 +492,6 @@ dialog :is(.script-page-preview,.script-page-excerpt){
   background-repeat:repeat!important;background-blend-mode:multiply!important;
 }
 /* The beat card's sprocket strip is drawn on top of the stock */
-.studio.atlas-shell .beat-card::before{background-blend-mode:normal}
 
 /* The chassis: graphite powder-coat, brushed along its length.
    */

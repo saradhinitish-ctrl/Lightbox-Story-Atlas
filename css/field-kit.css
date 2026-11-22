@@ -104,8 +104,6 @@ html.fk.fk-has-bar .studio.phone-layout .app-header .application-menu-trigger { 
 
 /* Surfaces the kit presses on your behalf never flash */
 html.fk.fk-quiet .studio dialog.dialog,
-html.fk.fk-quiet .studio .dialog-backdrop,
-html.fk.fk-quiet .studio .modal-backdrop,
 html.fk.fk-quiet .studio .binder,
 html.fk.fk-quiet .studio .phone-panel-backdrop { visibility: hidden !important; animation: none !important; transition: none !important; }
 
@@ -185,8 +183,7 @@ html.fk .studio dialog.dialog .dialog-heading h2 { margin: 0 0 6px !important; f
 html.fk .studio dialog.dialog .dialog-heading p { margin: 0 !important; font-size: 14.5px !important; line-height: 1.45 !important; }
 html.fk .studio dialog.dialog .dialog-heading .icon-button { flex: none !important; width: var(--fk-hit) !important; height: var(--fk-hit) !important; margin-top: -8px !important; border: 0 !important; border-radius: 50% !important; background: none !important; box-shadow: none !important; }
 html.fk .studio dialog.dialog .dialog-body { flex: 1 1 auto !important; min-height: 0 !important; max-height: none !important; overflow-y: auto !important; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; padding: 16px var(--fk-gutter) 24px !important; }
-html.fk .studio dialog.dialog .dialog-actions,
-html.fk .studio dialog.dialog .dialog-footer { flex: none !important; padding: 12px var(--fk-gutter) 14px !important; }
+html.fk .studio dialog.dialog .dialog-actions { flex: none !important; padding: 12px var(--fk-gutter) 14px !important; }
 html.fk .studio dialog.dialog :is(input:not([type="checkbox"]):not([type="radio"]), select) { min-height: var(--fk-hit) !important; }
 html.fk .studio dialog.dialog .button { min-height: var(--fk-hit) !important; }
 

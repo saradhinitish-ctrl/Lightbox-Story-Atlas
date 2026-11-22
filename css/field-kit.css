@@ -92,7 +92,7 @@ html.fk .studio.phone-layout .app-header .header-world { order: 1; flex: 1 1 aut
 html.fk .studio.phone-layout .app-header .header-world span { font-family: var(--fk-display); font-size: 23px; font-weight: 400; letter-spacing: -.012em; line-height: 1.25; height: auto; color: var(--fk-chassis-ink); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 html.fk .studio.phone-layout .app-header .header-world svg { flex: none; opacity: .6; margin-top: 3px; }
 html.fk .studio.phone-layout .app-header .header-actions { order: 2; display: flex; align-items: center; gap: 0; flex: none; width: auto; }
-html.fk .studio.phone-layout .app-header .header-actions > button { width: var(--fk-hit); min-width: var(--fk-hit); height: var(--fk-hit); border: 0 !important; border-radius: 50% !important; background: none !important; box-shadow: none !important; color: var(--fk-chassis-ink) !important; transition: background-color var(--fk-fast) ease, transform var(--fk-fast) ease; }
+html.fk .studio.phone-layout .app-header .header-actions > button { width: var(--fk-hit); min-width: var(--fk-hit); height: var(--fk-hit); border: 0 !important; border-radius: 50% !important; background: none !important; box-shadow: none !important; color: var(--fk-chassis-ink) !important; transition: background-color var(--fk-fast) var(--ds-ease), transform var(--fk-fast) var(--ds-ease); }
 html.fk .studio.phone-layout .app-header .header-actions > button:active,
 html.fk .studio.phone-layout .app-header .header-world:active { transform: scale(.96); }
 html.fk .studio.phone-layout .app-header .header-actions > button:active { background: rgba(238, 236, 231, .1) !important; }
@@ -110,11 +110,11 @@ html.fk.fk-quiet .studio .phone-panel-backdrop { visibility: hidden !important; 
 /* ---- 4 The bar ------------------------------------------------------------------------------- */
 html.fk .fk-bar { position: fixed; z-index: 46; left: 0; right: 0; bottom: 0; display: none; grid-template-columns: repeat(5, minmax(0, 1fr)); align-items: stretch; height: calc(var(--fk-bar) + var(--fk-safe-b)); padding: 0 6px var(--fk-safe-b); background: var(--fk-chassis); background-image: linear-gradient(180deg, rgba(255, 255, 255, .045), rgba(255, 255, 255, 0) 38%); border-top: 1px solid var(--fk-chassis-line); box-shadow: 0 -10px 28px -12px rgba(0, 0, 0, .55); color: var(--fk-chassis-muted); transition: transform var(--fk-med) var(--fk-ease), visibility 0s; }
 html.fk.fk-has-bar .fk-bar { display: grid; }
-html.fk.fk-typing .fk-bar { transform: translate3d(0, 105%, 0); visibility: hidden; transition: transform var(--fk-med) var(--fk-ease), visibility 0s var(--fk-med); }
+html.fk.fk-typing .fk-bar { transform: translate3d(0, 105%, 0); visibility: hidden; transition: transform var(--fk-med) var(--fk-ease), visibility 0s var(--fk-med) var(--ds-ease); }
 html.fk .fk-stop { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px; min-width: 0; height: var(--fk-bar); padding: 0; border: 0; background: none; color: inherit; font: inherit; cursor: pointer; }
-html.fk .fk-stop__icon { display: grid; place-items: center; width: 44px; height: 26px; border-radius: 13px; transition: transform var(--fk-med) var(--fk-spring), color var(--fk-fast) ease, background-color var(--fk-fast) ease; }
+html.fk .fk-stop__icon { display: grid; place-items: center; width: 44px; height: 26px; border-radius: 13px; transition: transform var(--fk-med) var(--fk-spring), color var(--fk-fast) var(--ds-ease), background-color var(--fk-fast) var(--ds-ease); }
 html.fk .fk-stop__icon svg { width: 23px; height: 23px; }
-html.fk .fk-stop__label { font-family: var(--fk-mono); font-size: var(--ds-fs-11); font-weight: 500; letter-spacing: .16em; text-transform: uppercase; line-height: 1; transition: color var(--fk-fast) ease; }
+html.fk .fk-stop__label { font-family: var(--fk-mono); font-size: var(--ds-fs-11); font-weight: 500; letter-spacing: .16em; text-transform: uppercase; line-height: 1; transition: color var(--fk-fast) var(--ds-ease); }
 html.fk .fk-stop:active .fk-stop__icon { transform: scale(.88); }
 html.fk .fk-stop[aria-current="page"], html.fk .fk-stop.is-here, html.fk .fk-stop[aria-expanded="true"] { color: var(--fk-chassis-ink); }
 /* Write is the red key */
@@ -123,23 +123,23 @@ html.fk .fk-stop--write .fk-stop__icon svg { width: 20px; height: 20px; stroke-w
 html.fk .fk-stop--write { gap: 4px; color: var(--fk-chassis-ink); }
 html.fk .fk-stop--write:active .fk-stop__icon { transform: translateY(1px) scale(.95); box-shadow: inset 0 1px 0 rgba(255, 255, 255, .1), inset 0 -1px 0 rgba(0, 0, 0, .2), 0 2px 6px -3px rgba(212, 48, 31, .8); }
 /* The grease-pencil mark that slides between stops */
-html.fk .fk-mark { position: absolute; left: -13px; top: 0; width: 26px; height: 3px; border-radius: 0 0 3px 3px; background: var(--fk-red-on-dark); opacity: 0; pointer-events: none; transition: transform var(--fk-slow) var(--fk-spring), opacity var(--fk-med) ease; will-change: transform; }
+html.fk .fk-mark { position: absolute; left: -13px; top: 0; width: 26px; height: 3px; border-radius: 0 0 3px 3px; background: var(--fk-red-on-dark); opacity: 0; pointer-events: none; transition: transform var(--fk-slow) var(--fk-spring), opacity var(--fk-med) var(--ds-ease); will-change: transform; }
 html.fk .fk-mark.is-set { opacity: 1; }
 
 /* ---- 5 Sheets -------------------------------------------------------------------------------- */
-html.fk .fk-veil { position: fixed; z-index: 44; inset: 0; background: rgba(12, 11, 10, .5); opacity: 0; visibility: hidden; transition: opacity var(--fk-med) ease, visibility 0s var(--fk-med); }
-html.fk .fk-veil.is-open { opacity: 1; visibility: visible; transition: opacity var(--fk-med) ease, visibility 0s; }
-html.fk .fk-sheet { position: fixed; z-index: 45; left: 0; right: 0; bottom: 0; display: flex; flex-direction: column; max-height: calc(100dvh - var(--fk-safe-t) - 44px); padding-bottom: var(--fk-band); border-radius: var(--fk-r-l) var(--fk-r-l) 0 0; background: var(--fk-paper); color: var(--fk-ink); box-shadow: var(--fk-lift); transform: translate3d(0, 105%, 0); visibility: hidden; transition: transform var(--fk-med) var(--fk-ease), visibility 0s var(--fk-med); outline: 0; }
+html.fk .fk-veil { position: fixed; z-index: 44; inset: 0; background: rgba(12, 11, 10, .5); opacity: 0; visibility: hidden; transition: opacity var(--fk-med) var(--ds-ease), visibility 0s var(--fk-med) var(--ds-ease); }
+html.fk .fk-veil.is-open { opacity: 1; visibility: visible; transition: opacity var(--fk-med) var(--ds-ease), visibility 0s; }
+html.fk .fk-sheet { position: fixed; z-index: 45; left: 0; right: 0; bottom: 0; display: flex; flex-direction: column; max-height: calc(100dvh - var(--fk-safe-t) - 44px); padding-bottom: var(--fk-band); border-radius: var(--fk-r-l) var(--fk-r-l) 0 0; background: var(--fk-paper); color: var(--fk-ink); box-shadow: var(--fk-lift); transform: translate3d(0, 105%, 0); visibility: hidden; transition: transform var(--fk-med) var(--fk-ease), visibility 0s var(--fk-med) var(--ds-ease); outline: 0; }
 html.fk .fk-sheet.is-open { transform: none; visibility: visible; transition: transform var(--fk-slow) var(--fk-spring), visibility 0s; }
 html.fk .fk-sheet.is-dragging, html.fk .studio .is-dragging { transition: none !important; animation: none !important; }
-html.fk .fk-sheet.is-leaving, html.fk .studio .is-leaving { transition: transform 170ms ease-in !important; }
+html.fk .fk-sheet.is-leaving, html.fk .studio .is-leaving { transition: transform var(--ds-dur-fast) var(--ds-ease-in) !important; }
 html.fk .fk-sheet__grab { flex: none; display: grid; place-items: center; height: 22px; touch-action: none; cursor: grab; }
 html.fk .fk-sheet__grab i { width: 38px; height: 4px; border-radius: var(--ds-r-2); background: var(--fk-rule-strong); }
 html.fk .fk-sheet__head { flex: none; display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; padding: 2px 12px 14px var(--fk-gutter); touch-action: none; }
 html.fk .fk-sheet__head h2 { margin: 0; font-family: var(--fk-display); font-size: 38px; font-weight: 400; line-height: 1; letter-spacing: -.025em; color: var(--fk-ink); }
 html.fk .fk-sheet__head h2 span { color: var(--fk-red); }
 html.fk .fk-eyebrow, html.fk .fk-label { margin: 0 0 8px; font-family: var(--fk-mono); font-size: var(--ds-fs-11); font-weight: 500; letter-spacing: .2em; text-transform: uppercase; color: var(--fk-red-ink); }
-html.fk .fk-close { display: grid; place-items: center; width: var(--fk-hit); height: var(--fk-hit); border: 0; border-radius: 50%; background: none; color: var(--fk-ink-2); cursor: pointer; transition: background-color var(--fk-fast) ease, transform var(--fk-fast) ease; }
+html.fk .fk-close { display: grid; place-items: center; width: var(--fk-hit); height: var(--fk-hit); border: 0; border-radius: 50%; background: none; color: var(--fk-ink-2); cursor: pointer; transition: background-color var(--fk-fast) var(--ds-ease), transform var(--fk-fast) var(--ds-ease); }
 html.fk .fk-close:active { background: rgba(28, 27, 25, .08); transform: scale(.94); }
 html.fk .fk-close svg { width: 20px; height: 20px; }
 html.fk .fk-sheet__body { flex: 1 1 auto; min-height: 0; overflow-y: auto; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; padding: 4px var(--fk-gutter) 22px; border-top: 1px solid var(--fk-rule); }
@@ -147,7 +147,7 @@ html.fk .fk-sheet__body { flex: 1 1 auto; min-height: 0; overflow-y: auto; overs
 /* ---- 6 The kit -------------------------------------------------------------------------------- */
 html.fk .fk-label { margin: 18px 0 10px; color: var(--fk-ink-3); }
 html.fk .fk-rooms { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-html.fk .fk-room { position: relative; display: grid; grid-template-columns: 1fr; align-content: start; gap: 2px; min-height: 104px; padding: 12px 14px 14px; border: 1px solid var(--fk-rule); border-radius: var(--fk-r-m); background: var(--fk-mount); color: var(--fk-ink); font: inherit; text-align: left; cursor: pointer; box-shadow: 0 1px 1px rgba(28, 27, 25, .05), 0 10px 20px -16px rgba(28, 27, 25, .4); transition: transform var(--fk-fast) ease, border-color var(--fk-fast) ease; }
+html.fk .fk-room { position: relative; display: grid; grid-template-columns: 1fr; align-content: start; gap: 2px; min-height: 104px; padding: 12px 14px 14px; border: 1px solid var(--fk-rule); border-radius: var(--fk-r-m); background: var(--fk-mount); color: var(--fk-ink); font: inherit; text-align: left; cursor: pointer; box-shadow: 0 1px 1px rgba(28, 27, 25, .05), 0 10px 20px -16px rgba(28, 27, 25, .4); transition: transform var(--fk-fast) var(--ds-ease), border-color var(--fk-fast) var(--ds-ease); }
 html.fk .fk-room b { font-family: var(--fk-frame); font-size: var(--ds-fs-15); font-weight: 700; letter-spacing: .06em; color: var(--fk-red); margin-bottom: 8px; }
 html.fk .fk-room b::after { content: "A"; }
 html.fk .fk-room strong { font-family: var(--fk-display); font-size: 25px; font-weight: 400; line-height: 1.05; letter-spacing: -.02em; }
@@ -155,16 +155,16 @@ html.fk .fk-room small { font-family: var(--fk-ui); font-size: 12.5px; line-heig
 html.fk .fk-room:active, html.fk .fk-chip:active { transform: scale(.975); box-shadow: 0 1px 1px rgba(28, 27, 25, .06); }
 html.fk .fk-room[aria-current="page"], html.fk .fk-chip[aria-current="page"] { border-color: var(--fk-red); box-shadow: inset 0 0 0 1px var(--fk-red); background: linear-gradient(0deg, var(--fk-red-wash), var(--fk-red-wash)), var(--fk-mount); }
 html.fk .fk-world { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
-html.fk .fk-chip { display: grid; gap: 6px; min-height: 68px; padding: 10px 12px; border: 1px solid var(--fk-rule); border-radius: var(--fk-r-m); background: var(--fk-mount); color: var(--fk-ink); font: inherit; text-align: left; cursor: pointer; transition: transform var(--fk-fast) ease, border-color var(--fk-fast) ease; }
+html.fk .fk-chip { display: grid; gap: 6px; min-height: 68px; padding: 10px 12px; border: 1px solid var(--fk-rule); border-radius: var(--fk-r-m); background: var(--fk-mount); color: var(--fk-ink); font: inherit; text-align: left; cursor: pointer; transition: transform var(--fk-fast) var(--ds-ease), border-color var(--fk-fast) var(--ds-ease); }
 html.fk .fk-chip strong { font-family: var(--fk-ui); font-size: 13.5px; font-weight: 600; letter-spacing: -.005em; overflow: hidden; text-overflow: ellipsis; }
 html.fk .fk-chip small { font-family: var(--fk-frame); font-size: var(--ds-fs-20); font-weight: 600; line-height: 1; color: var(--fk-ink-3); }
 html.fk .fk-tools { border-top: 1px solid var(--fk-rule); }
-html.fk .fk-tool { display: flex; align-items: center; justify-content: space-between; gap: 14px; width: 100%; min-height: 60px; padding: 9px 2px; border: 0; border-bottom: 1px solid var(--fk-rule); background: none; color: var(--fk-ink); font: inherit; text-align: left; cursor: pointer; transition: background-color var(--fk-fast) ease; }
+html.fk .fk-tool { display: flex; align-items: center; justify-content: space-between; gap: 14px; width: 100%; min-height: 60px; padding: 9px 2px; border: 0; border-bottom: 1px solid var(--fk-rule); background: none; color: var(--fk-ink); font: inherit; text-align: left; cursor: pointer; transition: background-color var(--fk-fast) var(--ds-ease); }
 html.fk .fk-tool:last-child { border-bottom: 0; }
 html.fk .fk-tool span { display: grid; gap: 2px; min-width: 0; }
 html.fk .fk-tool strong { font-family: var(--fk-ui); font-size: 15.5px; font-weight: 500; letter-spacing: -.005em; }
 html.fk .fk-tool small { font-family: var(--fk-ui); font-size: 12.5px; color: var(--fk-ink-3); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-html.fk .fk-tool svg { flex: none; width: 18px; height: 18px; color: var(--fk-ink-3); transition: transform var(--fk-med) var(--fk-spring), color var(--fk-fast) ease; }
+html.fk .fk-tool svg { flex: none; width: 18px; height: 18px; color: var(--fk-ink-3); transition: transform var(--fk-med) var(--fk-spring), color var(--fk-fast) var(--ds-ease); }
 html.fk .fk-tool:active { background: var(--fk-red-wash); }
 html.fk .fk-tool:active svg { transform: translateX(4px); color: var(--fk-red-ink); }
 
@@ -398,7 +398,7 @@ html.fk .studio.phone-layout .collection-add-card strong { font-family: var(--fk
 
 /* The world library sheet */
 html.fk .studio.phone-layout aside.binder .library-sections { display: grid !important; grid-template-columns: 1fr 1fr !important; gap: 8px !important; padding: 6px var(--fk-gutter) 16px !important; border: 0 !important; }
-html.fk .studio.phone-layout aside.binder .library-sections .section-choice { position: relative; display: grid !important; grid-template-columns: auto minmax(0, 1fr) auto !important; align-items: center !important; gap: 8px !important; min-height: 60px !important; padding: 0 12px 0 12px !important; border: 1px solid var(--fk-rule) !important; border-radius: var(--fk-r-m) !important; background: rgba(255, 255, 255, .78) !important; box-shadow: 0 1px 1px rgba(28, 27, 25, .05), 0 10px 18px -16px rgba(28, 27, 25, .5) !important; transition: transform var(--fk-fast) ease, border-color var(--fk-fast) ease; }
+html.fk .studio.phone-layout aside.binder .library-sections .section-choice { position: relative; display: grid !important; grid-template-columns: auto minmax(0, 1fr) auto !important; align-items: center !important; gap: 8px !important; min-height: 60px !important; padding: 0 12px 0 12px !important; border: 1px solid var(--fk-rule) !important; border-radius: var(--fk-r-m) !important; background: rgba(255, 255, 255, .78) !important; box-shadow: 0 1px 1px rgba(28, 27, 25, .05), 0 10px 18px -16px rgba(28, 27, 25, .5) !important; transition: transform var(--fk-fast) var(--ds-ease), border-color var(--fk-fast) var(--ds-ease); }
 html.fk .studio.phone-layout aside.binder .library-sections .section-choice:active { transform: scale(.97); }
 html.fk .studio.phone-layout aside.binder .library-sections .section-choice .tree-title { font-family: var(--fk-ui); font-size: var(--ds-fs-14); letter-spacing: -.01em; font-weight: 500; color: var(--fk-ink); }
 html.fk .studio.phone-layout aside.binder .library-sections .section-choice small { font-family: var(--fk-mono); font-size: var(--ds-fs-13); font-weight: 500; color: var(--fk-ink-3); }

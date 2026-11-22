@@ -195,10 +195,16 @@
 
   /* Motion: one language (see motion.css) */
   --ds-dur-fast: 140ms;             /* a press, a colour change */
-  --ds-dur-med: 300ms;              /* a panel, a card, a tab */
-  --ds-dur-slow: 460ms;             /* a sheet, a room, the mark */
-  --ds-ease: cubic-bezier(.2, .8, .2, 1);
-  --ds-spring: cubic-bezier(.2, .9, .25, 1.04);
+  --ds-dur-base: 220ms;             /* a hover, a toggle, a small reveal */
+  --ds-dur-med: 300ms;              /* a panel, a card, a room arriving */
+  --ds-dur-slow: 460ms;             /* a sheet, the mark */
+  --ds-ease: cubic-bezier(.2, .8, .2, 1);           /* things arrive: fast out, long settle */
+  --ds-ease-in: cubic-bezier(.7, 0, .84, 0);        /* things leave */
+  --ds-spring: cubic-bezier(.2, .9, .25, 1.04);     /* sheets: a soft 3% overshoot */
+
+  /* Tailwind's utilities (transition-colors etc.) speak the same language */
+  --default-transition-duration: var(--ds-dur-fast);
+  --default-transition-timing-function: var(--ds-ease);
 }
 
 /* ===== framework.css ===== */
@@ -9876,7 +9882,7 @@ body {
     0 2px 0 var(--fire-shadow),
     0 8px 22px var(--fire-shadow-soft),
     inset 0 1px var(--fire-edge);
-  transition: transform .18s ease, box-shadow .18s ease;
+  transition: transform var(--ds-dur-fast) var(--ds-ease), box-shadow var(--ds-dur-fast) var(--ds-ease);
 }
 .studio.atlas-shell .dock-bubble:hover {
   transform: translateY(-2px);
@@ -13931,7 +13937,7 @@ img,video,canvas,svg{max-width:100%}
   .atlas-viewport{width:100%;height:auto;min-height:0;max-height:none;overflow:visible;transform:none}
   .atlas-map{display:flex;flex-direction:column;align-items:stretch;gap:12px;width:100%;height:auto;min-height:0;max-width:100%;padding:0;margin:0;transform:none;position:relative;background-image:none}
   .atlas-lane{display:none}
-  .atlas-map>.atlas-node{position:relative;inset:auto;top:auto;left:auto;right:auto;bottom:auto;float:none;transform:none;width:100%;max-width:none;min-width:0;height:auto;min-height:190px;max-height:none;margin:0;padding:18px;display:flex;flex-direction:column;align-items:stretch;text-align:left;overflow:hidden;border-radius:15px;transition:border-color .2s ease,box-shadow .2s ease!important}
+  .atlas-map>.atlas-node{position:relative;inset:auto;top:auto;left:auto;right:auto;bottom:auto;float:none;transform:none;width:100%;max-width:none;min-width:0;height:auto;min-height:190px;max-height:none;margin:0;padding:18px;display:flex;flex-direction:column;align-items:stretch;text-align:left;overflow:hidden;border-radius:15px;transition:border-color var(--ds-dur-base) var(--ds-ease), box-shadow var(--ds-dur-base) var(--ds-ease)!important}
   .atlas-map>.atlas-node:active{transform:scale(.993)!important}
   .atlas-map>.atlas-node h2{font-size:clamp(23px,6vw,33px);line-height:1.13;max-width:100%!important;overflow-wrap:anywhere}
   .atlas-map>.atlas-node p{overflow-wrap:anywhere}
@@ -13963,7 +13969,7 @@ img,video,canvas,svg{max-width:100%}
   .atlas-map{min-width:760px}
 }
 @media (min-width:1051px){
-  .atlas-map>.atlas-node{transition:transform .22s ease,box-shadow .22s ease,border-color .22s ease}
+  .atlas-map>.atlas-node{transition:transform var(--ds-dur-base) var(--ds-ease), box-shadow var(--ds-dur-base) var(--ds-ease), border-color var(--ds-dur-base) var(--ds-ease)}
   .atlas-map>.atlas-node:focus-visible{outline:2px solid #b96e49;outline-offset:3px}
   .atlas-heading{gap:22px}
 }
@@ -14277,7 +14283,7 @@ body { margin:0; background:var(--lb-canvas); color:var(--lb-ink); }
 .studio.atlas-shell :is(.button.primary,.compile-button,.vl-button.is-primary),
 .studio.atlas-shell .compact-header .compile-button {
   background:var(--lb-lime); color:var(--lb-ink); border:1.5px solid var(--lb-ink); border-radius:var(--ds-r-4);
-  box-shadow:2px 2px 0 var(--lb-ink); font-weight:700; transition:transform 120ms ease,box-shadow 120ms ease;
+  box-shadow:2px 2px 0 var(--lb-ink); font-weight:700; transition:transform var(--ds-dur-fast) var(--ds-ease), box-shadow var(--ds-dur-fast) var(--ds-ease);
 }
 .studio.atlas-shell :is(.button.primary,.compile-button,.vl-button.is-primary):not(:disabled):hover,
 .studio.atlas-shell .compact-header .compile-button:not(:disabled):hover {
@@ -14312,7 +14318,7 @@ body { margin:0; background:var(--lb-canvas); color:var(--lb-ink); }
 .studio.atlas-shell .atlas-map { width:100%; min-width:0; position:relative; inset:auto; transform:none; display:grid; gap:20px; grid-template-columns:1fr 1fr 1fr; grid-template-rows:minmax(296px,auto) minmax(232px,auto); grid-template-areas:"script script foundation" "research visual world"; }
 .studio.atlas-shell .atlas-lane { display:none; }
 .studio.atlas-shell .atlas-lane::after { display:none; }
-.studio.atlas-shell .atlas-node { border:1px solid #A4A697; border-radius:var(--ds-r-4); background:var(--lb-card); box-shadow:none; padding:24px; transform:none; transition:border-color 140ms ease,background-color 140ms ease; overflow:hidden; }
+.studio.atlas-shell .atlas-node { border:1px solid #A4A697; border-radius:var(--ds-r-4); background:var(--lb-card); box-shadow:none; padding:24px; transform:none; transition:border-color var(--ds-dur-fast) var(--ds-ease), background-color var(--ds-dur-fast) var(--ds-ease); overflow:hidden; }
 .studio.atlas-shell :is(button.atlas-node,.atlas-world):hover,
 .studio.atlas-shell :is(button.atlas-node,.atlas-world):focus-within {
   border-color:var(--lb-ink); box-shadow:none; transform:none;
@@ -14417,7 +14423,7 @@ body { margin:0; background:var(--lb-canvas); color:var(--lb-ink); }
 .studio.atlas-shell .collection-name>input,.studio.atlas-shell .collection-heading h1 { font-family:var(--font-display); font-weight:400; font-size:clamp(40px,4.3vw,58px); letter-spacing:-.025em; }
 .studio.atlas-shell .collection-heading p { color:var(--lb-secondary); font-size:var(--ds-fs-14); }
 .studio.atlas-shell .collection-grid.card-stage { gap:22px; padding:4px 4px 8px 0; }
-.studio.atlas-shell .collection-card.index-card { background:var(--lb-card); border:1.5px solid var(--lb-ink); border-radius:var(--ds-r-4); box-shadow:3px 3px 0 var(--lb-ink); min-height:300px; transition:box-shadow 120ms ease; }
+.studio.atlas-shell .collection-card.index-card { background:var(--lb-card); border:1.5px solid var(--lb-ink); border-radius:var(--ds-r-4); box-shadow:3px 3px 0 var(--lb-ink); min-height:300px; transition:box-shadow var(--ds-dur-fast) var(--ds-ease); }
 .studio.atlas-shell .collection-card.index-card:hover { background:var(--lb-paper); border-color:var(--lb-ink); box-shadow:4px 4px 0 var(--lb-ink); }
 .studio.atlas-shell .collection-card :is(.index-card-head>input,.collection-card-title) { font-family:var(--font-ui); font-size:23px; font-weight:700; line-height:1.3; letter-spacing:-.03em; color:var(--lb-ink); }
 .studio.atlas-shell .collection-card>textarea { color:var(--lb-secondary); font-size:var(--ds-fs-15); line-height:1.7; background:transparent; }

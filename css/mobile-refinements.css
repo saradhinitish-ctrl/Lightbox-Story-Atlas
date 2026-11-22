@@ -27,7 +27,7 @@ img,video,canvas,svg{max-width:100%}
   .atlas-viewport{width:100%;height:auto;min-height:0;max-height:none;overflow:visible;transform:none}
   .atlas-map{display:flex;flex-direction:column;align-items:stretch;gap:12px;width:100%;height:auto;min-height:0;max-width:100%;padding:0;margin:0;transform:none;position:relative;background-image:none}
   .atlas-lane{display:none}
-  .atlas-map>.atlas-node{position:relative;inset:auto;top:auto;left:auto;right:auto;bottom:auto;float:none;transform:none;width:100%;max-width:none;min-width:0;height:auto;min-height:190px;max-height:none;margin:0;padding:18px;display:flex;flex-direction:column;align-items:stretch;text-align:left;overflow:hidden;border-radius:15px;transition:border-color .2s ease,box-shadow .2s ease!important}
+  .atlas-map>.atlas-node{position:relative;inset:auto;top:auto;left:auto;right:auto;bottom:auto;float:none;transform:none;width:100%;max-width:none;min-width:0;height:auto;min-height:190px;max-height:none;margin:0;padding:18px;display:flex;flex-direction:column;align-items:stretch;text-align:left;overflow:hidden;border-radius:15px;transition:border-color var(--ds-dur-base) var(--ds-ease), box-shadow var(--ds-dur-base) var(--ds-ease)!important}
   .atlas-map>.atlas-node:active{transform:scale(.993)!important}
   .atlas-map>.atlas-node h2{font-size:clamp(23px,6vw,33px);line-height:1.13;max-width:100%!important;overflow-wrap:anywhere}
   .atlas-map>.atlas-node p{overflow-wrap:anywhere}
@@ -59,7 +59,7 @@ img,video,canvas,svg{max-width:100%}
   .atlas-map{min-width:760px}
 }
 @media (min-width:1051px){
-  .atlas-map>.atlas-node{transition:transform .22s ease,box-shadow .22s ease,border-color .22s ease}
+  .atlas-map>.atlas-node{transition:transform var(--ds-dur-base) var(--ds-ease), box-shadow var(--ds-dur-base) var(--ds-ease), border-color var(--ds-dur-base) var(--ds-ease)}
   .atlas-map>.atlas-node:focus-visible{outline:2px solid #b96e49;outline-offset:3px}
   .atlas-heading{gap:22px}
 }

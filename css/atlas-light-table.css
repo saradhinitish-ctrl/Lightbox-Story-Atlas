@@ -43,7 +43,7 @@
 }
 .studio.atlas-shell.lbd-studio .story-atlas.lbd-atlas .pitch-launch:hover{border-color:rgba(241,229,218,.55)!important}
 .studio.atlas-shell.lbd-studio .story-atlas.lbd-atlas .pitch-launch>svg:last-child{color:var(--lbd-text-2)}
-.studio.atlas-shell.lbd-studio .story-atlas.lbd-atlas .atlas-heading{transition:opacity .45s ease}
+.studio.atlas-shell.lbd-studio .story-atlas.lbd-atlas .atlas-heading{transition:opacity var(--ds-dur-slow) var(--ds-ease)}
 .studio.atlas-shell.lbd-studio .story-atlas.lbd-atlas.is-pulling .atlas-heading{opacity:.22}
 .studio.atlas-shell.lbd-studio ::selection{background:rgba(242,98,79,.32);color:#fff}
 
@@ -164,7 +164,7 @@
 }
 .lbd-focus{
   position:absolute;inset:-6px;z-index:5;border:2px solid var(--lbd-red-text);border-radius:var(--ds-r-4);
-  opacity:0;pointer-events:none;transition:opacity .2s ease;
+  opacity:0;pointer-events:none;transition:opacity var(--ds-dur-base) var(--ds-ease);
 }
 .lbd-print.is-focus .lbd-focus{opacity:1}
 
@@ -186,7 +186,7 @@
   padding:max(4px,1.3cqw) 2px max(3px,1cqw);border:0;border-top:1px solid rgba(42,26,21,.28);border-radius:0;
   background:transparent;color:#4a3029;cursor:pointer;pointer-events:auto;
   font:500 max(9px,3cqw)/1 var(--lbd-mono);letter-spacing:.08em;text-transform:uppercase;
-  transition:color .2s ease,border-color .2s ease;
+  transition:color var(--ds-dur-base) var(--ds-ease), border-color var(--ds-dur-base) var(--ds-ease);
 }
 .lbd-tab b{font:600 max(12px,4.4cqw)/1 var(--lbd-frame);color:#2a1a15}
 .lbd-tab:hover{color:#2a1a15;border-top-color:var(--lbd-red)}
@@ -325,7 +325,7 @@
   /* The tray and its action sit on the bench, below its front edge */
   position:absolute;left:50%;top:calc(26% + 8px);bottom:10px;transform:translateX(-50%);
   display:flex;align-items:center;gap:clamp(16px,2.2vw,30px);width:max-content;max-width:calc(100% - 32px);pointer-events:auto;
-  transition:opacity .4s ease;
+  transition:opacity var(--ds-dur-slow) var(--ds-ease);
 }
 .lbd-tray{position:relative;flex:0 0 auto;width:clamp(150px,15vw,214px);height:calc(var(--lbd-bench) * .56);perspective:420px;perspective-origin:50% 0}
 .lbd-basin{
@@ -365,9 +365,9 @@
   border:0!important;border-radius:var(--ds-r-pill)!important;background:var(--lbd-red)!important;color:#fff!important;cursor:pointer;
   font:600 14px/1 var(--lbd-ui)!important;letter-spacing:.005em;
   box-shadow:0 10px 24px -12px rgba(212,48,31,.9),inset 0 1px 0 rgba(255,255,255,.18)!important;
-  transition:transform .25s cubic-bezier(.2,.7,.2,1),background-color .2s ease;
+  transition:transform var(--ds-dur-base) var(--ds-ease), background-color var(--ds-dur-base) var(--ds-ease);
 }
-.lbd-continue svg{transition:transform .25s cubic-bezier(.2,.7,.2,1)}
+.lbd-continue svg{transition:transform var(--ds-dur-base) var(--ds-ease)}
 .lbd-continue:hover{background:#e13a28!important;transform:translateY(-1px)}
 .lbd-continue:hover svg{transform:translateX(2px)}
 .lbd-continue:focus-visible{outline:2px solid var(--lbd-text)!important;outline-offset:3px}
@@ -375,13 +375,13 @@
 
 /* --- Taking a print off the line --------------------------------------------------- */
 .lbd-veil{
-  position:absolute;inset:0;z-index:20;opacity:0;pointer-events:none;transition:opacity .5s ease;
+  position:absolute;inset:0;z-index:20;opacity:0;pointer-events:none;transition:opacity var(--ds-dur-slow) var(--ds-ease);
   background:radial-gradient(ellipse 72% 78% at 50% 50%,#060403 0%,rgba(6,4,3,.9) 62%,rgba(6,4,3,0) 100%);
 }
 .lbd-darkroom.is-pulling .lbd-veil{opacity:.8}
 /* The line rises over the bench while a print is taken off it */
 .lbd-darkroom.is-pulling .lbd-scroller{z-index:21}
-.lbd-darkroom.is-pouring .lbd-tray-print{transition:transform .38s cubic-bezier(.3,.6,.2,1)}
+.lbd-darkroom.is-pouring .lbd-tray-print{transition:transform var(--ds-dur-slow) var(--ds-ease)}
 .lbd-darkroom.is-pouring .lbd-tray-wrap{opacity:.85}
 
 /* --- Narrow screens: one line that scrolls along the wall --------------------------- */
@@ -403,11 +403,11 @@
 }
 
 /* --- Reduced motion: the air is still; hover keeps a gentle lift ------------------- */
-.lbd-darkroom.is-still .lbd-lift{transition:transform .35s cubic-bezier(.2,.7,.2,1)}
+.lbd-darkroom.is-still .lbd-lift{transition:transform var(--ds-dur-med) var(--ds-ease)}
 .lbd-darkroom.is-still .lbd-print.is-hover .lbd-lift{transform:translate3d(0,-4px,0) scale(1.02)}
-.lbd-darkroom.is-still .lbd-emul{transition:opacity .5s ease}
-.lbd-darkroom.is-still .lbd-shadow{transition:opacity .35s ease}
-.lbd-darkroom.is-still .lbd-veil{transition:opacity .15s ease}
+.lbd-darkroom.is-still .lbd-emul{transition:opacity var(--ds-dur-slow) var(--ds-ease)}
+.lbd-darkroom.is-still .lbd-shadow{transition:opacity var(--ds-dur-med) var(--ds-ease)}
+.lbd-darkroom.is-still .lbd-veil{transition:opacity var(--ds-dur-fast) var(--ds-ease)}
 @media (prefers-reduced-motion:reduce){
   .studio.atlas-shell .lbd-darkroom.is-still .lbd-lift{transition:transform .35s cubic-bezier(.2,.7,.2,1)!important}
   .studio.atlas-shell .lbd-darkroom.is-still .lbd-emul{transition:opacity .5s ease!important}

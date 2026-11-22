@@ -9672,7 +9672,7 @@ body {
     0 2px 0 var(--fire-shadow),
     0 8px 22px var(--fire-shadow-soft),
     inset 0 1px var(--fire-edge);
-  transition: transform .18s ease, box-shadow .18s ease;
+  transition: transform var(--ds-dur-fast) var(--ds-ease), box-shadow var(--ds-dur-fast) var(--ds-ease);
 }
 .studio.atlas-shell .dock-bubble:hover {
   transform: translateY(-2px);

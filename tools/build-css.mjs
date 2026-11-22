@@ -41,6 +41,7 @@ export const BUNDLES = {
     'light-table-rooms',
     'field-kit',           // phone-only layer (max-width: 767px); must stay late
     'title-sequence',
+    'motion',              // the motion language: arrivals, press, reduced-motion guard (last on purpose)
   ],
 };
 

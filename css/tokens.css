@@ -94,8 +94,14 @@
 
   /* Motion: one language (see motion.css) */
   --ds-dur-fast: 140ms;             /* a press, a colour change */
-  --ds-dur-med: 300ms;              /* a panel, a card, a tab */
-  --ds-dur-slow: 460ms;             /* a sheet, a room, the mark */
-  --ds-ease: cubic-bezier(.2, .8, .2, 1);
-  --ds-spring: cubic-bezier(.2, .9, .25, 1.04);
+  --ds-dur-base: 220ms;             /* a hover, a toggle, a small reveal */
+  --ds-dur-med: 300ms;              /* a panel, a card, a room arriving */
+  --ds-dur-slow: 460ms;             /* a sheet, the mark */
+  --ds-ease: cubic-bezier(.2, .8, .2, 1);           /* things arrive: fast out, long settle */
+  --ds-ease-in: cubic-bezier(.7, 0, .84, 0);        /* things leave */
+  --ds-spring: cubic-bezier(.2, .9, .25, 1.04);     /* sheets: a soft 3% overshoot */
+
+  /* Tailwind's utilities (transition-colors etc.) speak the same language */
+  --default-transition-duration: var(--ds-dur-fast);
+  --default-transition-timing-function: var(--ds-ease);
 }

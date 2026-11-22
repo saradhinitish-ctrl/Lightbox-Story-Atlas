@@ -66,12 +66,12 @@
 
 /* --- Pitch view: a quiet tab that matches the card heads ------------------------------------ */
 .studio.atlas-shell.lb-cylinder-atlas .pitch-launch{
-  display:inline-flex!important;align-items:center!important;gap:9px!important;
-  height:36px!important;min-height:36px!important;padding:0 14px 0 12px!important;
-  background:var(--lt-mount,#fff)!important;color:var(--lt-ink,#1C1B19)!important;
-  border:1px solid rgba(28,27,25,.14)!important;border-radius:4px!important;
-  box-shadow:0 1px 1px rgba(28,27,25,.06),0 6px 12px -8px rgba(28,27,25,.3)!important;
-  font:500 9.5px/1 "DM Mono",monospace!important;letter-spacing:.16em!important;text-transform:uppercase!important;
+  display:inline-flex!important;align-items:center;gap:9px;
+  height:36px;min-height:36px;padding:0 14px 0 12px!important;
+  background:var(--lt-mount,#fff);color:var(--lt-ink,#1C1B19);
+  border:1px solid rgba(28,27,25,.14);border-radius:4px!important;
+  box-shadow:0 1px 1px rgba(28,27,25,.06),0 6px 12px -8px rgba(28,27,25,.3);
+  font:500 9.5px/1 "DM Mono",monospace!important;letter-spacing:.16em;text-transform:uppercase;
   transition:border-color .2s!important;
 }
 .studio.atlas-shell.lb-cylinder-atlas .pitch-launch>svg:first-child{width:12px;height:12px;color:var(--lt-marker,#D4301F);fill:currentColor}
@@ -83,10 +83,10 @@
 
 /* The Android line at the foot of the Atlas: a single rule, no panel */
 .studio.atlas-shell .lb-android-footer{
-  background:transparent!important;background-image:none!important;box-shadow:none!important;border-radius:0!important;
-  border:0!important;border-top:1px solid #E3DFD6!important;color:#B3261A!important;
+  background:transparent;background-image:none;box-shadow:none;border-radius:0;
+  border:0;border-top:1px solid #E3DFD6;color:#B3261A;
 }
-.studio.atlas-shell .lb-android-footer a{color:#1C1B19!important}
+.studio.atlas-shell .lb-android-footer a{color:#1C1B19}
 
 /* ==========================================================================
    The desk

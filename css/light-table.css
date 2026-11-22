@@ -150,9 +150,9 @@ html,body{background:var(--lt-table)}
 .studio.atlas-shell.stage-active :is(.workspace-layout,.main-editor,.editor-body),
 .studio.atlas-shell.lb-cylinder-atlas,
 .studio.atlas-shell.lb-cylinder-atlas .story-atlas{
-  background:transparent!important;background-image:none!important;
+  background:transparent!important;background-image:none;
 }
-.studio.atlas-shell.lb-cylinder-atlas{background:var(--lt-surface)!important;background-size:var(--lt-surface-size)!important}
+.studio.atlas-shell.lb-cylinder-atlas{background:var(--lt-surface);background-size:var(--lt-surface-size)}
 
 .studio.atlas-shell ::selection,.vl-reference-dialog ::selection{background:rgba(212,48,31,.16);color:var(--lt-ink)}
 .studio.atlas-shell :is(input,textarea,select):not(:where(.lb-cylinder-v9 *)){accent-color:var(--lt-marker);caret-color:var(--lt-marker)}
@@ -160,11 +160,11 @@ html,body{background:var(--lt-table)}
 
 /* --- Type ----------------------------------------------------------------- */
 .studio.atlas-shell :is(.director-tool-heading h1,.stage-heading h1,.planning-sheet header h2,.vl-header h1,.vl-board-heading h2,.pitch-title h1,.dialog h2,.dialog-heading h2):not(:where(.lb-cylinder-v9 *)){
-  font-family:var(--lt-display)!important;font-weight:400!important;letter-spacing:-.025em!important;color:var(--lt-ink)!important;
+  font-family:var(--lt-display);font-weight:400;letter-spacing:-.025em!important;color:var(--lt-ink);
 }
 /* Small labels read like edge print on film */
 .studio.atlas-shell :is(.eyebrow,.atlas-eyebrow,.collection-eyebrow,.node-overline,.vl-eyebrow,.stage-section-heading,.document-section-label):not(:where(.lb-cylinder-v9 *,.atlas-heading *)){
-  font-family:var(--lt-mono)!important;letter-spacing:.16em!important;color:var(--lt-edge-ink)!important;
+  font-family:var(--lt-mono);letter-spacing:.16em;color:var(--lt-edge-ink)!important;
 }
 
 /* --- The chassis: header ---------------------------------------------------- */
@@ -185,14 +185,14 @@ html,body{background:var(--lt-table)}
 }
 .studio.atlas-shell .compact-header .menubar{background-color:transparent!important}
 .studio.atlas-shell .app-wordmark>span{
-  font-family:var(--lt-display)!important;font-weight:400!important;font-size:25px!important;
-  letter-spacing:-.01em!important;color:var(--lt-chassis-ink)!important;
+  font-family:var(--lt-display);font-weight:400;font-size:25px;
+  letter-spacing:-.01em;color:var(--lt-chassis-ink);
 }
 /* The Viewfinder mark already carries the grease-pencil red: no filter */
 .studio.atlas-shell .app-wordmark img.studio-mark{filter:none;border-radius:6px;box-shadow:0 0 0 1px var(--lt-chassis-line)}
 .studio.atlas-shell :is(.header-world,.compact-header .header-world){color:var(--lt-chassis-ink)!important;border-color:var(--lt-chassis-line)!important}
 .studio.atlas-shell .header-world:hover{background:var(--lt-chassis-2)!important}
-.studio.atlas-shell .compact-header :is(.icon-button,.application-menu-trigger,.header-save){color:var(--lt-chassis-muted)!important}
+.studio.atlas-shell .compact-header :is(.icon-button,.application-menu-trigger,.header-save){color:var(--lt-chassis-muted)}
 .studio.atlas-shell .compact-header :is(.icon-button,.application-menu-trigger,.header-save):hover{color:var(--lt-chassis-ink)!important;background:var(--lt-chassis-2)!important}
 .studio.atlas-shell .compact-header :is(.menubar>span,.menubar>i,.menu-divider){background-color:var(--lt-chassis-line)!important;border-color:var(--lt-chassis-line)!important}
 .studio.atlas-shell .command-trigger{
@@ -240,7 +240,7 @@ html,body{background:var(--lt-table)}
   background:var(--lt-marker-wash)!important;color:var(--lt-ink)!important;
   border-color:var(--lt-marker-line)!important;box-shadow:inset 3px 0 0 var(--lt-marker)!important;
 }
-.studio.atlas-shell .command-results>button[data-active=true] small{color:var(--lt-ink-2)!important}
+.studio.atlas-shell .command-results>button[data-active=true] small{color:var(--lt-ink-2)}
 .studio.atlas-shell :is(.atlas-scene-strip>button>span,.collection-add-card>span,.live-dot,.collection-eyebrow>span):not(:where(.lb-cylinder-v9 *)){
   background:var(--lt-marker)!important;color:#fff!important;border-color:var(--lt-marker-ink)!important;box-shadow:none!important;
 }
@@ -252,12 +252,12 @@ html,body{background:var(--lt-table)}
   background-size:100% 4px!important;background-repeat:no-repeat!important;background-position:0 0!important;
 }
 .studio.atlas-shell .creative-dock>button{
-  position:relative;color:var(--lt-chassis-muted)!important;background:transparent!important;
-  border-radius:3px!important;box-shadow:none!important;transition:color .16s var(--lt-ease);
+  position:relative;color:var(--lt-chassis-muted);background:transparent;
+  border-radius:3px;box-shadow:none;transition:color .16s var(--lt-ease);
 }
 .studio.atlas-shell .creative-dock>button:hover{color:var(--lt-chassis-ink)!important;background:var(--lt-chassis-2)!important}
 /* The current workspace is circled, as you would circle a frame on a contact sheet */
-.studio.atlas-shell .creative-dock>button[aria-current=page]{color:#fff!important;background:transparent!important;box-shadow:none!important}
+.studio.atlas-shell .creative-dock>button[aria-current=page]{color:#fff!important;background:transparent;box-shadow:none}
 .studio.atlas-shell .creative-dock>button[aria-current=page]::after{
   content:"";position:absolute;inset:-3px -9px;pointer-events:none;
   background:var(--lt-circle) center/100% 100% no-repeat;
@@ -269,8 +269,8 @@ html,body{background:var(--lt-table)}
   box-shadow:0 10px 24px -10px rgba(28,27,25,.65)!important;
 }
 .studio.atlas-shell :is(.dock-bubble,.workspace-launcher):hover{background:var(--lt-chassis-2)!important;transform:none}
-.studio.atlas-shell .workspace-launcher :is(span,b,strong,small){color:inherit!important}
-.studio.atlas-shell .workspace-launcher svg,.studio.atlas-shell .dock-bubble svg{color:var(--lt-marker-hi)!important}
+.studio.atlas-shell .workspace-launcher :is(span,b,strong,small){color:inherit}
+.studio.atlas-shell .workspace-launcher svg,.studio.atlas-shell .dock-bubble svg{color:var(--lt-marker-hi)}
 .studio.atlas-shell .workspace-sheet{background:var(--lt-vellum)!important;-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px)}
 .studio.atlas-shell :is(.director-nav,.workspace-nav){background:var(--lt-vellum)!important;border-color:var(--lt-rule)!important;-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
 
@@ -279,11 +279,11 @@ html,body{background:var(--lt-table)}
   background:var(--lt-vellum)!important;border-color:var(--lt-rule)!important;
   -webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);
 }
-.studio.atlas-shell .document-identity input{background:transparent!important}
+.studio.atlas-shell .document-identity input{background:transparent}
 
 /* --- Sheets laid on the table: dialogs ---------------------------------------------------- */
 .studio.atlas-shell dialog.dialog,dialog.dialog{
-  background:rgba(252,251,248,.97)!important;color:var(--lt-ink)!important;
+  background:rgba(252,251,248,.97)!important;color:var(--lt-ink);
   border:1px solid rgba(28,27,25,.14)!important;border-radius:4px!important;
   box-shadow:0 2px 4px rgba(28,27,25,.08),0 40px 80px -30px rgba(28,27,25,.55)!important;
   overflow:visible;
@@ -302,8 +302,8 @@ dialog.dialog::after{right:34px;transform:rotate(3deg)}
 
 /* --- Floating menus and toasts ------------------------------------------------------------- */
 .studio.atlas-shell :is(.dropdown,.application-menu,.context-menu,[role=menu]):not(:where(.lb-cylinder-v9 *)){
-  background:rgba(252,251,248,.98)!important;border:1px solid rgba(28,27,25,.14)!important;border-radius:4px!important;
-  box-shadow:0 2px 4px rgba(28,27,25,.06),0 24px 48px -20px rgba(28,27,25,.45)!important;
+  background:rgba(252,251,248,.98);border:1px solid rgba(28,27,25,.14);border-radius:4px;
+  box-shadow:0 2px 4px rgba(28,27,25,.06),0 24px 48px -20px rgba(28,27,25,.45);
 }
 .studio.atlas-shell .toast-message{
   background:var(--lt-chassis)!important;color:var(--lt-chassis-ink)!important;border:1px solid var(--lt-chassis-line)!important;
@@ -316,9 +316,9 @@ dialog.dialog::after{right:34px;transform:rotate(3deg)}
 
 /* --- Slides: cards become mounts on the lit table --------------------------------------------- */
 .studio.atlas-shell :is(.planning-field,.collection-card.index-card,.beat-card,.template-card,.vl-scene-board,.vl-moment,.world-card,.comment-card):not(:where(.lb-cylinder-v9 *)){
-  background:var(--lt-mount)!important;background-image:none!important;
-  border:1px solid rgba(28,27,25,.13)!important;border-radius:3px!important;
-  box-shadow:var(--lt-lift)!important;
+  background:var(--lt-mount);background-image:none;
+  border:1px solid rgba(28,27,25,.13);border-radius:3px;
+  box-shadow:var(--lt-lift);
   transition:box-shadow .2s var(--lt-ease),transform .2s var(--lt-ease);
 }
 .studio.atlas-shell :is(.planning-field,.collection-card.index-card,.beat-card,.vl-scene-board):not(:where(.lb-cylinder-v9 *)):hover{box-shadow:var(--lt-lift-hi)!important}
@@ -331,9 +331,9 @@ dialog.dialog::after{right:34px;transform:rotate(3deg)}
 
 /* --- First page ------------------------------------------------------------------------------- */
 .studio.atlas-shell .welcome{position:relative}
-.studio.atlas-shell .welcome>.eyebrow{font-family:var(--lt-mono)!important;color:var(--lt-edge-ink)!important;letter-spacing:.2em!important}
-.studio.atlas-shell .welcome>.eyebrow::before{background:var(--lt-marker)!important;border:0!important;box-shadow:0 0 0 3px rgba(212,48,31,.14)}
-.studio.atlas-shell .welcome>h1{color:var(--lt-ink)!important;font-family:var(--lt-display)!important}
+.studio.atlas-shell .welcome>.eyebrow{font-family:var(--lt-mono);color:var(--lt-edge-ink);letter-spacing:.2em!important}
+.studio.atlas-shell .welcome>.eyebrow::before{background:var(--lt-marker);border:0;box-shadow:0 0 0 3px rgba(212,48,31,.14)}
+.studio.atlas-shell .welcome>h1{color:var(--lt-ink);font-family:var(--lt-display)!important}
 .studio.atlas-shell .welcome>h1 em{
   color:var(--lt-ink)!important;
   background:var(--lt-underline) 0 92%/100% .2em no-repeat!important;
@@ -342,43 +342,43 @@ dialog.dialog::after{right:34px;transform:rotate(3deg)}
 .studio.atlas-shell .welcome>p:not(.welcome-identity){color:var(--lt-ink-2)!important}
 .studio.atlas-shell .welcome>.button.primary{background:var(--lt-marker)!important;color:#fff!important;border-color:var(--lt-marker-ink)!important;border-radius:3px!important}
 .studio.atlas-shell .welcome>.button.primary:hover{background:var(--lt-marker-hi)!important}
-.studio.atlas-shell .welcome-secondary button{color:var(--lt-ink-2)!important;text-decoration-color:var(--lt-marker-line)!important}
+.studio.atlas-shell .welcome-secondary button{color:var(--lt-ink-2)!important;text-decoration-color:var(--lt-marker-line)}
 .studio.atlas-shell .welcome-secondary button:hover{color:var(--lt-ink)!important;text-decoration-color:var(--lt-marker)!important}
 
 /* The Android card: a slide taped to the table */
 .studio.atlas-shell .lb-native-choice{
-  position:relative;background:var(--lt-mount)!important;background-image:none!important;color:var(--lt-ink)!important;
+  position:relative;background:var(--lt-mount);background-image:none;color:var(--lt-ink);
   border:1px solid rgba(28,27,25,.13)!important;border-radius:3px!important;box-shadow:var(--lt-mount-window),var(--lt-lift)!important;
-  padding:28px 30px!important;overflow:visible!important;
+  padding:28px 30px!important;overflow:visible;
 }
 .studio.atlas-shell .lb-native-choice::before{
   content:"";position:absolute;top:-11px;left:50%;width:92px;height:22px;transform:translateX(-50%) rotate(-2deg);pointer-events:none;
   background:linear-gradient(180deg,rgba(236,229,208,.88),rgba(226,218,195,.84));box-shadow:0 1px 2px rgba(28,27,25,.12);
   clip-path:polygon(3% 0,97% 4%,100% 32%,96% 60%,99% 100%,2% 96%,0 64%,4% 34%);
 }
-.studio.atlas-shell .lb-native-choice__tag{font-family:var(--lt-mono)!important;color:var(--lt-edge-ink)!important;letter-spacing:.18em!important;font-weight:500!important}
-.studio.atlas-shell :is(.lb-native-choice h3,.lb-native-choice__title){font-family:var(--lt-display)!important;font-weight:400!important;color:var(--lt-ink)!important}
-.studio.atlas-shell :is(.lb-native-choice__desc,.lb-native-choice__browser){color:var(--lt-ink-2)!important;font-family:var(--lt-ui)!important}
-.studio.atlas-shell .lb-native-choice__notice{color:var(--lt-ink-3)!important;font-family:var(--lt-ui)!important}
+.studio.atlas-shell .lb-native-choice__tag{font-family:var(--lt-mono);color:var(--lt-edge-ink);letter-spacing:.18em;font-weight:500}
+.studio.atlas-shell :is(.lb-native-choice h3,.lb-native-choice__title){font-family:var(--lt-display);font-weight:400;color:var(--lt-ink)}
+.studio.atlas-shell :is(.lb-native-choice__desc,.lb-native-choice__browser){color:var(--lt-ink-2);font-family:var(--lt-ui)}
+.studio.atlas-shell .lb-native-choice__notice{color:var(--lt-ink-3);font-family:var(--lt-ui)}
 .studio.atlas-shell .lb-native-choice a,.studio.atlas-shell .lb-widgets-link{
   background:var(--lt-chassis)!important;color:var(--lt-chassis-ink)!important;border:1px solid var(--lt-chassis)!important;
   border-radius:3px!important;box-shadow:0 8px 16px -10px rgba(28,27,25,.7)!important;font-family:var(--lt-mono)!important;letter-spacing:.06em!important;
 }
 .studio.atlas-shell .lb-native-choice a:hover,.studio.atlas-shell .lb-widgets-link:hover{background:var(--lt-chassis-3)!important}
-.studio.atlas-shell .lb-android-footer{border-top:1px solid var(--lt-rule)!important;color:var(--lt-edge-ink)!important;font-family:var(--lt-mono)!important;letter-spacing:.2em!important}
-.studio.atlas-shell .lb-android-footer a{background:transparent!important;box-shadow:none!important;border:0!important;color:var(--lt-ink)!important;font-family:var(--lt-mono)!important;text-decoration-color:var(--lt-marker)!important}
+.studio.atlas-shell .lb-android-footer{border-top:1px solid var(--lt-rule);color:var(--lt-edge-ink);font-family:var(--lt-mono);letter-spacing:.2em}
+.studio.atlas-shell .lb-android-footer a{background:transparent;box-shadow:none;border:0;color:var(--lt-ink);font-family:var(--lt-mono);text-decoration-color:var(--lt-marker)}
 
 /* --- The Atlas: the cylinder stands on the lit table --------------------------------------------
    Cards, canvas and motion are the cylinder's own and untouched. Only the
    table, the title and the frame controls around it belong to this theme. */
 .studio.atlas-shell.lb-cylinder-atlas .atlas-heading .atlas-eyebrow,
-.studio.atlas-shell.lb-cylinder-atlas .atlas-heading .atlas-eyebrow::before{color:var(--lt-edge-ink)!important}
-.studio.atlas-shell.lb-cylinder-atlas .atlas-heading .atlas-eyebrow::before{letter-spacing:.3em!important}
-.studio.atlas-shell.lb-cylinder-atlas .atlas-world-name>input{color:var(--lt-ink)!important}
-.studio.atlas-shell.lb-cylinder-atlas .atlas-heading p{color:var(--lt-ink-2)!important}
+.studio.atlas-shell.lb-cylinder-atlas .atlas-heading .atlas-eyebrow::before{color:var(--lt-edge-ink)}
+.studio.atlas-shell.lb-cylinder-atlas .atlas-heading .atlas-eyebrow::before{letter-spacing:.3em}
+.studio.atlas-shell.lb-cylinder-atlas .atlas-world-name>input{color:var(--lt-ink)}
+.studio.atlas-shell.lb-cylinder-atlas .atlas-heading p{color:var(--lt-ink-2)}
 .studio.atlas-shell.lb-cylinder-atlas .pitch-launch{
-  background:var(--lt-mount)!important;color:var(--lt-ink)!important;border:1px solid var(--lt-rule-strong)!important;
-  border-radius:3px!important;box-shadow:var(--lt-lift)!important;
+  background:var(--lt-mount);color:var(--lt-ink);border:1px solid var(--lt-rule-strong);
+  border-radius:3px!important;box-shadow:var(--lt-lift);
 }
 .studio.atlas-shell.lb-cylinder-atlas .pitch-launch:hover{border-color:var(--lt-ink)!important}
 .lb-cylinder-back{
@@ -388,7 +388,7 @@ dialog.dialog::after{right:34px;transform:rotate(3deg)}
 .lb-cylinder-back:hover{background:var(--lt-chassis-3)!important}
 
 /* --- The screenplay page: a sheet on the table ------------------------------------------------------ */
-.studio.atlas-shell :is(.script-page-scroll,.script-editor-shell){background:transparent!important;background-image:none!important}
+.studio.atlas-shell :is(.script-page-scroll,.script-editor-shell){background:transparent!important;background-image:none}
 .studio.atlas-shell :is(.script-page-zoom,.script-page-preview,.script-page-excerpt),
 dialog :is(.script-page-preview,.script-page-excerpt){
   --lb-canvas:#fff;--lb-card:#faf9f5;--lb-paper:#fffefa;--lb-ink:#23241f;--lb-secondary:#55574e;
@@ -402,7 +402,7 @@ dialog :is(.script-page-preview,.script-page-excerpt){
 }
 .studio.atlas-shell .script-page-zoom{color:#23241f;font-family:"DM Sans","Segoe UI",sans-serif}
 .studio.atlas-shell .script-page-zoom .screenplay-prosemirror{
-  box-shadow:0 1px 1px rgba(28,27,25,.06),0 24px 50px -28px rgba(28,27,25,.5)!important;
+  box-shadow:0 1px 1px rgba(28,27,25,.06),0 24px 50px -28px rgba(28,27,25,.5);
 }
 
 /* --- Story Cylinder pin ------------------------------------------------------------------------------
@@ -438,15 +438,15 @@ dialog :is(.script-page-preview,.script-page-excerpt){
 /* Export: the dialog's heading is the press plate, a strip of the chassis */
 .studio.atlas-shell .dialog:has(.compile-layout) .dialog-heading{background:var(--lt-chassis)!important;background-image:none!important}
 .studio.atlas-shell .dialog:has(.compile-layout) .dialog-heading h2{color:var(--lt-chassis-ink)!important}
-.studio.atlas-shell .dialog:has(.compile-layout) .dialog-heading p{color:var(--lt-chassis-muted)!important}
-.studio.atlas-shell .dialog:has(.compile-layout) .dialog-heading .icon-button{color:var(--lt-chassis-ink)!important}
+.studio.atlas-shell .dialog:has(.compile-layout) .dialog-heading p{color:var(--lt-chassis-muted)}
+.studio.atlas-shell .dialog:has(.compile-layout) .dialog-heading .icon-button{color:var(--lt-chassis-ink)}
 /* An empty scene cover is a blank slide waiting for a frame */
-.studio.atlas-shell .vl-scene-cover.is-empty{background-color:#F4F2ED!important;background-image:none!important}
+.studio.atlas-shell .vl-scene-cover.is-empty{background-color:#F4F2ED;background-image:none}
 .lb-opener__identity span{color:var(--lt-ink-3)!important}
-.studio.atlas-shell .theme-swatches>i:nth-child(1){background:#EFEDE7!important;box-shadow:inset 0 0 0 1px rgba(28,27,25,.15)}
-.studio.atlas-shell .theme-swatches>i:nth-child(2){background:#18181A!important}
-.studio.atlas-shell .theme-swatches>i:nth-child(3){background:#D4301F!important}
-.studio.atlas-shell .theme-swatches>i:nth-child(4){background:#FFFFFF!important;box-shadow:inset 0 0 0 1px rgba(28,27,25,.15)}
+.studio.atlas-shell .theme-swatches>i:nth-child(1){background:#EFEDE7;box-shadow:inset 0 0 0 1px rgba(28,27,25,.15)}
+.studio.atlas-shell .theme-swatches>i:nth-child(2){background:#18181A}
+.studio.atlas-shell .theme-swatches>i:nth-child(3){background:#D4301F}
+.studio.atlas-shell .theme-swatches>i:nth-child(4){background:#FFFFFF;box-shadow:inset 0 0 0 1px rgba(28,27,25,.15)}
 
 /* ==========================================================================
    Materials
@@ -474,7 +474,7 @@ dialog :is(.script-page-preview,.script-page-excerpt){
 .studio.atlas-shell,
 .studio.atlas-shell.dark[data-palette],
 .studio.atlas-shell.lb-cylinder-atlas{
-  background-blend-mode:soft-light,normal,normal,normal!important;
+  background-blend-mode:soft-light,normal,normal,normal;
 }
 
 /* Vellum: translucent sheets for strips, menus, the phone sheet and dialogs */
@@ -482,14 +482,14 @@ dialog :is(.script-page-preview,.script-page-excerpt){
 .studio.atlas-shell :is(.dropdown,.application-menu,.context-menu,[role=menu]):not(:where(.lb-cylinder-v9 *)),
 .studio.atlas-shell dialog.dialog,dialog.dialog{
   background-image:var(--lt-tex-vellum)!important;background-size:512px 512px!important;
-  background-repeat:repeat!important;background-blend-mode:soft-light!important;
+  background-repeat:repeat;background-blend-mode:soft-light!important;
 }
 
 /* Slide mounts: white card stock with a fine tooth */
 .studio.atlas-shell :is(.planning-field,.collection-card.index-card,.beat-card,.template-card,.vl-scene-board,.vl-moment,.world-card,.comment-card,.lb-native-choice):not(:where(.lb-cylinder-v9 *)){
   background-color:var(--lt-mount)!important;
   background-image:var(--lt-tex-mount)!important;background-size:256px 256px!important;
-  background-repeat:repeat!important;background-blend-mode:multiply!important;
+  background-repeat:repeat;background-blend-mode:multiply;
 }
 /* The beat card's sprocket strip is drawn on top of the stock */
 
@@ -503,8 +503,8 @@ dialog :is(.script-page-preview,.script-page-excerpt){
   background-size:100% 7px,100% 4px,512px 512px!important;
   background-position:0 100%,0 100%,0 0!important;
   background-repeat:no-repeat,no-repeat,repeat!important;
-  background-blend-mode:normal,normal,soft-light!important;
-  box-shadow:none!important;
+  background-blend-mode:normal,normal,soft-light;
+  box-shadow:none;
 }
 .studio.atlas-shell .creative-dock{
   background-image:
@@ -513,7 +513,7 @@ dialog :is(.script-page-preview,.script-page-excerpt){
   background-size:100% 4px,512px 512px!important;
   background-position:0 0,0 0!important;
   background-repeat:no-repeat,repeat!important;
-  background-blend-mode:normal,soft-light!important;
+  background-blend-mode:normal,soft-light;
   box-shadow:0 -10px 30px -18px rgba(28,27,25,.6)!important;
 }
 .studio.atlas-shell :is(.dock-bubble,.workspace-launcher,.toast-message),
@@ -521,7 +521,7 @@ dialog :is(.script-page-preview,.script-page-excerpt){
 .studio.atlas-shell .dialog:has(.compile-layout) .dialog-heading,
 .lb-cylinder-back{
   background-image:var(--lt-tex-chassis)!important;background-size:512px 512px!important;
-  background-repeat:repeat!important;background-blend-mode:soft-light!important;
+  background-repeat:repeat;background-blend-mode:soft-light;
 }
 /* A dialog is a sheet lifted off the table */
 .studio.atlas-shell dialog.dialog,dialog.dialog{

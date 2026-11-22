@@ -290,7 +290,7 @@
   .btl.btl .btl-tools{width:100%}
   .btl.btl .btl-tools .btl-filter{flex:1;min-width:0}
   /* The app forces 16px on every phone input; a beat title stays a title */
-  .btl.btl .btl-title{font-size:26px!important}
+  .btl.btl .btl-title{font-size:26px}
 }
 @media (max-width:480px){
   .btl.btl .btl-board-bar{margin-bottom:26px}

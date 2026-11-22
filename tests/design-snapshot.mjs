@@ -55,6 +55,9 @@ function seed() {
 
 const PROPS = ['display', 'position', 'top', 'right', 'bottom', 'left', 'z-index', 'float', 'width', 'height', 'min-width', 'min-height', 'max-width', 'max-height', 'margin-top', 'margin-right', 'margin-bottom', 'margin-left', 'padding-top', 'padding-right', 'padding-bottom', 'padding-left', 'box-sizing', 'overflow-x', 'overflow-y', 'flex-direction', 'flex-wrap', 'flex-grow', 'flex-shrink', 'flex-basis', 'align-items', 'align-self', 'justify-content', 'gap', 'grid-template-columns', 'grid-template-rows', 'color', 'background-color', 'background-image', 'background-size', 'background-position', 'border-top-width', 'border-right-width', 'border-bottom-width', 'border-left-width', 'border-top-style', 'border-top-color', 'border-right-color', 'border-bottom-color', 'border-left-color', 'border-top-left-radius', 'border-top-right-radius', 'border-bottom-right-radius', 'border-bottom-left-radius', 'box-shadow', 'outline-style', 'outline-width', 'outline-color', 'outline-offset', 'opacity', 'visibility', 'transform', 'filter', 'backdrop-filter', 'mix-blend-mode', 'font-family', 'font-size', 'font-weight', 'font-style', 'line-height', 'letter-spacing', 'text-transform', 'text-align', 'text-decoration-line', 'text-shadow', 'white-space', 'cursor', 'pointer-events', 'transition-property', 'transition-duration', 'transition-timing-function', 'animation-name', 'animation-duration', 'object-fit', 'content'];
 
+// Optional hook: LB_PROBE=<module> runs `default(page, stateName)` after every state is captured.
+const probe = process.env.LB_PROBE ? (await import(resolve(process.env.LB_PROBE))).default : null;
+
 const results = [];
 const browser = await chromium.launch();
 
@@ -103,6 +106,7 @@ async function capture(page, name) {
   }, PROPS);
   await writeFile(resolve(outDir, name + '.json'), JSON.stringify(styles));
   await page.screenshot({path: resolve(outDir, name + '.png'), animations: 'disabled', caret: 'hide'});
+  if (probe) await probe(page, name);
   results.push(name + ' (' + styles.length + ' elements)');
 }
 

@@ -245,7 +245,7 @@
     height: auto;
   }
   [hidden]:where(:not([hidden=until-found])) {
-    display: none !important;
+    display: none;
   }
 }
 @layer utilities {
@@ -1305,7 +1305,7 @@ kbd {
 }
 .rich-editor {
   min-height: 760px;
-  outline: none !important;
+  outline: none;
   overflow-wrap: anywhere;
   caret-color: var(--accent);
 }
@@ -1687,7 +1687,7 @@ kbd {
   color: var(--text);
 }
 .checkbox-label {
-  display: flex !important;
+  display: flex;
   align-items: center;
   gap: 7px;
   font-size: 12px;
@@ -1696,10 +1696,10 @@ kbd {
   line-height: 1.6;
 }
 .checkbox-label input {
-  width: 13px !important;
+  width: 13px;
   height: 13px;
-  padding: 0 !important;
-  margin: 0 !important;
+  padding: 0;
+  margin: 0;
   accent-color: var(--accent);
   flex-shrink: 0;
 }
@@ -3336,13 +3336,13 @@ kbd {
   font-family:
     "Courier Prime",
     "Courier New",
-    monospace !important;
-  font-size: 16px !important;
-  line-height: 16px !important;
+    monospace;
+  font-size: 16px;
+  line-height: 16px;
   font-weight: 400;
   color: #171717;
   background: white;
-  outline: none !important;
+  outline: none;
   box-sizing: border-box;
   border: 0 !important;
   box-shadow: 0 1px 5px #0000000d;
@@ -3355,10 +3355,10 @@ kbd {
   overflow-wrap: break-word;
 }
 .screenplay-prosemirror .script-block {
-  display: block !important;
+  display: block;
   font-family: inherit !important;
-  font-size: 16px !important;
-  line-height: 16px !important;
+  font-size: 16px;
+  line-height: 16px;
   min-height: 16px;
   padding: 0;
   margin: 16px 0 0;
@@ -3400,8 +3400,8 @@ kbd {
   font:
     16px/16px "Courier Prime",
     "Courier New",
-    monospace !important;
-  color: #171717 !important;
+    monospace;
+  color: #171717;
 }
 .screenplay-prosemirror .rm-page-header p,
 .screenplay-prosemirror .rm-page-footer p {
@@ -5153,7 +5153,7 @@ kbd {
     display: none;
   }
   .screenplay-toolbar-main {
-    flex-wrap: nowrap !important;
+    flex-wrap: nowrap;
   }
   .script-zoom-controls > select {
     max-width: 80px !important;
@@ -5587,17 +5587,17 @@ kbd {
     margin: 0;
   }
   .studio .phone-script .screenplay-prosemirror {
-    width: 100% !important;
+    width: 100%;
     max-width: 100%;
     min-height: 400px;
-    padding: 24px 18px 100px !important;
+    padding: 24px 18px 100px;
     box-shadow: none;
-    font-size: 16px !important;
-    line-height: 22px !important;
+    font-size: 16px;
+    line-height: 22px;
   }
   .studio .phone-script .script-block {
-    font-size: 16px !important;
-    line-height: 22px !important;
+    font-size: 16px;
+    line-height: 22px;
     min-height: 22px;
     margin-top: 22px;
   }
@@ -6542,10 +6542,10 @@ button.atlas-node:hover {
 .studio-command > label > input {
   flex: 1;
   min-width: 0;
-  font-size: 15px !important;
+  font-size: 15px;
   border: 0 !important;
   background: transparent !important;
-  padding: 7px 0 !important;
+  padding: 7px 0;
   outline-offset: 2px;
 }
 .studio-command > label > kbd {
@@ -6987,7 +6987,7 @@ button.atlas-node:hover {
     margin-top: 15px;
   }
   .atlas-world-name > input {
-    font-size: 34px !important;
+    font-size: 34px;
     letter-spacing: -1.5px;
   }
   .atlas-world-name > svg {
@@ -7026,7 +7026,7 @@ button.atlas-node:hover {
   .atlas-map {
     position: static;
     margin: 0;
-    transform: none !important;
+    transform: none;
     width: auto;
     height: auto;
     display: grid;
@@ -7036,8 +7036,8 @@ button.atlas-node:hover {
   }
   .atlas-node {
     position: static;
-    width: auto !important;
-    height: auto !important;
+    width: auto;
+    height: auto;
     min-width: 0;
     box-shadow: none;
     border-radius: 10px;
@@ -7276,7 +7276,7 @@ button.atlas-node:hover {
     max-height: 50vh;
   }
   .studio-command > label > input {
-    font-size: 16px !important;
+    font-size: 16px;
   }
 }
 @media (prefers-reduced-motion: reduce) {
@@ -8268,7 +8268,7 @@ body {
     padding: 20px;
   }
   .studio.atlas-shell .atlas-world-name > input {
-    font-size: 2rem !important;
+    font-size: 2rem;
   }
   .studio.atlas-shell .collection-name > input {
     font-size: 2rem;
@@ -8308,7 +8308,7 @@ body {
     max-width: 165px;
   }
   .studio.atlas-shell .studio-command > label > input {
-    font-size: 1rem !important;
+    font-size: 1rem;
   }
   .studio.atlas-shell .collection-card > textarea {
     font-size: 1rem;
@@ -8395,7 +8395,7 @@ body {
   text-decoration: none;
 }
 .studio.atlas-shell .settings-archive[hidden] {
-  display: none !important;
+  display: none;
 }
 .studio.atlas-shell:not(.legacy-archive-owner) button:has(> svg.lucide-archive) {
   display: none;
@@ -8803,7 +8803,7 @@ body {
     gap: 16px;
   }
   .studio.atlas-shell .atlas-world-name > input {
-    font-size: clamp(2.5rem, 10vw, 3.5rem) !important;
+    font-size: clamp(2.5rem, 10vw, 3.5rem);
   }
   .studio.atlas-shell .atlas-heading p {
     font-size: .875rem;
@@ -9125,7 +9125,7 @@ body {
     align-items: flex-end;
   }
   .studio.atlas-shell .atlas-world-name > input {
-    font-size: clamp(2.2rem, 9vw, 3.1rem) !important;
+    font-size: clamp(2.2rem, 9vw, 3.1rem);
   }
   .studio.atlas-shell .atlas-caption {
     min-height: 36px;
@@ -9903,10 +9903,10 @@ body {
   min-width: 0;
   width: 100%;
   font-size: 10px !important;
-  padding: 3px !important;
+  padding: 3px;
   background: none !important;
   border: 0 !important;
-  color: var(--vl-ink) !important;
+  color: var(--vl-ink);
 }
 .vl-scene-list {
   overflow-y: auto;
@@ -11122,7 +11122,7 @@ body {
   text-overflow: ellipsis;
 }
 .atlas-visual-scenes small {
-  font-size: .57rem !important;
+  font-size: .57rem;
   color: var(--muted);
   white-space: nowrap;
 }
@@ -11273,8 +11273,8 @@ body {
     text-align: right;
   }
   .vl-save .vl-button {
-    font-size: 9px !important;
-    padding: 7px 10px !important;
+    font-size: 9px;
+    padding: 7px 10px;
   }
   .vl-mobile-board {
     display: flex;
@@ -11290,11 +11290,11 @@ body {
   .vl-mobile-board > select {
     min-width: 0;
     width: 100%;
-    font-size: 12px !important;
-    border: 0 !important;
-    background: none !important;
-    color: var(--fire-muted) !important;
-    padding: 5px !important;
+    font-size: 12px;
+    border: 0;
+    background: none;
+    color: var(--fire-muted);
+    padding: 5px;
   }
   .vl-workspace {
     display: block;
@@ -11770,7 +11770,7 @@ body {
     min-width: 0;
   }
   .studio.atlas-shell [hidden] {
-    display: none !important;
+    display: none;
   }
   .studio.atlas-shell :is(button, a, summary) {
     touch-action: manipulation;
@@ -11966,7 +11966,7 @@ body {
     gap: 8px;
   }
   .studio.atlas-shell .atlas-world-name > input {
-    font-size: clamp(35px, 10vw, 52px) !important;
+    font-size: clamp(35px, 10vw, 52px);
     line-height: 1.12;
     padding: 0 0 6px;
     letter-spacing: -.025em;
@@ -12023,7 +12023,7 @@ body {
     width: 100%;
     height: auto;
     margin: 0;
-    transform: none !important;
+    transform: none;
   }
   .studio.atlas-shell .atlas-lane {
     display: none;
@@ -12038,7 +12038,7 @@ body {
     padding: 21px;
     border: 1px solid var(--fire-line);
     border-radius: 16px;
-    transform: none !important;
+    transform: none;
     box-shadow: 0 2px 0 var(--fire-shadow-soft), 0 7px 18px var(--fire-shadow-soft);
     overflow: hidden;
     text-align: left;
@@ -12479,19 +12479,19 @@ body {
   }
   .studio.atlas-shell .phone-script .script-page-zoom {
     width: 100%;
-    zoom: 1 !important;
+    zoom: 1;
   }
   .studio.atlas-shell .phone-script .screenplay-prosemirror {
-    width: 100% !important;
+    width: 100%;
     min-height: calc(var(--visible-height,100dvh) - 180px);
     padding: 26px 20px 140px !important;
-    font-size: 16px !important;
+    font-size: 16px;
     line-height: 24px !important;
     box-shadow: none;
     border: 0;
   }
   .studio.atlas-shell .phone-script .script-block {
-    font-size: 16px !important;
+    font-size: 16px;
     line-height: 24px !important;
     min-height: 24px;
     overflow-wrap: break-word;
@@ -12668,7 +12668,7 @@ body {
     min-height: 60px;
   }
   .visual-language .vl-mobile-board > select {
-    font-size: 16px !important;
+    font-size: 16px;
     min-height: 44px;
   }
   .visual-language .vl-board-heading p {

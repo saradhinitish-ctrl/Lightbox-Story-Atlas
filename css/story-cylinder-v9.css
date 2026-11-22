@@ -1,28 +1,28 @@
 /* STORY CYLINDER IX — geometry-first cinematic studio
    This stylesheet replaces the retired multi-strip cylinder CSS on v7.
    Only the Story Atlas landing screen is affected. */
-.studio.atlas-shell.lb-cylinder-atlas{background:#fffefa!important}
+.studio.atlas-shell.lb-cylinder-atlas{background:#fffefa}
 .studio.atlas-shell.lb-cylinder-atlas .story-atlas{
   box-sizing:border-box;position:relative;isolation:isolate;width:100%;max-width:1600px;
   margin:0 auto;padding:clamp(16px,2.3vw,32px) clamp(8px,1.45vw,24px) 26px;
-  color:#22241f!important;background:#fffefa!important;
-  background-image:none!important;
-  border:0!important;overflow:visible!important
+  color:#22241f;background:#fffefa;
+  background-image:none;
+  border:0;overflow:visible
 }
 .studio.atlas-shell.lb-cylinder-atlas .atlas-viewport{
-  position:relative;height:auto!important;min-height:0!important;margin:0!important;
-  padding:0!important;overflow:visible!important;border:0!important;background:none!important
+  position:relative;height:auto;min-height:0;margin:0;
+  padding:0;overflow:visible;border:0;background:none
 }
 .studio.atlas-shell.lb-cylinder-atlas .atlas-viewport>.atlas-map{
-  position:absolute!important;visibility:hidden!important;pointer-events:none!important;
-  width:1px!important;height:1px!important;min-width:0!important;overflow:hidden!important;
-  margin:0!important;inset:0 auto auto 0!important;z-index:-1!important
+  position:absolute!important;visibility:hidden;pointer-events:none;
+  width:1px!important;height:1px!important;min-width:0;overflow:hidden;
+  margin:0;inset:0 auto auto 0;z-index:-1
 }
 .studio.atlas-shell.lb-cylinder-atlas .atlas-caption,
 .studio.atlas-shell.lb-cylinder-atlas .atlas-reel,
 .studio.atlas-shell.lb-cylinder-atlas .atlas-recent,
-.studio.atlas-shell.lb-cylinder-atlas .install-app{display:none!important}
-.studio.atlas-shell.lb-cylinder-atlas .creative-dock{display:flex!important}
+.studio.atlas-shell.lb-cylinder-atlas .install-app{display:none}
+.studio.atlas-shell.lb-cylinder-atlas .creative-dock{display:flex}
 .studio.atlas-shell.lb-cylinder-atlas .atlas-heading{
   position:relative;display:flex;align-items:center;justify-content:center;
   min-height:132px;max-width:1400px;margin:0 auto;text-align:center
@@ -32,30 +32,30 @@
 }
 .studio.atlas-shell.lb-cylinder-atlas .atlas-heading .atlas-eyebrow{
   display:flex;align-items:center;justify-content:center;height:24px;
-  font-size:0!important;letter-spacing:0!important;color:#637f1d!important
+  font-size:0;letter-spacing:0;color:#637f1d
 }
 .studio.atlas-shell.lb-cylinder-atlas .atlas-heading .atlas-eyebrow::before{
   content:"◈  STORY ATLAS";font:600 12px/1.4 "DM Mono",monospace;
   letter-spacing:.24em;color:#62801b
 }
-.studio.atlas-shell.lb-cylinder-atlas .atlas-heading .live-dot{display:none!important}
+.studio.atlas-shell.lb-cylinder-atlas .atlas-heading .live-dot{display:none}
 .studio.atlas-shell.lb-cylinder-atlas .atlas-world-name{
   display:flex;justify-content:center;max-width:760px;width:90%;margin:3px auto 0
 }
 .studio.atlas-shell.lb-cylinder-atlas .atlas-world-name>input{
   width:100%;max-width:100%;text-align:center;font:400 clamp(45px,4.9vw,71px)/1.04 "Instrument Serif",Georgia,serif!important;
-  color:#25241f!important;letter-spacing:-.045em!important;background:transparent!important
+  color:#25241f;letter-spacing:-.045em;background:transparent
 }
-.studio.atlas-shell.lb-cylinder-atlas .atlas-world-name>svg{display:none!important}
+.studio.atlas-shell.lb-cylinder-atlas .atlas-world-name>svg{display:none}
 .studio.atlas-shell.lb-cylinder-atlas .atlas-heading p{
   margin:6px auto 0;max-width:740px;text-align:center;
   font:400 clamp(12px,1.25vw,16px)/1.5 "DM Sans",sans-serif!important;
-  color:#74716d!important
+  color:#74716d
 }
 .studio.atlas-shell.lb-cylinder-atlas .pitch-launch{
-  position:absolute;right:8px;top:10px;min-height:35px;border:1px solid #d5d0cd!important;
-  border-radius:30px!important;background:#fffdfa!important;color:#383731!important;
-  box-shadow:0 3px 12px #4d37431a!important;
+  position:absolute;right:8px;top:10px;min-height:35px;border:1px solid #d5d0cd;
+  border-radius:30px!important;background:#fffdfa;color:#383731;
+  box-shadow:0 3px 12px #4d37431a;
   font:500 10px "DM Mono",monospace!important
 }
 /* Geometry: a 950–1100px pearl drum, five genuinely curved independent cards.
@@ -66,7 +66,7 @@
   padding:12px 18px;font:600 10px "DM Mono",monospace;letter-spacing:.085em;
   box-shadow:0 4px 16px #0002;white-space:nowrap
 }
-.lb-cylinder-back[hidden]{display:none!important}
+.lb-cylinder-back[hidden]{display:none}
 .lb-cylinder-back:hover{background:#dcf3b3}
 @media(min-width:701px) and (max-height:810px){
  .studio.atlas-shell.lb-cylinder-atlas .atlas-heading{

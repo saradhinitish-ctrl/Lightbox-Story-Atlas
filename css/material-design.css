@@ -168,12 +168,12 @@
 /* The download invitation uses the same physical paper as the workspace. */
 .studio.atlas-shell .welcome {background:#fff;}
 .studio.atlas-shell .lb-native-choice {
-  background-color:#f5f3eb!important;background-image:linear-gradient(#fffdf855,#fffdf855),var(--lb-crease)!important;
-  background-size:cover!important;border:1px solid #d8dbcc!important;border-radius:6px!important;
+  background-color:#f5f3eb;background-image:linear-gradient(#fffdf855,#fffdf855),var(--lb-crease);
+  background-size:cover;border:1px solid #d8dbcc!important;border-radius:6px!important;
   box-shadow:var(--lb-sheet-shadow)!important;padding:28px!important;
 }
 .studio.atlas-shell .lb-native-choice h3 {font:400 32px/1.1 var(--font-display)!important;letter-spacing:-.025em;}
-.studio.atlas-shell .lb-native-choice a {background:#252720!important;color:#e5f5b5!important;border-color:#353d27!important;border-radius:5px;box-shadow:0 2px 4px #25282020!important;}
+.studio.atlas-shell .lb-native-choice a {background:#252720;color:#e5f5b5;border-color:#353d27;border-radius:5px;box-shadow:0 2px 4px #25282020;}
 .studio.atlas-shell .lb-native-choice a:hover {background:#363e2a!important;}
 .studio.atlas-shell :is(.workspace-sheet,.application-menu-popover,.dropdown,.binder.section-library,.inspector) {
   background-color:#faf9f5;background-image:var(--lb-paper-surface);background-size:auto,384px;
@@ -181,7 +181,7 @@
 }
 .studio.atlas-shell .toast-message {inset:auto auto calc(76px + env(safe-area-inset-bottom)) 50%;}
 /* Respect the established cylinder geometry and animation; only its paper inserts change. */
-.studio.atlas-shell.lb-cylinder-atlas,.studio.atlas-shell.lb-cylinder-atlas .story-atlas {background-color:#fff!important;}
+.studio.atlas-shell.lb-cylinder-atlas,.studio.atlas-shell.lb-cylinder-atlas .story-atlas {background-color:#fff;}
 
 @media (max-width:767px) {
   .studio.atlas-shell :is(.vl-header h1,.director-tool-heading h1,.stage-heading h1) {font-size:39px;}

@@ -8,5 +8,5 @@
 .studio.atlas-shell .install-app-steps,
 .studio.atlas-shell .welcome .install-app,
 .studio.atlas-shell .story-atlas > .install-app {
-  display: none !important;
+  display: none;
 }

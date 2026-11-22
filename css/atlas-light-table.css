@@ -30,19 +30,19 @@
   background-image:radial-gradient(ellipse 90% 70% at 30% 18%,#1d0f0c 0%,#120a08 48%,#0a0706 100%)!important;
   background-size:100% 100%!important;background-blend-mode:normal!important;color:var(--lbd-text);
 }
-.studio.atlas-shell.lb-cylinder-atlas.lbd-studio .story-atlas.lbd-atlas{background:transparent!important;color:var(--lbd-text)!important}
+.studio.atlas-shell.lb-cylinder-atlas.lbd-studio .story-atlas.lbd-atlas{background:transparent;color:var(--lbd-text)!important}
 .studio.atlas-shell.lbd-studio .story-atlas.lbd-atlas .atlas-heading .atlas-eyebrow,
 .studio.atlas-shell.lbd-studio .story-atlas.lbd-atlas .atlas-heading .atlas-eyebrow::before{color:var(--lbd-red-text)!important}
-.studio.atlas-shell.lbd-studio .story-atlas.lbd-atlas .atlas-heading .atlas-eyebrow::before{content:"◆  STORY ATLAS";letter-spacing:.3em!important}
-.studio.atlas-shell.lbd-studio .story-atlas.lbd-atlas .atlas-world-name>input{color:var(--lbd-text)!important;caret-color:var(--lbd-red-text)!important}
-.studio.atlas-shell.lbd-studio .story-atlas.lbd-atlas .atlas-world-name>input::placeholder{color:var(--lbd-text-2)!important}
+.studio.atlas-shell.lbd-studio .story-atlas.lbd-atlas .atlas-heading .atlas-eyebrow::before{content:"◆  STORY ATLAS";letter-spacing:.3em}
+.studio.atlas-shell.lbd-studio .story-atlas.lbd-atlas .atlas-world-name>input{color:var(--lbd-text)!important;caret-color:var(--lbd-red-text)}
+.studio.atlas-shell.lbd-studio .story-atlas.lbd-atlas .atlas-world-name>input::placeholder{color:var(--lbd-text-2)}
 .studio.atlas-shell.lbd-studio .story-atlas.lbd-atlas .atlas-heading p{color:var(--lbd-text-2)!important}
 .studio.atlas-shell.lbd-studio .story-atlas.lbd-atlas .pitch-launch{
   background:rgba(28,16,13,.85)!important;color:var(--lbd-text)!important;
   border:1px solid rgba(241,229,218,.22)!important;box-shadow:0 10px 24px -14px #000!important;
 }
 .studio.atlas-shell.lbd-studio .story-atlas.lbd-atlas .pitch-launch:hover{border-color:rgba(241,229,218,.55)!important}
-.studio.atlas-shell.lbd-studio .story-atlas.lbd-atlas .pitch-launch>svg:last-child{color:var(--lbd-text-2)!important}
+.studio.atlas-shell.lbd-studio .story-atlas.lbd-atlas .pitch-launch>svg:last-child{color:var(--lbd-text-2)}
 .studio.atlas-shell.lbd-studio .story-atlas.lbd-atlas .atlas-heading{transition:opacity .45s ease}
 .studio.atlas-shell.lbd-studio .story-atlas.lbd-atlas.is-pulling .atlas-heading{opacity:.22}
 .studio.atlas-shell.lbd-studio ::selection{background:rgba(242,98,79,.32);color:#fff}
@@ -159,8 +159,8 @@
 }
 .lbd-face{
   position:absolute;inset:0;z-index:2;display:block;width:100%;height:100%;margin:0;padding:0;
-  border:0!important;border-radius:0;background:transparent!important;cursor:pointer;pointer-events:auto;outline:none!important;
-  box-shadow:none!important;
+  border:0;border-radius:0;background:transparent;cursor:pointer;pointer-events:auto;outline:none;
+  box-shadow:none;
 }
 .lbd-focus{
   position:absolute;inset:-6px;z-index:5;border:2px solid var(--lbd-red-text);border-radius:3px;

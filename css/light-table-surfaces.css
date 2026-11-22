@@ -134,6 +134,6 @@
     background-color: var(--lt-marker)
 }
 .studio.atlas-shell .lb-native-choice a:not(:where(.lb-cylinder-v9 *, .script-page-zoom *, .script-page-preview *, .script-page-excerpt *)) {
-    color: var(--lt-marker-ink) !important;
-    border-color: var(--lt-marker) !important
+    color: var(--lt-marker-ink);
+    border-color: var(--lt-marker)
 }

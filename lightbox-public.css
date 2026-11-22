@@ -288,7 +288,7 @@ h3 { font-family: var(--ds-font-ui); font-weight: 600; font-size: 17px; letter-s
 /* Foot: the bar again, at the bottom */
 .foot { background: var(--ds-chassis); color: var(--ds-chassis-muted); padding: 34px 0 44px; font-size: var(--ds-fs-13); }
 .foot .wrap { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 20px; }
-.foot a { text-decoration-color: var(--ds-chassis-line); }
+.foot a { display: inline-flex; align-items: center; min-height: var(--ds-hit-min); padding: 0 4px; text-decoration-color: var(--ds-chassis-line); }
 .foot a:hover { color: var(--ds-chassis-ink); }
 .foot :where(a):focus-visible { outline-color: var(--ds-red-on-dark); }
 
@@ -315,6 +315,38 @@ h3 { font-family: var(--ds-font-ui); font-weight: 600; font-size: 17px; letter-s
   .section { padding-bottom: 48px; }
   .actions .btn { flex: 1 1 100%; }
 }
+
+/* Android download: in the header, the hero, a section of its own and the footer.
+   Hidden inside the installed app, where it would offer you what you are already using. */
+html.lb-native-shell [data-apk] { display: none; }
+.btn-ic { margin-right: 10px; flex: none; }
+.btn--dark { background: var(--ds-chassis); border-color: var(--ds-chassis); color: var(--ds-chassis-ink); }
+.btn--dark:hover { background: var(--ds-chassis-3); border-color: var(--ds-chassis-3); color: #fff; }
+.btn--light { background: transparent; border-color: var(--ds-chassis-line); color: var(--ds-chassis-ink); }
+.btn--light:hover { background: rgba(255, 255, 255, .08); color: #fff; }
+.nav .nav-get { margin-left: 8px; padding: 0 16px; background: var(--ds-red); color: #fff; font-weight: 600; }
+.nav .nav-get:hover { background: var(--ds-red-hi); color: #fff; }
+.get { padding-bottom: 96px; }
+.get-card {
+  display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: clamp(28px, 5vw, 64px); align-items: center;
+  padding: clamp(28px, 5vw, 56px); border-radius: var(--ds-r-24); color: var(--ds-chassis-ink); position: relative; overflow: hidden; isolation: isolate;
+  background: radial-gradient(70% 90% at 0% 0%, rgba(242, 98, 79, .28), transparent 60%), radial-gradient(120% 90% at 50% -10%, #2c2c31, var(--ds-chassis) 62%);
+  box-shadow: inset 0 0 0 1px var(--ds-chassis-line), 0 30px 60px -30px rgba(28, 27, 25, .55);
+}
+.get-card::before { content: ""; position: absolute; inset: 0; z-index: -1; background: url("./assets/textures/chassis.webp") center / 320px; opacity: .2; mix-blend-mode: overlay; }
+.get-card h2 { color: #fff; margin-bottom: 14px; }
+.get-card .eyebrow { color: var(--ds-red-on-dark); }
+.get-card .eyebrow::before { background: var(--ds-red-on-dark); box-shadow: 0 0 0 3px rgba(242, 98, 79, .2); }
+.get-card p { color: var(--ds-chassis-muted); max-width: 32em; }
+.get-card .actions { margin: 26px 0 14px; }
+.get-card .get-meta { margin: 0; font: 500 var(--ds-fs-12)/1.5 var(--ds-font-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--ds-chassis-muted); }
+.get-steps { list-style: none; counter-reset: step; margin: 0; padding: 0; display: grid; gap: 14px; }
+.get-steps li { counter-increment: step; display: grid; grid-template-columns: 40px 1fr; column-gap: 16px; padding: 16px 18px; border-radius: var(--ds-r-14); background: rgba(255, 255, 255, .05); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .08); }
+.get-steps li::before { content: counter(step); grid-row: span 2; align-self: center; width: 40px; height: 40px; display: grid; place-items: center; border-radius: 50%; font: 500 var(--ds-fs-14)/1 var(--ds-font-mono); color: #fff; background: var(--ds-red); }
+.get-steps b { font-weight: 600; color: #fff; }
+.get-steps span { font-size: var(--ds-fs-14); color: var(--ds-chassis-muted); line-height: 1.5; }
+@media (max-width: 960px) { .get-card { grid-template-columns: 1fr; } }
+@media (max-width: 720px) { .nav .nav-get { margin-left: 0; } .get { padding-bottom: 56px; } }
 
 /* ===== hero.css ===== */
 /* The Lightbox hero: a lit table in CSS 3D.

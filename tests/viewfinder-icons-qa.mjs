@@ -35,8 +35,8 @@ assert.deepEqual(manifest.icons.map(icon => icon.src), [
   "/app-icons/viewfinder-512.png",
   "/app-icons/viewfinder-maskable-512.png"
 ], "Manifest uses Viewfinder assets");
-assert.ok(read("material-design.css").toString("utf8").includes("content:url('./app-icons/viewfinder-mark.svg')"), "Studio header uses the Viewfinder mark");
-assert.ok(!/studio-mark\{filter:hue-rotate/.test(read("light-table.css").toString("utf8")), "Studio mark is not recoloured");
+assert.ok(read("lightbox-app.css").toString("utf8").includes("content:url('./app-icons/viewfinder-mark.svg')"), "Studio header uses the Viewfinder mark");
+assert.ok(!/studio-mark\{filter:hue-rotate/.test(read("lightbox-app.css").toString("utf8")), "Studio mark is not recoloured");
 for (const page of pages) {
   const html = read(page).toString("utf8");
   assert.ok(!html.includes("lit-spine"), page + " has no Lit Spine leftovers");

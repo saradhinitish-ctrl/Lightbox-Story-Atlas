@@ -14,7 +14,7 @@ const dir = resolve(root, 'qa-artifacts');
 await mkdir(dir, {recursive: true});
 
 // ---- Source guards: transforms and opacity per frame, no tweened blur or layout -----------------
-const css = await readFile(resolve(root, 'atlas-light-table.css'), 'utf8') + await readFile(resolve(root, 'light-table-rooms.css'), 'utf8');
+const css = await readFile(resolve(root, 'css/atlas-light-table.css'), 'utf8') + await readFile(resolve(root, 'css/light-table-rooms.css'), 'utf8');
 for (const m of css.matchAll(/transition\s*:([^;}]*)/g)) assert.doesNotMatch(m[1], /filter|blur|width|height|top|left/, 'No transition on filter or layout: ' + m[1]);
 for (const m of css.matchAll(/@keyframes[^{]*\{((?:[^{}]*\{[^}]*\})*)\s*\}/g)) assert.doesNotMatch(m[1], /filter|blur/, 'No keyframes animate blur');
 for (const m of css.matchAll(/blur\((\d+(?:\.\d+)?)px\)/g)) assert.ok(Number(m[1]) <= 16, 'Static blur at most 16px');

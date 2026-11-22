@@ -13,7 +13,7 @@ const dir = resolve(root, 'qa-artifacts');
 await mkdir(dir, {recursive: true});
 
 // ---- Source guards: nothing in the phone layer can reach the desktop ----------------------------
-const css = await readFile(resolve(root, 'field-kit.css'), 'utf8');
+const css = await readFile(resolve(root, 'css/field-kit.css'), 'utf8');
 const stripped = css.replace(/\/\*[\s\S]*?\*\//g, '').trim();
 assert.ok(stripped.startsWith('@media (max-width: 767px) {'), 'The stylesheet opens with the phone media query');
 let depth = 0, closedAt = -1;

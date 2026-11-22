@@ -20,6 +20,7 @@ const root = resolve(import.meta.dirname, '..');
 export const BUNDLES = {
   'lightbox.css': [
     'fonts',               // @font-face for every family; one file per script subset
+    'tokens',              // the design tokens (--ds-*): palette, type, radius, elevation, layers, motion
     'framework',           // Tailwind output for the React app (layered: theme, base, components, utilities)
     'mobile-refinements',
     'screenplay-polish',

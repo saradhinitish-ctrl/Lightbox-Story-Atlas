@@ -19,10 +19,10 @@ img,video,canvas,svg{max-width:100%}
   .atlas-heading>div{min-width:0;width:100%}
   .atlas-world-name{max-width:100%;min-width:0}
   .atlas-world-name input{width:100%;min-width:0;max-width:100%;font-size:clamp(30px,9vw,47px);line-height:1.12}
-  .atlas-heading p{max-width:100%;font-size:13px;line-height:1.5}
+  .atlas-heading p{max-width:100%;font-size:var(--ds-fs-13);line-height:1.5}
   .pitch-launch{align-self:flex-start;min-height:42px;padding:9px 14px}
   .atlas-caption{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:14px 0}
-  .atlas-caption small{font-size:11px}
+  .atlas-caption small{font-size:var(--ds-fs-11)}
   /* Replace sprawling desktop map coordinates with touch-friendly card flow */
   .atlas-viewport{width:100%;height:auto;min-height:0;max-height:none;overflow:visible;transform:none}
   .atlas-map{display:flex;flex-direction:column;align-items:stretch;gap:12px;width:100%;height:auto;min-height:0;max-width:100%;padding:0;margin:0;transform:none;position:relative;background-image:none}
@@ -36,15 +36,15 @@ img,video,canvas,svg{max-width:100%}
   .atlas-map>.atlas-script{min-height:310px}
   .atlas-map>.atlas-visual{min-height:220px}
   .atlas-map>.atlas-world{min-height:230px}
-  .atlas-map>.atlas-node .node-overline{display:flex;align-items:center;gap:7px;flex-wrap:wrap;font-size:10px;letter-spacing:.11em}
+  .atlas-map>.atlas-node .node-overline{display:flex;align-items:center;gap:7px;flex-wrap:wrap;font-size:var(--ds-fs-11);letter-spacing:.11em}
   .atlas-map>.atlas-node .node-footer{margin-top:auto;min-height:34px;display:flex;align-items:center;justify-content:space-between}
   .atlas-map>.atlas-node .script-page-preview{position:relative;inset:auto;transform:none;margin:14px auto;width:min(100%,270px);max-width:100%;height:auto;min-height:130px;padding:16px}
   .atlas-map>.atlas-node .research-card-body{min-height:115px;max-width:100%}
   .atlas-map>.atlas-node .research-stack{transform:scale(.8);transform-origin:right center}
   .atlas-map>.atlas-node .atlas-visual-scenes{max-width:100%}
   .atlas-scene-strip{max-width:100%;overflow-x:auto;overscroll-behavior-x:contain}
-  .creative-dock{position:fixed!important;left:8px!important;right:8px!important;bottom:calc(8px + env(safe-area-inset-bottom))!important;top:auto!important;transform:none!important;width:auto!important;max-width:none!important;min-width:0!important;display:flex!important;gap:0!important;justify-content:space-around!important;padding:5px!important;border-radius:14px!important;z-index:1000}
-  .creative-dock button{flex:1 1 0!important;min-width:0!important;min-height:44px!important;padding:6px 2px!important;font-size:10px!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important}
+  .creative-dock{position:fixed!important;left:8px!important;right:8px!important;bottom:calc(8px + env(safe-area-inset-bottom))!important;top:auto!important;transform:none!important;width:auto!important;max-width:none!important;min-width:0!important;display:flex!important;gap:0!important;justify-content:space-around!important;padding:5px!important;border-radius:var(--ds-r-14)!important;z-index:1000}
+  .creative-dock button{flex:1 1 0!important;min-width:0!important;min-height:44px!important;padding:6px 2px!important;font-size:var(--ds-fs-11)!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important}
   .workspace-tabs{max-width:100vw;overflow-x:auto;overscroll-behavior-x:contain}
   .vl-workspace,
 .collection-workspace{max-width:100%;min-width:0}
@@ -69,7 +69,7 @@ img,video,canvas,svg{max-width:100%}
 
 /* Detail workspaces. Keep these rules together; Atlas card styling above is unchanged. */
 .foundation-formatting { border-bottom:1px solid var(--line); }
-.foundation-formatting > summary { display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 18px;cursor:pointer;color:var(--muted);font-size:12px;list-style:none; }
+.foundation-formatting > summary { display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 18px;cursor:pointer;color:var(--muted);font-size:var(--ds-fs-12);list-style:none; }
 .foundation-formatting > summary::-webkit-details-marker { display:none; }
 .foundation-formatting[open] > summary svg { transform:rotate(180deg); }
 @media (max-width:767px) {
@@ -85,27 +85,27 @@ img,video,canvas,svg{max-width:100%}
     position:fixed;right:max(14px,env(safe-area-inset-right));bottom:calc(14px + env(safe-area-inset-bottom));
     z-index:40;display:flex;align-items:center;gap:9px;min-height:48px;padding:0 15px;
     border:1px solid var(--line);border-radius:16px;background:var(--side);color:var(--text);
-    box-shadow:0 6px 24px #0005;font-family:inherit;font-size:13px;font-weight:500;line-height:1.2;-webkit-tap-highlight-color:transparent;
+    box-shadow:0 6px 24px #0005;font-family:inherit;font-size:var(--ds-fs-13);font-weight:500;line-height:1.2;-webkit-tap-highlight-color:transparent;
   }
   .workspace-launcher > svg { color:var(--accent);flex-shrink:0; }
-  .workspace-current { border-left:1px solid var(--line);padding-left:9px;color:var(--muted);font-size:12px; }
+  .workspace-current { border-left:1px solid var(--line);padding-left:9px;color:var(--muted);font-size:var(--ds-fs-12); }
   .studio.atlas-shell .workspace-sheet {
     position:fixed;inset:auto 0 0;width:min(100% - 20px,480px);max-width:none;
     margin:auto auto calc(10px + env(safe-area-inset-bottom));padding:20px;
     max-height:calc(var(--visible-height,100dvh) - 32px - env(safe-area-inset-bottom));overflow:auto;
-    background:var(--side);color:var(--text);border:1px solid var(--line);border-radius:24px;
+    background:var(--side);color:var(--text);border:1px solid var(--line);border-radius:var(--ds-r-24);
     box-shadow:0 24px 80px #0008;overscroll-behavior:contain;
   }
   .workspace-sheet::backdrop { background:#08080899;backdrop-filter:blur(4px); }
   .workspace-sheet > header { display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:20px; }
-  .workspace-sheet-eyebrow { color:var(--muted);font-size:9px;line-height:1.5;letter-spacing:.12em; }
+  .workspace-sheet-eyebrow { color:var(--muted);font-size:var(--ds-fs-11);line-height:1.5;letter-spacing:.12em; }
   .workspace-sheet h2 { margin:6px 0 0;font-size:26px;line-height:1.15;font-weight:500;letter-spacing:-.035em; }
   .workspace-sheet > header > button { display:grid;place-items:center;flex-shrink:0;width:44px;height:44px;border:1px solid var(--line);border-radius:50%;background:transparent;color:var(--text); }
   .workspace-sheet nav { display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px; }
   .workspace-sheet nav > button { position:relative;display:flex;flex-direction:column;align-items:flex-start;gap:5px;min-width:0;min-height:114px;padding:16px 12px;border:1px solid var(--line);border-radius:15px;background:var(--surface);color:var(--text);text-align:left; }
   .workspace-destination-icon { display:flex;margin-bottom:7px;color:var(--muted); }
-  .workspace-sheet strong { font-size:14px;line-height:1.25;font-weight:600; }
-  .workspace-sheet small { font-size:11px;line-height:1.4;color:var(--muted); }
+  .workspace-sheet strong { font-size:var(--ds-fs-14);line-height:1.25;font-weight:600; }
+  .workspace-sheet small { font-size:var(--ds-fs-11);line-height:1.4;color:var(--muted); }
   .workspace-sheet nav > button[aria-current=page] { border-color:var(--accent);background:var(--accent-soft); }
   .workspace-sheet nav > button[aria-current=page] .workspace-destination-icon { color:var(--accent); }
   .workspace-selected { position:absolute;right:13px;top:16px;color:var(--accent); }
@@ -116,9 +116,9 @@ img,video,canvas,svg{max-width:100%}
   .studio.atlas-shell .planning-sheet { width:100%;max-width:100%;padding:24px var(--mobile-edge) calc(96px + env(safe-area-inset-bottom))!important; }
   .studio.atlas-shell .planning-sheet > header { display:flex;align-items:flex-start;gap:12px;margin:0 0 20px;padding:0 0 20px; }
   .studio.atlas-shell .planning-sheet > header > div { min-width:0; }
-  .studio.atlas-shell .planning-sheet .eyebrow { font-size:9px;line-height:1.5;letter-spacing:.1em; }
-  .studio.atlas-shell .planning-sheet header h2 { margin:6px 0 10px;font-size:32px;line-height:1.12;letter-spacing:-.025em;overflow-wrap:anywhere; }
-  .studio.atlas-shell .planning-sheet header p { font-size:13px;line-height:1.6; }
+  .studio.atlas-shell .planning-sheet .eyebrow { font-size:var(--ds-fs-11);line-height:1.5;letter-spacing:.1em; }
+  .studio.atlas-shell .planning-sheet header h2 { margin:6px 0 10px;font-size:var(--ds-fs-32);line-height:1.12;letter-spacing:-.025em;overflow-wrap:anywhere; }
+  .studio.atlas-shell .planning-sheet header p { font-size:var(--ds-fs-13);line-height:1.6; }
   .foundation-formatting > summary { min-height:40px;padding:8px 14px; }
   .studio.atlas-shell .foundation-workspace .document-identity { flex:1 1 100px; }
   .studio.atlas-shell .foundation-workspace .document-context-actions { flex:none; }
@@ -127,30 +127,30 @@ img,video,canvas,svg{max-width:100%}
   .studio.atlas-shell .visual-language .vl-header { display:flex;flex-direction:column;align-items:stretch;gap:16px;margin-bottom:22px; }
   .studio.atlas-shell .visual-language .vl-header h1 { font-size:38px;line-height:1.08; }
   .studio.atlas-shell .visual-language .vl-save { display:flex;flex-direction:row;align-items:center;justify-content:space-between;gap:10px;width:100%; }
-  .studio.atlas-shell .visual-language .vl-save > span { width:auto;max-width:none;text-align:left;font-size:11px; }
+  .studio.atlas-shell .visual-language .vl-save > span { width:auto;max-width:none;text-align:left;font-size:var(--ds-fs-11); }
   .studio.atlas-shell .visual-language .vl-mobile-board { display:flex;flex-direction:column;align-items:stretch;gap:8px;padding:14px 0;margin:0; }
-  .studio.atlas-shell .visual-language .vl-mobile-board select { width:100%;max-width:100%;min-height:46px;font-size:16px; }
+  .studio.atlas-shell .visual-language .vl-mobile-board select { width:100%;max-width:100%;min-height:46px;font-size:var(--ds-fs-16); }
   .studio.atlas-shell .visual-language .vl-workspace { display:block;min-width:0;width:100%;padding:0; }
   .studio.atlas-shell .visual-language .vl-sidebar { display:none; }
   .studio.atlas-shell .visual-language .vl-main { min-width:0;width:100%;padding:24px 0 0; }
   .studio.atlas-shell .visual-language .vl-board-heading { display:flex;flex-direction:column;align-items:stretch;gap:14px;margin-bottom:22px; }
   .studio.atlas-shell .visual-language .vl-board-heading h2 { font-size:30px;line-height:1.15;overflow-wrap:anywhere; }
-  .studio.atlas-shell .visual-language .vl-board-heading p { font-size:14px;line-height:1.65; }
+  .studio.atlas-shell .visual-language .vl-board-heading p { font-size:var(--ds-fs-14);line-height:1.65; }
   .studio.atlas-shell .visual-language .vl-scene-controls { display:flex;flex-wrap:wrap;gap:8px; }
-  .studio.atlas-shell .visual-language .vl-scene-controls button { min-height:44px;padding:9px 12px;font-size:12px; }
+  .studio.atlas-shell .visual-language .vl-scene-controls button { min-height:44px;padding:9px 12px;font-size:var(--ds-fs-12); }
   .studio.atlas-shell .visual-language .vl-scene-directory,.studio.atlas-shell .visual-language .vl-board-grid { grid-template-columns:minmax(0,1fr);gap:16px; }
-  .studio.atlas-shell .visual-language :is(.vl-direction,.vl-reference,.vl-scene-board,.vl-film-banner,.vl-empty-board) { min-width:0;border-radius:14px; }
+  .studio.atlas-shell .visual-language :is(.vl-direction,.vl-reference,.vl-scene-board,.vl-film-banner,.vl-empty-board) { min-width:0;border-radius:var(--ds-r-14); }
   .studio.atlas-shell .visual-language .vl-direction { padding:18px;margin:0 0 24px; }
   .studio.atlas-shell .visual-language .vl-direction > header { flex-wrap:wrap;gap:10px; }
   .studio.atlas-shell .visual-language .vl-emotional-turn { display:grid;grid-template-columns:minmax(0,1fr);gap:14px; }
   .studio.atlas-shell .visual-language .vl-emotional-turn > svg { display:none; }
   .studio.atlas-shell .visual-language .vl-emotional-turn input { width:100%;min-height:44px; }
   .studio.atlas-shell .visual-language .vl-direction-details { grid-template-columns:minmax(0,1fr);gap:16px; }
-  .studio.atlas-shell .visual-language .vl-direction :is(input,textarea) { font-size:16px!important;line-height:1.6; }
+  .studio.atlas-shell .visual-language .vl-direction :is(input,textarea) { font-size:var(--ds-fs-16)!important;line-height:1.6; }
   .studio.atlas-shell .visual-language .vl-toolbar { display:flex;flex-direction:column;align-items:stretch;gap:16px;margin:22px 0;padding:0; }
   .studio.atlas-shell .visual-language .vl-toolbar-title { flex-wrap:wrap;gap:10px; }
   .studio.atlas-shell .visual-language .vl-toolbar-title > label { flex:1 1 170px;min-width:0; }
-  .studio.atlas-shell .visual-language .vl-toolbar-title input { font-size:16px;min-height:44px; }
+  .studio.atlas-shell .visual-language .vl-toolbar-title input { font-size:var(--ds-fs-16);min-height:44px; }
   .studio.atlas-shell .visual-language .vl-add { display:flex;flex-wrap:wrap;gap:8px; }
   .studio.atlas-shell .visual-language .vl-add > button { min-height:44px; }
   .studio.atlas-shell .visual-language .vl-reference-copy,.studio.atlas-shell .visual-language .vl-scene-board-copy { padding:18px; }
@@ -160,7 +160,7 @@ img,video,canvas,svg{max-width:100%}
   /* Screenplay controls: format first, then reachable tools without clipped popovers. */
   .studio.atlas-shell .phone-script .screenplay-toolbar { padding:10px 12px;min-height:0;overflow:visible; }
   .studio.atlas-shell .phone-script .screenplay-toolbar-main { display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:6px 4px;width:100%;overflow:visible; }
-  .studio.atlas-shell .phone-script .screenplay-toolbar-main > select { grid-column:1/5;width:100%;min-width:0;max-width:none;min-height:44px;margin:0;font-size:16px; }
+  .studio.atlas-shell .phone-script .screenplay-toolbar-main > select { grid-column:1/5;width:100%;min-width:0;max-width:none;min-height:44px;margin:0;font-size:var(--ds-fs-16); }
   .studio.atlas-shell .phone-script .screenplay-toolbar-main > i { display:none; }
   .studio.atlas-shell .phone-script .script-tool { width:100%;min-width:0;height:44px;border-radius:9px; }
   .studio.atlas-shell .phone-script .script-more-menu { flex:none; }
@@ -169,25 +169,25 @@ img,video,canvas,svg{max-width:100%}
   .studio.atlas-shell .breakdown-stage { padding:26px var(--mobile-edge) calc(96px + env(safe-area-inset-bottom)); }
   .studio.atlas-shell .breakdown-stage .stage-heading { display:flex;flex-direction:column;align-items:flex-start;gap:18px;margin-bottom:24px; }
   .studio.atlas-shell .breakdown-stage .stage-heading h1 { font-size:38px;line-height:1.1; }
-  .studio.atlas-shell .breakdown-stage .stage-heading p { font-size:14px;line-height:1.6; }
+  .studio.atlas-shell .breakdown-stage .stage-heading p { font-size:var(--ds-fs-14);line-height:1.6; }
   .studio.atlas-shell .breakdown-stage .breakdown-picker { display:grid;grid-template-columns:minmax(0,1fr);gap:10px;margin-bottom:24px; }
-  .studio.atlas-shell .breakdown-stage .breakdown-picker :is(input,select) { min-width:0;width:100%;min-height:46px;font-size:16px; }
+  .studio.atlas-shell .breakdown-stage .breakdown-picker :is(input,select) { min-width:0;width:100%;min-height:46px;font-size:var(--ds-fs-16); }
   .studio.atlas-shell .breakdown-stage .breakdown-columns { display:flex;flex-direction:column;gap:24px; }
-  .studio.atlas-shell .breakdown-stage :is(.breakdown-script,.breakdown-frames) { width:100%;min-width:0;padding:18px;border-radius:14px; }
+  .studio.atlas-shell .breakdown-stage :is(.breakdown-script,.breakdown-frames) { width:100%;min-width:0;padding:18px;border-radius:var(--ds-r-14); }
   .studio.atlas-shell .breakdown-stage .stage-section-heading { align-items:center;flex-wrap:wrap;gap:10px; }
   .studio.atlas-shell .breakdown-stage .stage-section-heading button,.studio.atlas-shell .breakdown-stage .stage-empty button { min-height:44px; }
-  .studio.atlas-shell .breakdown-stage .breakdown-script h2 { overflow-wrap:anywhere;font-size:20px;line-height:1.4; }
+  .studio.atlas-shell .breakdown-stage .breakdown-script h2 { overflow-wrap:anywhere;font-size:var(--ds-fs-20);line-height:1.4; }
   .studio.atlas-shell .breakdown-stage .breakdown-assets { grid-template-columns:minmax(0,1fr); }
   .studio.atlas-shell .breakdown-stage .breakdown-assets > button { min-height:56px; }
   .studio.atlas-shell .breakdown-stage .stage-empty { padding:24px 16px; }
-  .studio.atlas-shell .breakdown-stage .stage-empty p { font-size:14px;line-height:1.65; }
+  .studio.atlas-shell .breakdown-stage .stage-empty p { font-size:var(--ds-fs-14);line-height:1.65; }
 }
 @media (max-width:360px) {
   .studio.atlas-shell { --mobile-edge:14px; }
   .studio.atlas-shell .workspace-sheet { padding:16px; }
   .workspace-sheet nav { gap:8px; }
   .workspace-sheet nav > button { padding:14px 11px; }
-  .workspace-sheet small { font-size:10px; }
+  .workspace-sheet small { font-size:var(--ds-fs-11); }
   .studio.atlas-shell .planning-sheet header h2 { font-size:29px; }
 }
 @media (prefers-reduced-motion:reduce) {

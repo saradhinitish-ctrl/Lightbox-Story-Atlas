@@ -54,7 +54,7 @@
 }
 .studio.atlas-shell.lb-cylinder-atlas .pitch-launch{
   position:absolute;right:8px;top:10px;min-height:35px;border:1px solid #d5d0cd;
-  border-radius:30px!important;background:#fffdfa;color:#383731;
+  border-radius:var(--ds-r-24)!important;background:#fffdfa;color:#383731;
   box-shadow:0 3px 12px #4d37431a;
   font:500 10px "DM Mono",monospace!important
 }
@@ -62,7 +62,7 @@
    The wall has one radius, each card has a fixed local curvature of its own. */
 .lb-cylinder-back{
   position:fixed;z-index:990;left:50%;bottom:18px;transform:translateX(-50%);
-  border:1px solid #9dbb57;border-radius:22px;background:#ecf8d4;color:#2d3620;
+  border:1px solid #9dbb57;border-radius:var(--ds-r-24);background:#ecf8d4;color:#2d3620;
   padding:12px 18px;font:600 10px "DM Mono",monospace;letter-spacing:.085em;
   box-shadow:0 4px 16px #0002;white-space:nowrap
 }
@@ -84,12 +84,12 @@
 @media(max-width:700px){
  .studio.atlas-shell.lb-cylinder-atlas .story-atlas{padding:14px 0 24px!important}
  .studio.atlas-shell.lb-cylinder-atlas .atlas-heading{min-height:126px;padding:0 13px!important}
- .studio.atlas-shell.lb-cylinder-atlas .atlas-heading .atlas-eyebrow::before{font-size:10px}
+ .studio.atlas-shell.lb-cylinder-atlas .atlas-heading .atlas-eyebrow::before{font-size:var(--ds-fs-11)}
  .studio.atlas-shell.lb-cylinder-atlas .atlas-world-name{width:100%}
  .studio.atlas-shell.lb-cylinder-atlas .atlas-world-name>input{
    font-size:clamp(35px,10vw,49px)!important
  }
- .studio.atlas-shell.lb-cylinder-atlas .atlas-heading p{font-size:11px!important;margin-top:2px}
+ .studio.atlas-shell.lb-cylinder-atlas .atlas-heading p{font-size:var(--ds-fs-11)!important;margin-top:2px}
  .studio.atlas-shell.lb-cylinder-atlas .pitch-launch{display:none!important}
  .lb-cylinder-back{bottom:calc(15px + env(safe-area-inset-bottom))}
 }

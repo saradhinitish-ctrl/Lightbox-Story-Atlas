@@ -10,18 +10,18 @@
    ========================================================================== */
 
 .lbd-studio,.lbd-darkroom{
-  --lbd-wall:#0a0706;
-  --lbd-wall-2:#160c0a;
-  --lbd-text:#f1e5da;            /* paper white under the safelight */
-  --lbd-text-2:#c2ab9f;          /* 9.2:1 on the wall */
-  --lbd-red:#D4301F;             /* the one red: grease pencil, the action */
-  --lbd-red-text:#f2624f;        /* the same red, lifted for small text on the wall (5.9:1 or better) */
+  --lbd-wall:var(--ds-wall);
+  --lbd-wall-2:var(--ds-wall-2);
+  --lbd-text:var(--ds-wall-ink);            /* paper white under the safelight */
+  --lbd-text-2:var(--ds-wall-muted);          /* 9.2:1 on the wall */
+  --lbd-red:var(--ds-red);             /* the one red: grease pencil, the action */
+  --lbd-red-text:var(--ds-red-on-dark);        /* the same red, lifted for small text on the wall (5.9:1 or better) */
   --lbd-ink:#21160f;             /* the print's darkest tone */
-  --lbd-serif:"Instrument Serif",Georgia,serif;
-  --lbd-ui:"DM Sans","Segoe UI",sans-serif;
-  --lbd-mono:"DM Mono",ui-monospace,monospace;
-  --lbd-frame:"Big Shoulders Display","DM Mono",sans-serif;
-  --lbd-courier:"Courier Prime","Courier New",monospace;
+  --lbd-serif:var(--ds-font-display);
+  --lbd-ui:var(--ds-font-ui);
+  --lbd-mono:var(--ds-font-mono);
+  --lbd-frame:var(--ds-font-frame);
+  --lbd-courier:var(--ds-font-courier);
 }
 
 /* --- The room around the line: the whole Atlas goes dark ------------------- */
@@ -61,7 +61,7 @@
 .lbd-beam{position:absolute;left:0;top:0}
 /* The safelight: a housing hung on its cord, the filter glowing */
 .lbd-lamp{
-  position:absolute;z-index:1;top:-6px;left:calc(10% - 32px);width:64px;height:24px;border-radius:5px 5px 8px 8px;pointer-events:none;
+  position:absolute;z-index:1;top:-6px;left:calc(10% - 32px);width:64px;height:24px;border-radius:var(--ds-r-4) var(--ds-r-4) var(--ds-r-8) var(--ds-r-8);pointer-events:none;
   background:linear-gradient(#2e1915,#140908);
   box-shadow:0 10px 20px rgba(0,0,0,.7),inset 0 1px 0 rgba(255,140,120,.12),inset 0 -1px 0 rgba(255,120,100,.1);
 }
@@ -71,7 +71,7 @@
 }
 .lbd-darkroom.is-scroll .lbd-lamp{left:calc(16% - 34px)}
 .lbd-lamp-filter{
-  position:absolute;left:8px;right:8px;bottom:4px;height:8px;border-radius:2px;
+  position:absolute;left:8px;right:8px;bottom:4px;height:8px;border-radius:var(--ds-r-2);
   background:linear-gradient(#ff6b4b,#c4200f);
   box-shadow:0 0 12px 3px rgba(255,62,34,.6),0 0 60px 20px rgba(255,40,20,.16);
 }
@@ -98,7 +98,7 @@
 /* Shadows on the wall, down and right of the lamp; soft when a print lifts.
    Painted once as box-shadows, so moving them costs nothing but a transform. */
 .lbd-shadow{position:absolute;left:0;top:0;will-change:transform,opacity;pointer-events:none}
-.lbd-shadow::before{content:"";position:absolute;border-radius:3px}
+.lbd-shadow::before{content:"";position:absolute;border-radius:var(--ds-r-4)}
 .lbd-shadow.is-tight::before{inset:5px;background:rgba(0,0,0,.72);box-shadow:0 0 9px 5px rgba(0,0,0,.72)}
 .lbd-shadow.is-soft{opacity:0}
 .lbd-shadow.is-soft::before{inset:16px;background:rgba(0,0,0,.6);box-shadow:0 0 34px 18px rgba(0,0,0,.6)}
@@ -163,7 +163,7 @@
   box-shadow:none;
 }
 .lbd-focus{
-  position:absolute;inset:-6px;z-index:5;border:2px solid var(--lbd-red-text);border-radius:3px;
+  position:absolute;inset:-6px;z-index:5;border:2px solid var(--lbd-red-text);border-radius:var(--ds-r-4);
   opacity:0;pointer-events:none;transition:opacity .2s ease;
 }
 .lbd-print.is-focus .lbd-focus{opacity:1}
@@ -295,7 +295,7 @@
 .lbd-page-line--dialogue{padding:0 12% 0 16%}
 .lbd-page-line--parenthetical{padding-left:22%}
 .lbd-page-line--transition{text-align:right;text-transform:uppercase}
-.lbd-page-rule{height:1.5cqw;border-radius:1px;background:rgba(70,34,28,.14)}
+.lbd-page-rule{height:1.5cqw;border-radius:var(--ds-r-2);background:rgba(70,34,28,.14)}
 .lbd-page-rule:nth-child(4){width:92%}.lbd-page-rule:nth-child(5){width:70%}.lbd-page-rule:nth-child(6){width:84%}.lbd-page-rule:nth-child(7){width:46%}
 
 /* 05 Visual Language: the frames, and the colour script under them */
@@ -329,11 +329,11 @@
 }
 .lbd-tray{position:relative;flex:0 0 auto;width:clamp(150px,15vw,214px);height:calc(var(--lbd-bench) * .56);perspective:420px;perspective-origin:50% 0}
 .lbd-basin{
-  position:absolute;inset:0;transform:rotateX(46deg);transform-origin:50% 100%;border-radius:7px;overflow:hidden;
+  position:absolute;inset:0;transform:rotateX(46deg);transform-origin:50% 100%;border-radius:var(--ds-r-8);overflow:hidden;
   background:linear-gradient(#41201a,#1e0e0b);
   box-shadow:inset 0 0 0 2px #4d251d,inset 0 8px 12px rgba(0,0,0,.65),0 22px 20px -10px rgba(0,0,0,.85);
 }
-.lbd-liquid{position:absolute;inset:6px;border-radius:4px;background:linear-gradient(180deg,#2c0e09,#150605)}
+.lbd-liquid{position:absolute;inset:6px;border-radius:var(--ds-r-4);background:linear-gradient(180deg,#2c0e09,#150605)}
 .lbd-tray-print{
   position:absolute;left:17%;right:17%;top:13%;bottom:11%;overflow:hidden;will-change:transform;
   background:#dcc8b8;box-shadow:0 2px 7px rgba(0,0,0,.55);
@@ -353,7 +353,7 @@
     linear-gradient(100deg,transparent 34%,rgba(255,150,120,.17) 44%,rgba(255,206,186,.07) 50%,transparent 60%),
     linear-gradient(rgba(74,12,6,.5),rgba(40,6,3,.58));
 }
-.lbd-tray-rim{position:absolute;inset:0;border-radius:7px;pointer-events:none;box-shadow:inset 0 0 0 1px rgba(255,140,110,.2)}
+.lbd-tray-rim{position:absolute;inset:0;border-radius:var(--ds-r-8);pointer-events:none;box-shadow:inset 0 0 0 1px rgba(255,140,110,.2)}
 .lbd-tray-info{display:flex;flex-direction:column;align-items:flex-start;gap:10px;min-width:0;max-width:300px}
 /* One quiet line under the action: the scene you stopped in */
 .lbd-tray-slug{
@@ -362,7 +362,7 @@
 }
 .lbd-continue{
   display:inline-flex;align-items:center;gap:10px;min-height:44px;margin:0;padding:0 18px 0 20px;
-  border:0!important;border-radius:999px!important;background:var(--lbd-red)!important;color:#fff!important;cursor:pointer;
+  border:0!important;border-radius:var(--ds-r-pill)!important;background:var(--lbd-red)!important;color:#fff!important;cursor:pointer;
   font:600 14px/1 var(--lbd-ui)!important;letter-spacing:.005em;
   box-shadow:0 10px 24px -12px rgba(212,48,31,.9),inset 0 1px 0 rgba(255,255,255,.18)!important;
   transition:transform .25s cubic-bezier(.2,.7,.2,1),background-color .2s ease;
@@ -395,7 +395,7 @@
   .lbd-darkroom{margin-top:0}
   .lbd-tray-wrap{gap:14px;bottom:24px}
   .lbd-tray{width:108px;height:calc(var(--lbd-bench) * .5)}
-  .lbd-tray-slug{font-size:9px;padding-left:17px}
+  .lbd-tray-slug{font-size:var(--ds-fs-11);padding-left:17px}
   .lbd-continue{min-height:40px;padding:0 15px 0 17px;font-size:13.5px!important}
 }
 @media (max-width:380px){

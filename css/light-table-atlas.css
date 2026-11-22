@@ -1,0 +1,108 @@
+/* ==========================================================================
+   Lightbox / The Atlas cards
+
+   One card system for all five cylinder cards. story-cylinder-v9.js re-lays
+   each native React card into the same skeleton (.lbx):
+
+     ┌──────────────────────────────┐ ← 3px edge in the card's shade
+     │ 03A  THE SCREENPLAY        ↗ │   head    22px row, hairline under, red tick
+     │                              │   18px
+     │ Make it a scene.             │   title   Instrument Serif, one size for all
+     │ 0 words · 1 scene            │   meta    8px under, one quiet line
+     │                              │   16px
+     │ ┌ preview ─────────────────┐ │   preview fills what is left, clips cleanly
+     │ └──────────────────────────┘ │   12px
+     ├──────────────────────────────┤
+     │ Enter writing room        →  │   foot    48px, same baseline on every card
+     └──────────────────────────────┘
+
+   Spacing runs on a 4px grid (4 · 8 · 12 · 16 · 20). Type scale: 9px mono
+   labels, 11.5px meta, 12.5px action, one display size. Edge treatment:
+   12px radius, a 1px ink hairline at 10%, card-stock paper, three shadow
+   layers (contact, near, ambient). Palette: white, ink, grease-pencil red.
+   ========================================================================== */
+
+/* --- The stage --------------------------------------------------------------- */
+/* Floor contact under each card: tighter and cooler than before */
+
+/* --- The sheet ------------------------------------------------------------------ */
+/* The lift: the active card's long ambient shadow. Opacity is driven by the
+   card's distance from centre; hover adds a second, deeper layer. */
+/* Curvature: a whisper of shade at both edges, a line of light along the top */
+/* Distance: the table's own tone laid over cards as they turn away */
+
+/* Hover and focus on the card in front: it rises a little, the arrow leans in */
+
+/* --- The card anatomy ------------------------------------------------------------ */
+
+/* Head: frame number · label · arrow, over a hairline with a red tick */
+
+/* Title */
+/* Meta: one line of context */
+/* Preview: the card's own picture, filling what is left */
+/* Foot: the action, on a rule, on the same baseline on every card */
+
+/* --- 01A World: a survey sheet over the index ------------------------------------- */
+/* Hover wash as its own layer, so it fades with opacity alone */
+
+/* --- 02A Field notes: two index cards on a red thread ---------------------------------- */
+/* The index card's red head rule, then pale ruling */
+/* Pins and the thread sit in the board's own coordinates */
+
+/* --- 03A Screenplay: the first page, on a short stack ------------------------------- */
+/* Two brass-free brads down the binding edge */
+
+/* --- 04A Visual language: scene frames over a colour script --------------------------- */
+/* An empty board is an unexposed frame: letterboxed, with its number */
+/* A colour script: six painted keys, each with its own light above a horizon */
+
+/* --- 05A The spark: a logline in four blanks ----------------------------------------- */
+
+/* --- Short screens: the same skeleton, tightened ----------------------------------- */
+
+
+/* --- Controls under the drum ----------------------------------------------------------- */
+/* Five frame ticks; the current one is inked in red */
+
+/* --- Pitch view: a quiet tab that matches the card heads ------------------------------------ */
+.studio.atlas-shell.lb-cylinder-atlas .pitch-launch{
+  display:inline-flex!important;align-items:center;gap:9px;
+  height:36px;min-height:36px;padding:0 14px 0 12px!important;
+  background:var(--lt-mount,#fff);color:var(--lt-ink,var(--ds-ink));
+  border:1px solid rgba(28,27,25,.14);border-radius:var(--ds-r-4)!important;
+  box-shadow:0 1px 1px rgba(28,27,25,.06),0 6px 12px -8px rgba(28,27,25,.3);
+  font:500 9.5px/1 "DM Mono",monospace!important;letter-spacing:.16em;text-transform:uppercase;
+  transition:border-color var(--ds-dur-base) var(--ds-ease)!important;
+}
+.studio.atlas-shell.lb-cylinder-atlas .pitch-launch>svg:first-child{width:12px;height:12px;color:var(--lt-marker,var(--ds-red));fill:currentColor}
+.studio.atlas-shell.lb-cylinder-atlas .pitch-launch>svg:last-child{width:12px;height:12px;color:var(--lt-ink-3,var(--ds-ink-3));transition:transform var(--ds-dur-med) var(--ds-ease)}
+.studio.atlas-shell.lb-cylinder-atlas .pitch-launch:hover{border-color:var(--lt-ink,var(--ds-ink))!important}
+.studio.atlas-shell.lb-cylinder-atlas .pitch-launch:focus-visible{outline:2px solid var(--lt-marker,var(--ds-red))!important;outline-offset:3px!important}
+@media (max-width:700px){.studio.atlas-shell.lb-cylinder-atlas .pitch-launch{display:none!important}}
+.studio.atlas-shell.lb-cylinder-atlas .pitch-launch:hover>svg:last-child{transform:translate3d(2px,-2px,0)}
+
+/* The Android line at the foot of the Atlas: a single rule, no panel */
+.studio.atlas-shell .lb-android-footer{
+  background:transparent;background-image:none;box-shadow:none;border-radius:0;
+  border:0;border-top:1px solid #E3DFD6;color:var(--ds-red-ink);
+}
+.studio.atlas-shell .lb-android-footer a{color:var(--ds-ink)}
+
+/* ==========================================================================
+   The desk
+   Things left on the grid paper for people who look closely. Ink at 18-35%,
+   in the margins, never over a card or a control. Everything is aria-hidden
+   and pointer-events:none except the slate and the tally, which sit in empty
+   corners above the page and do nothing but delight.
+   ========================================================================== */
+
+/* Registration marks at the corners of the sheet */
+
+/* The slate: top-left, opposite Pitch view. Click for another take. */
+@keyframes lbx-clap{0%{transform:rotate(0)}35%{transform:rotate(-14deg)}70%{transform:rotate(0)}85%{transform:rotate(-2deg)}100%{transform:rotate(0)}}
+
+/* A coffee ring and the script supervisor's note */
+
+/* Days at this desk, in grease pencil. Hover to read it. */
+
+/* Edge print, running down the right margin like the edge of a film strip */

@@ -1,0 +1,213 @@
+/* The Lightbox hero: a lit table in CSS 3D.
+ *
+ * A slab of opal glass glows under a red safelight. Five film frames, one per stage of a project, float above it
+ * like transparencies on a light table. Pointer tilts the scene, scrolling lifts the frames apart. Everything is
+ * transform and opacity; there is no WebGL and no image. All sizes are in container units (--u = 1cqw), so
+ * the scene scales with its panel.
+ *
+ * hero.js turns on `.is-live`. Without it, or when the device is weak, the user prefers less motion or
+ * 3D transforms are unsupported, the same markup holds one fixed pose (`.is-static`) and nothing moves.
+ */
+.lbx {
+  --u: min(.9vw, 6px);                  /* fallback where container units do not exist */
+  --rx0: 60deg;                         /* rest pose: looking down onto the table */
+  --rz0: -31deg;
+  --tx: 0deg;                           /* pointer, written by hero.js */
+  --ty: 0deg;
+  --lift: .3;                           /* 0 = frames resting on the glass, 1 = fully exploded; written on scroll */
+  --T: 3.4;                             /* thickness of the slab, in units */
+  position: relative;
+  container-type: inline-size;
+  aspect-ratio: 1 / .96;
+  min-height: 300px;
+  border-radius: var(--ds-r-24);
+  overflow: hidden;
+  isolation: isolate;
+  background:
+    radial-gradient(60% 46% at 50% 54%, rgba(242, 98, 79, .34), rgba(212, 48, 31, .1) 55%, transparent 76%),
+    radial-gradient(120% 90% at 50% -10%, #2c2c31, var(--ds-chassis) 62%);
+  box-shadow: inset 0 0 0 1px var(--ds-chassis-line), 0 30px 60px -30px rgba(28, 27, 25, .55);
+  touch-action: pan-y;
+  user-select: none;
+  -webkit-user-select: none;
+}
+@supports (width: 1cqw) { .lbx { --u: 1cqw; } }
+.lbx::before {                          /* the graphite's grain */
+  content: ""; position: absolute; inset: 0; z-index: 0; pointer-events: none;
+  background: url("../assets/textures/chassis.webp") center / 320px; opacity: .22; mix-blend-mode: overlay;
+}
+.lbx::after {                           /* vignette keeps the eye on the table */
+  content: ""; position: absolute; inset: 0; z-index: 3; pointer-events: none;
+  background: radial-gradient(90% 80% at 50% 52%, transparent 58%, rgba(8, 8, 9, .5));
+}
+
+.lbx-stage {
+  position: absolute; inset: 0; z-index: 1;
+  perspective: calc(var(--u) * 150);
+  perspective-origin: 50% 36%;
+}
+.lbx-scene {
+  position: absolute; left: 51%; top: 64%;
+  width: calc(var(--u) * 60); height: calc(var(--u) * 40);
+  margin: calc(var(--u) * -20) 0 0 calc(var(--u) * -30);
+  transform-style: preserve-3d;
+  transform: rotateX(calc(var(--rx0) + var(--ty))) rotateZ(calc(var(--rz0) + var(--tx)));
+}
+.lbx.is-live .lbx-scene { will-change: transform; }
+.lbx.is-live .lbx-frame { will-change: transform; }
+
+/* The slab */
+.lbx-box { position: absolute; inset: 0; transform-style: preserve-3d; }
+.lbx-glass {
+  position: absolute; inset: 0;
+  transform: translateZ(calc(var(--u) * var(--T)));
+  border-radius: calc(var(--u) * .8);
+  background:
+    radial-gradient(70% 70% at 50% 46%, #fffdf8 0, #fff3e6 34%, #f9cdb7 68%, #e98a6f 100%);
+  box-shadow:
+    inset 0 0 0 calc(var(--u) * .7) var(--ds-chassis-2),
+    inset 0 0 0 calc(var(--u) * .95) #060606,
+    0 0 calc(var(--u) * 9) calc(var(--u) * 1.5) rgba(242, 98, 79, .55);
+}
+.lbx-glass::after {                      /* a faint grid under the opal, like a lit cutting mat */
+  content: ""; position: absolute; inset: calc(var(--u) * .95); border-radius: calc(var(--u) * .3);
+  background:
+    linear-gradient(rgba(180, 90, 70, .12) 1px, transparent 1px) 0 0 / calc(var(--u) * 4) calc(var(--u) * 4),
+    linear-gradient(90deg, rgba(180, 90, 70, .12) 1px, transparent 1px) 0 0 / calc(var(--u) * 4) calc(var(--u) * 4);
+  mix-blend-mode: multiply;
+}
+.lbx-side {
+  position: absolute; background: linear-gradient(180deg, #2e2e32, #131315);
+  box-shadow: inset 0 calc(var(--u) * .12) 0 rgba(255, 255, 255, .12);
+}
+.lbx-side--front {                       /* the face toward you */
+  left: 0; top: 100%; width: 100%; height: calc(var(--u) * var(--T));
+  transform-origin: 50% 0; transform: translateZ(calc(var(--u) * var(--T))) rotateX(-90deg);
+}
+.lbx-side--front::after {                /* a pilot light */
+  content: ""; position: absolute; right: calc(var(--u) * 2); top: 50%; width: calc(var(--u) * .7); height: calc(var(--u) * .7);
+  margin-top: calc(var(--u) * -.35); border-radius: 50%; background: var(--ds-red-on-dark);
+  box-shadow: 0 0 calc(var(--u) * 1.2) calc(var(--u) * .3) rgba(242, 98, 79, .9);
+}
+.lbx-side--right {
+  left: 100%; top: 0; width: calc(var(--u) * var(--T)); height: 100%;
+  transform-origin: 0 50%; transform: translateZ(calc(var(--u) * var(--T))) rotateY(90deg);
+  background: linear-gradient(90deg, #232326, #0e0e10);
+}
+.lbx-shadow {
+  position: absolute; inset: calc(var(--u) * -6);
+  background: radial-gradient(closest-side, rgba(0, 0, 0, .6), transparent);
+  transform: translateZ(0);
+}
+
+/* The safelight: one plane of glow rising from the glass, turned to face you so it never cuts into anything */
+.lbx-beam {
+  position: absolute; left: 50%; top: 50%;
+  width: calc(var(--u) * 40); height: calc(var(--u) * 46); margin-left: calc(var(--u) * -20);
+  transform-origin: 50% 0;
+  transform: translateZ(calc(var(--u) * var(--T))) rotateZ(calc(-1 * (var(--rz0) + var(--tx)))) rotateX(90deg);
+  background: linear-gradient(0deg, rgba(255, 190, 160, .85), rgba(242, 98, 79, .38) 38%, rgba(212, 48, 31, .1) 56%, transparent 88%);
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 32%, #000 68%, transparent), linear-gradient(0deg, #000 40%, transparent);
+  -webkit-mask-composite: source-in;
+  mask-image: linear-gradient(90deg, transparent, #000 32%, #000 68%, transparent), linear-gradient(0deg, #000 40%, transparent);
+  mask-composite: intersect;
+  pointer-events: none;
+  opacity: calc(.8 + var(--lift) * .2);
+}
+
+/* The frames */
+.lbx-frame {
+  position: absolute; margin: 0;
+  width: calc(var(--u) * 19.5); height: calc(var(--u) * 13);
+  left: calc(var(--u) * (1.6 + var(--i) * 9.3));
+  top: calc(var(--u) * (17 - var(--i) * 1.6 + var(--k, 0) * 1.1));
+  transform:
+    translateZ(calc(var(--u) * ((var(--T) + 2.2) + var(--i) * 5 + var(--lift) * var(--i) * 10)))
+    rotateZ(calc(var(--r, 0) * 1deg + var(--lift) * var(--i) * -1.6deg));
+  transform-style: preserve-3d;
+}
+.lbx-film {
+  position: absolute; inset: 0;
+  display: grid; grid-template-rows: calc(var(--u) * 1.1) 1fr calc(var(--u) * 1.1);
+  background: rgba(20, 20, 22, .9);
+  border-radius: calc(var(--u) * .5);
+  box-shadow:
+    0 0 0 calc(var(--u) * .12) rgba(255, 255, 255, .22),
+    0 calc(var(--u) * 1.6) calc(var(--u) * 3.2) rgba(0, 0, 0, .42),
+    0 0 calc(var(--u) * 3) rgba(255, 190, 160, calc(.1 + var(--i) * .04));
+  overflow: hidden;
+}
+.lbx-perf {
+  background: repeating-linear-gradient(90deg, #efe6d9 0 calc(var(--u) * .5), transparent 0 calc(var(--u) * 1.1)) calc(var(--u) * .3) 50% / 100% 56% no-repeat;
+  opacity: .8;
+}
+.lbx-img { position: relative; margin: 0 calc(var(--u) * .7); border-radius: calc(var(--u) * .25); overflow: hidden; }
+.lbx-n {                                 /* frame number in the border, a tiny mono tick */
+  position: absolute; right: calc(var(--u) * 1); bottom: calc(var(--u) * .05); width: calc(var(--u) * 2.2); height: calc(var(--u) * .35);
+  background: var(--ds-red-on-dark); opacity: .9; border-radius: 1px;
+}
+
+/* What each frame holds */
+.lbx-img--spark {
+  background: radial-gradient(circle at 50% 54%, #fff 0, #ffd2bd 6%, rgba(242, 98, 79, .8) 16%, rgba(120, 28, 16, .55) 40%, #1a0c0a 80%);
+}
+.lbx-img--world { background: linear-gradient(165deg, #3a342d, #1d1b19); }
+.lbx-img--world i { position: absolute; border: calc(var(--u) * .22) solid #efe6d9; }
+.lbx-img--world i:nth-child(1) { left: 14%; top: 28%; width: 22%; height: 38%; border-radius: 50%; }
+.lbx-img--world i:nth-child(2) { left: 42%; top: 22%; width: 20%; height: 46%; border-radius: calc(var(--u) * .3); transform: skewX(-8deg); }
+.lbx-img--world i:nth-child(3) { left: 68%; top: 36%; width: 18%; height: 28%; border-radius: 4px; border-color: var(--ds-red-on-dark); }
+.lbx-img--research { background: #2b2926; }
+.lbx-img--research i { position: absolute; width: 36%; height: 56%; background: #f4ecdd; border-radius: 1px; box-shadow: 0 1px 2px rgba(0, 0, 0, .4); }
+.lbx-img--research i:nth-child(1) { left: 10%; top: 18%; transform: rotate(-7deg); }
+.lbx-img--research i:nth-child(2) { left: 46%; top: 26%; transform: rotate(5deg); }
+.lbx-img--research i::before { content: ""; position: absolute; left: 12%; right: 12%; top: 30%; height: 1px; background: rgba(28, 27, 25, .25); box-shadow: 0 calc(var(--u) * .8) 0 rgba(28, 27, 25, .25), 0 calc(var(--u) * 1.6) 0 rgba(28, 27, 25, .25); }
+.lbx-img--research i::after { content: ""; position: absolute; left: 44%; top: -6%; width: calc(var(--u) * .9); height: calc(var(--u) * .9); border-radius: 50%; background: var(--ds-red); box-shadow: 0 1px 2px rgba(0, 0, 0, .5); }
+.lbx-img--script { background: #f6f0e4; }
+.lbx-img--script i { position: absolute; left: 20%; height: calc(var(--u) * .3); background: rgba(28, 27, 25, .7); border-radius: 1px; }
+.lbx-img--script i:nth-child(1) { top: 18%; width: 38%; }
+.lbx-img--script i:nth-child(2) { top: 32%; width: 54%; background: rgba(28, 27, 25, .38); }
+.lbx-img--script i:nth-child(3) { top: 44%; width: 30%; left: 38%; }
+.lbx-img--script i:nth-child(4) { top: 56%; width: 44%; left: 30%; background: rgba(28, 27, 25, .38); }
+.lbx-img--script i:nth-child(5) { top: 72%; width: 48%; background: rgba(212, 48, 31, .7); }
+.lbx-img--visual { background: linear-gradient(90deg, #e9d9bf 0 20%, #cf8a5f 20% 40%, #b3261a 40% 60%, #5a2b27 60% 80%, #1f2a33 80%); }
+.lbx-img--visual::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(255, 255, 255, .18), transparent 40%, rgba(0, 0, 0, .25)); }
+
+/* Dust in the beam */
+.lbx-mote {
+  position: absolute; left: calc(var(--u) * (28 + var(--m) * 3.6)); top: 50%; width: calc(var(--u) * .5); height: calc(var(--u) * .5);
+  border-radius: 50%; background: #ffd9c8; opacity: 0; pointer-events: none;
+  transform: translateZ(calc(var(--u) * var(--T)));
+}
+.lbx.is-live .lbx-mote { animation: lbx-mote calc(7s + var(--m) * .9s) linear calc(var(--m) * -1.3s) infinite; }
+@keyframes lbx-mote {
+  0% { opacity: 0; transform: translate3d(0, 0, calc(var(--u) * var(--T))); }
+  15% { opacity: .85; }
+  100% { opacity: 0; transform: translate3d(calc(var(--u) * (var(--m) - 3) * .7), calc(var(--u) * (var(--m) - 2) * -.4), calc(var(--u) * 30)); }
+}
+.lbx.is-live .lbx-stage::before {
+  content: ""; position: absolute; left: 50%; top: 58%; width: 70%; height: 46%; margin: -23% 0 0 -35%;
+  background: radial-gradient(closest-side, rgba(242, 98, 79, .5), transparent);
+  animation: lbx-breathe 5.5s ease-in-out infinite alternate; pointer-events: none;
+}
+@keyframes lbx-breathe { from { opacity: .55; transform: scale(.94); } to { opacity: 1; transform: scale(1.04); } }
+
+/* Pointer follow: a soft light under the cursor makes the glass answer you */
+.lbx-sheen {
+  position: absolute; inset: 0; z-index: 2; pointer-events: none; opacity: 0;
+  background: radial-gradient(18% 18% at var(--mx, 50%) var(--my, 50%), rgba(255, 220, 200, .22), transparent);
+  transition: opacity var(--ds-dur-med) var(--ds-ease);
+}
+.lbx.is-live:hover .lbx-sheen { opacity: 1; }
+
+/* No 3D: lay the same frames out flat on the glass */
+@supports not (transform-style: preserve-3d) {
+  .lbx-scene { transform: none; }
+  .lbx-frame { transform: none; top: 50%; margin-top: calc(var(--u) * -5.7); }
+  .lbx-beam, .lbx-side, .lbx-mote { display: none; }
+}
+.lbx.is-static .lbx-mote, .lbx.is-static .lbx-sheen { display: none; }
+@media (prefers-reduced-motion: reduce) { .lbx-mote, .lbx-stage::before { animation: none; } }
+
+@media (max-width: 720px) {
+  .lbx { aspect-ratio: 1 / .9; min-height: 280px; }
+}

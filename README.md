@@ -1,3 +1,7 @@
+# Design system
+
+The whole studio is styled from one token layer and one cascade. See `docs/design-system.md`: tokens in `css/tokens.css`, partials in `css/`, built into `lightbox.css` and `lightbox-app.css` by `node tools/build-css.mjs`. Check a refactor with `tests/design-snapshot.mjs` and `tools/design-compare.py`.
+
 # Field Kit: Lightbox on a phone
 
 At 767px and narrower, Lightbox has its own phone design: a graphite bar docked under the thumb (Atlas, Develop, the red Write key, Visuals, Kit), and paper sheets that rise from the bottom for everything else, from the other rooms to export, settings and the studio menu. Desktop is unchanged. See `docs/field-kit.md`; the browser checks are in `tests/field-kit-qa.mjs`.
@@ -18,7 +22,7 @@ Validation: JavaScript syntax, stylesheet asset checks, palette contrast calcula
 
 The original studio palette and foundation/profile layouts are retained. Screenplay tools use a compact toolbar with automatic formatting, and the phone page fills its available writing area. Research notes in `docs/studio-refresh-research.md` are proposals only.
 
-Use `node export-tools/build-portable.mjs --scripts-only` to rebuild writing code while preserving the existing portable visual baseline in `styles.css`.
+Use `node export-tools/build-portable.mjs --scripts-only` to rebuild writing code. The visual baseline lives in `css/framework.css`.
 
 # Lightbox v64 — complete source and portable export
 
@@ -27,7 +31,7 @@ This download was exported from saved Lightbox version 64, source commit
 
 ## What is included
 
-- `index.html`, `styles.css`, `script.js`: a ready-to-run portable workspace.
+- `index.html`, `lightbox.css`, `lightbox-app.css`, `first-page.css`, `script.js` (and `assets/`): a ready-to-run portable workspace.
   React, the editor, PDF generation, icons, the logo, and fonts are bundled.
   No CDN imports, build step, npm install, or server account is needed to use it.
   JavaScript is bundled without minification so its complete code remains readable.
@@ -43,7 +47,7 @@ This download was exported from saved Lightbox version 64, source commit
 ## Open the portable workspace
 
 1. Extract the ZIP.
-2. Keep `index.html`, `styles.css`, and `script.js` together.
+2. Keep `index.html`, the stylesheets, `script.js` and `assets/` together.
 3. Open `index.html` in a current browser.
 
 For more consistent browser storage behavior, serve the extracted folder locally:

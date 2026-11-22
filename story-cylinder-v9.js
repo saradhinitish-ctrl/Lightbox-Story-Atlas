@@ -446,7 +446,8 @@
       prints: [], ac: new AbortController(), raf: 0, last: 0, acc: 0, visible: true, onscreen: true,
       still: reduceMQ.matches, pulling: null, hover: -1, pointer: null, jank: 0, dataKey: '', current: 0, lv: [0, 0, 0, 0, 0],
       air: { t: 0, gusts: [], puffs: [], nextGust: 4.5, prevail: Math.random() < .5 ? -1 : 1, A0: 18, rnd: rng((Date.now() & 0xffff) + 7) },
-      rope: null, dust: [], trayAir: 0, trayAirV: 0, trayBoost: 0, trayHover: false, layoutKey: ''
+      rope: null, dust: [], trayAir: 0, trayAirV: 0, trayBoost: 0, trayHover: false, layoutKey: '',
+      lampEl: q('.lbd-lamp'), depth: { x: 0, y: 0, cache: {} }
     };
     const shadowFrag = document.createDocumentFragment(), clipFrag = document.createDocumentFragment();
     const params = rng(31);
@@ -1166,6 +1167,34 @@
       s.projF[k] = f;
     }
   }
+  /* ---- Depth: three layers that answer you differently -----------------------------------
+   * The wall is far, the safelight hangs nearer, the prints are in your hands. Sideways swipes (phone),
+   * the cursor (desk) and, where the device offers it without asking, a tilt of the phone all slide the
+   * wall a few pixels and the lamp a little further, so the room has depth without a single extra layer
+   * to paint. Two cached `translate` writes per frame; nothing at all while still (reduced motion). */
+  const gyro = { x: 0, y: 0 };
+  // Never asks for permission: where the browser offers the sensor freely (Android, the Android app) it moves the room;
+  // where it wants a prompt (iOS) the event simply never arrives and the swipe and the cursor do the work.
+  addEventListener('deviceorientation', (e) => {
+    if (e.gamma == null || e.beta == null || reduceMQ.matches) return;
+    gyro.x = clamp(e.gamma / 24, -1, 1);                   // left / right
+    gyro.y = clamp((e.beta - 52) / 24, -1, 1);             // toward / away, around a natural holding angle
+  }, { passive: true });
+  function parallax(s, dt) {
+    const d = s.depth, reach = Math.max(6, s.W * .012);
+    const pan = s.scroll ? clamp(s.viewX / Math.max(1, s.lineW - s.W), 0, 1) * 2 - 1 : 0;
+    const pt = s.pointer && s.pointer.type === 'mouse' ? s.pointer : null;
+    const px = pt ? clamp((pt.x - s.viewX) / Math.max(1, s.W) * 2 - 1, -1, 1) : 0;
+    const py = pt ? clamp(pt.y / Math.max(1, s.H) * 2 - 1, -1, 1) : 0;
+    const tx = -(pan * .9 + px * .6 + gyro.x * .8) * reach;
+    const ty = -(py * .4 + gyro.y * .5) * reach * .6;
+    const k = 1 - Math.pow(.003, dt);
+    d.x += (tx - d.x) * k; d.y += (ty - d.y) * k;
+    const wall = f3(Math.round(d.x * 4) / 4) + 'px ' + f3(Math.round(d.y * 4) / 4) + 'px';
+    if (d.cache.w !== wall) { d.cache.w = wall; s.beam.style.translate = wall; }   // the canvas slides inside the clipped wall, so the room never grows a scrollbar
+    const lamp = f3(Math.round(d.x * 1.7 * 4) / 4) + 'px ' + f3(Math.round(d.y * 1.7 * 4) / 4) + 'px';
+    if (d.cache.l !== lamp) { d.cache.l = lamp; s.lampEl.style.translate = lamp; }
+  }
   function render(s, dt) {
     if (!s.rope) return;
     // Read the scroll position and where the line sits once, before this
@@ -1236,6 +1265,7 @@
     const tl = still ? (s.trayHover ? .95 : s.trayLevel || .2) : (s.trayLevel || .2) + (1 - (s.trayLevel || .2)) * .8 * s.trayBoost;
     const tlo = String(Math.round(tl * 100) / 100);
     if (s.trayPage._o !== tlo) { s.trayPage.style.opacity = tlo; s.trayPage._o = tlo; }
+    if (!still) parallax(s, dt);
   }
 
   /* ---- The loop ------------------------------------------------------------------------- */

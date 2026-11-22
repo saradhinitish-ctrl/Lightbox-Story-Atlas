@@ -56,25 +56,15 @@
       html.lb-native-shell .studio.atlas-shell .install-app,
       html.lb-native-shell .lb-native-choice { display: none !important; }
     </style>
-    <link rel="stylesheet" href="./styles.css">
-    <link rel="stylesheet" href="./mobile-refinements.css">
-    <link rel="stylesheet" href="./screenplay-polish.css">
-    <link rel="stylesheet" href="./install-app.css">
-    <link rel="stylesheet" href="./studio-design.css?v=107">
-    <link rel="stylesheet" href="./opening.css">
+    <!-- The four faces the first screen is set in. Everything else loads on demand. -->
+    <link rel="preload" href="./assets/fonts/instrument-serif-400-latin.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="./assets/fonts/instrument-serif-400-italic-latin.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="./assets/fonts/dm-sans-400-latin.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="./assets/fonts/dm-sans-500-latin.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="stylesheet" href="./lightbox.css?v=b67a803d">
+    <!-- Kept separate on purpose: the native Android app substitutes its own first-page.css by exact path. -->
     <link rel="stylesheet" href="./first-page.css">
-    <link rel="stylesheet" href="./story-cylinder-v9.css?v=12">
-    <link rel="stylesheet" href="./material-design.css?v=4">
-    <link rel="stylesheet" href="./light-table-surfaces.css?v=2">
-    <link rel="stylesheet" href="./light-table.css?v=3">
-    <link rel="stylesheet" href="./light-table-atlas.css?v=6">
-    <link rel="stylesheet" href="./beat-table.css?v=1">
-    <link rel="stylesheet" href="./writing-rooms.css?v=1">
-    <link rel="stylesheet" href="./atlas-light-table.css?v=8">
-    <link rel="stylesheet" href="./light-table-rooms.css?v=4">
-    <!-- Field Kit: the phone experience. Every rule is inside a phone-width media query. -->
-    <link rel="stylesheet" href="./field-kit.css?v=2">
-    <link rel="stylesheet" href="./title-sequence.css?v=1">
+    <link rel="stylesheet" href="./lightbox-app.css?v=19c0996c">
     <link rel="manifest" href="./manifest.webmanifest">
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=viewfinder-1">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -135,6 +125,7 @@
     <script defer src="./research-board.js?v=3"></script>
     <script defer src="./film-frames.js?v=1"></script>
     <script defer src="./field-kit.js?v=2"></script>
+    <script defer src="./motion.js"></script>
 </body>
 </html>
 

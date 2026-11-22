@@ -1,0 +1,107 @@
+/* Lightbox design tokens: the one source of truth.
+ *
+ * Everything the studio looks like comes from here: the warm paper and graphite, the single red, the
+ * four typefaces, one radius scale, one type scale, three elevations, one z-index ladder and one motion
+ * language. Older prefixes (--fk-*, --lt-*, --lbd-*) are kept as aliases of these so existing rules keep
+ * working; new CSS should use --ds-* directly.
+ */
+:root {
+  /* Graphite: the bar, the header, dark sheets */
+  --ds-chassis: #18181A;
+  --ds-chassis-2: #232326;
+  --ds-chassis-3: #2E2E32;
+  --ds-chassis-line: #38383D;
+  --ds-chassis-ink: #EEECE7;        /* 15.0:1 on chassis */
+  --ds-chassis-muted: #A9A6A0;      /* 7.3:1 on chassis */
+
+  /* Paper: the writing surface and the table it sits on */
+  --ds-paper: #FAF9F5;
+  --ds-table: #EFEDE7;
+  --ds-mount: #FFFFFF;
+  --ds-rule: #D9D5CB;
+  --ds-rule-strong: #B8B3A7;
+
+  /* Ink */
+  --ds-ink: #1C1B19;                /* 16.3:1 on paper */
+  --ds-ink-2: #4B4842;
+  --ds-ink-3: #67635B;              /* 5.7:1 on paper */
+
+  /* Red: the only accent */
+  --ds-red: #D4301F;
+  --ds-red-hi: #E3412E;
+  --ds-red-ink: #B3261A;            /* small text on paper, 6.2:1 */
+  --ds-red-on-dark: #F2624F;        /* small text on graphite, 5.6:1 */
+  --ds-red-wash: rgba(212, 48, 31, .075);
+  --ds-red-line: rgba(212, 48, 31, .38);
+
+  /* The darkroom wall under the safelight */
+  --ds-wall: #0a0706;
+  --ds-wall-2: #160c0a;
+  --ds-wall-ink: #F1E5DA;           /* 16:1 on wall */
+  --ds-wall-muted: #C2AB9F;         /* 9.2:1 on wall */
+
+  /* Type */
+  --ds-font-display: "Instrument Serif", Georgia, serif;
+  --ds-font-ui: "DM Sans", "Segoe UI", system-ui, sans-serif;
+  --ds-font-mono: "DM Mono", ui-monospace, monospace;
+  --ds-font-frame: "Big Shoulders Display", "DM Mono", sans-serif;
+  --ds-font-courier: "Courier Prime", "Courier New", monospace;
+
+  /* Type scale (px). Nothing in the studio is set smaller than 11px. */
+  --ds-fs-11: 11px;
+  --ds-fs-12: 12px;
+  --ds-fs-13: 13px;
+  --ds-fs-14: 14px;
+  --ds-fs-15: 15px;
+  --ds-fs-16: 16px;
+  --ds-fs-18: 18px;
+  --ds-fs-20: 20px;
+  --ds-fs-24: 24px;
+  --ds-fs-28: 28px;
+  --ds-fs-32: 32px;
+  --ds-fs-36: 36px;
+  --ds-fs-40: 40px;
+  --ds-fs-48: 48px;
+  --ds-fs-56: 56px;
+  --ds-fs-64: 64px;
+
+  /* Radius scale: paper edges, controls, cards, sheets */
+  --ds-r-2: 2px;
+  --ds-r-4: 4px;
+  --ds-r-8: 8px;
+  --ds-r-14: 14px;
+  --ds-r-24: 24px;
+  --ds-r-pill: 999px;
+
+  /* Elevation: a resting print, a lifted print, a pegged print, a sheet */
+  --ds-lift: 0 1px 1px rgba(28, 27, 25, .06), 0 10px 22px -14px rgba(28, 27, 25, .38);
+  --ds-lift-hi: 0 1px 2px rgba(28, 27, 25, .08), 0 18px 34px -16px rgba(28, 27, 25, .42);
+  --ds-print: 0 1px 1px rgba(28, 27, 25, .1), 0 14px 22px -14px rgba(28, 27, 25, .5), 0 34px 44px -34px rgba(60, 20, 12, .5);
+  --ds-sheet: 0 -1px 0 rgba(28, 27, 25, .06), 0 -18px 44px -18px rgba(28, 27, 25, .45);
+
+  /* Layers: use these, not new magic numbers */
+  --ds-z-raised: 10;
+  --ds-z-bar: 30;
+  --ds-z-overlay: 40;
+  --ds-z-sheet: 50;
+  --ds-z-modal: 60;
+  --ds-z-toast: 70;
+
+  /* Space and touch */
+  --ds-gutter: 20px;
+  --ds-hit: 48px;                   /* comfortable touch target */
+  --ds-hit-min: 44px;
+
+  /* Motion: one language (see motion.css) */
+  --ds-dur-fast: 140ms;             /* a press, a colour change */
+  --ds-dur-base: 220ms;             /* a hover, a toggle, a small reveal */
+  --ds-dur-med: 300ms;              /* a panel, a card, a room arriving */
+  --ds-dur-slow: 460ms;             /* a sheet, the mark */
+  --ds-ease: cubic-bezier(.2, .8, .2, 1);           /* things arrive: fast out, long settle */
+  --ds-ease-in: cubic-bezier(.7, 0, .84, 0);        /* things leave */
+  --ds-spring: cubic-bezier(.2, .9, .25, 1.04);     /* sheets: a soft 3% overshoot */
+
+  /* Tailwind's utilities (transition-colors etc.) speak the same language */
+  --default-transition-duration: var(--ds-dur-fast);
+  --default-transition-timing-function: var(--ds-ease);
+}

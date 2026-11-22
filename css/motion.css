@@ -1,0 +1,64 @@
+/* Motion: one language for the whole studio.
+ *
+ * Things arrive on a long, soft settle (--ds-ease) and leave quickly (--ds-ease-in). A press is 140ms,
+ * a hover 220ms, a room or panel 300ms, a sheet 460ms. Only transform, opacity and colour move, using the
+ * individual `translate` and `scale` properties so nothing here fights a rule that already sets `transform`.
+ *
+ * Existing transitions were normalised to these durations (see docs/design-system.md). Press feedback is in
+ * motion.js. Everything below is off under prefers-reduced-motion.
+ */
+
+@keyframes ds-arrive {
+  from { opacity: 0; translate: 0 10px; }
+}
+@keyframes ds-pop {
+  from { opacity: 0; translate: 0 8px; scale: .985; }
+}
+@keyframes ds-slide-in {
+  from { opacity: 0; translate: -14px 0; }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  /* A room arrives: the page it opens settles up into place rather than appearing. Rooms mount fresh
+     when you switch, so this runs once per visit and never while you write. */
+  :is(.foundation-workspace, .lbs, .visual-language, .btl, .breakdown-stage, .collection-workspace, .pitch-stage) {
+    animation: ds-arrive var(--ds-dur-med) var(--ds-ease) backwards;
+  }
+
+  /* Dialogs and menus on a desk rise a little and fade in. (On a phone they are sheets: Field Kit moves them.) */
+  html:not(.fk) :is(dialog.dialog[open], .application-menu-popover, .menu-host > .dropdown, .script-more-popover) {
+    animation: ds-pop var(--ds-dur-base) var(--ds-ease) backwards;
+  }
+
+  /* The library slides in from its edge on a desk. */
+  html:not(.fk) .studio aside.binder {
+    animation: ds-slide-in var(--ds-dur-med) var(--ds-ease) backwards;
+  }
+
+  /* Layers on a phone: while the kit is open the studio behind it steps back, the way a sheet sits over a page.
+     The sheet and bar are siblings of #root, so only the studio scales. Transform-only, one composited layer. */
+  html.fk #root { transform-origin: 50% 0; transition: scale var(--ds-dur-slow) var(--ds-spring); }
+  html.fk.fk-kit-open #root { scale: .955; }
+
+  /* Focus arrives instead of snapping on. */
+  :where(a, button, input, select, textarea, summary, [tabindex], [role="button"], [role="tab"]):focus-visible {
+    transition: outline-offset var(--ds-dur-fast) var(--ds-ease);
+  }
+}
+
+/* A sheet or menu is its own scroll world: reaching its end must not drag the page behind it. */
+:is(dialog.dialog, .application-menu-popover, .script-more-popover, .menu-host > .dropdown, .binder, .fk-sheet__body) {
+  overscroll-behavior: contain;
+}
+
+/* The one reduced-motion guard for the whole studio. Zero, not none, so animationend and transitionend still
+   fire and nothing waits on an event that never comes. (The darkroom and the title sequence also read the
+   media query themselves.) */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

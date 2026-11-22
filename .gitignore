@@ -2,3 +2,4 @@ export-tools/node_modules/
 export-tools/.work/
 qa-artifacts/
 __pycache__/
+.DS_Store

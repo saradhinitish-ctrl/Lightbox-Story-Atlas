@@ -57,7 +57,9 @@
 .lbd-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap}
 
 /* The wall: matte black paint, a warm cast where the safelight falls */
-.lbd-wall{position:absolute;inset:0;z-index:0;pointer-events:none}
+.lbd-wall{position:absolute;inset:0;z-index:0;pointer-events:none;overflow:clip}
+/* Depth: the wall's light and the lamp are parallax layers (story-cylinder-v9.js); under reduced motion they stay put */
+.lbd-darkroom.is-still .lbd-beam,.lbd-darkroom.is-still .lbd-lamp{translate:none}
 .lbd-beam{position:absolute;left:0;top:0}
 /* The safelight: a housing hung on its cord, the filter glowing */
 .lbd-lamp{

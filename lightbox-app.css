@@ -2055,7 +2055,9 @@ dialog.dialog::before,dialog.dialog::after,
 .lbd-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap}
 
 /* The wall: matte black paint, a warm cast where the safelight falls */
-.lbd-wall{position:absolute;inset:0;z-index:0;pointer-events:none}
+.lbd-wall{position:absolute;inset:0;z-index:0;pointer-events:none;overflow:clip}
+/* Depth: the wall's light and the lamp are parallax layers (story-cylinder-v9.js); under reduced motion they stay put */
+.lbd-darkroom.is-still .lbd-beam,.lbd-darkroom.is-still .lbd-lamp{translate:none}
 .lbd-beam{position:absolute;left:0;top:0}
 /* The safelight: a housing hung on its cord, the filter glowing */
 .lbd-lamp{
@@ -3087,6 +3089,11 @@ html.fk .studio.phone-layout aside.binder .binder-content .tree-delete { width: 
   html:not(.fk) .studio aside.binder {
     animation: ds-slide-in var(--ds-dur-med) var(--ds-ease) backwards;
   }
+
+  /* Layers on a phone: while the kit is open the studio behind it steps back, the way a sheet sits over a page.
+     The sheet and bar are siblings of #root, so only the studio scales. Transform-only, one composited layer. */
+  html.fk #root { transform-origin: 50% 0; transition: scale var(--ds-dur-slow) var(--ds-spring); }
+  html.fk.fk-kit-open #root { scale: .955; }
 
   /* Focus arrives instead of snapping on. */
   :where(a, button, input, select, textarea, summary, [tabindex], [role="button"], [role="tab"]):focus-visible {

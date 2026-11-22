@@ -569,6 +569,11 @@ h3 { font-family: var(--ds-font-ui); font-weight: 600; font-size: 17px; letter-s
     animation: ds-slide-in var(--ds-dur-med) var(--ds-ease) backwards;
   }
 
+  /* Layers on a phone: while the kit is open the studio behind it steps back, the way a sheet sits over a page.
+     The sheet and bar are siblings of #root, so only the studio scales. Transform-only, one composited layer. */
+  html.fk #root { transform-origin: 50% 0; transition: scale var(--ds-dur-slow) var(--ds-spring); }
+  html.fk.fk-kit-open #root { scale: .955; }
+
   /* Focus arrives instead of snapping on. */
   :where(a, button, input, select, textarea, summary, [tabindex], [role="button"], [role="tab"]):focus-visible {
     transition: outline-offset var(--ds-dur-fast) var(--ds-ease);

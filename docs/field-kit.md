@@ -23,7 +23,7 @@ A phone has no hover, so prints on the Atlas line used to stay undeveloped until
 The rooms carry the darkroom with them. The world's sections (Characters, Locations, Objects, Research) and Visual language open under a dark title card with the red safelight and grain. Below it, cards are prints on a line: card stock with paper fibres, a wooden peg, a slight tilt, and a settle as they arrive. Sheets (kit, dialogs, library, menu) are fibred paper. The library's sections are tiles with counts. Tokens: `--fk-room`, `--fk-noise`, `--fk-fibre`, `--fk-print`, `--fk-wall-ink`, `--fk-wall-muted`.
 
 ## Tokens
-All custom properties are defined on `html.fk` in `field-kit.css`.
+All custom properties are defined on `html.fk` in `css/field-kit.css`.
 
 | Group | Tokens |
 |---|---|
@@ -46,7 +46,7 @@ All custom properties are defined on `html.fk` in `field-kit.css`.
 - Safe areas: the top slate, the bar and every sheet pad for the notch and the home indicator.
 
 ## How it works
-`field-kit.js` adds `html.fk` at phone width and removes everything it added above it. Every rule in `field-kit.css` is inside one `@media (max-width: 767px)` block and starts with `html.fk`, so without the script the previous phone layout still works.
+`field-kit.js` adds `html.fk` at phone width and removes everything it added above it. Every rule in `css/field-kit.css` is inside one `@media (max-width: 767px)` block and starts with `html.fk`, so without the script the previous phone layout still works.
 
 The app has no public router, so the kit presses controls React already renders: the workspace switcher's six destinations, entries of "Go anywhere" by label, and the library's section buttons. While it does, `html.fk-quiet` hides those intermediate surfaces. Counts are read from `window.LightboxStudio.project()`. Nothing is written.
 
@@ -55,7 +55,7 @@ Two phone bugs in the previous layout are fixed along the way: the screenplay "m
 ## Files
 | File | Role |
 |---|---|
-| `field-kit.css` | Tokens, the bar, sheets, the kit, and the phone treatment of the app's dialogs, menus, library and room headers |
+| `css/field-kit.css` | Tokens, the bar, sheets, the kit, and the phone treatment of the app's dialogs, menus, library and room headers |
 | `field-kit.js` | The bar and kit, navigation, sheet gestures, keyboard awareness |
 | `tests/field-kit-qa.mjs` | Browser checks at 360, 390 and 430px, first run, reduced motion, and a desktop comparison with and without the layer |
 

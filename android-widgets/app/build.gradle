@@ -43,8 +43,9 @@ dependencies {
 // Package the same read-only snapshot logic used by the public sync page.
 def syncAssets = tasks.register('prepareSyncAssets', Copy) {
     from(rootProject.file('..')) {
-        include 'story-sync.js', 'index.html', 'script.js', 'styles.css', 'opening.*', 'studio-design.*',
-                'mobile-*.css', 'responsive-polish.css', 'screenplay-polish.css', 'install-app.css',
+        include 'story-sync.js', 'index.html', 'script.js', 'opening.*', 'studio-design.*',
+                'lightbox.css', 'lightbox-app.css', 'first-page.css',
+                'install-app.css',
                 'manifest.webmanifest', 'app-icons/*.png'
     }
     into layout.buildDirectory.dir('generated/syncAssets/studio')

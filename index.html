@@ -56,6 +56,11 @@
       html.lb-native-shell .studio.atlas-shell .install-app,
       html.lb-native-shell .lb-native-choice { display: none !important; }
     </style>
+    <!-- The four faces the first screen is set in. Everything else loads on demand. -->
+    <link rel="preload" href="./assets/fonts/instrument-serif-400-latin.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="./assets/fonts/instrument-serif-400-italic-latin.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="./assets/fonts/dm-sans-400-latin.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="./assets/fonts/dm-sans-500-latin.woff2" as="font" type="font/woff2" crossorigin>
     <link rel="stylesheet" href="./lightbox.css?v=723efcd5">
     <!-- Kept separate on purpose: the native Android app substitutes its own first-page.css by exact path. -->
     <link rel="stylesheet" href="./first-page.css">

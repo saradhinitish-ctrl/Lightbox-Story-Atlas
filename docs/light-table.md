@@ -34,7 +34,7 @@ Instrument Serif (titles), DM Sans (interface), DM Mono (edge print and labels),
 
 ## Files
 - `light-table.css`: the design. Loaded last.
-- `light-table-surfaces.css`: GENERATED. It re-inks the older layers' lime and lavender as grease-pencil red. Rebuild with `(cd export-tools && npm install) && node tools/build-light-table.mjs`.
+- `light-table-surfaces.css`: It re-inks the older layers' lime and lavender as grease-pencil red. It was generated once; the generator has been retired and the file is now maintained by hand in `css/`.
 - `assets/fonts/big-shoulders-display-latin-wght-normal.woff2` (SIL OFL 1.1).
 
 ## Untouched, and verified
